@@ -1,0 +1,42 @@
+npm notice
+npm notice 📦  pi-herdr-pstack@0.1.0-experimental.0
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 8.0kB README.md
+npm notice 4.6kB THIRD_PARTY_NOTICES.md
+npm notice 5.2kB docs/compatibility.md
+npm notice 4.7kB docs/provenance.md
+npm notice 1.5kB package.json
+npm notice 8.1kB pi-extension/pstack/config.ts
+npm notice 267B pi-extension/pstack/index.ts
+npm notice 7.7kB pi-extension/pstack/mode.ts
+npm notice 3.2kB pi-extension/pstack/resources.ts
+npm notice 30.4kB pi-extension/pstack/setup.ts
+npm notice 2.6kB skills/poteto-mode/playbooks/autonomous-run.md
+npm notice 3.0kB skills/poteto-mode/playbooks/bug-fix.md
+npm notice 4.0kB skills/poteto-mode/playbooks/feature.md
+npm notice 1.4kB skills/poteto-mode/playbooks/investigation.md
+npm notice 7.5kB skills/poteto-mode/playbooks/opening-a-pr.md
+npm notice 1.6kB skills/poteto-mode/playbooks/pause-safely.md
+npm notice 2.2kB skills/poteto-mode/playbooks/perf-issue.md
+npm notice 2.5kB skills/poteto-mode/playbooks/prototype.md
+npm notice 3.7kB skills/poteto-mode/playbooks/refactoring.md
+npm notice 1.5kB skills/poteto-mode/playbooks/runtime-forensics.md
+npm notice 2.3kB skills/poteto-mode/playbooks/session-pickup.md
+npm notice 1.9kB skills/poteto-mode/playbooks/trace-forensics.md
+npm notice 4.0kB skills/poteto-mode/references/authorization.md
+npm notice 10.5kB skills/poteto-mode/references/bugbot-triage.md
+npm notice 9.4kB skills/poteto-mode/references/delegation.md
+npm notice 26.7kB skills/poteto-mode/SKILL.md
+npm notice 6.5kB skills/setup-pstack/SKILL.md
+npm notice Tarball Details
+npm notice name: pi-herdr-pstack
+npm notice version: 0.1.0-experimental.0
+npm notice filename: pi-herdr-pstack-0.1.0-experimental.0.tgz
+npm notice package size: 57.2 kB
+npm notice unpacked size: 165.9 kB
+npm notice shasum: 3da976be5a91d6953cf823b32224fdcceea9d696
+npm notice integrity: sha512-VNINq7hhmFNVk[...]tr8tV7JKDnjWg==
+npm notice total files: 28
+npm notice
+pi-herdr-pstack-0.1.0-experimental.0.tgz

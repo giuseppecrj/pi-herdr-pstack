@@ -1,0 +1,21 @@
+▶ installed pack without pi-herdr-agents
+  ✔ registers only its two commands and two skills, without host diagnostics (179.889824ms)
+✔ installed pack without pi-herdr-agents (180.675162ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✔ lists no roles, since pstack contributes none, with no collisions or retired commands (201.070543ms)
+  ✔ applies /setup-pstack only after the RPC dialog is accepted (981.88541ms)
+  ✔ applies /setup-pstack only after the RPC dialog is declined (964.932452ms)
+  ✔ coexists with pi-herdr-roles without role or command collisions (221.789325ms)
+✔ installed pack with a real role-free pi-herdr-agents host (2370.132365ms)
+▶ legacy bundled host characterization
+  ✔ keeps the host's own bundled roles; pstack adds no role or collision diagnostic (207.756946ms)
+  ✔ with roles.bundled:false, lists no roles because pstack contributes none (202.695463ms)
+✔ legacy bundled host characterization (410.738677ms)
+ℹ tests 7
+ℹ suites 3
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3035.79197

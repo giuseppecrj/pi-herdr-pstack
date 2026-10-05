@@ -1,0 +1,158 @@
+
+> pi-herdr-pstack@0.1.0-experimental.0 check
+> npm run typecheck && npm run lint && npm run format:check && npm test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 lint
+> oxlint pi-extension test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 format:check
+> biome format pi-extension test
+
+Checked 21 files in 6ms. No fixes applied.
+
+> pi-herdr-pstack@0.1.0-experimental.0 test
+> node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts
+
+▶ explicit skills: poteto-mode startup for an auto-exit role
+  ✔ uses the host's real child extension (0.584202ms)
+  ✔ direct delivery runs a skill-only turn, then exits before the task completes (561.560354ms)
+  ✔ artifact delivery runs the task without the skill, then a skill-only turn is cut off (367.588431ms)
+  ✔ control: an instant fake reply finishes before the exit and would hide the race (372.392161ms)
+  ✔ keeps the gate closed: the poteto role does not declare skills (0.334618ms)
+✔ explicit skills: poteto-mode startup for an auto-exit role (1303.578767ms)
+▶ poteto role
+  ✔ is the only role and matches the pinned pi-herdr-agents source byte for byte (1.36927ms)
+  ✔ reconstructs from the source commit (5.60363ms)
+  ✔ keeps its strict capability declarations and no skill activation yet (0.313819ms)
+  ✔ names no other role, so it needs neither pi-herdr-roles nor another pack (0.208646ms)
+✔ poteto role (8.344725ms)
+▶ Wave 2 runtime scope
+  ✔ ships the role bridge plus mode and setup modules only (0.099013ms)
+  ✔ imports nothing private from pi-herdr-agents and writes no files itself (0.306639ms)
+  ✔ keeps the W1 role-pack bridge byte for byte (0.117792ms)
+✔ Wave 2 runtime scope (0.666444ms)
+▶ package manifest
+  ✔ is a private experimental Pi package with host peers (0.201752ms)
+  ✔ packs the role, extension, skills and notices without plans or development files (179.599429ms)
+✔ package manifest (179.965052ms)
+▶ role-pack v1 bridge
+  ✔ contributes the package agents directory (0.298433ms)
+  ✔ removes its own listener from its session_shutdown handler (0.502211ms)
+✔ role-pack v1 bridge (1.311687ms)
+▶ role-pack v1 bridge in a real SDK session
+  ✔ registers once across reloads, not after dispose, beside its two commands (41.016025ms)
+✔ role-pack v1 bridge in a real SDK session (41.241266ms)
+▶ mode record and reducer
+  ✔ accepts only the exact version 1 shape (1.032245ms)
+  ✔ follows the latest valid record on the branch and fails closed on invalid ones (0.208269ms)
+  ✔ keeps a user fork's copied records but ignores them in a subagent (0.127734ms)
+  ✔ parses the documented command forms (0.135586ms)
+✔ mode record and reducer (2.355779ms)
+▶ /poteto-mode in the real Pi CLI
+  ✔ registers both commands and skills from this package (179.24558ms)
+  ✔ enables idempotently, adds a short section with the hub path, and turns off for the next prompt (3939.226824ms)
+  ✔ treats /skill:poteto-mode as a one-time load, never sticky (174.288117ms)
+  ✔ sends the task form as one literal full-skill prompt ({}) (205.668212ms)
+  ✔ sends the task form as one literal full-skill prompt ({"enableSkillCommands":false}) (180.4083ms)
+  ✔ reports memory-only persistence without a session file (1673.694764ms)
+  ✔ refuses the task form while busy and changes only the next prompt mid-turn (3187.317783ms)
+  ✔ diagnoses a filtered or shadowed skill instead of enabling (3360.213886ms)
+✔ /poteto-mode in the real Pi CLI (12900.752693ms)
+▶ mode across Pi session transitions
+  ✔ follows tree navigation, compaction, clone, fork, new session and resume (7762.518147ms)
+  ✔ ignores a parent's copied record in a subagent, keeps the child's own across resume (4494.921028ms)
+✔ mode across Pi session transitions (12257.668427ms)
+▶ installed pack without pi-herdr-agents
+  ✔ registers only its two commands and two skills, without host diagnostics (184.187463ms)
+✔ installed pack without pi-herdr-agents (184.769886ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✔ lists only poteto with pstack provenance, with no collisions or retired commands (198.394886ms)
+  ✔ applies /setup-pstack only after the RPC dialog is accepted (955.666739ms)
+  ✔ applies /setup-pstack only after the RPC dialog is declined (949.308568ms)
+  ✔ coexists with pi-herdr-roles without role or command collisions (209.811564ms)
+✔ installed pack with a real role-free pi-herdr-agents host (2313.569087ms)
+﹣ legacy bundled host characterization (0.041457ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+▶ writer contract detection from the public schema
+  ✔ recognizes the conditional writer and treats anything else as report-only (0.56843ms)
+✔ writer contract detection from the public schema (1.062639ms)
+▶ one-shot approval matching
+  ✔ requires the exact direct parent, exact payload, unchanged file and an unused approval (0.694561ms)
+✔ one-shot approval matching (0.776709ms)
+▶ config snapshot
+  ✔ revisions exact bytes, so whitespace and unrelated edits are changes (0.189444ms)
+  ✔ rejects every models shape pi-herdr-agents rejects (0.658406ms)
+  ✔ fails closed on a relative agent directory (0.098785ms)
+  ✔ compares preserved settings without task fields, key order or an absent models object (0.129257ms)
+  ✔ deep-freezes nested arrays (0.259281ms)
+✔ config snapshot (1.600135ms)
+▶ proposal checks and approval text
+  ✔ names why a reference cannot be written (0.326886ms)
+  ✔ shows the before/after table, metadata, shared effect and exact JSON (0.196438ms)
+✔ proposal checks and approval text (0.643287ms)
+▶ setup report (no write path)
+  ✔ reports a missing host and stays report-only, even for a change request (51.08934ms)
+  ✔ keeps an older unconditional writer report-only (11.825092ms)
+  ✔ distinguishes unusable config files and never shows their contents (90.387536ms)
+  ✔ shows only the task, metadata, default and poteto fields of the config (14.489738ms)
+  ✔ is report-only in a subagent and without dialog support (31.059227ms)
+  ✔ refuses the apply tool outside a flow, even if it is made visible (25.126271ms)
+✔ setup report (no write path) (224.885717ms)
+▶ setup writes through the real conditional host writer
+  ✔ shows the complete payload, writes only after approval, verifies the saved file (74.116212ms)
+  ✔ discloses default seeding and creates a missing file only after approval (22.661842ms)
+  ✔ writes nothing when the dialog is declined or times out, and closes the flow (20.404113ms)
+  ✔ writes nothing when the turn is aborted during the dialog (27.400166ms)
+  ✔ refuses when the config, flow or session changes while the dialog is open (54.328566ms)
+  ✔ lets the real conditional writer refuse a config change made by a later hook (26.240624ms)
+  ✔ blocks argument mutation by earlier hooks and freezes input against later ones (141.506294ms)
+  ✔ blocks raw and relayed writer calls during setup, but not outside it (37.533204ms)
+  ✔ rejects unauthenticated, alias, duplicate, padded and unknown references before any dialog (34.245978ms)
+  ✔ does not silently drop or rewrite a retained category it cannot write (23.043298ms)
+  ✔ reports no change without a dialog (19.014156ms)
+  ✔ reports a busy writer as a failure without retrying (19.746584ms)
+  ✔ does not trust a success claim that the saved file contradicts (26.144187ms)
+  ✔ stays report-only when the writer is inactive (22.900783ms)
+✔ setup writes through the real conditional host writer (550.104208ms)
+▶ W2 methodology skill tree
+  ✔ ships exactly the frozen entry contract: two skills, three references, twelve base playbooks (0.959412ms)
+  ✔ loads through the tested Pi skill loader as exactly two skills (4.328053ms)
+  ✔ matches the canonical inventory's W2 rows and partition (0.1365ms)
+  ✔ has substantive content, not placeholders (0.521438ms)
+✔ W2 methodology skill tree (6.543181ms)
+▶ references and forward exceptions
+  ✔ enumerates every unresolved reference as an exact owned-wave tuple (0.52731ms)
+  ✔ marks each forward reference as planned on the line that makes it (0.177608ms)
+  ✔ names principle skills by their full inventory names (4.250966ms)
+  ✔ keeps all 24 principle summaries in the hub, each marked planned W3 (0.511078ms)
+  ✔ routes every upstream playbook from the hub, W4 rows visibly planned (0.369156ms)
+✔ references and forward exceptions (6.06922ms)
+▶ delegation contract
+  ✔ gives runnable examples only the public single-call parameters (0.202311ms)
+  ✔ names no other role, obsolete runner API, alias or platform tool (1.370995ms)
+  ✔ pins the subagent schema and task categories of the tested host (6.723832ms)
+✔ delegation contract (8.406975ms)
+▶ authorization boundaries
+  ✔ never lets activation, autonomy or a playbook step grant permission (0.155998ms)
+  ✔ leaves configuration writes to the setup extension's approved flow (0.185096ms)
+✔ authorization boundaries (0.408373ms)
+▶ methodology provenance
+  ✔ records the inventory's pinned sources (0.090449ms)
+  ✔ hashes every shipped methodology file (0.61024ms)
+  ✔ accounts for each upstream source file of both W2 rows exactly once (0.288786ms)
+  ✔ reproduces every recorded source hash from the pinned commits (163.328414ms)
+  ✔ preserves both upstream MIT notices and documents the W2 adaptation (0.287458ms)
+✔ methodology provenance (164.797323ms)
+ℹ tests 84
+ℹ suites 23
+ℹ pass 84
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31570.961712
