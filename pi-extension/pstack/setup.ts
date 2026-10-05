@@ -1,4 +1,4 @@
-import { existsSync, realpathSync } from "node:fs";
+import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
@@ -31,9 +31,6 @@ export const APPLY_TOOL = "pstack_apply_task_models";
 export const REPORT_MESSAGE_TYPE = "pi-herdr-pstack:setup-report";
 export const CONFIRM_TIMEOUT_MS = 120_000;
 const EXTENSION_FILE = fileURLToPath(new URL("./index.ts", import.meta.url));
-const ROLE_FILE = fileURLToPath(
-	new URL("../../agents/poteto.md", import.meta.url),
-);
 /** Categories poteto-mode's delegation examples route through. */
 const METHODOLOGY_CATEGORIES: readonly TaskCategory[] = [
 	"coding",
@@ -123,8 +120,18 @@ function sameFile(a: string, b: string): boolean {
 	}
 }
 
+/**
+ * A configured reference as the report shows it. Anything other than one
+ * printable token is withheld, so a crafted value cannot add report lines.
+ */
+function displayRef(ref: string): string {
+	return /^[\x21-\x7e]{1,200}$/.test(ref)
+		? ref
+		: "(withheld: not a single printable token)";
+}
+
 function formatRefs(refs: readonly string[] | undefined): string {
-	return refs ? refs.join(", ") : "(not set)";
+	return refs ? refs.map(displayRef).join(", ") : "(not set)";
 }
 
 type Report = {
@@ -174,24 +181,20 @@ function preferenceLines(
 	);
 	lines.push(
 		`  tasksMeta: ${preferences.tasksMeta ? `${preferences.tasksMeta.method} at ${preferences.tasksMeta.generatedAt}` : "(not set)"}`,
-		`  default model: ${preferences.defaultModel ?? "(not set)"}`,
-		`  poteto override (models.agents.poteto): ${preferences.potetoOverride ?? "(not set)"}`,
+		`  default model (models.default): ${preferences.defaultModel === undefined ? "(not set)" : displayRef(preferences.defaultModel)}`,
 	);
 	const findings: string[] = [];
 	for (const category of TASK_CATEGORIES)
 		for (const ref of preferences.tasks[category] ?? []) {
 			const problem = refProblem(ref, authenticated);
-			if (problem) findings.push(`tasks.${category}: ${ref} ${problem}.`);
+			if (problem)
+				findings.push(`tasks.${category}: ${displayRef(ref)} ${problem}.`);
 		}
 	for (const category of METHODOLOGY_CATEGORIES)
 		if (!preferences.tasks[category])
 			findings.push(
 				`tasks.${category} is not set; poteto-mode delegation examples use task:${category}.`,
 			);
-	if (preferences.potetoOverride)
-		findings.push(
-			`models.agents.poteto (${preferences.potetoOverride}) applies to every poteto launch without an explicit model, ahead of the task categories.`,
-		);
 	return { lines, findings };
 }
 
@@ -266,7 +269,7 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		);
 	}
 	lines.push(
-		`  poteto role file: ${existsSync(ROLE_FILE) ? ROLE_FILE : "missing"}. Use subagents_list to see the role the host actually resolves; a project or global poteto overrides this package's role.`,
+		"  Roles: none. Pstack contributes no named roles; poteto-mode delegates are bare.",
 		"  Child visibility: not verified. Parent discovery does not prove child sessions load this package.",
 	);
 
@@ -304,6 +307,7 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 	lines.push("", "Next steps");
 	lines.push(
 		"  Task categories are shared pi-herdr-agents preferences: a change affects every pi-herdr-agents workflow and role pack, not only pstack.",
+		"  An explicit subagent model argument, including a task:<category> selector, takes precedence over role, per-agent and default models.",
 	);
 	if (blockers.length > 0)
 		lines.push(
@@ -317,10 +321,18 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 	return { text: lines.join("\n"), applyBlockers: blockers };
 }
 
+/**
+ * One `/setup-pstack <request>` run. It protects the shared writer from the
+ * change command until that run settles, independently of whether its single
+ * apply attempt is still open.
+ */
 type Flow = {
 	generation: number;
 	sessionId: string;
-	closed: boolean;
+	/** The run may still open its one approval dialog. */
+	applyOpen: boolean;
+	/** A report command, settlement or shutdown ended the run's apply authority. */
+	revoked: boolean;
 	applying: boolean;
 };
 
@@ -329,6 +341,8 @@ export type Authorization = {
 	canonical: string;
 	revision: string;
 	consumed: boolean;
+	/** The apply call's signal; an aborted turn cancels the approval. */
+	signal?: AbortSignal;
 };
 
 /** Why a nested writer call does not match its one-shot approval, if it does not. */
@@ -340,6 +354,7 @@ export function authorizationProblem(
 	if (approved.consumed) return "the approval was already used";
 	if (parentToolCallId !== approved.parentToolCallId)
 		return `this call is not the approved ${APPLY_TOOL} call's direct nested write`;
+	if (approved.signal?.aborted) return "the setup turn was cancelled";
 	if (canonicalJson(input) !== approved.canonical)
 		return "its arguments differ from the approved payload";
 	if (currentRevision() !== approved.revision)
@@ -380,11 +395,6 @@ export function approvalMessage(
 		...tableLines(before?.tasks ?? {}, payload.tasks),
 		"",
 		`Metadata, generated by pstack: method ${payload.tasksMeta.method}, generatedAt ${payload.tasksMeta.generatedAt} (was ${before?.tasksMeta ? `${before.tasksMeta.method} at ${before.tasksMeta.generatedAt}` : "not set"}).`,
-		...(before?.potetoOverride
-			? [
-					`models.agents.poteto (${before.potetoOverride}) is unchanged and still takes precedence for poteto launches without an explicit model.`,
-				]
-			: []),
 		"",
 		"Shared effect: task categories are pi-herdr-agents preferences used by every workflow and role pack, not only pstack.",
 		"The write is conditional: it fails without changing anything if the file changes before the writer runs. Reload Pi afterwards.",
@@ -404,51 +414,100 @@ const CHANGES = Type.Object(
 	{ additionalProperties: false, minProperties: 1 },
 );
 
+/** Whether the active branch shows `toolCallId` as a model-issued apply call. */
+function isApplyCall(ctx: ExtensionContext, toolCallId: string): boolean {
+	return ctx.sessionManager
+		.getBranch()
+		.some(
+			(entry) =>
+				entry.type === "message" &&
+				entry.message.role === "assistant" &&
+				entry.message.content.some(
+					(part) =>
+						part.type === "toolCall" &&
+						part.id === toolCallId &&
+						part.name === APPLY_TOOL,
+				),
+		);
+}
+
 export function registerSetup(pi: ExtensionAPI): void {
 	let generation = 0;
+	/** The protected setup run, from the change command until that run settles. */
 	let flow: Flow | undefined;
 	let authorization: Authorization | undefined;
-	/** Apply calls the model issued directly; only their nested writer calls can be authorized. */
-	const directApplyCalls = new Set<string>();
+	/**
+	 * Every apply call the model issued in this extension instance. Kept after
+	 * the flow ends, so a late nested write under an expired approval is still
+	 * recognized as one rather than as an unrelated call.
+	 */
+	const applyCalls = new Set<string>();
+	/** This instance's session shut down; nothing it guarded may write now. */
+	let ended = false;
 
 	function deactivateApply() {
-		const active = pi.getActiveTools();
-		if (active.includes(APPLY_TOOL))
-			pi.setActiveTools(active.filter((name) => name !== APPLY_TOOL));
+		try {
+			const active = pi.getActiveTools();
+			if (active.includes(APPLY_TOOL))
+				pi.setActiveTools(active.filter((name) => name !== APPLY_TOOL));
+		} catch {
+			// The runtime was replaced or reloaded; its successor starts without a flow.
+		}
 	}
 
-	function closeFlow() {
-		if (flow) flow.closed = true;
-		flow = undefined;
+	/** Ends the run's apply authority. Protection lasts until the run settles. */
+	function revokeApply() {
+		if (flow) {
+			flow.applyOpen = false;
+			flow.revoked = true;
+		}
 		authorization = undefined;
-		directApplyCalls.clear();
 		deactivateApply();
 	}
 
-	pi.on("session_start", () => closeFlow());
-	pi.on("session_shutdown", () => closeFlow());
-	pi.on("agent_settled", () => closeFlow());
+	pi.on("session_start", () => {
+		revokeApply();
+		flow = undefined;
+	});
+	pi.on("session_shutdown", () => {
+		revokeApply();
+		ended = true;
+	});
+	pi.on("agent_settled", () => {
+		revokeApply();
+		flow = undefined;
+	});
 
-	pi.on("tool_call", (event) => {
+	pi.on("tool_call", (event, ctx) => {
 		if (event.toolName === APPLY_TOOL) {
 			if (event.parentToolCallId !== undefined)
 				return {
 					block: true,
 					reason: `${APPLY_TOOL} must be called directly by the model inside /setup-pstack, not from another tool.`,
 				};
-			directApplyCalls.add(event.toolCallId);
+			applyCalls.add(event.toolCallId);
 			return;
 		}
 		if (event.toolName !== WRITER) return;
-		const fromApply =
-			event.parentToolCallId !== undefined &&
-			directApplyCalls.has(event.parentToolCallId);
-		// Outside a setup flow the host's writer behaves exactly as without pstack.
-		if (!flow && !authorization && !fromApply) return;
-		const approved = authorization;
-		const problem = approved
-			? authorizationProblem(approved, event.parentToolCallId, event.input)
-			: `while /setup-pstack is active, only its approved ${APPLY_TOOL} call may write`;
+		const parent = event.parentToolCallId;
+		let underApply = parent !== undefined && applyCalls.has(parent);
+		if (!underApply && parent !== undefined && !ended)
+			try {
+				// After a reload, this instance never saw the apply call itself.
+				underApply = isApplyCall(ctx, parent);
+			} catch {
+				underApply = true;
+			}
+		// Outside a setup run the host's writer behaves exactly as without pstack.
+		if (!ended && !flow && !underApply) return;
+		const approved = ended ? undefined : authorization;
+		const problem = ended
+			? "the session that ran /setup-pstack shut down or was replaced"
+			: approved
+				? authorizationProblem(approved, parent, event.input)
+				: underApply
+					? `the approval for that ${APPLY_TOOL} call has ended (declined, cancelled, revoked, stale or already used)`
+					: `until this /setup-pstack run settles, only its approved ${APPLY_TOOL} call may write`;
 		if (!approved || problem)
 			return {
 				block: true,
@@ -463,7 +522,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: APPLY_TOOL,
 		label: "Apply pstack task models",
-		description: `Setup-only. Inside an active /setup-pstack change flow, propose new model lists for named pi-herdr-agents task categories (${TASK_CATEGORIES.join(", ")}). Use only exact authenticated provider/model-id references from the setup report. Every category you omit keeps its current models. The user approves the complete ${WRITER} payload in a dialog before a conditional write. Refuses outside the flow.`,
+		description: `Setup-only. Inside an active /setup-pstack change flow, propose new model lists for named pi-herdr-agents task categories (${TASK_CATEGORIES.join(", ")}). Use only exact authenticated provider/model-id references from the setup report. Every category you omit keeps its current models. The user approves the complete ${WRITER} payload in a dialog before a conditional write. One dialog per flow. Refuses outside the flow.`,
 		parameters: Type.Object({ changes: CHANGES }),
 		defaultActive: false,
 		executionMode: "sequential",
@@ -471,14 +530,15 @@ export function registerSetup(pi: ExtensionAPI): void {
 		async execute(toolCallId, params, signal, _onUpdate, ctx) {
 			const active = flow;
 			if (
+				ended ||
 				!active ||
-				active.closed ||
+				!active.applyOpen ||
 				active.sessionId !== ctx.sessionManager.getSessionId()
 			)
 				throw new Error(
-					`No active /setup-pstack change flow in this session. ${APPLY_TOOL} cannot write; ask the user to run /setup-pstack <request>.`,
+					`No open /setup-pstack change flow in this session. ${APPLY_TOOL} cannot write; ask the user to run /setup-pstack <request>.`,
 				);
-			if (!directApplyCalls.has(toolCallId))
+			if (!applyCalls.has(toolCallId))
 				throw new Error(`${APPLY_TOOL} must be called directly by the model.`);
 			if (active.applying)
 				throw new Error("Another setup proposal is already awaiting approval.");
@@ -514,6 +574,13 @@ export function registerSetup(pi: ExtensionAPI): void {
 			throw new Error(
 				`The config file is ${snapshot.state}; setup is report-only and wrote nothing.`,
 			);
+		const unknown = Object.keys(changes).some(
+			(key) => !(TASK_CATEGORIES as readonly string[]).includes(key),
+		);
+		if (unknown)
+			throw new Error(
+				`Proposal rejected; nothing was written. It names a category other than ${TASK_CATEGORIES.join(", ")}.`,
+			);
 		const authenticated = new Set(authenticatedRefs(ctx));
 		const current =
 			snapshot.state === "present" ? snapshot.preferences.tasks : {};
@@ -522,11 +589,6 @@ export function registerSetup(pi: ExtensionAPI): void {
 			const refs = changes[category] ?? current[category];
 			if (refs) tasks[category] = [...refs];
 		}
-		const unknown = Object.keys(changes).filter(
-			(key) => !(TASK_CATEGORIES as readonly string[]).includes(key),
-		);
-		if (unknown.length > 0)
-			throw new Error(`Unknown task categories: ${unknown.join(", ")}.`);
 		const problems: string[] = [];
 		for (const category of TASK_CATEGORIES) {
 			const refs = tasks[category] ?? [];
@@ -536,7 +598,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 				const problem = refProblem(ref, authenticated);
 				if (problem)
 					problems.push(
-						`${category}: ${ref} ${problem}${changes[category] ? "" : " (retained category: include it in changes with authenticated models)"}`,
+						`${category}: ${displayRef(ref)} ${problem}${changes[category] ? "" : " (retained category: include it in changes with authenticated models)"}`,
 					);
 			}
 		}
@@ -557,73 +619,62 @@ export function registerSetup(pi: ExtensionAPI): void {
 			},
 			expectedConfigRevision: snapshot.revision,
 		});
+		// One dialog per flow: whatever happens next, this run cannot ask again.
+		// The run stays protected until it settles.
+		active.applyOpen = false;
+		deactivateApply();
 		const approved = await ctx.ui.confirm(
 			"Write shared pi-herdr-agents task models?",
 			approvalMessage(snapshot, payload),
 			{ signal, timeout: CONFIRM_TIMEOUT_MS },
 		);
-		if (signal?.aborted) {
-			closeFlow();
+		if (signal?.aborted)
 			throw new Error("Setup was cancelled; nothing was written.");
-		}
-		if (!approved) {
-			closeFlow();
+		if (!approved)
 			return ok(
 				"The user declined or the approval dialog timed out. Nothing was written. Run /setup-pstack again for a new proposal.",
 			);
-		}
 
 		const stale: string[] = [];
-		if (flow !== active || active.closed) stale.push("the setup flow ended");
-		if (active.sessionId !== ctx.sessionManager.getSessionId())
+		if (ended || flow !== active || active.revoked)
+			stale.push("the setup flow ended");
+		else if (active.sessionId !== ctx.sessionManager.getSessionId())
 			stale.push("the session changed");
 		if (currentRevision() !== payload.expectedConfigRevision)
 			stale.push("the config file changed during approval");
-		const nowAuthenticated = new Set(authenticatedRefs(ctx));
-		if (
-			Object.values(tasks)
-				.flat()
-				.some((ref) => !nowAuthenticated.has(ref))
-		)
-			stale.push("model authentication changed during approval");
-		if (writerStatus(pi).state !== "conditional")
-			stale.push(`${WRITER} changed`);
-		if (stale.length > 0) {
-			closeFlow();
+		if (!ended) {
+			const nowAuthenticated = new Set(authenticatedRefs(ctx));
+			if (
+				Object.values(tasks)
+					.flat()
+					.some((ref) => !nowAuthenticated.has(ref))
+			)
+				stale.push("model authentication changed during approval");
+			if (writerStatus(pi).state !== "conditional")
+				stale.push(`${WRITER} changed`);
+		}
+		if (stale.length > 0)
 			throw new Error(
 				`Approval is stale (${stale.join("; ")}). Nothing was written. Run /setup-pstack again for a fresh proposal.`,
 			);
-		}
 
 		authorization = {
 			parentToolCallId: toolCallId,
 			canonical: canonicalJson(payload),
 			revision: payload.expectedConfigRevision,
 			consumed: false,
+			signal,
 		};
-		let outcome: Awaited<ReturnType<typeof ctx.executeTool>>;
+		let outcome: Awaited<ReturnType<typeof ctx.executeTool>> | undefined;
+		let dispatchError: unknown;
 		try {
 			outcome = await ctx.executeTool(WRITER, payload, { signal });
+		} catch (error) {
+			dispatchError = error;
 		} finally {
 			authorization = undefined;
-			// One write attempt per flow: a failure needs a fresh proposal and approval.
-			closeFlow();
 		}
-		const resultText = outcome.result.content
-			.map((part) => (part.type === "text" ? part.text : ""))
-			.join("");
-		if (outcome.isError)
-			throw new Error(
-				`${WRITER} did not write: ${resultText} Approval is not reused; run /setup-pstack again for a fresh proposal.`,
-			);
-		const failure = verifySaved(snapshot, payload, outcome.result.details);
-		if (failure)
-			throw new Error(
-				`${WRITER} reported success, but the saved file does not match the approved payload: ${failure}. Inspect ${snapshot.path} before relying on it.`,
-			);
-		return ok(
-			`Saved the approved task preferences to ${snapshot.path} (revision ${String((outcome.result.details as Record<string, unknown>).configRevision)}). Verified the saved file. Reload Pi (/reload) so pi-herdr-agents uses them.`,
-		);
+		return reconcile(snapshot, payload, outcome, dispatchError);
 	}
 
 	pi.registerCommand("setup-pstack", {
@@ -631,7 +682,8 @@ export function registerSetup(pi: ExtensionAPI): void {
 			"Report pstack setup; /setup-pstack <request> proposes shared task-model changes for approval",
 		handler: async (args, ctx) => {
 			const request = args.trim();
-			closeFlow();
+			// A running setup turn loses its apply authority but stays protected.
+			revokeApply();
 			const report = buildReport(pi, ctx);
 			if (
 				request === "" ||
@@ -659,7 +711,8 @@ export function registerSetup(pi: ExtensionAPI): void {
 			flow = {
 				generation,
 				sessionId: ctx.sessionManager.getSessionId(),
-				closed: false,
+				applyOpen: true,
+				revoked: false,
 				applying: false,
 			};
 			pi.setActiveTools([...pi.getActiveTools(), APPLY_TOOL]);
@@ -679,18 +732,90 @@ export function registerSetup(pi: ExtensionAPI): void {
 	});
 }
 
-/** Confirms the saved bytes, not only the writer's claim, match the approval. */
-export function verifySaved(
+function describeError(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+function resultText(outcome: { result: { content: unknown } }): string {
+	const { content } = outcome.result;
+	if (!Array.isArray(content)) throw new Error("result content is not a list");
+	return content
+		.map((part: unknown) =>
+			isRecord(part) && part.type === "text" && typeof part.text === "string"
+				? part.text
+				: "",
+		)
+		.join("");
+}
+
+/**
+ * Turns a dispatched writer call into a report about the saved file. A failed
+ * or unreadable outcome does not prove nothing was written: a later result
+ * handler can mark a completed write as an error, and a failure can follow the
+ * write. Only the file on disk decides, and nothing is retried.
+ */
+function reconcile(
 	before: Extract<ConfigSnapshot, { state: "present" | "missing" }>,
 	payload: WriterPayload,
-	details: unknown,
-): string | undefined {
+	outcome: Awaited<ReturnType<ExtensionToolContext["executeTool"]>> | undefined,
+	dispatchError: unknown,
+) {
+	const retry =
+		"Approval is not reused and nothing was retried; run /setup-pstack again for a fresh proposal.";
+	let reason: string;
+	if (dispatchError !== undefined || !outcome)
+		reason = `the ${WRITER} call failed (${describeError(dispatchError)})`;
+	else {
+		let text = "";
+		let failure: string | undefined;
+		let revision = "";
+		let processing: unknown;
+		try {
+			text = resultText(outcome);
+			if (!outcome.isError) {
+				failure = verifySaved(before, payload, outcome.result.details);
+				revision = String(
+					(outcome.result.details as Record<string, unknown>).configRevision,
+				);
+			}
+		} catch (error) {
+			processing = error;
+		}
+		if (processing !== undefined)
+			reason = `the ${WRITER} result could not be processed (${describeError(processing)})`;
+		else if (outcome.isError) reason = `${WRITER} reported an error: ${text}`;
+		else if (failure)
+			throw new Error(
+				`${WRITER} reported success, but the saved file does not match the approved payload: ${failure}. Inspect ${before.path} before relying on it. ${retry}`,
+			);
+		else
+			return ok(
+				`Saved the approved task preferences to ${before.path} (revision ${revision}). Verified the saved file. Reload Pi (/reload) so pi-herdr-agents uses them.`,
+			);
+	}
+
 	const after = readConfig();
+	if ("revision" in after && after.revision === before.revision)
+		throw new Error(
+			`${reason}. The config file is unchanged (revision ${after.revision}), so nothing was written. ${retry}`,
+		);
+	const mismatch = savedProblem(before, payload, after);
+	if (!mismatch)
+		throw new Error(
+			`${reason}. However, ${before.path} changed and now holds exactly the approved task preferences (revision ${after.state === "present" ? after.revision : "unknown"}), so the write most likely happened. Inspect the file, then reload Pi (/reload) if you keep it. ${retry}`,
+		);
+	throw new Error(
+		`${reason}. ${before.path} changed (${mismatch}), so whether ${WRITER} wrote is uncertain. Inspect the file before relying on it. ${retry}`,
+	);
+}
+
+/** Why the saved file differs from the approval, if it does. */
+function savedProblem(
+	before: Extract<ConfigSnapshot, { state: "present" | "missing" }>,
+	payload: WriterPayload,
+	after: ConfigSnapshot,
+): string | undefined {
 	if (after.state !== "present") return `the file is ${after.state}`;
-	if (!isRecord(details) || details.configRevision !== after.revision)
-		return "the returned configRevision does not match the saved bytes";
-	if (canonicalJson(details.tasks) !== canonicalJson(payload.tasks))
-		return "the returned tasks differ from the approval";
 	if (canonicalJson(after.preferences.tasks) !== canonicalJson(payload.tasks))
 		return "the saved tasks differ from the approval";
 	if (
@@ -703,5 +828,25 @@ export function verifySaved(
 		unrelatedSettingsJson(before.root) !== unrelatedSettingsJson(after.root)
 	)
 		return "settings outside models.tasks and models.tasksMeta changed";
+	return undefined;
+}
+
+/** Confirms the saved bytes, not only the writer's claim, match the approval. */
+export function verifySaved(
+	before: Extract<ConfigSnapshot, { state: "present" | "missing" }>,
+	payload: WriterPayload,
+	details: unknown,
+): string | undefined {
+	const after = readConfig();
+	const saved = savedProblem(before, payload, after);
+	if (saved) return saved;
+	if (
+		after.state !== "present" ||
+		!isRecord(details) ||
+		details.configRevision !== after.revision
+	)
+		return "the returned configRevision does not match the saved bytes";
+	if (canonicalJson(details.tasks) !== canonicalJson(payload.tasks))
+		return "the returned tasks differ from the approval";
 	return undefined;
 }

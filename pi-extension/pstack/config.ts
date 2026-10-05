@@ -24,7 +24,6 @@ export type SharedPreferences = {
 	tasks: TaskMap;
 	tasksMeta?: TasksMeta;
 	defaultModel?: string;
-	potetoOverride?: string;
 };
 
 export type ConfigSnapshot =
@@ -76,7 +75,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 const ISO_8601 =
 	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
 
-/** Validates the shapes pi-herdr-agents itself rejects; returns the reason or the extracted fields. */
+/**
+ * Validates the shapes pi-herdr-agents itself rejects; returns the reason or
+ * the extracted fields. Reasons name only fixed field names and the allowlisted
+ * task categories, never a key or value taken from the file.
+ */
 export function parseModels(
 	root: Record<string, unknown>,
 ): SharedPreferences | string {
@@ -85,7 +88,7 @@ export function parseModels(
 	if (!isRecord(models)) return "models must be an object";
 	for (const key of Object.keys(models))
 		if (!["default", "agents", "tasks", "tasksMeta"].includes(key))
-			return `models has an unsupported key: ${key}`;
+			return "models has an unsupported key";
 	const preferences: SharedPreferences = { tasks: {} };
 	if (models.default !== undefined && models.default !== null) {
 		if (typeof models.default !== "string" || models.default.trim() === "")
@@ -94,17 +97,20 @@ export function parseModels(
 	}
 	if (models.agents !== undefined && models.agents !== null) {
 		if (!isRecord(models.agents)) return "models.agents must be an object";
-		for (const [agent, model] of Object.entries(models.agents))
+		// Per-agent overrides are validated for the report but never shown:
+		// they are unrelated settings the writer preserves.
+		for (const model of Object.values(models.agents))
 			if (typeof model !== "string" || model.trim() === "")
-				return `models.agents.${agent} must be a non-empty string`;
-		if (Object.hasOwn(models.agents, "poteto"))
-			preferences.potetoOverride = models.agents.poteto as string;
+				return "models.agents has a value that is not a non-empty string";
 	}
 	if (models.tasks !== undefined && models.tasks !== null) {
 		if (!isRecord(models.tasks)) return "models.tasks must be an object";
-		for (const [category, refs] of Object.entries(models.tasks)) {
+		for (const category of Object.keys(models.tasks))
 			if (!(TASK_CATEGORIES as readonly string[]).includes(category))
-				return `models.tasks.${category} is not a supported category`;
+				return "models.tasks has an unsupported category";
+		for (const category of TASK_CATEGORIES) {
+			if (!Object.hasOwn(models.tasks, category)) continue;
+			const refs = models.tasks[category];
 			if (!Array.isArray(refs) || refs.length === 0)
 				return `models.tasks.${category} must be a non-empty list`;
 			if (refs.some((ref) => typeof ref !== "string" || ref.trim() === ""))

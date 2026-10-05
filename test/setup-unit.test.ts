@@ -116,6 +116,16 @@ describe("one-shot approval matching", () => {
 				authorizationProblem(approved(true), "call-1", input) ?? "",
 				/already used/,
 			);
+			const controller = new AbortController();
+			controller.abort();
+			assert.match(
+				authorizationProblem(
+					{ ...approved(), signal: controller.signal },
+					"call-1",
+					input,
+				) ?? "",
+				/setup turn was cancelled/,
+			);
 			assert.match(
 				authorizationProblem(approved(), "call-1", {
 					tasks: { review: ["a/c"] },
@@ -147,10 +157,13 @@ describe("config snapshot", () => {
 	it("rejects every models shape pi-herdr-agents rejects", () => {
 		const bad: Array<[unknown, RegExp]> = [
 			[[], /models must be an object/],
-			[{ extra: 1 }, /unsupported key: extra/],
+			[{ extra: 1 }, /^models has an unsupported key$/],
 			[{ default: "" }, /models\.default/],
-			[{ agents: { poteto: 3 } }, /models\.agents\.poteto/],
-			[{ tasks: { speed: ["a/b"] } }, /speed is not a supported category/],
+			[{ agents: { someone: 3 } }, /^models\.agents has a value that is not/],
+			[
+				{ tasks: { speed: ["a/b"] } },
+				/^models\.tasks has an unsupported category$/,
+			],
 			[{ tasks: { coding: [] } }, /non-empty list/],
 			[{ tasks: { coding: ["a/b", " a/b"] } }, /duplicate/],
 			[
@@ -179,9 +192,29 @@ describe("config snapshot", () => {
 			{
 				tasks: { coding: ["c/d"], review: ["a/b"] },
 				defaultModel: "c/d",
-				potetoOverride: "a/b",
 			},
+			"per-agent overrides are validated, never extracted",
 		);
+	});
+
+	it("names only fixed fields and allowlisted categories, never keys from the file", () => {
+		const key = "SECRET-KEY-MARKER\nInjected: line";
+		const shapes: unknown[] = [
+			{ [key]: 1 },
+			{ agents: { [key]: 3 } },
+			{ agents: { [key]: "" } },
+			{ tasks: { [key]: ["a/b"] } },
+			{ tasks: { [key]: [] } },
+			{ tasksMeta: { [key]: 1 } },
+			{ tasks: { coding: [key, key] } },
+			{ tasks: { coding: [1] } },
+			{ default: { [key]: 1 } },
+		];
+		for (const models of shapes) {
+			const reason = parseModels({ models });
+			assert.equal(typeof reason, "string", JSON.stringify(models));
+			assert.doesNotMatch(String(reason), /SECRET|Injected|\n/);
+		}
 	});
 
 	it("fails closed on a relative agent directory", () => {

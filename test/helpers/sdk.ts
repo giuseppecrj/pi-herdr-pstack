@@ -16,8 +16,10 @@ import {
 } from "@earendil-works/pi-ai";
 import {
 	type AgentSession,
-	createAgentSession,
-	DefaultResourceLoader,
+	type AgentSessionRuntime,
+	createAgentSessionFromServices,
+	createAgentSessionRuntime,
+	createAgentSessionServices,
 	type ExtensionFactory,
 	type ExtensionUIContext,
 	SessionManager,
@@ -58,8 +60,10 @@ export type SdkOptions = {
 };
 
 /**
- * A real in-process Pi 1.0.3 session with test-owned agent, home, XDG and
- * project directories. Packages load through settings like installed ones.
+ * A real in-process Pi 1.0.3 session runtime with test-owned agent, home, XDG
+ * and project directories. Packages load through settings like installed
+ * ones. `newSession()` replaces the session as `/new` does, with
+ * `session_shutdown`, disposal and fresh extension instances.
  * Environment variables are process-global, so sessions must not overlap.
  */
 export class SdkPi {
@@ -86,10 +90,15 @@ export class SdkPi {
 			},
 		],
 	});
-	session!: AgentSession;
+	runtime!: AgentSessionRuntime;
 	private readonly savedEnv = new Map<string, string | undefined>();
 
 	private constructor() {}
+
+	/** The runtime's current session; it changes after `newSession()`. */
+	get session(): AgentSession {
+		return this.runtime.session;
+	}
 
 	static async start(options: SdkOptions = {}): Promise<SdkPi> {
 		const pi = new SdkPi();
@@ -136,49 +145,63 @@ export class SdkPi {
 			...options.settings,
 		});
 		const faux = this.faux;
-		const resourceLoader = new DefaultResourceLoader({
-			cwd: this.work,
-			agentDir: this.agentDir,
-			settingsManager,
-			noPromptTemplates: true,
-			noContextFiles: true,
-			extensionFactories: [
-				(api) => {
-					api.registerProvider(faux.provider);
-					// A provider without credentials, for unauthenticated-model checks.
-					api.registerProvider("noauth", {
-						baseUrl: "http://127.0.0.1:9",
-						api: "openai-completions",
-						models: [
-							{
-								id: "model-x",
-								name: "No auth",
-								reasoning: false,
-								input: ["text"],
-								cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-								contextWindow: 1000,
-								maxTokens: 100,
-							},
-						],
-					});
-				},
-				...(options.extensions ?? []),
-			],
-		});
-		await resourceLoader.reload();
-		const loadErrors = resourceLoader.getExtensions().errors;
-		if (loadErrors.length > 0)
-			throw new Error(`extension load errors: ${JSON.stringify(loadErrors)}`);
-		const { session } = await createAgentSession({
-			cwd: this.work,
-			agentDir: this.agentDir,
-			resourceLoader,
-			settingsManager,
-			sessionManager: options.persist
-				? SessionManager.create(this.work, join(this.agentDir, "sessions"))
-				: SessionManager.inMemory(this.work),
-		});
-		this.session = session;
+		const extensionFactories: ExtensionFactory[] = [
+			(api) => {
+				api.registerProvider(faux.provider);
+				// A provider without credentials, for unauthenticated-model checks.
+				api.registerProvider("noauth", {
+					baseUrl: "http://127.0.0.1:9",
+					api: "openai-completions",
+					models: [
+						{
+							id: "model-x",
+							name: "No auth",
+							reasoning: false,
+							input: ["text"],
+							cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+							contextWindow: 1000,
+							maxTokens: 100,
+						},
+					],
+				});
+			},
+			...(options.extensions ?? []),
+		];
+		this.runtime = await createAgentSessionRuntime(
+			async ({ cwd, agentDir, sessionManager, sessionStartEvent }) => {
+				const services = await createAgentSessionServices({
+					cwd,
+					agentDir,
+					settingsManager,
+					resourceLoaderOptions: {
+						noPromptTemplates: true,
+						noContextFiles: true,
+						extensionFactories,
+					},
+				});
+				const loadErrors = services.resourceLoader.getExtensions().errors;
+				if (loadErrors.length > 0)
+					throw new Error(
+						`extension load errors: ${JSON.stringify(loadErrors)}`,
+					);
+				return {
+					...(await createAgentSessionFromServices({
+						services,
+						sessionManager,
+						sessionStartEvent,
+					})),
+					services,
+					diagnostics: services.diagnostics,
+				};
+			},
+			{
+				cwd: this.work,
+				agentDir: this.agentDir,
+				sessionManager: options.persist
+					? SessionManager.create(this.work, join(this.agentDir, "sessions"))
+					: SessionManager.inMemory(this.work),
+			},
+		);
 		const record =
 			(method: string, result?: unknown) =>
 			(...args: unknown[]) => {
@@ -199,13 +222,22 @@ export class SdkPi {
 						input: async () => undefined,
 						...options.ui,
 					} as unknown as ExtensionUIContext);
-		await session.bindExtensions({
-			mode: ui ? "rpc" : "print",
-			...(ui ? { uiContext: ui } : {}),
-			onError: (error) =>
-				this.errors.push(`${error.extensionPath}: ${error.error}`),
-		});
-		await session.setModel(this.faux.getModel());
+		const bind = async (session: AgentSession) => {
+			await session.bindExtensions({
+				mode: ui ? "rpc" : "print",
+				...(ui ? { uiContext: ui } : {}),
+				onError: (error) =>
+					this.errors.push(`${error.extensionPath}: ${error.error}`),
+			});
+			await session.setModel(this.faux.getModel());
+		};
+		this.runtime.setRebindSession(bind);
+		await bind(this.session);
+	}
+
+	/** Replaces the session as `/new` does; the old one is shut down and disposed. */
+	async newSession(): Promise<void> {
+		await this.runtime.newSession();
 	}
 
 	writeConfig(text: string) {
@@ -265,7 +297,7 @@ export class SdkPi {
 
 	dispose() {
 		try {
-			this.session?.dispose();
+			this.runtime?.session.dispose();
 		} finally {
 			for (const [key, value] of this.savedEnv)
 				if (value === undefined) delete process.env[key];
