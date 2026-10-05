@@ -1,0 +1,28 @@
+{
+  "subject": "subagent_cancel real-Herdr QA",
+  "hostCommitTested": "05e53b8 (cancel runtime rebased on skill head 2692c51; content equals f607fa4)",
+  "archive": "/tmp/agentcancel-qa (git archive, test-only fixture overlay)",
+  "cases": {
+    "a": "slow ordinary child cancelled: one cancelled result, pane closed, no fallback",
+    "b": "negative control: manual pane close starts the fallback model",
+    "c": "worktree child cancelled: workspace, checkout, commit, handoff retained",
+    "d": "persistent specialist rejected with pointer to subagent_stop",
+    "e": "double cancel idempotent"
+  },
+  "results": "5/5 passed; full test:integration 72 passed, 0 failed, 0 skipped",
+  "notCopied": {
+    "evidence.log": "b0913278e919a1425c77bf05f649187d4e159f1f55b52a3a74dd96608a214f89"
+  },
+  "sha256": {
+    "case-a.log": "9faad26520ae8229eb21d83f6de93dc98c7909ad46255bab8d9acfee6b84bdd0",
+    "case-b.log": "56cd47b69b95ee9082f8c9a82536aeac593f64ef6aaa84a5596d9c332c6edbec",
+    "case-c.log": "3f2320d283114dbdd9e7389420c58f8f74066c09fb9c3febf4c52848c9ac74df",
+    "case-d.log": "0a38de91d3ce94d45581fcc3114986d7b41b6fc69ab1d59f9c43170108c0d9b2",
+    "case-e.log": "d3c05cc8cf33644d3cd23ccd02b52ca8c3ffb054b59715a376f14209682e89d4",
+    "fake-provider.diff": "027a5881c0fe94944b8cba7402afb6e31fc6a2bd7ba50739cfbf5ae65fe87fe3",
+    "full-suite.log": "b63f970aae1b1ede4ba0bf852e2e7049edcac28592bc73592a7080151025681e",
+    "run.sh": "7807ce965da226661f398eb1cf954135388c3f2fa581b71c1fb0e28e4d3439a1",
+    "subagent-cancel.test.ts": "12934ddb946822561d6ff2b2bf955aede7d89e62a1ce5d5010286ed4af4c0c55",
+    "workspaces-baseline.json": "b7f9767174fbc57e7c5977943f4d9a762d5e0ba5c35eb8335289b1c336e74b64"
+  }
+}

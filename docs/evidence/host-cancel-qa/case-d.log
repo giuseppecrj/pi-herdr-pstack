@@ -1,0 +1,11 @@
+▶ subagent-cancel [herdr]
+  ✔ (d) rejects cancel of a persistent specialist and points to subagent_stop (7325.562598ms)
+✔ subagent-cancel [herdr] (7326.521841ms)
+ℹ tests 1
+ℹ suites 1
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7445.761789

@@ -1,0 +1,110 @@
+7c7
+< import { existsSync } from "node:fs";
+---
+> import { existsSync, readFileSync } from "node:fs";
+57a58,59
+> 	/** QA addition: arrival time, to order requests against cancel timestamps. */
+> 	at?: number;
+84a87
+> 	cancelScenarioStates.clear();
+461a465,542
+> // ── QA addition: parent script for subagent_cancel scenarios ──
+> const cancelScenarioStates = new Map<
+> 	string,
+> 	{ cancelSent: boolean; secondSent: boolean }
+> >();
+> 
+> async function waitForQaFile(path: string, ms = 110_000): Promise<void> {
+> 	const deadline = Date.now() + ms;
+> 	while (!existsSync(path) && Date.now() < deadline) {
+> 		await new Promise((resolve) => setTimeout(resolve, 25));
+> 	}
+> 	if (!existsSync(path)) throw new Error(`QA gate was not opened: ${path}`);
+> }
+> 
+> /**
+>  * Parent prompt carries `INTEGRATION_CANCEL:<id>:<mode>` plus
+>  * `CANCEL_<KEY>: <value>` lines. Modes: basic | double | persistent |
+>  * worktree | manual. The parent launches one slow child, waits for the test's
+>  * gate file (the child is provably running), then calls subagent_cancel.
+>  */
+> async function cancelScenarioResponse(
+> 	request: ChatRequest,
+> ): Promise<ResponsePlan | null> {
+> 	const names = toolNames(request);
+> 	const source = requestText(request);
+> 	const marker = source.match(/INTEGRATION_CANCEL:([A-Za-z0-9_-]+):([a-z]+)/);
+> 	if (!marker || !names.has("subagent")) return null;
+> 	const [, id, mode] = marker;
+> 	const field = (key: string) =>
+> 		source.match(new RegExp(`CANCEL_${key}:\\s*(\\S+)`))?.[1] ?? "";
+> 	const name = `Cancel-${id}`;
+> 	const startFile = field("START_FILE");
+> 	const sleepSeconds = field("SLEEP");
+> 	const slow = `echo 'START_${id}' > '${startFile}'; sleep ${sleepSeconds}; echo 'DONE_${id}' > '${startFile}.done'`;
+> 	const command =
+> 		mode === "worktree"
+> 			? `echo 'WT_${id}' > 'ticket-${id}.txt' && git add 'ticket-${id}.txt' && git commit -qm 'Cancel ${id}' && ${slow}`
+> 			: slow;
+> 	if (!source.includes(`Sub-agent "${name}" launched and is now running`)) {
+> 		const args: ToolCallArguments & { model: string } = {
+> 			name,
+> 			agent: "test-echo",
+> 			model: (field("MODELS_OVERRIDE") || field("MODELS")).replaceAll(",", ", "),
+> 			task: `Use the bash tool to run exactly: ${command}`,
+> 		};
+> 		if (mode === "persistent") args.persistent = true;
+> 		if (mode === "worktree") args.worktree = { branch: field("BRANCH") };
+> 		return { toolCalls: [{ name: "subagent", arguments: args }] };
+> 	}
+> 	if (mode === "manual") return { text: `CANCEL_SCENARIO_WAITING_${id}` };
+> 	const state = cancelScenarioStates.get(id) ?? {
+> 		cancelSent: false,
+> 		secondSent: false,
+> 	};
+> 	cancelScenarioStates.set(id, state);
+> 	const cancel = (args: ToolCallArguments): ToolCall => ({
+> 		name: "subagent_cancel",
+> 		arguments: args,
+> 	});
+> 	if (!state.cancelSent) {
+> 		await waitForQaFile(field("GATE_FILE"));
+> 		state.cancelSent = true;
+> 		return {
+> 			toolCalls:
+> 				mode === "double"
+> 					? [cancel({ name }), cancel({ name })]
+> 					: [cancel({ name })],
+> 		};
+> 	}
+> 	if (mode === "double" && !state.secondSent) {
+> 		state.secondSent = true;
+> 		await waitForQaFile(field("ID_FILE"));
+> 		const runId = readFileSync(field("ID_FILE"), "utf8").trim();
+> 		return { toolCalls: [cancel({ name }), cancel({ id: runId })] };
+> 	}
+> 	return { text: `CANCEL_SCENARIO_DONE_${id}` };
+> }
+> 
+467a549,551
+> 	const cancelScenario = await cancelScenarioResponse(request);
+> 	if (cancelScenario) return cancelScenario;
+> 
+632c716,720
+< 			providerRequests.push({ model: chatRequest.model, status: 400 });
+---
+> 			providerRequests.push({
+> 				at: Date.now(),
+> 				model: chatRequest.model,
+> 				status: 400,
+> 			});
+648c736,740
+< 			providerRequests.push({ model: chatRequest.model, status: 503 });
+---
+> 			providerRequests.push({
+> 				at: Date.now(),
+> 				model: chatRequest.model,
+> 				status: 503,
+> 			});
+657a750
+> 			at: Date.now(),
