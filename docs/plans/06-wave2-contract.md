@@ -1,6 +1,6 @@
 # Wave 2 execution contract
 
-Status: **authorized; contract/API reconnaissance in progress**. The user accepted Wave 1 and explicitly answered yes to proceeding with Wave 2. This supersedes the earlier Waves 0–1-only authorization, not the later-wave or shipping gates.
+Status: **authorized; entry paths and methodology contract frozen** in [the W2 entry checkpoint](./07-wave2-entry-contract.md). API recon demonstrated mode behavior and exposed an unresolved setup-write guarantee; that path remains report-only unless independently proven safe. The user accepted Wave 1 and explicitly answered yes to proceeding with Wave 2. This supersedes the earlier Waves 0–1-only authorization, not the later-wave or shipping gates.
 
 ## Accepted inputs
 
@@ -26,7 +26,7 @@ Implement the W2 row and W2-A/W2-B briefs in [the wave plan](./03-release-waves.
 - `/setup-pstack` capability/configuration reporting and an exact-payload consent boundary for the host-owned preferences writer, where supported and demonstrated by the public Pi API.
 - Real `poteto-mode` and `setup-pstack` skill entry points plus the agreed methodology/shared references needed for this subsystem.
 - Canonical 51-skill inventory and only exact, enumerated future-resource exceptions for W3/W4. No fake or placeholder skill implementations.
-- Enable the poteto role's explicit skill startup only after the real resource and child-loading behavior are verified.
+- The user additionally approved replacing the generic poteto role body with a thin adapter to pstack skills as the single methodology source. Preserve the role name and runtime settings; enable explicit skill startup only after the real resource and child-loading behavior are verified.
 
 Local candidate branches/worktrees, local commits and isolated deterministic probes/tests continue the established workflow. At most two implementation writers, no overlapping ownership, and one real Herdr integration suite at a time. Read-only reviewers may operate independently.
 
