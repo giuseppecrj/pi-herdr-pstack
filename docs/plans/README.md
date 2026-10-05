@@ -1,6 +1,6 @@
 # Pack separation and pstack delivery
 
-Status: user approved local execution of Waves 0–1, repository initialization, isolated branches/worktrees and local commits. Stop for human review after Wave 1. No pushes, PRs, merges, publication, normal-installation changes or paid live-model evaluations are authorized. See [the Wave 0 contract](./04-wave0-contract.md) for the frozen scope and execution evidence.
+Status: Waves 0–1 candidates are implemented and verified; **human Wave 1 acceptance is pending**. See [the Wave 1 handoff](./05-wave1-handoff.md) for exact revisions, checks, review and limitations, and [the Wave 0 contract](./04-wave0-contract.md) for authorized scope. Stop here: Wave 2, pushes, PRs, merges, publication, normal-installation changes and paid live-model evaluations remain unauthorized.
 
 ## Two workstreams
 
@@ -79,4 +79,4 @@ Planning baseline:
 
 The planning baseline had no pstack Git repository. The user subsequently authorized initialization and local Waves 0–1 work; exact baseline/result revisions and checks are recorded in the Wave 0 contract and Wave 1 handoff. No release action is authorized.
 
-A fresh read-only plan review found no blocking contradictions and identified five material clarifications. The plans now specify setup payload approval/read paths, explicit child-context discrimination, cross-pack skill ownership, old-host diagnostic ownership, and additional host extraction checks. The API spikes and behavioral tests remain implementation gates, not completed evidence. Subsequent user annotations confirm full skill coverage, removal of `/iterate` and `/btw`, and explicit pi-herdr naming; these decisions supersede earlier curated-scope and command-retention proposals.
+A fresh read-only plan review found no blocking contradictions and identified five material clarifications. The plans now specify setup payload approval/read paths, explicit child-context discrimination, cross-pack skill ownership, old-host diagnostic ownership, and additional host extraction checks. At planning time the API spikes and behavioral tests were future gates; their subsequent results and remaining limits are now recorded in the Wave 0 contract and Wave 1 handoff. Subsequent user annotations confirm full skill coverage, removal of `/iterate` and `/btw`, and explicit pi-herdr naming; these decisions supersede earlier curated-scope and command-retention proposals.

@@ -101,4 +101,4 @@ Important observed boundaries:
 - Role `skills:` startup may create a separate model turn, and a missing skill can become literal prompt text. W1 therefore does not add that field to poteto.
 - Probe limitations: no TUI tree/compaction test, no real Herdr child launch, no installed-child resource visibility test, and no host full-suite run. Those remain explicit W1/later integration gates.
 
-No W1 acceptance check above is claimed to have passed yet. Worker candidate SHAs, paths, exact checks and review will be recorded in the Wave 1 handoff.
+The preceding evidence describes the initial Wave 0 snapshot. Completed W1 candidate revisions, checks, review and remaining limitations are now recorded in [the Wave 1 handoff](./05-wave1-handoff.md). Human Wave 1 acceptance remains pending.

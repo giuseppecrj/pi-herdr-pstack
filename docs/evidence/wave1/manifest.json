@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-10-05T19:44:16.603492+00:00",
+  "candidateVector": {
+    "host": {
+      "path": "/home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host",
+      "sha": "e262c584f54a7c8d60eb1fa5510f47c1299e3801",
+      "branch": "wave1/pack-neutral-host",
+      "clean": true
+    },
+    "roles": {
+      "path": "/home/g/Projects/pi-herdr-roles",
+      "sha": "22e1816725ba0910573f667f52e97c9757ca0305",
+      "branch": "wave1/role-pack",
+      "clean": true
+    },
+    "pstack": {
+      "path": "/home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation",
+      "sha": "b3f9c9d48d2735fb97246ab00270ea039687cc8f",
+      "branch": "wave1/pstack-foundation",
+      "clean": true
+    }
+  },
+  "upstreamHead": "c2177dff835da44937e614e8a03d0405d442e848",
+  "openPRs": [
+    {
+      "number": 66,
+      "sha": "eb19bf9935dacf1fbad9cde5bd74d743193dc1bf",
+      "state": "open",
+      "merged": false
+    },
+    {
+      "number": 67,
+      "sha": "f6a3e00e63d4f2324d6d9cb646f5bf924f583517",
+      "state": "open",
+      "merged": false
+    },
+    {
+      "number": 68,
+      "sha": "34719712d40c5b6ef4f8f4d7bf2ac429680ea471",
+      "state": "open",
+      "merged": false
+    }
+  ],
+  "artifacts": {
+    "README.md": "aca7fc324ed99c07adbddf31dda49d25c3885dcd79cafbb71fbf8f8fcff6f487",
+    "cleanup.json": "2bf3a215de3280a9bfeff22656987955984b233a785b09710d7a2ef6e8d88c95",
+    "audit-final-observations.mjs": "e0bf37b91eed593fdb84bc3637882a3b6b4004536ff59025801e5a4824d1b07b",
+    "combined-archive-audit.json": "6fe1735c5077605ef823ffed15c5f20a804693c3fd5a5fd0a8a7ed80d9dba10c",
+    "combined-catalog.log": "de485e4724d3d6bdda292a5718229722f6376fd954093d58d44477592c67f58b",
+    "combined-catalog.test.mjs": "4c29ae22f196c7381c5af7f6e245f8758e959f77225672c0f36c408f240e29e1",
+    "combined-child-visibility-corrected.log": "8ab0fd5cf959dca8eae2c0a7dfb247c0b7f30b028be1c9003d48e3c7ecb0c3e7",
+    "combined-child-visibility.log": "b23c6d73ba5d3cde5ad0ebe5d2e9c21a818203289f908bab9e1cd52640d7a7dc",
+    "combined-child-visibility.test.mjs": "4a195344952f05086d45d9ebfafa8f87ab2955333e2ed0b3eede19c5ff89eb09",
+    "combined-full-integration-isolated.log": "fadea645cb6765c19aa913348c940da924c61bd900a24a4bc02428cb10a256d2",
+    "combined-full-integration.log": "2fe764a68f5dca3fe987ac7693693ba530c305ddbc3468b63f465e83c1e17458",
+    "combined-harness-overlay.patch": "b692ffb2d9ebcd8f77c8bf58ba24b79b6e4b9ee9f69da27fb01275126d714ad1",
+    "combined-lifecycle-summary.json": "26f93e0ff2d663da810d3e2be9db9cdf1a15ebb75a9920f67397aefe1a84c90f",
+    "combined-lifecycle.log": "bdba8af7f936a8a7fa296004749d04eb99f09c71f5f230ef2f5b046121e4702f",
+    "combined-observation-audit.log": "2cb31744e45820ae16d1bfa2c48cf19f0f0db62a2b5355301effb9ad29192180",
+    "host-format.log": "2ef03df10bbb6e343ddb1165bf5357ec456b8852c43a5f8146e9d7cd0d5466ec",
+    "host-integration.log": "f51babf48410048b46df77d5d2085640ad06ebde4626d60aa1578b70eeb415a5",
+    "host-lint.log": "5ff864df14f8c66a86494d73b0709ff252d5e587e514edeb30b74a0c1d55a860",
+    "host-pack.json": "f6b3d833614e4ae33ec907a0b5c075fde64fc09ebdb1a271ebba0f06d1fed721",
+    "host-parent-unit.log": "e201b267596720cfd9a08473b4f00e7928b62ebdbe2b4677ffbf18fe87cef5ef",
+    "lifecycle-pack-observer.ts": "bb773458854d02eb4dfbf6f751a01c86ffe29a6f32bb55adcfe8f33301f7fb30",
+    "pstack-final-check.log": "c0a065991591b273e29a9b0f8a1b5983bbb2f73579cbbfe1482901adc5f0aa62",
+    "pstack-old-host-negative.log": "9968dabccb5c357be6cd138b39179bb75a6b16febf30c221aca884ef17314b10",
+    "roles-final-check.log": "05b4485a4859af16b4ba50d06bf30e2cc59e9957a9097707304858c0fd573291",
+    "roles-old-host-negative.log": "afe185648d51eb1907cd5a593b54e96d315359f782df8c408342656b5287aecd"
+  }
+}

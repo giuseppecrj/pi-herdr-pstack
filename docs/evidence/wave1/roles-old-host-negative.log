@@ -1,0 +1,89 @@
+▶ installed pack without pi-herdr-agents
+  ✔ exposes /plan and both skills from the package, with no retired commands (285.968366ms)
+  ✔ fails /plan closed with a prerequisite diagnostic and starts no run (222.181887ms)
+✔ installed pack without pi-herdr-agents (509.202048ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✖ lists exactly the six roles and one unsuffixed /plan, with no collisions or retired commands (251.895161ms)
+  ✖ delivers /plan as the literal plan-skill wrapper through the pack command (239.90239ms)
+✖ installed pack with a real role-free pi-herdr-agents host (492.283865ms)
+﹣ legacy bundled host characterization (0.051551ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+ℹ tests 4
+ℹ suites 3
+ℹ pass 2
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1152.853758
+
+✖ failing tests:
+
+test at test/rpc.test.ts:180:2
+✖ lists exactly the six roles and one unsuffixed /plan, with no collisions or retired commands (251.895161ms)
+  AssertionError [ERR_ASSERTION]: • adversarial-reviewer (package) — Coordinator for bounded adversarial code review with independent reviewers and parent synthesis
+  • planner (package) — Interactive planning agent that resolves material unknowns and writes an executable implementation plan
+  • poteto (package) — Autonomous engineering agent that investigates deeply, makes the smallest safe change, delegates independent work, and verifies the real result
+  • reviewer (package) — Code review agent - reviews changes for quality, security, and correctness
+  • scout (package) — Fast codebase reconnaissance - maps existing code, conventions, and patterns for a task
+  • visual-tester (package) — Optional visual QA tester — navigates web UIs via Chrome CDP when available, spots visual issues, tests interactions, produces structured reports
+  • worker (package) — Implements a complete task or plan section - writes code, runs tests, commits only when asked
+  Supervision: wake+batch; 0 watchers
+  ! Role pack cannot replace bundled role "adversarial-reviewer"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "planner"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "reviewer"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "scout"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "visual-tester"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "worker"; use a global or project override instead.
+  + actual - expected
+  
+    [
+  +   'adversarial-reviewer (package)',
+  +   'planner (package)',
+  +   'poteto (package)',
+  +   'reviewer (package)',
+  +   'scout (package)',
+  +   'visual-tester (package)',
+  +   'worker (package)'
+  -   'adversarial-reviewer (package:pi-herdr-roles)',
+  -   'planner (package:pi-herdr-roles)',
+  -   'reviewer (package:pi-herdr-roles)',
+  -   'scout (package:pi-herdr-roles)',
+  -   'visual-tester (package:pi-herdr-roles)',
+  -   'worker (package:pi-herdr-roles)'
+    ]
+  
+      at TestContext.<anonymous> (file:///home/g/Projects/pi-herdr-roles/test/rpc.test.ts:185:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Promise.all (index 0)
+      at async Suite.run (node:internal/test_runner/test:1905:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'adversarial-reviewer (package)', 'planner (package)', 'poteto (package)', 'reviewer (package)', 'scout (package)', 'visual-tester (package)', 'worker (package)' ],
+    expected: [ 'adversarial-reviewer (package:pi-herdr-roles)', 'planner (package:pi-herdr-roles)', 'reviewer (package:pi-herdr-roles)', 'scout (package:pi-herdr-roles)', 'visual-tester (package:pi-herdr-roles)', 'worker (package:pi-herdr-roles)' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/rpc.test.ts:219:2
+✖ delivers /plan as the literal plan-skill wrapper through the pack command (239.90239ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'plan:1'
+  -   'plan'
+    ]
+  
+      at TestContext.<anonymous> (file:///home/g/Projects/pi-herdr-roles/test/rpc.test.ts:225:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'plan:1' ],
+    expected: [ 'plan' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,14 @@
+{
+  "verifiedAt": "2026-10-05T19:48:09.013044+00:00",
+  "removedFixtureWorkspaces": [
+    "w8W",
+    "w8X"
+  ],
+  "removedDisposableSource": "/tmp/pi-integ-NJZ7EQ",
+  "removedDisposableWorktreeBucket": "/home/g/.herdr/worktrees/pi-integ-NJZ7EQ",
+  "remainingPiIntegrationWorkspaces": [],
+  "candidateWorktreesRetained": [
+    "/home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host",
+    "/home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation"
+  ]
+}

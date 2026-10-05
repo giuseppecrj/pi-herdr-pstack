@@ -1,0 +1,20 @@
+diff --git 1/home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host/test/integration/harness.ts 2/tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/harness.ts
+index 0ca5167..681bf37 100644
+--- 1/home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host/test/integration/harness.ts
++++ 2/tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/harness.ts
+@@ -285,0 +286,7 @@ export function createTestEnv(backend: MuxBackend): TestEnv {
++			// Parent-owned combined-installation QA overlay; not a candidate change.
++			writeFileSync(join(agentDir, "settings.json"), JSON.stringify({packages: [
++				"/home/g/Projects/pi-herdr-roles",
++				"/home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation",
++			]}));
++			writeFileSync(join(agentDir, "extensions", "pack-observer.ts"),
++				'export { default } from "/tmp/pi-herdr-wave1-qa-y7ClZe/lifecycle-pack-observer.ts";\n');
+@@ -414 +421,6 @@ export function startPi(
+-	const extra = opts?.extraArgs ?? "";
++	const extra = [
++		"-e /home/g/Projects/pi-herdr-roles/extensions/index.ts",
++		"-e /home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation/pi-extension/pstack/index.ts",
++		"-e /tmp/pi-herdr-wave1-qa-y7ClZe/lifecycle-pack-observer.ts",
++		opts?.extraArgs ?? "",
++	].join(" ");

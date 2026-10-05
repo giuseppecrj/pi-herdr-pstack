@@ -1,0 +1,21 @@
+▶ persistent-specialist [herdr]
+  ✔ delivers sequential tasks, rejects busy work, and stops cleanly (11419.463815ms)
+✔ persistent-specialist [herdr] (11420.423864ms)
+▶ subagent-lifecycle [herdr]
+  ✔ spawns a subagent that writes a file and verifies the session (2066.883346ms)
+{"error":{"code":"workspace_not_found","message":"workspace w7J not found"},"id":"cli:worktree:remove"}
+  ✔ retains a completed worktree, refuses dirty cleanup, and explicitly removes it without deleting history (11227.922503ms)
+  ℹ Stale inventory: old predicate accepts; warning predicate rejects.
+  ℹ Dirty refusal notification observed; checkout and uncommitted file intact.
+  ℹ History assertions passed: integration/ticket-yzmmet20muvn1ghs = 2fbfab5f7d9f48914c9e44a3f42e777b7a272878; Implement yzmmet20muvn1ghs reachable; checkout /home/g/.herdr/worktrees/pi-integ-qtoJSO/integration-ticket-yzmmet20muvn1ghs and workspace w7J absent; source /tmp/pi-integ-qtoJSO.
+  ✔ fork mode creates a child session linked to the parent (2113.715386ms)
+  ✔ preserves restricted child tools and spawning denial across public resume (4057.76731ms)
+✔ subagent-lifecycle [herdr] (19467.881763ms)
+ℹ tests 5
+ℹ suites 2
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31096.694835
