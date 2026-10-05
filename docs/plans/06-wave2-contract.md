@@ -1,6 +1,6 @@
 # Wave 2 execution contract
 
-Status: **authorized; entry paths and methodology contract frozen** in [the W2 entry checkpoint](./07-wave2-entry-contract.md). API recon demonstrated mode behavior and exposed an unresolved setup-write guarantee; that path remains report-only unless independently proven safe. The user accepted Wave 1 and explicitly answered yes to proceeding with Wave 2. This supersedes the earlier Waves 0–1-only authorization, not the later-wave or shipping gates.
+Status: **authorized; entry paths and methodology contract frozen** in [the W2 entry checkpoint](./07-wave2-entry-contract.md). API recon demonstrated mode behavior and exposed a setup-write gap. The user explicitly authorized [the conditional host-writer addition](./08-wave2-conditional-writer.md); setup remains report-only until that seam and its consent integration are verified. The user accepted Wave 1 and explicitly answered yes to proceeding with Wave 2. This supersedes the earlier Waves 0–1-only authorization, not the later-wave or shipping gates.
 
 ## Accepted inputs
 
