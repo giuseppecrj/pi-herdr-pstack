@@ -140,3 +140,99 @@ starts leaves an `opened` entry that the next new run claims without apply
 authority. A run that claims a reservation it does not own is blocked once. A
 displaced setup prompt is recognized only by this extension instance.
 Real Herdr, TUI, installed-package and live-model checks were not run.
+
+## Unconditional writer gate (`9bef548`)
+
+After four cross-family reviews each found a new approval bypass in the
+run-identity design, the user chose option 1
+(`docs/plans/10-wave2-unconditional-writer-gate.md`, planning commit
+`96dbd163192613ff0c105dcdb37fe7c2c88ba2d5`, copied in checkpoint
+`6f36a1b4fae897c260abd88766673baefbb77348`). While pstack is loaded, its
+`tool_call` handler blocks every `subagents_write_task_models` call, with a
+reason naming `/setup-pstack <request>`. The only exception is a nested call
+whose `parentToolCallId` strictly equals the ID of a pstack apply call holding
+a live, unused in-memory approval. The approval is created after the user
+approves the exact payload and the post-dialog recheck passes. The call's
+canonical arguments, including `expectedConfigRevision`, must equal the
+approved payload, and the file revision must still match. The approval is
+consumed once and cleared when the dispatch returns, when the apply call's
+signal aborts, and at `session_shutdown` (reload, replacement, quit), at
+`session_start`, at `session_tree` and by any `/setup-pstack` command. The
+session-entry run identity, run IDs, prompt matching, displaced-run set, branch
+lookup of apply calls and `recordedRun` were deleted with their tests. The apply
+window remains as a convenience: the command activates the apply tool for the
+next run that starts and closes it at that run's settlement or after one dialog.
+All apply-tool checks are unchanged.
+
+Inputs: base `b10a40c07f289c545b7e64c09dbbbccd6abc6322`; logs ran on the clean
+implementation tree of `9bef548146d0341477739c8bff0dfe35e2db6097` with the
+evidence files uncommitted. Host `b04906b6d6d0f81ac23a64753a5aec2b506c6423`
+(clean, also used as `PI_HERDR_AGENTS_SOURCE`), roles
+`22e1816725ba0910573f667f52e97c9757ca0305` (clean), mimir `f07dd981`, Cursor
+`2cbf5850`; Node 26.8.2, npm 11.19.1, Pi 1.0.3; `HOME`, `PI_CODING_AGENT_DIR`
+and the npm cache in a temporary directory.
+
+| Log | What it shows |
+| `gate-check-full.log` | `npm run check` with all inputs: typecheck, lint, format and 111 passing tests, none skipped. |
+| `gate-test-default-noenv.log` | `npm test` with no integration inputs: 67 pass, 3 skipped, each with its reason. The in-memory gate unit tests run here too. |
+| `gate-npm-pack-dry-run.log` | 28 packed files, unchanged. |
+| `gate-mutation-checks.log`, `run-mutations.sh`, `mutate.py` | Nineteen faults against the setup SDK and unit tests, with the source restored and checked with `git diff`. |
+
+New and changed tests. In the SDK suites with the real host writer, direct and
+relayed writes are blocked in an ordinary run, inside and outside a setup turn.
+The host's own `/subagents-init` prompt runs and its writer call is refused with
+the pointer. An approved apply writes exactly once. Later raw, relayed and second
+apply calls in the same turn are blocked after a decline, a success, a writer
+failure and a report command during the dialog. Writes stay blocked after a
+reload during the nested dispatch, after a decline and after a success, and
+after a `before_agent_start` hook reloads Pi for the setup prompt. They also
+stay blocked in a run that displaced a held setup prompt, across a reload, in
+the late setup run, and in custom-message runs after a consumed setup prompt,
+before and after a reload. Under a whitespace-normalizing input hook, apply
+still works and direct writes are blocked. The earlier replacement, shutdown,
+mutation-freeze and reconciliation tests are unchanged except for the new block
+text and their final check, which now expects a later run's writes to be
+blocked instead of allowed. A new in-memory unit harness drives the real command, apply tool and
+guard. It checks that only the exact parent, payload and revision pass, and
+only once. A direct call, an unrelated relay, a relay beneath the apply call
+(`apply-1/relay`), a parent prefix (`apply-`) and siblings (`apply-2`,
+`apply-10`) are refused, as are changed tasks and a changed
+`expectedConfigRevision`. The approval is cleared after an unused dispatch, on
+abort, and at `session_shutdown` for `new`, `resume`, `fork`, `reload` and
+`quit`. A relayed apply call is refused, and the window closes at settlement.
+
+Mutation results: all nineteen faults are caught. Gate faults:
+default-allow (`G1`), no freeze (`G2`), no payload compare (`G3`), prefix parent
+(`G4`), reusable approval (`G5`), not cleared on abort (`G6`), on shutdown or
+replacement (`G7`, and both together), or after the dispatch (`G8`), revision
+not compared (`G9`) and any parent accepted (`G10`). Apply-tool faults: the
+flow-ended recheck (`G11`), an ignored decline (`G12`), the apply tool accepted
+from a relay (`G13`) and the window left open after settlement (`G14`). Earlier
+faults whose code is unchanged stay caught: `M5`, `M6`, `M8` and `M10`. `G6` and
+`G7` are caught only by the unit harness: Pi 1.0.3 refuses an aborted nested call
+before `tool_call`, so the SDK abort and replacement tests pass on Pi's refusal
+alone.
+
+Removed fault shapes and why:
+
+- `M1`, `M1b`, `M13`–`M20`, `N1`–`N17` and their pairs mutate run protection,
+  setup-run entries, markers, reservations, settlement, displaced runs and the
+  unconfirmed-run notice. That code no longer exists. The default block
+  replaces it, and `G1` covers its removal.
+- `M2`, `M3` and `M2M3` removed the in-memory and branch recognition of an
+  expired apply call. Without a live approval every call blocks, so nothing
+  needs to recognize an expired one (`G1`, `G8`).
+- `M7` removed the aborted-signal check in `authorizationProblem`. Abort now
+  clears the approval through a signal listener (`G6`).
+- `M9` targeted the deleted `revoked` flag; the flow-identity recheck is `G11`.
+- `M11` and `M12` continue as `G4` and `G2`.
+
+Limits: an apply window can be claimed by whichever run starts first after the
+command. If another extension delays or consumes the setup prompt, that run may
+make the one proposal; the dialog still shows the exact payload (asserted with
+a declined dialog). Same-process extensions remain trusted code: one that calls
+the host writer's implementation without Pi's `tool_call` path is outside this
+guard. The reviewer's earlier `/tmp` probes were not rerun. The extension's load
+path is unchanged (`index.ts` and registration), so the combined real-Herdr run
+at `b10a40c` (72/72) was not repeated here. Real Herdr, TUI, installed-package
+and live-model checks were not run.
