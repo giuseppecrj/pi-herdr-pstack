@@ -6,15 +6,14 @@ How poteto-mode delegates through pi-herdr-agents' `subagent` tool. You, the par
 
 | Need | Launch |
 | --- | --- |
-| Write or change code, tests or docs | `agent: "poteto"`, the role this package ships |
+| Write or change code, tests or docs | A bare delegate with the Implementer prompt |
 | Read-only investigation or reconnaissance | A bare delegate with the Investigator prompt |
 | Independent review of a diff, plan or design | A bare delegate with the Reviewer prompt |
 | Verification of a claimed result | A bare delegate with the Verifier prompt |
 
-- Pstack depends on no optional role pack. Name only `poteto` in `agent`, unless the user asks for another installed role by name.
-- A bare delegate is a deliberate choice made before launch. Omit `agent`, pass the reference prompt below as `systemPrompt`, and say in your reply that the child was bare.
-- If a `poteto` launch fails because the role is not discovered, stop and report the diagnostic. Typical causes are pi-herdr-pstack not loaded in that scope, a project or global `poteto` overriding it, or a host collision. Never relaunch the same work as a bare agent to get past the failure.
-- When ownership matters, check `subagents_list`. It shows every role and where it came from. A project or global `poteto` overrides this package's role.
+- Every pstack delegate is bare by deliberate choice, made before launch. Omit `agent`, pass the matching reference prompt below as `systemPrompt`, and say in your reply that the child was bare.
+- Pstack ships no named roles and depends on no optional role pack. Do not name a role in `agent` unless the user asks for that installed role by name.
+- If a launch with a role the user named fails because the role is not discovered, stop and report the diagnostic. Never relaunch the same work as a bare agent to get past the failure. `subagents_list` shows every discovered role and where it came from.
 
 ## The brief
 
@@ -28,7 +27,7 @@ Every child gets a self-contained brief. A standalone child cannot see your conv
 6. **Commit policy.** Commit or leave uncommitted, and on which branch. No push, merge, PR operation, or branch or worktree deletion unless the brief names that specific action. See `references/authorization.md`.
 7. **Session and worktree mode.** `fork: false` gives a fresh standalone child and is the usual choice. Use `fork: true` only when the child truly needs the conversation. Each parallel writer gets its own `worktree` branch, based on committed state. Uncommitted parent changes are not copied into a worktree. Read-only children run in an ordinary pane.
 8. **Delegation.** Children are leaves. Say so, or name exactly what further delegation is allowed.
-9. **Methodology.** For `poteto`, name the playbook that applies. For a bare child, the reference prompt is the methodology.
+9. **Methodology.** The reference prompt is the child's role. Name the playbook step the task comes from so the child knows its purpose, but do not paste this skill into the brief.
 
 ## Model and thinking
 
@@ -42,6 +41,12 @@ Every child gets a self-contained brief. A standalone child cannot see your conv
 ## Reference prompts for bare delegates
 
 Pass the matching prompt verbatim as `systemPrompt`, and put the specifics in `task`.
+
+### Implementer
+
+```text
+You are a bounded implementer. Make the change your task describes, only in the files your task allows. Read the relevant code, tests and callers before editing, and for a bug reproduce it first. Keep the diff small and leave unrelated work untouched. Run the verification your task names and include its output. Follow the task's commit policy exactly. Do not push, merge, open or comment on a pull request, delete branches or worktrees, or launch subagents unless your task names that action. Bash is not sandboxed, so these limits are yours to keep. If the change needs files or actions outside your scope, stop and report what and why. Report the files changed, the commit SHA if you committed, the verification output and anything you did not do.
+```
 
 ### Investigator
 
@@ -65,26 +70,26 @@ You are a verifier. Reproduce each claimed result named in your task on the real
 
 Each block is one `subagent` call using the tool's real parameters. Text in angle brackets is a placeholder you replace before launch. `<provider>/<model-id>` stands for an exact ID you pick from the live catalog. It is not a runnable value.
 
-An implementation delegate through the pstack role, standalone in the current checkout:
+A bare implementer, standalone in the current checkout:
 
 ```json subagent
 {
   "name": "login-build",
-  "agent": "poteto",
-  "task": "Bug fix playbook. <symptom and repro command>. Allowed files: src/auth/**, test/auth/**. Verify with `npm test -- test/auth` and paste the failing-then-passing output. Commit on the current branch; do not push, open a PR or launch subagents. Report the commit SHA.",
+  "task": "Bug fix playbook, implementation step. <symptom and repro command>. Allowed files: src/auth/**, test/auth/**. Verify with `npm test -- test/auth` and paste the failing-then-passing output. Commit on the current branch; do not push, open a PR or launch subagents. Report the commit SHA.",
+  "systemPrompt": "<the Implementer prompt above, verbatim>",
   "model": "task:coding",
   "thinking": "medium",
   "fork": false
 }
 ```
 
-One of two parallel writers, each in its own managed worktree based on committed HEAD:
+One of two parallel bare implementers, each in its own managed worktree based on committed HEAD:
 
 ```json subagent
 {
   "name": "login-api",
-  "agent": "poteto",
   "task": "Feature playbook, API slice only. <outcome>. Allowed files: src/api/login/**, test/api/login/**. Verify with `npm test -- test/api/login`. Commit in your worktree; do not push, merge, open a PR or remove the worktree. Report the base and result SHAs.",
+  "systemPrompt": "<the Implementer prompt above, verbatim>",
   "model": "task:coding",
   "thinking": "medium",
   "fork": false,

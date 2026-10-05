@@ -234,10 +234,7 @@ export class IsolatedPi {
 
 	/** Model requests the faux provider has seen so far. */
 	requests(): Array<{ systemPrompt: string; user: string }> {
-		return readRequestLog(this.requestLog).filter(
-			(entry): entry is { systemPrompt: string; user: string } =>
-				"user" in entry,
-		);
+		return readRequestLog(this.requestLog);
 	}
 
 	/** Prompts and waits until the run it starts (if any) settles. */
@@ -294,9 +291,7 @@ export class IsolatedPi {
 	}
 }
 
-export type RequestLogEntry =
-	| { systemPrompt: string; user: string }
-	| { replied: number };
+export type RequestLogEntry = { systemPrompt: string; user: string };
 
 /** Entries the faux provider fixture appended to its PSTACK_TEST_LOG file. */
 export function readRequestLog(path: string): RequestLogEntry[] {

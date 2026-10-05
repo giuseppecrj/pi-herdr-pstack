@@ -11,8 +11,10 @@ type ProvenanceEntry = {
 	source: string;
 	sourceSha256: string;
 	sha256: string;
-	status: "unchanged";
+	status: "unchanged" | "removed";
 	replacements: [];
+	removedIn?: string;
+	reason?: string;
 };
 
 const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
@@ -36,29 +38,26 @@ const manifest = JSON.parse(read("package.json")) as {
 	pi: Record<string, string[]>;
 };
 
-function frontmatter(path: string): Map<string, string> {
-	const match = /^---\n([\s\S]*?)\n---\n/.exec(read(path));
-	assert.ok(match, `${path} must start with frontmatter`);
-	const fields = new Map<string, string>();
-	for (const line of match[1].split("\n")) {
-		const field = /^([a-z][a-z-]*):(?: (.*))?$/.exec(line);
-		if (!field) continue;
-		assert.equal(fields.has(field[1]), false, `${path}: duplicate ${field[1]}`);
-		fields.set(field[1], field[2] ?? "");
-	}
-	return fields;
-}
-
-describe("poteto role", () => {
-	it("is the only role and matches the pinned pi-herdr-agents source byte for byte", () => {
-		assert.deepEqual(readdirSync(join(PACK_ROOT, "agents")), ["poteto.md"]);
+describe("Wave 1 moved files", () => {
+	it("keeps unchanged files byte for byte and records the poteto role as removed in W2", () => {
 		assert.equal(
 			provenance.sourceCommit,
 			"c2177dff835da44937e614e8a03d0405d442e848",
 		);
+		assert.equal(existsSync(join(PACK_ROOT, "agents")), false);
+		assert.deepEqual(
+			provenance.files.map(({ path, status }) => `${status} ${path}`),
+			["removed agents/poteto.md", "unchanged LICENSE"],
+		);
 		for (const entry of provenance.files) {
-			assert.equal(entry.status, "unchanged", entry.path);
 			assert.equal(entry.sha256, entry.sourceSha256, entry.path);
+			if (entry.status === "removed") {
+				assert.equal(entry.removedIn, "W2", entry.path);
+				assert.match(entry.reason ?? "", /09-wave2-no-poteto-role\.md/);
+				assert.equal(existsSync(join(PACK_ROOT, entry.path)), false);
+				continue;
+			}
+			assert.equal(entry.status, "unchanged", entry.path);
 			assert.equal(
 				sha256(readFileSync(join(PACK_ROOT, entry.path))),
 				entry.sha256,
@@ -79,52 +78,22 @@ describe("poteto role", () => {
 			"-e",
 			`${provenance.sourceCommit}^{commit}`,
 		]).status === 0;
-	it("reconstructs from the source commit", {
+	it("reproduces each recorded source hash from the source commit", {
 		skip:
 			!hasSource &&
 			"set PI_HERDR_AGENTS_SOURCE to a pi-herdr-agents Git checkout containing the source commit",
 	}, () => {
-		for (const entry of provenance.files)
-			assert.equal(
-				execFileSync("git", [
-					"-C",
-					source,
-					"show",
-					`${provenance.sourceCommit}:${entry.source}`,
-				]).toString("utf8"),
-				read(entry.path),
-				entry.path,
-			);
-	});
-
-	it("keeps its strict capability declarations and no skill activation yet", () => {
-		const fields = frontmatter("agents/poteto.md");
-		assert.equal(fields.get("name"), "poteto");
-		assert.ok((fields.get("description") ?? "").length > 0);
-		assert.equal(fields.get("tools"), "read, bash, edit, write, subagent");
-		assert.equal(fields.get("spawning"), "true");
-		assert.equal(fields.get("auto-exit"), "true");
-		assert.equal(fields.get("system-prompt"), "append");
-		assert.equal(fields.get("model"), undefined);
-		assert.equal(fields.get("thinking"), undefined);
-		// W2 gate: explicit skills: poteto-mode waits for a startup path that
-		// keeps the task; see test/child-skill-startup.test.ts.
-		assert.equal(fields.get("skills"), undefined);
-		assert.equal(fields.get("skill"), undefined);
-	});
-
-	it("names no other role, so it needs neither pi-herdr-roles nor another pack", () => {
-		const body = read("agents/poteto.md");
-		assert.doesNotMatch(body, /agent:\s*"/);
-		for (const role of [
-			"scout",
-			"planner",
-			"worker",
-			"reviewer",
-			"adversarial-reviewer",
-			"visual-tester",
-		])
-			assert.doesNotMatch(body, new RegExp(`\`${role}\``));
+		for (const entry of provenance.files) {
+			const blob = execFileSync("git", [
+				"-C",
+				source,
+				"show",
+				`${provenance.sourceCommit}:${entry.source}`,
+			]);
+			assert.equal(sha256(blob), entry.sourceSha256, entry.path);
+			if (entry.status === "unchanged")
+				assert.equal(blob.toString("utf8"), read(entry.path), entry.path);
+		}
 	});
 });
 
@@ -136,15 +105,19 @@ describe("Wave 2 runtime scope", () => {
 		.map((name) => read(`pi-extension/pstack/${name}`))
 		.join("\n");
 
-	it("ships the role bridge plus mode and setup modules only", () => {
+	it("ships the mode and setup modules only, with no role registration", () => {
 		assert.deepEqual(modules, [
 			"config.ts",
 			"index.ts",
 			"mode.ts",
 			"resources.ts",
-			"roles.ts",
 			"setup.ts",
 		]);
+		// W2 contributes no named roles and must not register an empty directory.
+		assert.doesNotMatch(
+			source,
+			/roles:discover|registerRolePack|\.\.\/\.\.\/agents|pi\.events\.on/,
+		);
 	});
 
 	it("imports nothing private from pi-herdr-agents and writes no files itself", () => {
@@ -161,13 +134,6 @@ describe("Wave 2 runtime scope", () => {
 			source,
 			/\.execute\(/,
 			"no discovered raw execute callback",
-		);
-	});
-
-	it("keeps the W1 role-pack bridge byte for byte", () => {
-		assert.equal(
-			sha256(read("pi-extension/pstack/roles.ts")),
-			"7e1f9ab2f6d9aa30716ca6929a700f840abd243d422868b8f6889b3944befd9e",
 		);
 	});
 });
@@ -191,7 +157,7 @@ describe("package manifest", () => {
 		});
 	});
 
-	it("packs the role, extension, skills and notices without plans or development files", () => {
+	it("packs the extension, skills and notices without roles, plans or development files", () => {
 		const [pack] = JSON.parse(
 			execFileSync("npm", ["pack", "--dry-run", "--json"], {
 				cwd: PACK_ROOT,
@@ -211,7 +177,6 @@ describe("package manifest", () => {
 				"LICENSE",
 				"README.md",
 				"THIRD_PARTY_NOTICES.md",
-				"agents/poteto.md",
 				"docs/compatibility.md",
 				"docs/provenance.md",
 				"package.json",
@@ -219,7 +184,6 @@ describe("package manifest", () => {
 				"pi-extension/pstack/index.ts",
 				"pi-extension/pstack/mode.ts",
 				"pi-extension/pstack/resources.ts",
-				"pi-extension/pstack/roles.ts",
 				"pi-extension/pstack/setup.ts",
 				...skills,
 			].toSorted(),

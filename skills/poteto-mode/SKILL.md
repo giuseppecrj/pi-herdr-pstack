@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Poteto mode
 
-This skill is the single source of poteto's engineering methodology in pi-herdr-pstack. The `poteto` role and the `/poteto-mode` command point here. They do not carry a second copy.
+This skill is the single source of poteto's engineering methodology in pi-herdr-pstack. The `/poteto-mode` command points here and does not carry a second copy. Pstack ships no named roles. Delegates get bounded briefs, not this file.
 
 Paths in this skill, its playbooks and its references are relative to this skill directory. A path that starts with `../` names a sibling skill in the same package.
 
@@ -108,9 +108,8 @@ Nothing in pstack blocks these commands for you. Bash is not sandboxed, and a to
 
 Delegate through pi-herdr-agents' `subagent` tool. `references/delegation.md` has the brief template, the reference prompts and schema-valid examples.
 
-- **Implementation delegates use `agent: "poteto"`.** This package contributes that role, and it works from this methodology.
-- **Bounded investigation, review and verification use deliberate bare delegates.** Omit `agent` and pass the matching reference prompt from `references/delegation.md` as `systemPrompt`.
-- **No other named role.** Pstack depends on no optional role pack. If `poteto` is not discoverable, stop and report it. Never fall back silently to a bare agent.
+- **Every delegate is a deliberate bare delegate.** Omit `agent` and pass the matching reference prompt from `references/delegation.md` as `systemPrompt`: the Implementer for code, tests or docs, and the Investigator, Reviewer or Verifier for bounded read-only work.
+- **No named roles.** Pstack ships none and depends on no optional role pack. Name an installed role only when the user asks for it by name. If that role is not discoverable, stop and report it. Never swap in a bare agent for a named role that failed.
 
 **Defaults for each `subagent` call.** One bounded outcome per child. Point at files instead of inlining large payloads. Set `model` and `thinking` explicitly, with `task:<category>` for ordinary work and an exact authenticated `provider/model-id` from the live catalog for independence-sensitive review. Set the session mode explicitly with `fork`, and give each parallel writer its own `worktree`. Children are leaves. They do not push, merge, open PRs or launch further agents unless the brief says so. Results are delivered automatically, so never sleep, poll or tail a session waiting for them. Tool lists such as read and bash are behavioral limits, not a sandbox.
 

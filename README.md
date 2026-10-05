@@ -1,32 +1,31 @@
 # pi-herdr-pstack
 
 > **Experimental, private, unpublished — Wave 2 candidate.** This package
-> contributes the `poteto` role, the `poteto-mode` and `setup-pstack` skills and
-> their `/poteto-mode` and `/setup-pstack` commands. The other 49 skills of the
-> full pstack inventory are planned for later waves and are **not** shipped.
-> Nothing is published or released.
+> contributes the `poteto-mode` and `setup-pstack` skills and their
+> `/poteto-mode` and `/setup-pstack` commands. It ships no named roles. The
+> other 49 skills of the full pstack inventory are planned for later waves and
+> are **not** shipped. Nothing is published or released.
 
 A Pi methodology pack for [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents).
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs
-children in. This pack owns methodology and roles, never a child runner,
-scheduler, model store, installer or shell-permission engine.
+children in. This pack owns methodology, never a child runner, scheduler, model
+store, installer or shell-permission engine.
 
 ## Contents
 
 | Resource | Kind | Notes |
-| `poteto` | role | Autonomous engineering agent moved unchanged from pi-herdr-agents. Spawns children through the host's `subagent` tool. |
 | `poteto-mode` | skill | The single source of poteto's methodology: hub, three references, twelve base playbooks. Explicit-only (`disable-model-invocation: true`). |
 | `setup-pstack` | skill | Explains the setup report and drives one approved change inside a `/setup-pstack` change flow. |
 | `/poteto-mode` | command | Sticky methodology mode for the current session branch. |
 | `/setup-pstack` | command | Report-first setup; shared task-model changes only with explicit approval. |
 
-`poteto` names no other role and needs neither pi-herdr-roles nor another pack.
-
-`poteto` does **not** declare `skills: poteto-mode` yet. With Pi 1.0.3 and the
-tested host, a role skill is delivered as its own startup prompt, and an
-`auto-exit` child exits when that first run settles, cutting off the task (see
-[compatibility](docs/compatibility.md#role-skill-startup)). The role keeps its
-W1 body until a startup path that keeps the task is available.
+Pstack registers no role directory and depends on neither pi-herdr-roles nor
+another pack. `poteto-mode` delegates are deliberately **bare**: each call omits
+`agent` and passes a bounded reference prompt (implementer, investigator,
+reviewer or verifier) as `systemPrompt`, with explicit `model`, `thinking`,
+`fork` and, for parallel writers, `worktree`. The `poteto` role that Wave 1
+moved here was removed in Wave 2 at the user's request; see
+[provenance](docs/provenance.md).
 
 ## `/poteto-mode`
 
@@ -55,10 +54,11 @@ W1 body until a startup path that keeps the task is available.
 - `/setup-pstack` (or `/setup-pstack report`) shows a report built in code: the
   session, the host's tools and writer contract, this package's skills and
   commands, authenticated exact models, and the shared task categories, their
-  metadata, the default model and any `poteto` override from
+  metadata and the default model from
   `$PI_CODING_AGENT_DIR/herdr-agents/config.json` (default
-  `~/.pi/agent/herdr-agents/config.json`). Other config fields are never shown.
-  It makes no change.
+  `~/.pi/agent/herdr-agents/config.json`). Per-agent overrides and other config
+  fields are never shown, and diagnostics never echo keys from the file. It
+  makes no change.
 - `/setup-pstack <request>` opens a one-turn change flow. The model may call the
   setup-only `pstack_apply_task_models` tool once with the categories to
   replace. The extension keeps every other category, rejects unknown
@@ -68,16 +68,24 @@ W1 body until a startup path that keeps the task is available.
   two-minute timeout. Only after approval, and after rechecking the file,
   session and authentication, does it call the host writer through
   `ctx.executeTool`. It then verifies the saved file before reporting success.
-- During the flow, pstack blocks every other writer call, binds the approval to
-  that one nested call and payload, and freezes the validated arguments.
-  The host's conditional writer rejects a file that changed after approval.
-  Stale, busy, failed, declined or cancelled attempts write nothing and are not
-  retried. Outside a flow the host writer behaves exactly as without pstack.
+- Until the setup run settles, pstack blocks every other writer call, including
+  after the one approval was declined, used, failed or revoked by another
+  `/setup-pstack`. The approval binds that one nested call and payload and
+  freezes the validated arguments; a late nested call under an ended approval,
+  after a reload or in a replaced or shut-down session is refused. The host's
+  conditional writer rejects a file that changed after approval.
+- Declined, rejected, stale or cancelled attempts stop before the writer runs.
+  Once the writer has been called, an error result does not prove nothing was
+  written: pstack rereads the file and reports it as unchanged, as holding the
+  approved preferences, or as changed in a way it cannot attribute. Nothing is
+  retried. Later independent runs get the host writer's own behavior.
 - Setup is report-only in a subagent, without a dialog-capable UI, with a
   missing, inactive or older unconditional writer, or with a missing,
   unreadable, malformed, non-object, missing-status or invalid-models config.
 - Task categories are shared pi-herdr-agents preferences: a change affects every
-  workflow and role pack using them, not only pstack.
+  workflow and role pack using them, not only pstack. An explicit `model`
+  argument, exact or `task:<category>`, takes precedence over role, per-agent
+  and default models.
 
 ## Prerequisites and installation
 
@@ -93,16 +101,9 @@ pi install /path/to/pi-herdr-pstack
 ```
 
 Install the pack where pi-herdr-agents children load packages too (normally the
-same user settings). Do not install it beside a host that still bundles
-`poteto`; see [compatibility](docs/compatibility.md).
-
-## How the role is registered
-
-`pi-extension/pstack/roles.ts` listens synchronously for
-`pi-herdr-subagents:roles:discover:v1`, registers `agents/` for `apiVersion`
-1 only and unsubscribes on `session_shutdown`. It imports nothing from
+same user settings). Only a role-free host is an intended combination; see
+[compatibility](docs/compatibility.md). Pstack imports nothing from
 pi-herdr-agents and copies nothing into user or project role directories.
-Project and global `poteto.md` definitions override the package role as usual.
 
 ## Development
 
@@ -114,20 +115,17 @@ npm run check        # typecheck, lint, format:check, test
 Tests use test-owned temporary agent, home, XDG and project directories, the
 pinned `@earendil-works/pi-coding-agent@1.0.3` SDK and CLI and a deterministic
 offline faux provider. They never edit your Pi settings. A passing
-faux-provider run is not evidence that a live model follows `poteto` or the
-skills.
+faux-provider run is not evidence that a live model follows the skills.
 
 | Variable | Effect |
-| `PI_HERDR_AGENTS_HOST` | Role-free, conditional-writer host package root for the real-writer consent, RPC setup, combined-host and child skill-startup checks; role-free expectations always apply. Skipped when unset. |
+| `PI_HERDR_AGENTS_HOST` | Role-free, conditional-writer host package root for the real-writer consent, run-protection, RPC setup and combined-host checks; role-free expectations always apply. Skipped when unset. |
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Opt-in pre-extraction host root for separate legacy bundled-role characterization; skipped when unset. |
 | `PI_HERDR_ROLES_PACK` | Also install pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
-| `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for role provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit; skipped otherwise. |
+| `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for W1 file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit; skipped otherwise. |
 | `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction; skipped when unset. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
 
-The child skill-startup check also needs util-linux `script(1)` for a
-pseudo-terminal. `docs/plans/` contains the coordinated migration plans; it is
-not shipped.
+`docs/plans/` contains the coordinated migration plans; it is not shipped.
 
 ## Provenance and license
 

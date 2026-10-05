@@ -14,7 +14,7 @@
    7. Do it cheaper.
 
    When an earlier mantra meets the target, stop.
-3. Plan the fix from the trace. If it crosses a function boundary, run the **architect** skill (planned W4) first, or compare fix shapes yourself and record `architect skipped: planned W4`. Delegate implementation to a `poteto` subagent per `references/delegation.md` with `model: "task:coding"`. Review the diff. Capture a post-fix trace.
+3. Plan the fix from the trace. If it crosses a function boundary, run the **architect** skill (planned W4) first, or compare fix shapes yourself and record `architect skipped: planned W4`. Delegate implementation to a bare implementer subagent per `references/delegation.md` with `model: "task:coding"`. Review the diff. Capture a post-fix trace.
    Apply **principle-sequence-verifiable-units** (planned W3), verifying each attempt before trying the next.
 4. Parse and compare the artifacts (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass. Flag it.
 5. Cite the measurement in the PR or, without one, in the final report.

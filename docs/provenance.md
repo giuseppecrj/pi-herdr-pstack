@@ -4,26 +4,32 @@
 
 | Destination | Source | Status |
 | --- | --- | --- |
-| `agents/poteto.md` | pi-herdr-agents `agents/poteto.md` at `c2177dff835da44937e614e8a03d0405d442e848` | unchanged (byte-identical) |
+| `agents/poteto.md` | pi-herdr-agents `agents/poteto.md` at `c2177dff835da44937e614e8a03d0405d442e848` | moved unchanged in W1; **removed in W2** |
 | `LICENSE` | pi-herdr-agents `LICENSE` at the same commit | unchanged |
 
-`poteto.md` first appeared in pi-herdr-agents' launch commit `4fa3f26`. Its text
-contains no host-owned paths or bundled-ownership wording, so no adaptation was
-needed. `test/fixtures/provenance.json` records the SHA-256 of each source blob
-and destination; `npm test` fails on unreviewed drift and, when a
-pi-herdr-agents checkout is available, compares each file to the source commit.
+`poteto.md` first appeared in pi-herdr-agents' launch commit `4fa3f26` and was
+moved here byte-identical in Wave 1. `test/fixtures/provenance.json` records the
+SHA-256 of each source blob and destination; `npm test` fails on unreviewed
+drift and, when a pi-herdr-agents checkout is available, reproduces each source
+hash from the source commit.
 
-`pi-extension/pstack/{index,roles}.ts` (bridge adapted from pi-herdr-agents'
-`examples/role-pack/extension.ts` and ADR-0003), package metadata, tests,
-`README.md`, `THIRD_PARTY_NOTICES.md` and these documents are new.
+Wave 1 also added `pi-extension/pstack/{index,roles}.ts` (a role-pack bridge
+adapted from pi-herdr-agents' `examples/role-pack/extension.ts` and ADR-0003),
+package metadata, tests, `README.md`, `THIRD_PARTY_NOTICES.md` and these
+documents.
+
+## Wave 2: role removal
+
+The user removed the named `poteto` role from the Wave 2 target
+(`docs/plans/09-wave2-no-poteto-role.md`). `agents/poteto.md`, the `roles.ts`
+bridge and its registration were deleted; pstack contributes no named roles and
+registers no role directory. The provenance fixture keeps the role's W1 source
+and hashes with status `removed` and `removedIn: "W2"`. No replacement role was
+added and the role body was not copied elsewhere.
 
 ## Wave 2: runtime
 
 `pi-extension/pstack/{config,mode,resources,setup}.ts` and their tests are new.
-`roles.ts` is unchanged from Wave 1. `agents/poteto.md` remains the byte-identical
-Wave 1 move: the approved thin adapter waits for a working explicit skill
-startup (see [compatibility](compatibility.md#role-skill-startup)), so its
-provenance fixture is unchanged.
 
 ## Wave 2: methodology skills
 
@@ -50,9 +56,9 @@ blob hash at the pinned commit, and what changed. The adaptations share four
 themes:
 
 - Delegation uses pi-herdr-agents' public single-call `subagent` schema (tested
-  host `e262c584f54a7c8d60eb1fa5510f47c1299e3801`). The `poteto` role covers
-  implementation, and deliberate bare delegates cover investigation, review and
-  verification. Upstream `poteto-agent`, `role`/`tasks`/`chain`,
+  host `e262c584f54a7c8d60eb1fa5510f47c1299e3801`). Every delegate is a
+  deliberate bare delegate with a bounded reference prompt: implementer,
+  investigator, reviewer or verifier. Upstream `poteto-agent`, `role`/`tasks`/`chain`,
   `subagent_type`, model aliases and hardcoded model defaults are gone.
 - Methodology never grants permission. Commits follow the task's commit policy.
   Pushes, PR operations, review-thread replies, merges, deletions and shared

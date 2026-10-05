@@ -7,61 +7,26 @@ import {
 	createAgentSession,
 	createEventBus,
 	DefaultResourceLoader,
-	type ExtensionAPI,
 	SessionManager,
 	SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import {
-	AGENTS_DIR,
-	ROLE_DISCOVERY_EVENT,
-	registerRolePack,
-} from "../pi-extension/pstack/roles.ts";
 import { PACK_ROOT } from "./helpers/rpc.ts";
 
 const EXTENSION = join(PACK_ROOT, "pi-extension", "pstack", "index.ts");
+/** pi-herdr-agents' public role-pack discovery event. */
+const ROLE_DISCOVERY_EVENT = "pi-herdr-subagents:roles:discover:v1";
 
-function discover(
-	bus: ReturnType<typeof createEventBus>,
-	apiVersion: number,
-): string[] {
+function discover(bus: ReturnType<typeof createEventBus>): string[] {
 	const registered: string[] = [];
 	bus.emit(ROLE_DISCOVERY_EVENT, {
-		apiVersion,
+		apiVersion: 1,
 		register: (path: string) => registered.push(path),
 	});
 	return registered;
 }
 
-describe("role-pack v1 bridge", () => {
-	it("contributes the package agents directory", () => {
-		assert.equal(AGENTS_DIR, join(PACK_ROOT, "agents"));
-	});
-
-	it("removes its own listener from its session_shutdown handler", () => {
-		// Pi 1.0.3 also drops extension listeners on reload/dispose, so this checks
-		// the pack's own ADR-0003 cleanup directly against a real SDK event bus.
-		const bus = createEventBus();
-		const shutdown: Array<() => void> = [];
-		const registered: string[] = [];
-		const api = {
-			events: bus,
-			on(event: string, handler: () => void) {
-				registered.push(event);
-				if (event === "session_shutdown") shutdown.push(handler);
-			},
-		};
-		// SAFETY: the bridge only uses events and on at load time.
-		registerRolePack(api as unknown as ExtensionAPI);
-		assert.deepEqual(registered, ["session_shutdown"]);
-		assert.deepEqual(discover(bus, 1), [AGENTS_DIR]);
-		assert.deepEqual(discover(bus, 2), [], "only apiVersion 1 is accepted");
-		shutdown[0]();
-		assert.deepEqual(discover(bus, 1), []);
-	});
-});
-
-describe("role-pack v1 bridge in a real SDK session", () => {
-	it("registers once across reloads, not after dispose, beside its two commands", async () => {
+describe("extension in a real SDK session", () => {
+	it("registers its two commands and contributes no role directory, across reloads", async () => {
 		const root = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-sdk-"));
 		const cwd = join(root, "work");
 		const agentDir = join(root, "agent");
@@ -98,12 +63,11 @@ describe("role-pack v1 bridge in a real SDK session", () => {
 			});
 			await session.bindExtensions({});
 
-			assert.deepEqual(discover(bus, 1), [AGENTS_DIR]);
+			// W2 ships no named roles, so it must not register an empty directory.
+			assert.deepEqual(discover(bus), []);
 			await session.reload();
-			await session.reload();
-			assert.deepEqual(discover(bus, 1), [AGENTS_DIR]);
+			assert.deepEqual(discover(bus), []);
 			session.dispose();
-			assert.deepEqual(discover(bus, 1), []);
 		} finally {
 			rmSync(root, { recursive: true, force: true });
 		}

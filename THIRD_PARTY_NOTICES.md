@@ -2,9 +2,10 @@
 
 ## pi-herdr-agents
 
-`agents/poteto.md` was moved unchanged from
+`LICENSE` comes unchanged from
 [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) at commit
-`c2177dff835da44937e614e8a03d0405d442e848`. See
+`c2177dff835da44937e614e8a03d0405d442e848`. Wave 1 also moved
+`agents/poteto.md` from that commit; Wave 2 removed it. See
 [docs/provenance.md](docs/provenance.md) for each file.
 
 pi-herdr-agents is distributed under the MIT License with this notice, retained

@@ -50,7 +50,7 @@ async function listedRoles(pi: IsolatedPi): Promise<string> {
 	return result.content.map((part) => part.text ?? "").join("");
 }
 
-/** Role lines from subagents_list, e.g. "poteto (package:pi-herdr-pstack)". */
+/** Role lines from subagents_list, e.g. "scout (package:pi-herdr-roles)". */
 function roleLines(listing: string): string[] {
 	return [...listing.matchAll(/^• (\S+ \([^)]+\))/gm)]
 		.map((match) => match[1])
@@ -115,15 +115,12 @@ describe("installed pack with a real role-free pi-herdr-agents host", {
 		hostRoot === undefined &&
 		"set PI_HERDR_AGENTS_HOST=<host package root> to run combined-host checks",
 }, () => {
-	it("lists only poteto with pstack provenance, with no collisions or retired commands", async () => {
+	it("lists no roles, since pstack contributes none, with no collisions or retired commands", async () => {
 		const pi = new IsolatedPi({ packages: [PACK_ROOT, hostRoot ?? ""] });
 		try {
 			const listing = await listedRoles(pi);
-			assert.deepEqual(
-				roleLines(listing),
-				["poteto (package:pi-herdr-pstack)"],
-				listing,
-			);
+			assert.deepEqual(roleLines(listing), [], listing);
+			assert.match(listing, /^Supervision: /m, "the host listed its catalog");
 			assert.doesNotMatch(listing, /^!/m, "no role diagnostics expected");
 			const listed = await commands(pi);
 			assertNoCommandCollisions(listed);
@@ -212,10 +209,7 @@ describe("installed pack with a real role-free pi-herdr-agents host", {
 			const listing = await listedRoles(pi);
 			assert.deepEqual(
 				roleLines(listing),
-				[
-					"poteto (package:pi-herdr-pstack)",
-					...GENERIC_ROLES.map((role) => `${role} (package:pi-herdr-roles)`),
-				].toSorted(),
+				GENERIC_ROLES.map((role) => `${role} (package:pi-herdr-roles)`),
 				listing,
 			);
 			assert.doesNotMatch(listing, /^!/m, "no role diagnostics expected");
@@ -244,29 +238,32 @@ describe("legacy bundled host characterization", {
 		legacyHostRoot === undefined &&
 		"set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts",
 }, () => {
-	it("keeps the host's own poteto collision diagnostic", async () => {
+	it("keeps the host's own bundled roles; pstack adds no role or collision diagnostic", async () => {
 		const pi = new IsolatedPi({ packages: [PACK_ROOT, legacyHostRoot ?? ""] });
 		try {
 			const listing = await listedRoles(pi);
-			assert.ok(
-				listing.includes('Role pack cannot replace bundled role "poteto"'),
+			assert.deepEqual(
+				roleLines(listing),
+				[...GENERIC_ROLES, "poteto"]
+					.toSorted()
+					.map((role) => `${role} (package)`),
 				listing,
 			);
+			assert.doesNotMatch(listing, /^!/m, "no role diagnostics expected");
+			assert.doesNotMatch(listing, /pi-herdr-pstack/);
 		} finally {
 			await pi.close();
 		}
 	});
 
-	it("with roles.bundled:false, lists poteto with pstack provenance", async () => {
+	it("with roles.bundled:false, lists no roles because pstack contributes none", async () => {
 		const pi = new IsolatedPi({
 			packages: [PACK_ROOT, legacyHostRoot ?? ""],
 			herdrAgentsConfig: LEGACY_CONFIG,
 		});
 		try {
 			const listing = await listedRoles(pi);
-			assert.deepEqual(roleLines(listing), [
-				"poteto (package:pi-herdr-pstack)",
-			]);
+			assert.deepEqual(roleLines(listing), [], listing);
 			assert.doesNotMatch(listing, /^!/m);
 		} finally {
 			await pi.close();

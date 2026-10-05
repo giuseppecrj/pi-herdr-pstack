@@ -407,13 +407,16 @@ describe("delegation contract", () => {
 				assert.ok(EXAMPLE_PARAMS.has(key), `${path}: ${key}`);
 			assert.equal(typeof call.name, "string", path);
 			assert.equal(typeof call.task, "string", path);
-			if ("agent" in call) assert.equal(call.agent, "poteto", path);
-			else
-				assert.equal(
-					typeof call.systemPrompt,
-					"string",
-					`${path}: bare delegates carry their prompt`,
-				);
+			assert.equal(
+				"agent" in call,
+				false,
+				`${path}: pstack delegates are bare`,
+			);
+			assert.match(
+				String(call.systemPrompt),
+				/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/,
+				`${path}: bare delegates carry their reference prompt`,
+			);
 			assert.ok(
 				call.model === MODEL_PLACEHOLDER ||
 					HOST_TASK_CATEGORIES.some(
@@ -435,19 +438,42 @@ describe("delegation contract", () => {
 		const kinds = new Set(
 			examples.map(({ call }) =>
 				[
-					"agent" in call ? "poteto" : "bare",
+					/Implementer/.test(String(call.systemPrompt)) ? "write" : "read",
 					"worktree" in call ? "worktree" : "pane",
 					call.model === MODEL_PLACEHOLDER ? "exact" : "task",
 				].join("/"),
 			),
 		);
 		for (const kind of [
-			"poteto/pane/task",
-			"poteto/worktree/task",
-			"bare/pane/task",
-			"bare/pane/exact",
+			"write/pane/task",
+			"write/worktree/task",
+			"read/pane/task",
+			"read/pane/exact",
 		])
 			assert.ok(kinds.has(kind), kind);
+		const delegation = read("skills/poteto-mode/references/delegation.md");
+		for (const prompt of [
+			"Implementer",
+			"Investigator",
+			"Reviewer",
+			"Verifier",
+		])
+			assert.match(
+				delegation,
+				new RegExp(`### ${prompt}\\n\\n\`\`\`text\\nYou are `),
+			);
+	});
+
+	it("names no pstack role: the retired poteto role is neither provided nor required", () => {
+		for (const path of OWNED_FILES) {
+			const text = read(path);
+			assert.doesNotMatch(text, /\bagent"?\s*:/, path);
+			assert.doesNotMatch(
+				text,
+				/`poteto`|poteto role|role this package|this package's role/i,
+				path,
+			);
+		}
 	});
 
 	it("names no other role, obsolete runner API, alias or platform tool", () => {
@@ -474,8 +500,6 @@ describe("delegation contract", () => {
 		for (const path of OWNED_FILES) {
 			const text = read(path);
 			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
-			for (const [, role] of text.matchAll(/\bagent"?\s*:\s*"([^"]+)"/g))
-				assert.equal(role, "poteto", path);
 		}
 	});
 
@@ -560,6 +584,26 @@ describe("authorization boundaries", () => {
 			/```(?:bash|sh|js)?\n/,
 			"no manual config snippet",
 		);
+	});
+});
+
+describe("model precedence", () => {
+	it("says an explicit model argument, including task:<category>, wins over defaults", () => {
+		const setup = read("skills/setup-pstack/SKILL.md");
+		assert.match(
+			setup,
+			/An explicit `model` in the `subagent` call wins, whether it is an exact `provider\/model-id` or a `task:<category>` selector/,
+		);
+		assert.match(
+			setup,
+			/Only a call without `model` falls back to role, per-agent and default models/,
+		);
+		for (const path of OWNED_FILES)
+			assert.doesNotMatch(
+				read(path),
+				/takes? precedence over the (?:task )?categories|override that takes precedence/i,
+				path,
+			);
 	});
 });
 

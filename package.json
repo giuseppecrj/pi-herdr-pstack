@@ -2,7 +2,7 @@
   "name": "pi-herdr-pstack",
   "version": "0.1.0-experimental.0",
   "private": true,
-  "description": "Experimental pstack methodology pack for pi-herdr-agents: poteto role, poteto-mode and setup-pstack (Wave 2 candidate)",
+  "description": "Experimental pstack methodology pack for pi-herdr-agents: poteto-mode and setup-pstack (Wave 2 candidate)",
   "keywords": [
     "pi-package",
     "pi",
@@ -18,7 +18,6 @@
   "type": "module",
   "files": [
     "pi-extension/",
-    "agents/",
     "skills/",
     "docs/compatibility.md",
     "docs/provenance.md",

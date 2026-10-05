@@ -48,17 +48,10 @@ export default function fauxTestProvider(pi: ExtensionAPI) {
 		],
 	});
 	const log = process.env.PSTACK_TEST_LOG;
-	// "<request index>:<ms>" delays one response, e.g. to outlast a shutdown.
-	const [delayAt, delayMs] = (process.env.PSTACK_TEST_DELAY ?? "-1:0")
-		.split(":")
-		.map(Number);
 	let holdMs = 0;
-	let requests = 0;
 	const reply =
 		(text: string): FauxResponseStep =>
 		async (context) => {
-			const index = requests++;
-			if (index === delayAt) holdMs = delayMs;
 			if (log)
 				appendFileSync(
 					log,
@@ -72,7 +65,6 @@ export default function fauxTestProvider(pi: ExtensionAPI) {
 				holdMs = 0;
 				await new Promise((resolve) => setTimeout(resolve, ms));
 			}
-			if (log) appendFileSync(log, `${JSON.stringify({ replied: index })}\n`);
 			return fauxAssistantMessage(text);
 		};
 	const replies = () => Array.from({ length: 40 }, () => reply("ok"));

@@ -16,7 +16,7 @@
 	"files": [
 		{
 			"path": "skills/poteto-mode/SKILL.md",
-			"sha256": "dbf33ff33ef4ff2da72b99e38b3fdba7360d5d8ed1ac089b0f9c6fb72d6c7f21",
+			"sha256": "db68a4a9ca578f285991bbb65a415915a91b26482b7b142a52797f0f6fbd76cb",
 			"status": "adapted",
 			"sources": [
 				{
@@ -32,7 +32,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries (each marked planned W3), Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, the poteto role, bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks."
+			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries (each marked planned W3), Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autonomous-run.md",
@@ -56,7 +56,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/bug-fix.md",
-			"sha256": "1a05ae5568983c33ffa7c1953f5e65dd4fb2f418afe94f8177d6283334fb40e4",
+			"sha256": "7a941e6f1debb81786c63f8269a926996cde225e525dc2a4524abb32b2982c49",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,11 +72,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Replaces control-skill, /loop and model-default wording with project tooling, an explicit stop-condition loop and poteto task:coding delegation; marks how/why/architect/tdd planned with manual equivalents; commits and PR gated by task authorization."
+			"explanation": "Replaces control-skill, /loop and model-default wording with project tooling, an explicit stop-condition loop and bare implementer task:coding delegation; marks how/why/architect/tdd planned with manual equivalents; commits and PR gated by task authorization. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/feature.md",
-			"sha256": "c5d38a0e71daae97095fa20f53df31d71e57c30cf1cf461bd8399c43d1ebfa75",
+			"sha256": "2e7654bebd069f0ad8f125259a7c4496625d332688246f884a02da4e88d18579",
 			"status": "adapted",
 			"sources": [
 				{
@@ -92,7 +92,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the throughput checkpoint and mandatory delegation; delegates to poteto with task categories; marks how/architect/arena/interrogate planned with safe manual equivalents; leaf delegates own the diff when further delegation is not authorized; PR only when authorized."
+			"explanation": "Keeps the throughput checkpoint and mandatory delegation; delegates to a bare implementer with task categories; marks how/architect/arena/interrogate planned with safe manual equivalents; leaf delegates own the diff when further delegation is not authorized; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/investigation.md",
@@ -156,7 +156,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/perf-issue.md",
-			"sha256": "8807a177f3b655fd7721e36a17bfe2cab5cae5846fe8f881fa52072e6713379a",
+			"sha256": "66720959ec6a4deb26d9ff5a0f8c31db10768e64c9f550b9a74a1ad5dcf85b37",
 			"status": "adapted",
 			"sources": [
 				{
@@ -172,7 +172,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the mantras and measurement story; benchmark-checklist planned W3 with an Explain the Number fallback; hillclimb playbook planned W4; poteto task:coding delegation; PR only when authorized."
+			"explanation": "Keeps the mantras and measurement story; benchmark-checklist planned W3 with an Explain the Number fallback; hillclimb playbook planned W4; bare implementer task:coding delegation; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/prototype.md",
@@ -196,7 +196,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/refactoring.md",
-			"sha256": "6947b0cf947d183f6e6ace507e36f4dffa61a261f4c78755bfef4b93843413d3",
+			"sha256": "ab22749718e58f212ee495c91fac2163597cb4dc984d65ed952f30c3384ff32d",
 			"status": "adapted",
 			"sources": [
 				{
@@ -212,7 +212,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the pinned-contract method; normalizes principle references to full skill names marked planned W3; replaces control-skill smoke runs with project tooling; delegates to poteto; PR only when authorized."
+			"explanation": "Keeps the pinned-contract method; normalizes principle references to full skill names marked planned W3; replaces control-skill smoke runs with project tooling; delegates to a bare implementer; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/runtime-forensics.md",
@@ -316,7 +316,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/references/delegation.md",
-			"sha256": "a7dd35486eb1586df54c8d2dee575f5a79dae5c2829a5f8a94843c56f0db57d8",
+			"sha256": "3602dc09bdb175b7613f06306b46a2d8f40a4386ad3b4ea96d91c0752e492145",
 			"status": "new",
 			"sources": [
 				{
@@ -332,11 +332,11 @@
 					"use": "derived"
 				}
 			],
-			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: poteto for implementation, deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584."
+			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare."
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",
-			"sha256": "291c1c2783a662d73eecf9f446f7c29c7adb90608f5b95622cdecb410de80296",
+			"sha256": "6511cd146018b2cf4d00e2dc458ffb401a773c2b15e3dad0f91d1668b3a57af1",
 			"status": "adapted",
 			"sources": [
 				{
@@ -346,7 +346,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational."
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file."
 		}
 	],
 	"planned": [
