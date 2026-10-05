@@ -18,8 +18,8 @@ import {
 	APPLY_TOOL,
 	CONFIRM_TIMEOUT_MS,
 	REPORT_MESSAGE_TYPE,
-	RUN_ENTRY_TYPE,
 	WRITER,
+	WRITER_POINTER,
 } from "../pi-extension/pstack/setup.ts";
 import { configuredHostRoot, PACK_ROOT } from "./helpers/rpc.ts";
 import { SdkPi, type SdkOptions } from "./helpers/sdk.ts";
@@ -73,15 +73,14 @@ function confirmCalls(pi: SdkPi) {
 	return pi.uiCalls.filter((call) => call.method === "confirm");
 }
 
-/** The states pstack recorded for its setup runs on the current branch. */
-function runStates(pi: SdkPi): unknown[] {
-	return pi.session.sessionManager
-		.getBranch()
-		.flatMap((entry) =>
-			entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE
-				? [(entry.data as { state?: unknown }).state]
-				: [],
-		);
+/** The guard's refusal of a writer call, with its pointer to /setup-pstack. */
+const BLOCKED = /pi-herdr-pstack blocked subagents_write_task_models: /;
+const NO_APPROVAL = /no approved \/setup-pstack write is in progress/;
+
+function assertBlocked(text: string, reason: RegExp = NO_APPROVAL) {
+	assert.match(text, BLOCKED);
+	assert.match(text, reason);
+	assert.ok(text.includes(WRITER_POINTER), text);
 }
 
 /** UI whose confirm dialog records itself and then runs `decide`. */
@@ -604,7 +603,7 @@ describe(
 				);
 		});
 
-		it("blocks raw and relayed writer calls during setup, but not outside it", async () => {
+		it("blocks raw and relayed writer calls during setup and outside it", async () => {
 			const raw = {
 				tasks: { coding: ["faux/faux-2"] },
 				tasksMeta: {
@@ -617,16 +616,10 @@ describe(
 				async (pi) => {
 					pi.armToolCall(WRITER, raw);
 					await pi.prompt("/setup-pstack review");
-					assert.match(
-						pi.toolResults(WRITER)[0].text,
-						/only its approved pstack_apply_task_models call may write/,
-					);
+					assertBlocked(pi.toolResults(WRITER)[0].text);
 					pi.armToolCall("test_relay", { tool: WRITER, args: raw });
 					await pi.prompt("/setup-pstack review");
-					assert.match(
-						pi.toolResults("test_relay")[0].text,
-						/pi-herdr-pstack setup blocked/,
-					);
+					assertBlocked(pi.toolResults("test_relay")[0].text);
 					pi.armToolCall("test_relay", {
 						tool: APPLY_TOOL,
 						args: REVIEW_CHANGE,
@@ -636,18 +629,15 @@ describe(
 						pi.toolResults("test_relay")[1].text,
 						/must be called directly by the model/,
 					);
-					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
 					assert.deepEqual(confirmCalls(pi), []);
 
 					pi.armToolCall(WRITER, raw);
 					await pi.prompt("write directly without setup");
-					assert.equal(pi.toolResults(WRITER)[1].isError, false);
-					const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
-					assert.deepEqual(
-						saved.models.tasks,
-						raw.tasks,
-						"host behavior unchanged outside setup",
-					);
+					assertBlocked(pi.toolResults(WRITER)[1].text);
+					pi.armToolCall("test_relay", { tool: WRITER, args: raw });
+					await pi.prompt("relay a write without setup");
+					assertBlocked(pi.toolResults("test_relay")[2].text);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
 				},
 				{ extensions: [relayTool] },
 			);
@@ -824,377 +814,378 @@ function writerExecutions(): {
 	};
 }
 
-/** A later independent run keeps the host writer's own behavior. */
-async function assertHostWriterOutsideSetup(pi: SdkPi) {
-	pi.armToolCall(WRITER, RAW);
+/** A later independent run's direct and relayed writes are blocked too. */
+async function assertWriterBlocked(pi: SdkPi) {
+	const before = existsSync(pi.configPath)
+		? readFileSync(pi.configPath, "utf8")
+		: undefined;
+	const counts = [
+		pi.toolResults(WRITER).length,
+		pi.toolResults("test_relay").length,
+	];
+	const relay = pi.session.getActiveToolNames().includes("test_relay");
+	pi.respond([
+		fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+		...(relay
+			? [
+					fauxAssistantMessage([
+						fauxToolCall("test_relay", { tool: WRITER, args: RAW }),
+					]),
+				]
+			: []),
+		fauxAssistantMessage("done"),
+	]);
 	await pi.prompt("write directly, no setup");
-	const results = pi.toolResults(WRITER);
-	assert.equal(results.at(-1)?.isError, false, results.at(-1)?.text);
-	const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
-	assert.deepEqual(saved.models.tasks, RAW.tasks);
+	assertBlocked(pi.toolResults(WRITER)[counts[0]].text);
+	if (relay) assertBlocked(pi.toolResults("test_relay")[counts[1]].text);
+	assert.equal(
+		existsSync(pi.configPath) ? readFileSync(pi.configPath, "utf8") : undefined,
+		before,
+	);
 }
 
-describe("setup run protection lasts until the run settles", needsHost, () => {
-	const cases: Array<{
-		label: string;
-		decide: (pi: SdkPi) => boolean | Promise<boolean>;
-		apply: RegExp;
-		saved: (text: string) => void;
-	}> = [
-		{
-			label: "declined",
-			decide: () => false,
-			apply: /declined or the approval dialog timed out/,
-			saved: (text) => assert.equal(text, BASE_TEXT),
-		},
-		{
-			label: "approved and saved",
-			decide: () => true,
-			apply: /Verified the saved file/,
-			saved: (text) =>
-				assert.deepEqual(JSON.parse(text).models.tasks, {
-					...BASE.models.tasks,
-					review: REVIEW_CHANGE.changes.review,
-				}),
-		},
-		{
-			label: "approved but the writer failed",
-			decide: (pi) => {
-				writeFileSync(`${pi.configPath}.lock`, "{}");
-				return true;
+describe(
+	"the writer gate admits only the approved nested write",
+	needsHost,
+	() => {
+		const cases: Array<{
+			label: string;
+			decide: (pi: SdkPi) => boolean | Promise<boolean>;
+			apply: RegExp;
+			saved: (text: string) => void;
+		}> = [
+			{
+				label: "declined",
+				decide: () => false,
+				apply: /declined or the approval dialog timed out/,
+				saved: (text) => assert.equal(text, BASE_TEXT),
 			},
-			apply: /writer busy[\s\S]*nothing was written/,
-			saved: (text) => assert.equal(text, BASE_TEXT),
-		},
-		{
-			label: "cancelled by a report command during the dialog",
-			decide: async (pi) => {
-				await pi.session.prompt("/setup-pstack");
-				return true;
+			{
+				label: "approved and saved",
+				decide: () => true,
+				apply: /Verified the saved file/,
+				saved: (text) =>
+					assert.deepEqual(JSON.parse(text).models.tasks, {
+						...BASE.models.tasks,
+						review: REVIEW_CHANGE.changes.review,
+					}),
 			},
-			apply: /Approval is stale \(the setup flow ended\)/,
-			saved: (text) => assert.equal(text, BASE_TEXT),
-		},
-	];
-	for (const { label, decide, apply, saved } of cases)
-		it(`blocks raw and relayed writes after the apply call is ${label}`, async () => {
-			const holder: SdkPi[] = [];
-			const executions = writerExecutions();
-			await withHost(
-				() => decide(holder[0]),
-				async (pi) => {
-					holder.push(pi);
-					applyThenRaw(pi);
-					await pi.prompt("/setup-pstack review");
-					const [first, second] = pi.toolResults(APPLY_TOOL);
-					assert.match(first.text, apply, label);
-					assert.equal(second.isError, true, label);
-					// Pi refuses the deactivated tool before pstack sees it.
-					assert.match(
-						second.text,
-						/pstack_apply_task_models not found|No open \/setup-pstack change flow/,
-					);
-					const [raw] = pi.toolResults(WRITER);
-					assert.equal(raw.isError, true, label);
-					assert.match(
-						raw.text,
-						/until this \/setup-pstack run settles, only its approved/,
-					);
-					assert.match(
-						pi.toolResults("test_relay")[0].text,
-						/pi-herdr-pstack setup blocked/,
-					);
-					assert.equal(confirmCalls(pi).length, 1, "one dialog per flow");
-					saved(readFileSync(pi.configPath, "utf8"));
-					assert.equal(
-						executions.count(),
-						label === "declined" || label.startsWith("cancelled") ? 0 : 1,
-						"no retry and no raw write reached the host writer",
-					);
-					rmSync(`${pi.configPath}.lock`, { force: true });
-					await assertHostWriterOutsideSetup(pi);
+			{
+				label: "approved but the writer failed",
+				decide: (pi) => {
+					writeFileSync(`${pi.configPath}.lock`, "{}");
+					return true;
 				},
-				{ extensions: [relayTool, executions.factory] },
-			);
-		});
-
-	it("blocks a nested write whose flow is revoked between approval and tool_call", async () => {
-		const holder: SdkPi[] = [];
-		const lateCancel: ExtensionFactory = (api) => {
-			api.on("tool_execution_start", async (event) => {
-				if (event.toolName === WRITER && event.parentToolCallId)
-					await holder[0]?.session.prompt("/setup-pstack");
-			});
-		};
-		await withHost(
-			() => true,
-			async (pi) => {
-				holder.push(pi);
-				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
-				await pi.prompt("/setup-pstack review");
-				const [result] = pi.toolResults(APPLY_TOOL);
-				assert.equal(result.isError, true);
-				assert.match(
-					result.text,
-					/blocked subagents_write_task_models: the approval for that pstack_apply_task_models call has ended/,
-				);
-				assert.match(result.text, /unchanged[^.]*, so nothing was written/);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				await assertHostWriterOutsideSetup(pi);
+				apply: /writer busy[\s\S]*nothing was written/,
+				saved: (text) => assert.equal(text, BASE_TEXT),
 			},
-			{ extensions: [lateCancel] },
-		);
-	});
-
-	it("blocks a nested write when Pi reloads between approval and tool_call", async () => {
-		const holder: SdkPi[] = [];
-		let reloaded = false;
-		const lateReload: ExtensionFactory = (api) => {
-			api.on("tool_execution_start", async (event) => {
-				if (event.toolName !== WRITER || !event.parentToolCallId || reloaded)
-					return;
-				reloaded = true;
-				// Reload swaps in fresh extension instances without aborting the
-				// turn; the new pstack instance never saw the apply call.
-				await holder[0]?.session.reload();
-			});
-		};
-		await withHost(
-			() => true,
-			async (pi) => {
-				holder.push(pi);
-				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
-				await pi.prompt("/setup-pstack review");
-				assert.equal(reloaded, true);
-				const [result] = pi.toolResults(APPLY_TOOL);
-				assert.equal(result.isError, true);
-				assert.match(
-					result.text,
-					/the approval for that pstack_apply_task_models call has ended/,
-				);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				assert.equal(
-					pi.session.getActiveToolNames().includes(APPLY_TOOL),
-					false,
-				);
-				await assertHostWriterOutsideSetup(pi);
+			{
+				label: "cancelled by a report command during the dialog",
+				decide: async (pi) => {
+					await pi.session.prompt("/setup-pstack");
+					return true;
+				},
+				apply: /Approval is stale \(the setup flow ended\)/,
+				saved: (text) => assert.equal(text, BASE_TEXT),
 			},
-			{ extensions: [lateReload] },
-		);
-	});
+		];
+		for (const { label, decide, apply, saved } of cases)
+			it(`blocks raw and relayed writes after the apply call is ${label}`, async () => {
+				const holder: SdkPi[] = [];
+				const executions = writerExecutions();
+				await withHost(
+					() => decide(holder[0]),
+					async (pi) => {
+						holder.push(pi);
+						applyThenRaw(pi);
+						await pi.prompt("/setup-pstack review");
+						const [first, second] = pi.toolResults(APPLY_TOOL);
+						assert.match(first.text, apply, label);
+						assert.equal(second.isError, true, label);
+						// Pi refuses the deactivated tool before pstack sees it.
+						assert.match(
+							second.text,
+							/pstack_apply_task_models not found|No open \/setup-pstack change flow/,
+						);
+						assertBlocked(pi.toolResults(WRITER)[0].text);
+						assertBlocked(pi.toolResults("test_relay")[0].text);
+						assert.equal(confirmCalls(pi).length, 1, "one dialog per flow");
+						saved(readFileSync(pi.configPath, "utf8"));
+						assert.equal(
+							executions.count(),
+							label === "declined" || label.startsWith("cancelled") ? 0 : 1,
+							"no retry and no raw write reached the host writer",
+						);
+						rmSync(`${pi.configPath}.lock`, { force: true });
+						await assertWriterBlocked(pi);
+					},
+					{ extensions: [relayTool, executions.factory] },
+				);
+			});
 
-	for (const { label, decide, at, apply } of [
-		{
-			label: "during the approved nested dispatch",
-			decide: () => true,
-			at: "nested",
-			apply: /the approval for that pstack_apply_task_models call has ended/,
-		},
-		{
-			label: "after a declined apply",
-			decide: () => false,
-			at: "after-apply",
-			apply: /declined or the approval dialog timed out/,
-		},
-		{
-			label: "after a successful apply",
-			decide: () => true,
-			at: "after-apply",
-			apply: /Verified the saved file/,
-		},
-	] as const)
-		it(`keeps raw and relayed writes blocked in the same run after a reload ${label}`, async () => {
+		it("blocks a nested write whose flow is revoked between approval and tool_call", async () => {
 			const holder: SdkPi[] = [];
-			const executions = writerExecutions();
-			const lifecycle: string[] = [];
-			let reloaded = false;
-			const reloadFixture: ExtensionFactory = (api) => {
-				api.on("agent_start", () => {
-					lifecycle.push("agent_start");
-				});
-				api.on("agent_settled", () => {
-					lifecycle.push("agent_settled");
-				});
-				const reload = async () => {
-					reloaded = true;
-					// Fresh extension instances join the running turn.
-					await holder[0]?.session.reload();
-				};
+			const lateCancel: ExtensionFactory = (api) => {
 				api.on("tool_execution_start", async (event) => {
-					if (
-						at === "nested" &&
-						!reloaded &&
-						event.toolName === WRITER &&
-						event.parentToolCallId
-					)
-						await reload();
-				});
-				api.on("tool_execution_end", async (event) => {
-					if (
-						at === "after-apply" &&
-						!reloaded &&
-						event.toolName === APPLY_TOOL
-					)
-						await reload();
+					if (event.toolName === WRITER && event.parentToolCallId)
+						await holder[0]?.session.prompt("/setup-pstack");
 				});
 			};
 			await withHost(
-				decide,
+				() => true,
 				async (pi) => {
 					holder.push(pi);
-					pi.respond([
-						fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
-						fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
-						fauxAssistantMessage([
-							fauxToolCall("test_relay", { tool: WRITER, args: RAW }),
-						]),
-						fauxAssistantMessage("done"),
-					]);
+					pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+					await pi.prompt("/setup-pstack review");
+					const [result] = pi.toolResults(APPLY_TOOL);
+					assert.equal(result.isError, true);
+					assertBlocked(result.text);
+					assert.match(result.text, /unchanged[^.]*, so nothing was written/);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+					await assertWriterBlocked(pi);
+				},
+				{ extensions: [lateCancel] },
+			);
+		});
+
+		it("blocks a nested write when Pi reloads between approval and tool_call", async () => {
+			const holder: SdkPi[] = [];
+			let reloaded = false;
+			const lateReload: ExtensionFactory = (api) => {
+				api.on("tool_execution_start", async (event) => {
+					if (event.toolName !== WRITER || !event.parentToolCallId || reloaded)
+						return;
+					reloaded = true;
+					// Reload swaps in fresh extension instances without aborting the
+					// turn; the new pstack instance never saw the apply call.
+					await holder[0]?.session.reload();
+				});
+			};
+			await withHost(
+				() => true,
+				async (pi) => {
+					holder.push(pi);
+					pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
 					await pi.prompt("/setup-pstack review");
 					assert.equal(reloaded, true);
-					assert.deepEqual(lifecycle, ["agent_start", "agent_settled"]);
 					const [result] = pi.toolResults(APPLY_TOOL);
-					assert.match(result.text, apply);
-					const [raw] = pi.toolResults(WRITER);
-					assert.equal(raw.isError, true);
-					assert.match(
-						raw.text,
-						/until this \/setup-pstack run settles, only its approved/,
-					);
-					assert.match(
-						pi.toolResults("test_relay")[0].text,
-						/pi-herdr-pstack setup blocked/,
-					);
-					assert.equal(confirmCalls(pi).length, 1);
-					const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
-					assert.deepEqual(
-						saved.models.tasks,
-						label === "after a successful apply"
-							? { ...BASE.models.tasks, review: REVIEW_CHANGE.changes.review }
-							: BASE.models.tasks,
-						"retained categories survive; no raw replacement",
-					);
-					assert.equal(
-						executions.count(),
-						label === "after a successful apply" ? 1 : 0,
-					);
-					assert.deepEqual(
-						runStates(pi),
-						["opened", "started", "settled"],
-						"the run is recorded as settled once",
-					);
+					assert.equal(result.isError, true);
+					assertBlocked(result.text);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
 					assert.equal(
 						pi.session.getActiveToolNames().includes(APPLY_TOOL),
 						false,
 					);
-					await assertHostWriterOutsideSetup(pi);
+					await assertWriterBlocked(pi);
 				},
-				{ extensions: [relayTool, executions.factory, reloadFixture] },
+				{ extensions: [lateReload] },
 			);
 		});
 
-	it("writes nothing when the session is replaced while approval is pending", async () => {
-		const holder: SdkPi[] = [];
-		let replacement: Promise<void> | undefined;
-		await withHost(
-			() => {
-				// Like /new from another surface. The dialog ignores the abort
-				// signal and approves late.
-				replacement = holder[0]?.newSession();
-				return new Promise((resolve) => setTimeout(() => resolve(true), 20));
+		for (const { label, decide, at, apply } of [
+			{
+				label: "during the approved nested dispatch",
+				decide: () => true,
+				at: "nested",
+				apply: NO_APPROVAL,
 			},
-			async (pi) => {
-				holder.push(pi);
-				const old = pi.session;
-				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
-				await pi.prompt("/setup-pstack review");
-				await replacement;
-				assert.notEqual(pi.session, old, "the session was replaced");
-				const [result] = old.messages.flatMap((message) =>
-					message.role === "toolResult" && message.toolName === APPLY_TOOL
-						? [message]
-						: [],
-				);
-				assert.equal(result.isError, true);
-				assert.match(
-					JSON.stringify(result.content),
-					/cancelled; nothing was written/,
-				);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				await assertHostWriterOutsideSetup(pi);
+			{
+				label: "after a declined apply",
+				decide: () => false,
+				at: "after-apply",
+				apply: /declined or the approval dialog timed out/,
 			},
-		);
-	});
-
-	it("blocks the nested write when the session is replaced between approval and tool_call", async () => {
-		const holder: SdkPi[] = [];
-		let replacement: Promise<void> | undefined;
-		const lateReplace: ExtensionFactory = (api) => {
-			api.on("tool_execution_start", (event) => {
-				if (event.toolName === WRITER && event.parentToolCallId && !replacement)
-					// Not awaited: replacement first aborts and waits for this turn.
-					replacement = holder[0]?.newSession();
+			{
+				label: "after a successful apply",
+				decide: () => true,
+				at: "after-apply",
+				apply: /Verified the saved file/,
+			},
+		] as const)
+			it(`keeps raw and relayed writes blocked in the same run after a reload ${label}`, async () => {
+				const holder: SdkPi[] = [];
+				const executions = writerExecutions();
+				const lifecycle: string[] = [];
+				let reloaded = false;
+				const reloadFixture: ExtensionFactory = (api) => {
+					api.on("agent_start", () => {
+						lifecycle.push("agent_start");
+					});
+					api.on("agent_settled", () => {
+						lifecycle.push("agent_settled");
+					});
+					const reload = async () => {
+						reloaded = true;
+						// Fresh extension instances join the running turn.
+						await holder[0]?.session.reload();
+					};
+					api.on("tool_execution_start", async (event) => {
+						if (
+							at === "nested" &&
+							!reloaded &&
+							event.toolName === WRITER &&
+							event.parentToolCallId
+						)
+							await reload();
+					});
+					api.on("tool_execution_end", async (event) => {
+						if (
+							at === "after-apply" &&
+							!reloaded &&
+							event.toolName === APPLY_TOOL
+						)
+							await reload();
+					});
+				};
+				await withHost(
+					decide,
+					async (pi) => {
+						holder.push(pi);
+						pi.respond([
+							fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+							fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+							fauxAssistantMessage([
+								fauxToolCall("test_relay", { tool: WRITER, args: RAW }),
+							]),
+							fauxAssistantMessage("done"),
+						]);
+						await pi.prompt("/setup-pstack review");
+						assert.equal(reloaded, true);
+						assert.deepEqual(lifecycle, ["agent_start", "agent_settled"]);
+						const [result] = pi.toolResults(APPLY_TOOL);
+						assert.match(result.text, apply);
+						assertBlocked(pi.toolResults(WRITER)[0].text);
+						assertBlocked(pi.toolResults("test_relay")[0].text);
+						assert.equal(confirmCalls(pi).length, 1);
+						const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
+						assert.deepEqual(
+							saved.models.tasks,
+							label === "after a successful apply"
+								? { ...BASE.models.tasks, review: REVIEW_CHANGE.changes.review }
+								: BASE.models.tasks,
+							"retained categories survive; no raw replacement",
+						);
+						assert.equal(
+							executions.count(),
+							label === "after a successful apply" ? 1 : 0,
+						);
+						assert.equal(
+							pi.session.getActiveToolNames().includes(APPLY_TOOL),
+							false,
+						);
+						await assertWriterBlocked(pi);
+					},
+					{ extensions: [relayTool, executions.factory, reloadFixture] },
+				);
 			});
-		};
-		await withHost(
-			() => true,
-			async (pi) => {
-				holder.push(pi);
-				const old = pi.session;
-				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
-				await pi.prompt("/setup-pstack review");
-				await replacement;
-				assert.notEqual(pi.session, old);
-				const [result] = old.messages.flatMap((message) =>
-					message.role === "toolResult" && message.toolName === APPLY_TOOL
-						? [message]
-						: [],
-				);
-				const text = JSON.stringify(result.content);
-				assert.equal(result.isError, true);
-				assert.match(
-					text,
-					// Pi refuses an aborted nested call before tool_call; pstack's guard
-					// refuses it too if a hook aborts later.
-					/reported an error: (?:Operation aborted|pi-herdr-pstack setup blocked subagents_write_task_models: the setup turn was cancelled)/,
-				);
-				assert.match(text, /nothing was written/);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				await assertHostWriterOutsideSetup(pi);
-			},
-			{ extensions: [lateReplace] },
-		);
-	});
 
-	it("writes nothing when Pi shuts down while approval is pending", async () => {
-		const holder: SdkPi[] = [];
-		let shutdown: Promise<void> | undefined;
-		await withHost(
-			() => {
-				shutdown = holder[0]?.runtime.dispose();
-				return new Promise((resolve) => setTimeout(() => resolve(true), 20));
-			},
-			async (pi) => {
-				holder.push(pi);
-				const old = pi.session;
-				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
-				await pi.prompt("/setup-pstack review");
-				await shutdown;
-				const [result] = old.messages.flatMap((message) =>
-					message.role === "toolResult" && message.toolName === APPLY_TOOL
-						? [message]
-						: [],
-				);
-				assert.equal(result.isError, true);
-				assert.match(
-					JSON.stringify(result.content),
-					/cancelled; nothing was written/,
-				);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-			},
-		);
-	});
-});
+		it("writes nothing when the session is replaced while approval is pending", async () => {
+			const holder: SdkPi[] = [];
+			let replacement: Promise<void> | undefined;
+			await withHost(
+				() => {
+					// Like /new from another surface. The dialog ignores the abort
+					// signal and approves late.
+					replacement = holder[0]?.newSession();
+					return new Promise((resolve) => setTimeout(() => resolve(true), 20));
+				},
+				async (pi) => {
+					holder.push(pi);
+					const old = pi.session;
+					pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+					await pi.prompt("/setup-pstack review");
+					await replacement;
+					assert.notEqual(pi.session, old, "the session was replaced");
+					const [result] = old.messages.flatMap((message) =>
+						message.role === "toolResult" && message.toolName === APPLY_TOOL
+							? [message]
+							: [],
+					);
+					assert.equal(result.isError, true);
+					assert.match(
+						JSON.stringify(result.content),
+						/cancelled; nothing was written/,
+					);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+					await assertWriterBlocked(pi);
+				},
+			);
+		});
+
+		it("blocks the nested write when the session is replaced between approval and tool_call", async () => {
+			const holder: SdkPi[] = [];
+			let replacement: Promise<void> | undefined;
+			const lateReplace: ExtensionFactory = (api) => {
+				api.on("tool_execution_start", (event) => {
+					if (
+						event.toolName === WRITER &&
+						event.parentToolCallId &&
+						!replacement
+					)
+						// Not awaited: replacement first aborts and waits for this turn.
+						replacement = holder[0]?.newSession();
+				});
+			};
+			await withHost(
+				() => true,
+				async (pi) => {
+					holder.push(pi);
+					const old = pi.session;
+					pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+					await pi.prompt("/setup-pstack review");
+					await replacement;
+					assert.notEqual(pi.session, old);
+					const [result] = old.messages.flatMap((message) =>
+						message.role === "toolResult" && message.toolName === APPLY_TOOL
+							? [message]
+							: [],
+					);
+					const text = JSON.stringify(result.content);
+					assert.equal(result.isError, true);
+					assert.match(
+						text,
+						// Pi refuses an aborted nested call before tool_call; pstack's guard
+						// refuses it too if a hook aborts later.
+						/reported an error: (?:Operation aborted|pi-herdr-pstack blocked subagents_write_task_models: no approved)/,
+					);
+					assert.match(text, /nothing was written/);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+					await assertWriterBlocked(pi);
+				},
+				{ extensions: [lateReplace] },
+			);
+		});
+
+		it("writes nothing when Pi shuts down while approval is pending", async () => {
+			const holder: SdkPi[] = [];
+			let shutdown: Promise<void> | undefined;
+			await withHost(
+				() => {
+					shutdown = holder[0]?.runtime.dispose();
+					return new Promise((resolve) => setTimeout(() => resolve(true), 20));
+				},
+				async (pi) => {
+					holder.push(pi);
+					const old = pi.session;
+					pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+					await pi.prompt("/setup-pstack review");
+					await shutdown;
+					const [result] = old.messages.flatMap((message) =>
+						message.role === "toolResult" && message.toolName === APPLY_TOOL
+							? [message]
+							: [],
+					);
+					assert.equal(result.isError, true);
+					assert.match(
+						JSON.stringify(result.content),
+						/cancelled; nothing was written/,
+					);
+					assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+				},
+			);
+		});
+	},
+);
 
 describe(
 	"setup reports the saved file after a dispatched write",
@@ -1323,12 +1314,9 @@ describe(
 	},
 );
 
-describe("setup run identity does not depend on prompt text", needsHost, () => {
-	const UNCONFIRMED =
-		/could not confirm this run as the \/setup-pstack change flow[\s\S]*run \/setup-pstack (?:<request> )?again/i;
-
-	/** Raw and relayed writes in one run, then an unrelated run. */
-	function rawThenRelay(pi: SdkPi) {
+describe("the writer gate holds in every other run shape", needsHost, () => {
+	/** Raw, relayed and apply calls in one run. */
+	function rawRelayApply(pi: SdkPi) {
 		pi.respond([
 			fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
 			fauxAssistantMessage([
@@ -1339,7 +1327,77 @@ describe("setup run identity does not depend on prompt text", needsHost, () => {
 		]);
 	}
 
-	it("keeps a whitespace-normalized setup run protected and able to apply", async () => {
+	/**
+	 * Every writer call in the session so far was refused before the host ran
+	 * it. A run that claimed a displaced setup window may propose once, but its
+	 * dialog is declined here.
+	 */
+	function assertNothingWritten(
+		pi: SdkPi,
+		executions: ReturnType<typeof writerExecutions>,
+		dialogs = 0,
+	) {
+		for (const result of pi.toolResults(WRITER)) assertBlocked(result.text);
+		for (const result of pi.toolResults("test_relay"))
+			assertBlocked(result.text);
+		for (const result of pi.toolResults(APPLY_TOOL))
+			assert.match(
+				result.text,
+				/pstack_apply_task_models not found|No open \/setup-pstack change flow|declined or the approval dialog timed out/,
+			);
+		assert.equal(confirmCalls(pi).length, dialogs);
+		assert.equal(executions.count(), 0);
+		assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+	}
+
+	const consumeSetupPrompt: ExtensionFactory = (api) => {
+		api.on("input", (event) =>
+			event.text.includes("/setup-pstack opened change flow")
+				? { action: "handled" as const }
+				: undefined,
+		);
+	};
+
+	it("blocks direct and relayed writes in an ordinary run", async () => {
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				rawRelayApply(pi);
+				await pi.prompt("update my task models");
+				assert.equal(pi.toolResults(WRITER).length, 1);
+				assert.equal(pi.toolResults("test_relay").length, 1);
+				assertNothingWritten(pi, executions);
+			},
+			{ extensions: [relayTool, executions.factory] },
+		);
+	});
+
+	it("refuses the host's /subagents-init write with the /setup-pstack pointer", async () => {
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				pi.armToolCall(WRITER, RAW);
+				await pi.prompt("/subagents-init prefer faux-2");
+				const prompt = pi.session.messages.find(
+					(message) => message.role === "user",
+				);
+				assert.match(
+					JSON.stringify(prompt?.content),
+					/call subagents_write_task_models/,
+					"the host's own init prompt ran",
+				);
+				const [result] = pi.toolResults(WRITER);
+				assertBlocked(result.text);
+				assert.match(result.text, /\/subagents-init, are refused/);
+				assertNothingWritten(pi, executions);
+			},
+			{ extensions: [executions.factory] },
+		);
+	});
+
+	it("still applies under a whitespace-normalizing input hook and blocks a direct write", async () => {
 		const normalize: ExtensionFactory = (api) => {
 			api.on("input", (event) => ({
 				action: "transform" as const,
@@ -1355,244 +1413,102 @@ describe("setup run identity does not depend on prompt text", needsHost, () => {
 				const [apply, again] = pi.toolResults(APPLY_TOOL);
 				assert.match(apply.text, /Verified the saved file/);
 				assert.equal(again.isError, true);
-				assert.equal(confirmCalls(pi).length, 1, "the dialog was shown");
-				const [raw] = pi.toolResults(WRITER);
-				assert.equal(raw.isError, true);
-				assert.match(raw.text, /until this \/setup-pstack run settles/);
-				assert.match(
-					pi.toolResults("test_relay")[0].text,
-					/pi-herdr-pstack setup blocked/,
-				);
+				assert.equal(confirmCalls(pi).length, 1);
+				assertBlocked(pi.toolResults(WRITER)[0].text);
+				assertBlocked(pi.toolResults("test_relay")[0].text);
 				assert.equal(executions.count(), 1, "only the approved write ran");
 				assert.deepEqual(
 					JSON.parse(readFileSync(pi.configPath, "utf8")).models.tasks,
 					{ ...BASE.models.tasks, review: REVIEW_CHANGE.changes.review },
 				);
-				assert.deepEqual(runStates(pi), ["opened", "started", "settled"]);
-				await assertHostWriterOutsideSetup(pi);
+				await assertWriterBlocked(pi);
 			},
 			{ extensions: [normalize, relayTool, executions.factory] },
 		);
 	});
 
-	it("fails closed for a setup run whose run id an input handler removed", async () => {
-		const strip: ExtensionFactory = (api) => {
-			api.on("input", (event) => ({
-				action: "transform" as const,
-				text: event.text.replace(
-					/\/setup-pstack opened change flow \S+ It ends when this turn settles\./,
-					"",
-				),
-			}));
-		};
-		const executions = writerExecutions();
-		await withHost(
-			() => true,
-			async (pi) => {
-				rawThenRelay(pi);
-				await pi.prompt("/setup-pstack review");
-				const [raw] = pi.toolResults(WRITER);
-				assert.equal(raw.isError, true);
-				assert.match(raw.text, UNCONFIRMED);
-				const [relay] = pi.toolResults("test_relay");
-				assert.match(relay.text, /pi-herdr-pstack setup blocked/);
-				assert.match(relay.text, UNCONFIRMED);
-				const [apply] = pi.toolResults(APPLY_TOOL);
-				assert.equal(apply.isError, true, "no apply authority");
-				assert.match(
-					apply.text,
-					/pstack_apply_task_models not found|No open \/setup-pstack change flow/,
-				);
-				assert.equal(confirmCalls(pi).length, 0);
-				assert.equal(
-					pi.notifications().filter((text) => UNCONFIRMED.test(text)).length,
-					1,
-					"the user is told why",
-				);
-				assert.equal(executions.count(), 0);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				assert.deepEqual(runStates(pi), ["opened", "started", "settled"]);
-				await assertHostWriterOutsideSetup(pi);
-			},
-			{ extensions: [strip, relayTool, executions.factory] },
-		);
-	});
-
-	it("settles a run left open by tree navigation, so an unrelated run can write", async () => {
-		await withHost(
-			() => false,
-			async (pi) => {
-				pi.armToolCall(WRITER, RAW);
-				await pi.prompt("/setup-pstack review");
-				assert.equal(pi.toolResults(WRITER)[0].isError, true);
-				const branch = pi.session.sessionManager.getBranch();
-				const settledAt = branch.findLastIndex(
-					(entry) =>
-						entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE,
-				);
-				const before = branch[settledAt - 1];
-				assert.equal(
-					before.type === "message" && before.message.role,
-					"assistant",
-					"the settled entry follows the run's last assistant message",
-				);
-				await pi.session.navigateTree(before.id);
-				assert.deepEqual(
-					runStates(pi),
-					["opened", "started", "settled"],
-					"navigation records the run as over on the new branch",
-				);
-				assert.equal(
-					pi.session.getActiveToolNames().includes(APPLY_TOOL),
-					false,
-				);
-				await assertHostWriterOutsideSetup(pi);
-				assert.deepEqual(pi.notifications(), []);
-			},
-		);
-	});
-});
-
-describe("an unstarted setup reservation", needsHost, () => {
-	const consumeSetupPrompt: ExtensionFactory = (api) => {
-		api.on("input", (event) =>
-			event.text.includes("/setup-pstack opened change flow")
-				? { action: "handled" as const }
-				: undefined,
-		);
-	};
-
-	it("fails closed for the next new run once when an input handler consumed the setup message", async () => {
-		await withHost(
-			() => true,
-			async (pi) => {
-				await pi.prompt("/setup-pstack review");
-				assert.equal(pi.session.messages.length, 0, "no setup run started");
-				// pstack cannot tell a consumed setup prompt from a transformed one,
-				// so the next new run is protected as the setup run, without apply.
-				pi.respond([
-					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
-					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
-					fauxAssistantMessage("done"),
-				]);
-				await pi.prompt("an unrelated request");
-				const [blocked] = pi.toolResults(WRITER);
-				assert.equal(blocked.isError, true);
-				assert.match(blocked.text, /could not confirm this run/);
-				assert.equal(pi.toolResults(APPLY_TOOL)[0].isError, true);
-				assert.equal(
-					pi.notifications().filter((text) => /could not confirm/.test(text))
-						.length,
-					1,
-				);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				assert.equal(confirmCalls(pi).length, 0);
-				// Only once: the following run keeps the host's own behavior.
-				await assertHostWriterOutsideSetup(pi);
-				assert.equal(
-					pi.session.getActiveToolNames().includes(APPLY_TOOL),
-					false,
-				);
-			},
-			{ extensions: [consumeSetupPrompt] },
-		);
-	});
-
-	it("does not block a later run triggered by a custom message", async () => {
-		await withHost(
-			() => true,
-			async (pi) => {
-				await pi.prompt("/setup-pstack review");
-				pi.respond([
-					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
-					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
-					fauxAssistantMessage("done"),
-				]);
-				await pi.session.sendCustomMessage(
-					{ customType: "test-trigger", content: "go", display: false },
-					{ triggerTurn: true },
-				);
-				await pi.idle();
-				const [result] = pi.toolResults(WRITER);
-				assert.equal(result.isError, false, result.text);
-				// That run did not claim the reservation, so it has no apply authority.
-				const [apply] = pi.toolResults(APPLY_TOOL);
-				assert.equal(apply.isError, true);
-				assert.match(apply.text, /No open \/setup-pstack change flow/);
-				assert.equal(confirmCalls(pi).length, 0);
-			},
-			{ extensions: [consumeSetupPrompt] },
-		);
-	});
-
-	it("protects a setup prompt that starts after another run claimed its reservation", async () => {
-		let release: () => void = () => {};
-		const gate = new Promise<void>((resolve) => {
-			release = resolve;
-		});
-		const slowSetupInput: ExtensionFactory = (api) => {
-			api.on("input", async (event) => {
-				if (event.text.includes("/setup-pstack opened change flow")) await gate;
+	it("blocks writes after a before_agent_start hook reloads Pi for the setup prompt", async () => {
+		const holder: SdkPi[] = [];
+		let reloaded = false;
+		const preStartReload: ExtensionFactory = (api) => {
+			api.on("before_agent_start", async (event) => {
+				if (reloaded || !event.prompt.includes("/setup-pstack opened")) return;
+				reloaded = true;
+				await holder[0]?.session.reload();
 			});
 		};
 		const executions = writerExecutions();
 		await withHost(
 			() => true,
 			async (pi) => {
+				holder.push(pi);
+				rawRelayApply(pi);
+				await pi.prompt("/setup-pstack review");
+				assert.equal(reloaded, true);
+				assert.equal(pi.toolResults(WRITER).length, 1);
+				assertNothingWritten(pi, executions);
+				await assertWriterBlocked(pi);
+			},
+			{ extensions: [preStartReload, relayTool, executions.factory] },
+		);
+	});
+
+	it("blocks writes in a run that displaced a held setup prompt, across a reload, and in the late setup run", async () => {
+		let release: () => void = () => {};
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const holdSetupInput: ExtensionFactory = (api) => {
+			api.on("input", async (event) => {
+				if (event.text.includes("/setup-pstack opened change flow")) await gate;
+			});
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => false,
+			async (pi) => {
 				await pi.session.prompt("/setup-pstack review");
-				// The setup prompt waits in an input handler; another prompt runs first.
-				pi.armToolCall(WRITER, RAW);
+				// The setup prompt waits in an input handler; another prompt runs first
+				// and claims the apply window, so its one proposal reaches the dialog.
+				rawRelayApply(pi);
 				await pi.prompt("an unrelated request");
-				assert.match(
-					pi.toolResults(WRITER)[0].text,
-					/could not confirm this run/,
-				);
-				pi.respond([
-					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
-					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
-					fauxAssistantMessage("done"),
-				]);
+				assert.equal(pi.toolResults(WRITER).length, 1);
+				await pi.session.reload();
+				rawRelayApply(pi);
 				release();
 				// The released prompt starts its own run asynchronously.
 				for (let i = 0; i < 200 && pi.toolResults(WRITER).length < 2; i++)
 					await pi.idle();
 				await pi.idle();
-				const [, late] = pi.toolResults(WRITER);
-				assert.equal(late.isError, true, "the late setup prompt is protected");
-				assert.match(late.text, /could not confirm this run/);
-				assert.equal(pi.toolResults(APPLY_TOOL)[0].isError, true);
-				assert.equal(confirmCalls(pi).length, 0);
-				assert.equal(executions.count(), 0);
-				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
-				await assertHostWriterOutsideSetup(pi);
+				assert.equal(pi.toolResults(WRITER).length, 2, "the late run wrote");
+				assertNothingWritten(pi, executions, 1);
+				await assertWriterBlocked(pi);
 			},
-			{ extensions: [slowSetupInput, executions.factory] },
+			{ extensions: [holdSetupInput, relayTool, executions.factory] },
 		);
 	});
 
-	it("still protects a setup prompt that an input handler transformed", async () => {
-		const wrap: ExtensionFactory = (api) => {
-			api.on("input", (event) => ({
-				action: "transform" as const,
-				text: `Wrapped by a test.\n\n${event.text}`,
-			}));
-		};
+	it("blocks writes in a custom-message run after a consumed setup prompt and a reload", async () => {
 		const executions = writerExecutions();
 		await withHost(
-			() => true,
+			() => false,
 			async (pi) => {
-				pi.respond([
-					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
-					fauxAssistantMessage("done"),
-				]);
 				await pi.prompt("/setup-pstack review");
-				const [raw] = pi.toolResults(WRITER);
-				assert.equal(raw.isError, true);
-				assert.match(raw.text, /until this \/setup-pstack run settles/);
-				assert.equal(executions.count(), 0);
-				await assertHostWriterOutsideSetup(pi);
+				assert.equal(pi.session.messages.length, 0, "no setup run started");
+				for (const reload of [false, true]) {
+					if (reload) await pi.session.reload();
+					rawRelayApply(pi);
+					await pi.session.sendCustomMessage(
+						{ customType: "test-trigger", content: "go", display: false },
+						{ triggerTurn: true },
+					);
+					await pi.idle();
+				}
+				assert.equal(pi.toolResults(WRITER).length, 2);
+				// The first triggered run claimed the window; the reload closed it.
+				assertNothingWritten(pi, executions, 1);
 			},
-			{ extensions: [wrap, executions.factory] },
+			{ extensions: [consumeSetupPrompt, relayTool, executions.factory] },
 		);
 	});
 });

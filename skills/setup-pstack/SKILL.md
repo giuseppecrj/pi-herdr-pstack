@@ -17,7 +17,7 @@ Paths here are relative to this skill directory.
 - `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`, shows the same report to you and opens a **change flow** for this one turn. The flow's message starts with "/setup-pstack opened change flow". It closes when the turn settles.
 - Any other way of reaching this skill, including `/skill:setup-pstack` or your own choice to load it, is informational. It never authorizes a configuration write. Explain the report sections below and ask the user to run `/setup-pstack` for the live report.
 
-Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While a change flow is open, the extension blocks every writer call except the one it approved. Outside a flow, a raw writer call would bypass pstack's consent dialog, so this workflow does not make one.
+Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While pstack is installed, the extension refuses every writer call except the single call it makes itself after the user approves the exact payload. That includes the host's `/subagents-init` flow and direct writes in any session. `/setup-pstack <request>` is the replacement.
 
 ## Reading the report
 

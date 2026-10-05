@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 import type {
 	ExtensionAPI,
-	ExtensionContext,
-	SessionEntry,
+	ExtensionCommandContext,
+	ToolDefinition,
 	ToolInfo,
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
@@ -22,13 +22,13 @@ import {
 	APPLY_TOOL,
 	approvalMessage,
 	authorizationProblem,
-	recordedRun,
-	RUN_ENTRY_TYPE,
 	refProblem,
 	registerSetup,
 	WRITER,
+	WRITER_POINTER,
 	writerContract,
 } from "../pi-extension/pstack/setup.ts";
+import { ownedSkillFile } from "../pi-extension/pstack/resources.ts";
 
 function tool(parameters: unknown): ToolInfo {
 	// SAFETY: writerContract reads only the parameter schema.
@@ -126,15 +126,12 @@ describe("one-shot approval matching", () => {
 				authorizationProblem(approved(true), "call-1", input) ?? "",
 				/already used/,
 			);
-			const controller = new AbortController();
-			controller.abort();
 			assert.match(
-				authorizationProblem(
-					{ ...approved(), signal: controller.signal },
-					"call-1",
-					input,
-				) ?? "",
-				/setup turn was cancelled/,
+				authorizationProblem(approved(), "call-1", {
+					...input,
+					expectedConfigRevision: "missing",
+				}) ?? "",
+				/arguments differ/,
 			);
 			assert.match(
 				authorizationProblem(approved(), "call-1", {
@@ -294,236 +291,284 @@ describe("proposal checks and approval text", () => {
 	});
 });
 
-const RUN_A = "00000000-0000-4000-8000-00000000000a";
-const RUN_B = "00000000-0000-4000-8000-00000000000b";
+type Decision = { block: true; reason: string } | undefined;
+type WriterInput = Record<string, unknown>;
 
-function userEntry(text: string): SessionEntry {
-	// SAFETY: recordedRun reads only type, customType and data.
-	return {
-		type: "message",
-		message: { role: "user", content: [{ type: "text", text }] },
-	} as SessionEntry;
-}
+const CONDITIONAL_WRITER = {
+	name: WRITER,
+	parameters: Type.Object({
+		tasks: TASKS,
+		tasksMeta: META,
+		expectedConfigRevision: Type.Optional(
+			Type.Union([
+				Type.Literal("missing"),
+				Type.String({ pattern: "^sha256:[0-9a-f]{64}$" }),
+			]),
+		),
+	}),
+	sourceInfo: { source: "test", path: "/test/writer.ts" },
+} as unknown as ToolInfo;
 
-function run(runId: string, state: string): SessionEntry {
-	// SAFETY: recordedRun reads only type, customType and data.
-	return {
-		type: "custom",
-		customType: RUN_ENTRY_TYPE,
-		data: { runId, state },
-	} as SessionEntry;
-}
-
-const opened = (runId: string) => run(runId, "opened");
-const started = (runId: string) => [opened(runId), run(runId, "started")];
-const settled = (runId: string) => run(runId, "settled");
-
-/** registerSetup on a minimal API, driven by emitting events directly. */
-function fakeSetup() {
+/**
+ * registerSetup on a minimal in-memory API: the real command, apply tool and
+ * guard, with a missing config file, one authenticated model and a dialog.
+ * `ctx.executeTool` runs `before`, then the apply call's own nested
+ * `tool_call` (unless `skipNested`), then `after`, and returns a failed
+ * outcome so the apply call reports the unchanged file.
+ */
+function gate(
+	options: {
+		confirm?: () => boolean;
+		before?: (payload: WriterInput, signal?: AbortSignal) => void;
+		after?: (payload: WriterInput) => void;
+		skipNested?: boolean;
+	} = {},
+) {
 	const handlers = new Map<string, Array<(...args: unknown[]) => unknown>>();
-	const appended: Array<{ customType: string; data: unknown }> = [];
-	const notices: string[] = [];
+	let tool: ToolDefinition | undefined;
+	let command:
+		| ((args: string, ctx: ExtensionCommandContext) => Promise<void>)
+		| undefined;
+	let active = [WRITER];
+	let calls = 0;
+	const nested: Decision[] = [];
+	let payload: WriterInput | undefined;
 	const api = {
 		on: (name: string, handler: (...args: unknown[]) => unknown) =>
 			handlers.set(name, [...(handlers.get(name) ?? []), handler]),
-		registerTool: () => {},
-		registerCommand: () => {},
-		getActiveTools: () => [],
-		setActiveTools: () => {},
-		getAllTools: () => [],
-		appendEntry: (customType: string, data: unknown) =>
-			appended.push({ customType, data }),
+		registerTool: (definition: ToolDefinition) => {
+			tool = definition;
+		},
+		registerCommand: (
+			name: string,
+			options: { handler: NonNullable<typeof command> },
+		) => {
+			if (name === "setup-pstack") command = options.handler;
+		},
+		getActiveTools: () => active,
+		setActiveTools: (names: string[]) => {
+			active = names;
+		},
+		getAllTools: () => [CONDITIONAL_WRITER],
+		getCommands: () => [
+			{
+				name: "skill:setup-pstack",
+				source: "skill",
+				sourceInfo: { path: ownedSkillFile("setup-pstack") },
+			},
+		],
+		sendMessage: () => {},
+		sendUserMessage: () => {},
 	};
-	// SAFETY: registerSetup uses only the members above outside its command and tool.
+	// SAFETY: registerSetup uses only the members above.
 	registerSetup(api as unknown as ExtensionAPI);
-	const context = (branch: SessionEntry[], idle = false) =>
-		// SAFETY: the handlers under test read only these context members.
-		({
-			isIdle: () => idle,
-			hasUI: true,
-			ui: { notify: (message: string) => notices.push(message) },
-			sessionManager: { getBranch: () => branch, getSessionId: () => "s" },
-		}) as unknown as ExtensionContext;
-	const emit = (name: string, event: object, ctx: ExtensionContext) =>
+	const emit = (name: string, event: object = {}) =>
 		handlers
 			.get(name)
 			?.map((handler) => handler({ type: name, ...event }, ctx));
-	const writer = (
-		parentToolCallId: string | undefined,
-		ctx: ExtensionContext,
-	) =>
-		emit(
-			"tool_call",
-			{
-				toolName: WRITER,
-				toolCallId: parentToolCallId ? `${parentToolCallId}/1` : "raw-1",
-				parentToolCallId,
-				input: {},
-			},
-			ctx,
-		)?.[0] as { block: true; reason: string } | undefined;
-	const settledRuns = () =>
-		appended.flatMap(({ data }) =>
-			(data as { state: string }).state === "settled"
-				? [(data as { runId: string }).runId]
-				: [],
-		);
-	return { emit, writer, context, appended, notices, settledRuns };
+	const writer = (parentToolCallId: string | undefined, input: unknown) => {
+		calls += 1;
+		return emit("tool_call", {
+			toolName: WRITER,
+			toolCallId: `writer-${calls}`,
+			parentToolCallId,
+			input,
+		})?.[0] as Decision;
+	};
+	let applyId = "";
+	const ctx = {
+		mode: "rpc",
+		hasUI: true,
+		isIdle: () => true,
+		hasPendingMessages: () => false,
+		ui: {
+			notify: () => {},
+			confirm: async () => options.confirm?.() ?? true,
+		},
+		sessionManager: { getSessionId: () => "session-1" },
+		modelRegistry: {
+			getAll: () => [{ provider: "a", id: "b" }],
+			hasConfiguredAuth: () => true,
+		},
+		tools: [CONDITIONAL_WRITER],
+		executeTool: async (
+			_name: string,
+			input: WriterInput,
+			{ signal }: { signal?: AbortSignal } = {},
+		) => {
+			payload = input;
+			options.before?.(input, signal);
+			if (!options.skipNested) nested.push(writer(applyId, input));
+			options.after?.(input);
+			return {
+				isError: true,
+				result: { content: [{ type: "text", text: "test outcome" }] },
+			};
+		},
+	};
+	/** Runs `/setup-pstack review` and starts its turn. */
+	async function open() {
+		// SAFETY: the command reads only the context members above.
+		await command?.("review", ctx as unknown as ExtensionCommandContext);
+		emit("agent_start");
+	}
+	/** Opens a window and lets the model apply once. */
+	async function apply(id = "apply-1", signal?: AbortSignal) {
+		await open();
+		const decision = emit("tool_call", {
+			toolName: APPLY_TOOL,
+			toolCallId: id,
+			input: { changes: { review: ["a/b"] } },
+		})?.[0];
+		assert.equal(decision, undefined, "a direct apply call is allowed");
+		applyId = id;
+		try {
+			await tool?.execute(
+				id,
+				{ changes: { review: ["a/b"] } },
+				signal,
+				undefined,
+				ctx as never,
+			);
+			return "";
+		} catch (error) {
+			return String(error);
+		}
+	}
+	return {
+		open,
+		apply,
+		emit,
+		writer,
+		nested,
+		payload: () => payload as WriterInput,
+		active: () => active,
+	};
 }
 
-describe("setup run identity in the session branch", () => {
-	it("reads only pstack's own entries, and only the latest opened run", () => {
-		assert.equal(recordedRun([]), undefined);
-		assert.deepEqual(recordedRun([opened(RUN_A)]), {
-			runId: RUN_A,
-			state: "opened",
-		});
-		assert.deepEqual(recordedRun(started(RUN_A)), {
-			runId: RUN_A,
-			state: "started",
-		});
-		assert.equal(recordedRun([...started(RUN_A), settled(RUN_A)]), undefined);
-		// A steering message inside the run does not end its protection.
-		assert.deepEqual(recordedRun([...started(RUN_A), userEntry("steer")]), {
-			runId: RUN_A,
-			state: "started",
-		});
-		assert.deepEqual(
-			recordedRun([...started(RUN_A), settled(RUN_A), opened(RUN_B)]),
-			{ runId: RUN_B, state: "opened" },
-		);
-		assert.equal(
-			recordedRun([...started(RUN_A), ...started(RUN_B), settled(RUN_B)]),
-			undefined,
-			"only the latest opened run counts",
-		);
-		assert.equal(
-			recordedRun([
-				userEntry(
-					`/setup-pstack opened change flow ${RUN_A}. It ends when this turn settles.`,
-				),
-			]),
-			undefined,
-			"prompt text is not an identity",
-		);
+describe("unconditional writer gate", () => {
+	const previous = {
+		dir: process.env.PI_CODING_AGENT_DIR,
+		child: process.env.PI_SUBAGENT_ID,
+	};
+	let dir = "";
+	beforeEach(() => {
+		dir = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-gate-"));
+		process.env.PI_CODING_AGENT_DIR = dir;
+		delete process.env.PI_SUBAGENT_ID;
+	});
+	afterEach(() => {
+		for (const [key, value] of [
+			["PI_CODING_AGENT_DIR", previous.dir],
+			["PI_SUBAGENT_ID", previous.child],
+		] as const)
+			if (value === undefined) delete process.env[key];
+			else process.env[key] = value;
+		rmSync(dir, { recursive: true, force: true });
 	});
 
-	it("blocks raw writes in a running turn the branch records as an unsettled setup run", () => {
-		const setup = fakeSetup();
-		for (const branch of [started(RUN_A), [opened(RUN_A)]]) {
-			const running = setup.context(branch);
-			assert.match(
-				setup.writer(undefined, running)?.reason ?? "",
-				/until this \/setup-pstack run settles/,
-			);
-			assert.match(
-				setup.writer("relay-1", running)?.reason ?? "",
-				/until this \/setup-pstack run settles/,
-			);
-			assert.equal(
-				setup.writer(undefined, setup.context(branch, true)),
-				undefined,
-				"an idle session has no running setup turn",
-			);
+	const BLOCKED = /^pi-herdr-pstack blocked subagents_write_task_models: /;
+	const NONE = /no approved \/setup-pstack write is in progress/;
+
+	it("blocks direct, relayed and apply-parented writes while no approval is live", async () => {
+		const setup = gate({ confirm: () => false });
+		const input = { tasks: { review: ["a/b"] } };
+		for (const parent of [undefined, "relay-1", "apply-1"]) {
+			const decision = setup.writer(parent, input);
+			assert.match(decision?.reason ?? "", BLOCKED);
+			assert.match(decision?.reason ?? "", NONE);
+			assert.ok(decision?.reason.endsWith(WRITER_POINTER));
 		}
-		assert.equal(
-			setup.writer(
-				undefined,
-				setup.context([...started(RUN_A), settled(RUN_A)]),
-			),
-			undefined,
-		);
-		assert.equal(setup.writer(undefined, setup.context([])), undefined);
+		assert.match(WRITER_POINTER, /\/setup-pstack <request>/);
+		assert.match(WRITER_POINTER, /\/subagents-init/);
+		// An open window or a declined dialog authorizes nothing.
+		assert.match(await setup.apply(), /^$/);
+		assert.match(setup.writer("apply-1", input)?.reason ?? "", NONE);
+		assert.deepEqual(setup.nested, [], "a declined apply never dispatches");
 	});
 
-	it("settles a started run on settlement, idle start, tree navigation and the next new run", () => {
-		const setup = fakeSetup();
-		setup.emit("agent_settled", {}, setup.context(started(RUN_A), true));
-		setup.emit(
-			"agent_settled",
-			{},
-			setup.context([...started(RUN_A), settled(RUN_A)], true),
-		);
-		setup.emit(
-			"session_start",
-			{ reason: "resume" },
-			setup.context(started(RUN_B), true),
-		);
-		setup.emit(
-			"session_start",
-			{ reason: "reload" },
-			setup.context(started(RUN_B)),
-		);
-		assert.deepEqual(setup.settledRuns(), [RUN_A, RUN_B]);
-
-		const tree = fakeSetup();
-		tree.emit("session_tree", {}, tree.context(started(RUN_A), true));
-		assert.deepEqual(tree.settledRuns(), [RUN_A]);
-
-		const next = fakeSetup();
-		const branch = started(RUN_A);
-		next.emit(
-			"before_agent_start",
-			{ prompt: "unrelated" },
-			next.context(branch),
-		);
-		assert.deepEqual(next.settledRuns(), [RUN_A]);
-		assert.equal(
-			next.writer(undefined, next.context([...branch, settled(RUN_A)])),
-			undefined,
-			"the new run is not protected",
-		);
-		assert.deepEqual(next.notices, []);
+	it("passes only the approved call's exact nested write, once, and freezes it", async () => {
+		const attempts: Array<[string, Decision]> = [];
+		const setup = gate({
+			before: (payload) => {
+				const other = {
+					...payload,
+					expectedConfigRevision: `sha256:${"0".repeat(64)}`,
+				};
+				for (const [label, parent, input] of [
+					["direct", undefined, payload],
+					["relay", "relay-1", payload],
+					["relay beneath the apply call", "apply-1/relay", payload],
+					["parent prefix", "apply-", payload],
+					["sibling", "apply-2", payload],
+					["longer sibling", "apply-10", payload],
+					[
+						"changed tasks",
+						"apply-1",
+						{ ...payload, tasks: { review: ["a/c"] } },
+					],
+					["changed revision", "apply-1", other],
+				] as const)
+					attempts.push([label, setup.writer(parent, input)]);
+			},
+			after: (payload) => {
+				attempts.push(["second call", setup.writer("apply-1", payload)]);
+			},
+		});
+		assert.match(await setup.apply(), /reported an error: test outcome/);
+		for (const [label, decision] of attempts.slice(0, 6))
+			assert.match(
+				decision?.reason ?? "",
+				/not the approved pstack_apply_task_models call's direct nested write/,
+				label,
+			);
+		for (const [label, decision] of attempts.slice(6, 8))
+			assert.match(decision?.reason ?? "", /arguments differ/, label);
+		assert.deepEqual(setup.nested, [undefined], "the approved write passes");
+		assert.ok(Object.isFrozen(setup.payload()));
+		assert.ok(Object.isFrozen(setup.payload().tasks));
+		assert.match(attempts[8][1]?.reason ?? "", /already used/);
+		assert.match(setup.writer("apply-1", setup.payload())?.reason ?? "", NONE);
 	});
 
-	it("leaves an opened run for the next new run, which it protects without apply authority", () => {
-		const setup = fakeSetup();
-		const branch = [opened(RUN_A)];
-		setup.emit(
-			"session_start",
-			{ reason: "reload" },
-			setup.context(branch, true),
-		);
-		setup.emit("session_tree", {}, setup.context(branch, true));
-		setup.emit("agent_settled", {}, setup.context(branch, true));
-		assert.deepEqual(setup.appended, [], "an opened run is not settled early");
-
-		setup.emit(
-			"before_agent_start",
-			{ prompt: `whatever ${RUN_A}` },
-			setup.context(branch),
-		);
-		assert.deepEqual(setup.appended, [
-			{ customType: RUN_ENTRY_TYPE, data: { runId: RUN_A, state: "started" } },
-		]);
-		assert.equal(setup.notices.length, 1);
-		assert.match(setup.notices[0], /could not confirm this run/);
-		assert.match(
-			setup.writer(undefined, setup.context([]))?.reason ?? "",
-			/could not confirm this run as the \/setup-pstack change flow[\s\S]*run \/setup-pstack again/,
-		);
-		setup.emit("agent_settled", {}, setup.context(started(RUN_A), true));
-		assert.deepEqual(setup.settledRuns(), [RUN_A]);
-		assert.equal(setup.writer(undefined, setup.context([])), undefined);
+	it("clears the approval when the nested dispatch returns without using it", async () => {
+		const setup = gate({ skipNested: true });
+		assert.match(await setup.apply(), /unchanged/);
+		assert.match(setup.writer("apply-1", setup.payload())?.reason ?? "", NONE);
 	});
 
-	it("remembers apply calls this instance saw, without the branch lookup", () => {
-		const setup = fakeSetup();
-		// The branch shows neither the apply call nor a setup run.
-		const ctx = setup.context([]);
-		assert.equal(
-			setup.emit(
-				"tool_call",
-				{ toolName: APPLY_TOOL, toolCallId: "call-1", input: {} },
-				ctx,
-			)?.[0],
-			undefined,
-		);
-		setup.emit("agent_settled", {}, setup.context([], true));
-		assert.match(
-			setup.writer("call-1", ctx)?.reason ?? "",
-			/the approval for that pstack_apply_task_models call has ended/,
-		);
-		assert.equal(setup.writer("call-2", ctx), undefined);
+	it("clears the approval when the turn is aborted", async () => {
+		const controller = new AbortController();
+		const setup = gate({ before: () => controller.abort() });
+		await setup.apply("apply-1", controller.signal);
+		assert.match(setup.nested[0]?.reason ?? "", NONE);
+	});
+
+	for (const reason of ["new", "resume", "fork", "reload", "quit"])
+		it(`clears the approval at session_shutdown (${reason})`, async () => {
+			let setup: ReturnType<typeof gate> | undefined;
+			setup = gate({
+				before: () => setup?.emit("session_shutdown", { reason }),
+			});
+			await setup.apply();
+			assert.match(setup.nested[0]?.reason ?? "", NONE);
+		});
+
+	it("refuses the apply tool from another tool and closes the window at settlement", async () => {
+		const setup = gate({ confirm: () => false });
+		const relayed = setup.emit("tool_call", {
+			toolName: APPLY_TOOL,
+			toolCallId: "apply-1",
+			parentToolCallId: "relay-1",
+			input: {},
+		})?.[0] as Decision;
+		assert.match(relayed?.reason ?? "", /must be called directly by the model/);
+		await setup.open();
+		assert.equal(setup.active().includes(APPLY_TOOL), true);
+		setup.emit("agent_settled");
+		assert.equal(setup.active().includes(APPLY_TOOL), false);
+		await setup.open();
+		await setup.apply();
+		assert.equal(setup.active().includes(APPLY_TOOL), false, "one dialog");
 	});
 });

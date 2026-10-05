@@ -336,7 +336,7 @@
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",
-			"sha256": "6511cd146018b2cf4d00e2dc458ffb401a773c2b15e3dad0f91d1668b3a57af1",
+			"sha256": "01fa7b702e104052ee3dd971af0e3f9eae5ab8183f0369021de8f60fb5789ed5",
 			"status": "adapted",
 			"sources": [
 				{
@@ -346,7 +346,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file."
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement."
 		}
 	],
 	"planned": [

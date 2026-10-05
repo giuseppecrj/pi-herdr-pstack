@@ -50,7 +50,7 @@ roles. Its writer has no `expectedConfigRevision`, so setup stays report-only.
 `roles.bundled: false` disables only the host's role layer. That host still
 registers its own workflow commands, so it is not a supported combination.
 
-## Setup writer contract and run protection
+## Setup writer contract and the writer gate
 
 `/setup-pstack` detects the conditional writer from the loaded
 `subagents_write_task_models` schema: an optional `expectedConfigRevision`
@@ -62,38 +62,40 @@ revision inside that lock; an editor or process that ignores the lock is
 outside that guarantee, and same-process extensions are trusted code, not a
 sandboxed adversary.
 
-Pstack guards the writer from its `tool_call` handler for the whole setup run,
-until `agent_settled`. Pi 1.0.3 awaits extension `tool_execution_start`
-handlers for a nested call before `tool_call`, so another extension can revoke,
-reload or replace the session in that window; the guard treats a late nested
-call under a known apply call as expired, not as an unrelated call. After a
-reload, the new instance recognizes the apply call from the active branch.
+**While pstack is loaded, every `subagents_write_task_models` call is refused
+by default**, in every run, whether or not a setup flow is open. That includes
+pi-herdr-agents' `/subagents-init`, whose prompt has the model call the writer
+directly, any direct model call and any call relayed through another tool. The
+block reason names `/setup-pstack <request>` as the replacement. Uninstall or
+disable pstack to use `/subagents-init`.
 
-A reload during the run keeps the run protected without restoring any
-approval. Pstack identifies the run from its own `pi-herdr-pstack:setup-run`
-custom entries (model context excludes them), never from prompt text that
-input handlers can rewrite: the command appends `opened` before it sends the
-setup prompt, the run that claims it appends `started`, and settlement appends
-`settled`. While Pi is not idle and the active branch's latest opened run has
-no settled entry, the guard blocks every writer call, raw or beneath another
-tool.
+The sole exception is checked in pstack's `tool_call` handler: a nested call
+whose `parentToolCallId` strictly equals the tool-call ID of a pstack apply call
+that holds a live, unused approval. The apply call creates that approval in
+memory only after the user approved the exact payload in the dialog and the
+post-dialog recheck passed. The call's arguments must match the approved
+payload canonically, including `expectedConfigRevision`, and the file's
+revision must still match. The approval is used once and is cleared when the
+nested dispatch returns, when the apply call's abort signal fires, and at
+`session_shutdown`, which Pi emits for reload, session replacement and quit.
+Nothing is written to the session to identify setup runs, and prompt text is
+never consulted. After a reload the fresh instance holds no approval, so every
+writer call blocks. Pi 1.0.3 awaits extension `tool_execution_start` handlers
+for a nested call before `tool_call`; anything another extension does in that
+window, such as a report command, a reload or a session replacement, clears
+the approval or leaves the call to a fresh instance without one.
 
-`before_agent_start` fires once per new run, not for steering or follow-ups, so
-the first new run after the command claims the reservation, whatever input
-handlers did to its prompt. It may apply changes only if its prompt still
-contains the run's random ID; otherwise it fails closed: it stays protected
-until it settles, the apply tool is removed, and the user is told to run
-`/setup-pstack` again. That is the outcome when another extension strips the
-ID or consumes the setup message: the next new run's writer calls are blocked
-once. A run triggered without `before_agent_start`, such as a custom message,
-cannot be the setup prompt; it neither claims the reservation nor gets apply
-authority. A setup prompt that starts after another run claimed its
-reservation is still protected without apply authority.
+The apply tool itself must be called directly by the model; a call from another
+tool is blocked. `/setup-pstack <request>` activates it for the next run that
+starts and closes that window when the run settles, after one dialog, or at
+session start, tree navigation or shutdown. The window is a convenience: if
+another extension delays or consumes the setup prompt, the run that starts
+first may make the one proposal instead, and the dialog still shows the exact
+payload. The approval dialog is the gate.
 
-A started run that is left unsettled, by a crash or shutdown or by navigating
-the session tree back into the run, is recorded as settled at the next idle
-`session_start`, at `session_tree`, or when the next new run starts. An opened
-run that never started is left for the next new run to claim.
+Pi-herdr-agents does not expose the writer in child sessions, so pstack in a
+child changes nothing.
+
 Results are judged from the saved file because a later `tool_result` handler
 can mark a completed write as an error.
 

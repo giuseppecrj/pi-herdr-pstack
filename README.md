@@ -68,27 +68,33 @@ moved here was removed in Wave 2 at the user's request; see
   two-minute timeout. Only after approval, and after rechecking the file,
   session and authentication, does it call the host writer through
   `ctx.executeTool`. It then verifies the saved file before reporting success.
-- Until the setup run settles, pstack blocks every other writer call, including
-  after the one approval was declined, used, failed or revoked by another
-  `/setup-pstack`. The approval binds that one nested call and payload and
-  freezes the validated arguments; a late nested call under an ended approval,
-  after a reload or in a replaced or shut-down session is refused. A `/reload`
-  during the run ends its approval but not its protection: pstack records the
-  run as opened, started and settled in its own session entries, so the fresh
-  extension instance blocks raw and relayed writes until then. Run identity
-  never depends on prompt text that input handlers can rewrite. If another
-  extension removes the run ID from the setup prompt or consumes it, the next
-  new run is protected as the setup run without apply authority, and the user
-  is told to run `/setup-pstack` again.
-  The host's conditional writer rejects a file that changed after approval.
+- **While pstack is loaded, it refuses every `subagents_write_task_models`
+  call except its own approved one.** That includes pi-herdr-agents'
+  `/subagents-init`, whose prompt has the model call the writer directly, and
+  any direct or relayed writer call in any run, inside or outside a setup flow.
+  The refusal names `/setup-pstack <request>` as the replacement. The single
+  exception is the nested call the apply tool makes after you approve the exact
+  payload: it must come directly from that apply call, match the approved
+  arguments including `expectedConfigRevision`, and find the file unchanged.
+  The approval lives only in memory while that call dispatches. It is used
+  once, and it ends when the dispatch returns, when the turn is aborted, and
+  when the session is replaced, reloaded or shut down. After a `/reload` there
+  is no approval, so every writer call is refused. The validated arguments are
+  frozen against later hooks. The host's conditional writer still rejects a
+  file that changed after approval.
+- The apply tool is visible only to the next run after `/setup-pstack
+  <request>`, for one proposal. If another extension delays or consumes the
+  setup prompt, the run that starts first may make that proposal instead; the
+  dialog still shows the exact payload, and nothing is written without your
+  approval.
 - Declined, rejected, stale or cancelled attempts stop before the writer runs.
   Once the writer has been called, an error result does not prove nothing was
   written: pstack rereads the file and reports it as unchanged, as holding the
   approved preferences, or as changed in a way it cannot attribute. Nothing is
-  retried. Later independent runs get the host writer's own behavior.
+  retried.
 - Setup is report-only in a subagent, without a dialog-capable UI, with a
-  missing, inactive or older unconditional writer, or with a missing,
-  unreadable, malformed, non-object, missing-status or invalid-models config.
+  missing, inactive or older unconditional writer, or with an unreadable,
+  malformed, non-object, missing-status or invalid-models config.
 - Task categories are shared pi-herdr-agents preferences: a change affects every
   workflow and role pack using them, not only pstack. An explicit `model`
   argument, exact or `task:<category>`, takes precedence over role, per-agent
@@ -108,7 +114,10 @@ pi install /path/to/pi-herdr-pstack
 ```
 
 Install the pack where pi-herdr-agents children load packages too (normally the
-same user settings). Only a role-free host is an intended combination; see
+same user settings). While pstack is installed, pi-herdr-agents'
+`/subagents-init` and direct `subagents_write_task_models` calls are refused;
+use `/setup-pstack <request>` to change shared task models. Children never see
+the writer, so this changes nothing there. Only a role-free host is an intended combination; see
 [compatibility](docs/compatibility.md). Pstack imports nothing from
 pi-herdr-agents and copies nothing into user or project role directories.
 
@@ -125,7 +134,7 @@ offline faux provider. They never edit your Pi settings. A passing
 faux-provider run is not evidence that a live model follows the skills.
 
 | Variable | Effect |
-| `PI_HERDR_AGENTS_HOST` | Role-free, conditional-writer host package root for the real-writer consent, run-protection, RPC setup and combined-host checks; role-free expectations always apply. Skipped when unset. |
+| `PI_HERDR_AGENTS_HOST` | Role-free, conditional-writer host package root for the real-writer consent, writer-gate, RPC setup and combined-host checks; role-free expectations always apply. Skipped when unset. |
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Opt-in pre-extraction host root for separate legacy bundled-role characterization; skipped when unset. |
 | `PI_HERDR_ROLES_PACK` | Also install pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for W1 file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit; skipped otherwise. |
