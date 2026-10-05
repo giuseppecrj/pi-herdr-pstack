@@ -25,7 +25,7 @@ Open PRs #66, #67 and #68 remain untouched. #67 overlaps the fallback path; the 
 
 ## Cancel runtime (layer 4 candidate)
 
-`05e53b8` adds `subagent_cancel` for ordinary managed children. Parent reran the suite on the rebased head: 784 tests, 783 passed, 1 skipped; format, lint, pack and diff clean; the skill still loads. Author-disclosed limits: no SIGKILL escalation, no `/proc` cross-check on macOS, retired resumed runs report "No running subagent" rather than already-terminal, no integration tests run. Incident that motivated it: interrupting then closing a worker's pane was read as a crash and relaunched the same session under a fallback model.
+`05e53b8` adds `subagent_cancel` for ordinary managed children. Parent reran the suite on the rebased head: 784 tests, 783 passed, 1 skipped; format, lint, pack and diff clean; the skill still loads. Cross-family review then found one P1 and three P2 edge cases (worktree confirmation accepted foreground absence as process exit; shutdown persisted `cancelled` on an unconfirmed cancel; exhausted fallbacks left the terminal gate open; cancel state was lost across a fallback ownership transfer). A fix round is in progress; the worktree-confirmation wording in the skill, and therefore the global copy, may change once more. Author-disclosed limits: no SIGKILL escalation, no `/proc` cross-check on macOS, retired resumed runs report "No running subagent" rather than already-terminal, no integration tests run. Incident that motivated it: interrupting then closing a worker's pane was read as a crash and relaunched the same session under a fallback model.
 
 ## Pstack Wave 2 (separate repo)
 
