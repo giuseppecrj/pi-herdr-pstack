@@ -4,7 +4,7 @@ This package supplies the full unprefixed pstack skill inventory and a small Pi 
 
 ## Current authorized scope
 
-Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md` and `09-wave2-no-poteto-role.md` before implementation. The latest amendment removes the poteto role and supersedes earlier adapter/bootstrap requirements. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
+Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md`, `09-wave2-no-poteto-role.md` and `10-wave2-unconditional-writer-gate.md` before implementation. The latest amendment makes the host writer gate unconditional while pstack is loaded and supersedes the run-identity design; 09 removed the poteto role. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
 
 The user accepted Wave 1 and explicitly authorized Wave 2: setup/mode runtime and the two methodology entry points. Local candidate branches/worktrees and commits remain allowed; stop at the Wave 2 review gate before bulk W3/W4 skill porting. The user separately authorized the completed private GitHub repository creation and initial W1 branch pushes. No new pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations are authorized by the W2 approval.
 
