@@ -442,7 +442,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 	 * recognized as one rather than as an unrelated call.
 	 */
 	const applyCalls = new Set<string>();
-	/** This instance's session shut down; nothing it guarded may write now. */
+	/** This instance's session shut down or was replaced; its context is stale. */
 	let ended = false;
 
 	function deactivateApply() {
@@ -491,23 +491,22 @@ export function registerSetup(pi: ExtensionAPI): void {
 		if (event.toolName !== WRITER) return;
 		const parent = event.parentToolCallId;
 		let underApply = parent !== undefined && applyCalls.has(parent);
-		if (!underApply && parent !== undefined && !ended)
+		if (!underApply && parent !== undefined)
 			try {
 				// After a reload, this instance never saw the apply call itself.
 				underApply = isApplyCall(ctx, parent);
 			} catch {
+				// A stale context cannot rule it out.
 				underApply = true;
 			}
 		// Outside a setup run the host's writer behaves exactly as without pstack.
-		if (!ended && !flow && !underApply) return;
-		const approved = ended ? undefined : authorization;
-		const problem = ended
-			? "the session that ran /setup-pstack shut down or was replaced"
-			: approved
-				? authorizationProblem(approved, parent, event.input)
-				: underApply
-					? `the approval for that ${APPLY_TOOL} call has ended (declined, cancelled, revoked, stale or already used)`
-					: `until this /setup-pstack run settles, only its approved ${APPLY_TOOL} call may write`;
+		if (!flow && !underApply) return;
+		const approved = authorization;
+		let problem: string | undefined =
+			`until this /setup-pstack run settles, only its approved ${APPLY_TOOL} call may write`;
+		if (approved) problem = authorizationProblem(approved, parent, event.input);
+		else if (underApply)
+			problem = `the approval for that ${APPLY_TOOL} call has ended (declined, cancelled, revoked, stale or already used)`;
 		if (!approved || problem)
 			return {
 				block: true,
