@@ -1,0 +1,57 @@
+
+> pi-herdr-pstack@0.1.0-experimental.0 check
+> npm run typecheck && npm run lint && npm run format:check && npm test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 lint
+> oxlint pi-extension test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 format:check
+> biome format pi-extension test
+
+Checked 8 files in 4ms. No fixes applied.
+
+> pi-herdr-pstack@0.1.0-experimental.0 test
+> node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts
+
+▶ poteto role
+  ✔ is the only role and matches the pinned pi-herdr-agents source byte for byte (2.036904ms)
+  ✔ reconstructs from the source commit (9.665425ms)
+  ✔ keeps its strict capability declarations and no skill activation yet (0.744072ms)
+  ✔ names no other role, so it needs neither pi-herdr-roles nor another pack (0.472191ms)
+✔ poteto role (14.33871ms)
+▶ Wave 1 scope
+  ✔ ships no skills, setup or mode implementation yet (0.554011ms)
+✔ Wave 1 scope (0.815145ms)
+▶ package manifest
+  ✔ is a private experimental Pi package with host peers (0.557369ms)
+  ✔ packs the role, bridge and notices without plans or development files (234.690992ms)
+✔ package manifest (235.635107ms)
+▶ role-pack v1 bridge
+  ✔ contributes the package agents directory (0.371405ms)
+  ✔ removes its own listener from its session_shutdown handler (0.568122ms)
+✔ role-pack v1 bridge (1.551773ms)
+▶ role-pack v1 bridge in a real SDK session
+  ✔ registers once across reloads, not after dispose, and adds no commands (41.269106ms)
+✔ role-pack v1 bridge in a real SDK session (41.588205ms)
+▶ installed pack without pi-herdr-agents
+  ✔ loads without registering commands or skills in Wave 1 (213.257557ms)
+✔ installed pack without pi-herdr-agents (214.076869ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✔ lists only poteto with pstack provenance, with no collisions or retired commands (241.489656ms)
+  ✔ coexists with pi-herdr-roles without role or command collisions (270.474115ms)
+✔ installed pack with a real role-free pi-herdr-agents host (512.23994ms)
+﹣ legacy bundled host characterization (0.053427ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+ℹ tests 13
+ℹ suites 8
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1612.303931

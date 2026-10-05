@@ -1,0 +1,391 @@
+[
+  {
+    "id": "pi-herdr-agents@2.0.5",
+    "name": "pi-herdr-agents",
+    "version": "2.0.5",
+    "size": 242715,
+    "unpackedSize": 842937,
+    "shasum": "7471972977a5e3c4df8a63279d25fc8864ce76ac",
+    "integrity": "sha512-83Fp1ecyQXXLX9T2w6HVfa8iYEu24dXTZt0UkD8gELQOQHEZrssUMT5/hEjy1MX/jERwH/dAaq/fOUVLm0fESA==",
+    "filename": "pi-herdr-agents-2.0.5.tgz",
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "size": 9723,
+        "mode": 420
+      },
+      {
+        "path": "CHANGELOG.md",
+        "size": 27857,
+        "mode": 420
+      },
+      {
+        "path": "CONTEXT.md",
+        "size": 10349,
+        "mode": 420
+      },
+      {
+        "path": "LICENSE",
+        "size": 1062,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 73417,
+        "mode": 420
+      },
+      {
+        "path": "RELEASING.md",
+        "size": 6883,
+        "mode": 420
+      },
+      {
+        "path": "config.json.example",
+        "size": 286,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0001-btw-ephemeral-side-questions.md",
+        "size": 5321,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0002-agent-workflow-skill-runtime-taxonomy.md",
+        "size": 14357,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0003-installable-role-packs.md",
+        "size": 6501,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0004-require-active-user-approval-for-workflow-execution.md",
+        "size": 1513,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0005-parent-owns-workflow-script-authority.md",
+        "size": 883,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0006-limit-v1-execution-effects-to-isolated-worktrees.md",
+        "size": 1319,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0007-require-fresh-review-for-workflow-scripts.md",
+        "size": 1479,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0008-adopt-pi-only-subagent-execution.md",
+        "size": 1591,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0009-remove-workflow-subsystem.md",
+        "size": 1396,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0010-persistent-specialists-as-session-generations.md",
+        "size": 1208,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0011-explicit-worktree-cleanup.md",
+        "size": 4374,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0012-adopt-maestro-seams-in-repo.md",
+        "size": 2209,
+        "mode": 420
+      },
+      {
+        "path": "docs/adr/0013-pack-neutral-execution-host.md",
+        "size": 3579,
+        "mode": 420
+      },
+      {
+        "path": "docs/orchestrated-review-workflow-plan.md",
+        "size": 31158,
+        "mode": 420
+      },
+      {
+        "path": "docs/README.md",
+        "size": 4972,
+        "mode": 420
+      },
+      {
+        "path": "docs/research/pdw-architecture-assessment.md",
+        "size": 56003,
+        "mode": 420
+      },
+      {
+        "path": "docs/research/pi-workflows-sol-advisor.md",
+        "size": 18686,
+        "mode": 420
+      },
+      {
+        "path": "docs/research/pi-worktree-session-handoff.md",
+        "size": 13532,
+        "mode": 420
+      },
+      {
+        "path": "docs/research/worktree-subagent-orchestration.md",
+        "size": 25490,
+        "mode": 420
+      },
+      {
+        "path": "docs/worktree-subagents.md",
+        "size": 21163,
+        "mode": 420
+      },
+      {
+        "path": "examples/role-pack/extension.ts",
+        "size": 538,
+        "mode": 420
+      },
+      {
+        "path": "examples/role-pack/package.json",
+        "size": 256,
+        "mode": 420
+      },
+      {
+        "path": "examples/role-pack/roles/example-reviewer.md",
+        "size": 297,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/fake/fake-harness-adapter.ts",
+        "size": 6942,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/activity-file.ts",
+        "size": 14841,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/child/subagent-done.ts",
+        "size": 13521,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/completion.ts",
+        "size": 6359,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/launch.ts",
+        "size": 28657,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/model-registry.ts",
+        "size": 1209,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/pi-harness-adapter.ts",
+        "size": 17869,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/session.ts",
+        "size": 25968,
+        "mode": 420
+      },
+      {
+        "path": "maestro/adapters/pi/task-model-init.ts",
+        "size": 1744,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/activity.ts",
+        "size": 647,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/model-config.ts",
+        "size": 8816,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/pane-config.ts",
+        "size": 4332,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/persistent-config.ts",
+        "size": 2811,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/role-config.ts",
+        "size": 2968,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/supervision-config.ts",
+        "size": 2770,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/task-model-init.ts",
+        "size": 6817,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/task-model-types.ts",
+        "size": 632,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/config/type-guards.ts",
+        "size": 1366,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/harness-adapter.ts",
+        "size": 3864,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/index.ts",
+        "size": 120,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/lifecycle.ts",
+        "size": 14101,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/roles/discovery.ts",
+        "size": 16130,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/routing.ts",
+        "size": 15527,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/shell.ts",
+        "size": 104,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/status.ts",
+        "size": 15474,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/supervision.ts",
+        "size": 8024,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/surface-provider.ts",
+        "size": 5050,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/types.ts",
+        "size": 11335,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/wake.ts",
+        "size": 2602,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/worktree-cleanup.ts",
+        "size": 12457,
+        "mode": 420
+      },
+      {
+        "path": "maestro/core/worktree.ts",
+        "size": 2038,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/index.ts",
+        "size": 980,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/pi-run-session.ts",
+        "size": 34983,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/run-session.ts",
+        "size": 17851,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/surface-retention.ts",
+        "size": 194,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/task-model-init.ts",
+        "size": 891,
+        "mode": 420
+      },
+      {
+        "path": "maestro/runtime/worktree-operations.ts",
+        "size": 18159,
+        "mode": 420
+      },
+      {
+        "path": "maestro/surfaces/fake/fake-surface-provider.ts",
+        "size": 8243,
+        "mode": 420
+      },
+      {
+        "path": "maestro/surfaces/herdr/herdr-surface-provider.ts",
+        "size": 5320,
+        "mode": 420
+      },
+      {
+        "path": "maestro/surfaces/herdr/herdr.ts",
+        "size": 28555,
+        "mode": 420
+      },
+      {
+        "path": "maestro/surfaces/herdr/terminal.ts",
+        "size": 5405,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 2329,
+        "mode": 420
+      },
+      {
+        "path": "pi-extension/subagents/config-path.ts",
+        "size": 752,
+        "mode": 420
+      },
+      {
+        "path": "pi-extension/subagents/index.ts",
+        "size": 115561,
+        "mode": 420
+      },
+      {
+        "path": "pi-extension/subagents/model-registry.ts",
+        "size": 1217,
+        "mode": 420
+      }
+    ],
+    "entryCount": 75,
+    "bundled": []
+  }
+]

@@ -1,0 +1,94 @@
+
+> pi-herdr-roles@0.1.0-experimental.0 check
+> npm run typecheck && npm run lint && npm run format:check && npm test
+
+
+> pi-herdr-roles@0.1.0-experimental.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> pi-herdr-roles@0.1.0-experimental.0 lint
+> oxlint extensions test skills/orchestrate/adversarial-review-example.js
+
+
+> pi-herdr-roles@0.1.0-experimental.0 format:check
+> biome format extensions test skills/orchestrate/adversarial-review-example.js
+
+Checked 15 files in 8ms. No fixes applied.
+
+> pi-herdr-roles@0.1.0-experimental.0 test
+> node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts test/evals/*.test.mjs
+
+▶ source provenance and extraction parity
+  ✔ pins every moved file to the recorded pi-herdr-agents commit (2.2945ms)
+  ✔ reconstructs each destination from the source commit and recorded replacements (100.666792ms)
+  ✔ accounts for exactly the six generic roles and no poteto (0.941871ms)
+  ✔ ships only the plan and orchestrate skills (0.787675ms)
+✔ source provenance and extraction parity (106.082612ms)
+▶ role definitions
+  ✔ use the strict role-pack format with matching names and descriptions (1.816925ms)
+  ✔ preserve inherited runtimes, interaction modes and capability declarations (0.82911ms)
+  ✔ keep the adversarial coordinator's public-child instructions (2.461545ms)
+  ✔ requires fork:false in the adversarial-reviewer launch contract (1.280979ms)
+  ✔ rejects every same-family fallback on strict review surfaces (2.680086ms)
+  ✔ keeps generic reviewer findings evidence-backed and task-specific (0.753973ms)
+✔ role definitions (10.833706ms)
+▶ orchestrate skill
+  ✔ keeps the public subagent review contract (0.641806ms)
+  ✔ keeps adversarial review in the public-child topology (1.022837ms)
+  ✔ requires fork:false for reviewer launches (0.274601ms)
+✔ orchestrate skill (2.30277ms)
+▶ plan skill
+  ✔ pins the Phase 7 reviewer evidence and fork:false before launch (0.359984ms)
+  ✔ states the authenticated-family ordinary-review gate (0.571154ms)
+  ✔ references host-owned guidance without a sibling filesystem path (0.226861ms)
+✔ plan skill (1.401225ms)
+▶ workflow dependency closure
+  ✔ launches only roles shipped by this pack (0.97697ms)
+  ✔ resolves relative links inside the packaged workflow surface (0.677538ms)
+  ✔ keeps chrome-cdp an optional, visible, uninstalled prerequisite (0.320127ms)
+  ✔ does not reintroduce retired commands (1.083926ms)
+✔ workflow dependency closure (3.397164ms)
+▶ package manifest
+  ✔ is a private experimental Pi package with host peers (0.411812ms)
+  ✔ checks the shipped review helper (0.190669ms)
+  ✔ packs runtime resources and notices without development artifacts (220.05533ms)
+✔ package manifest (220.878862ms)
+✔ deduplicates repeated adjudications and reports planned coverage (2.058953ms)
+✔ counts omitted planned runs in recall and completeness (0.2437ms)
+✔ uses submitted clean runs for false-positive rate while reporting omissions (0.252254ms)
+✔ rejects malformed metrics, duplicate trials, and unadjudicated verified findings (0.66541ms)
+✔ validates the checked-in corpus and exports label-free reviewer input (1146.485145ms)
+✔ runs the documented validator command when default type stripping is disabled (1233.533725ms)
+✔ validates a nested source path when its oracle imports that path (1158.69731ms)
+✔ rejects source that cannot load (94.620947ms)
+✔ rejects an unintended module throw (82.535127ms)
+✔ rejects signaled and timed-out module loading (3176.76588ms)
+✔ rejects label mismatches, exposed labels, and duplicate oracle IDs (1.31959ms)
+✔ rejects a fixed regression when the oracle still expects a failure (158.598134ms)
+▶ role-pack v1 bridge
+  ✔ removes its own listener from its session_shutdown handler (0.827614ms)
+✔ role-pack v1 bridge (1.404813ms)
+▶ role-pack v1 bridge in a real SDK session
+  ✔ registers once across reloads and not after dispose (41.1425ms)
+✔ role-pack v1 bridge in a real SDK session (41.355038ms)
+▶ /plan prompt delivery
+  ✔ keeps the host's literal skill wrapper, location and task suffix (0.236568ms)
+✔ /plan prompt delivery (0.332252ms)
+▶ installed pack without pi-herdr-agents
+  ✔ exposes /plan and both skills from the package, with no retired commands (235.912621ms)
+  ✔ fails /plan closed with a prerequisite diagnostic and starts no run (208.257817ms)
+✔ installed pack without pi-herdr-agents (445.097069ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✔ lists exactly the six roles and one unsuffixed /plan, with no collisions or retired commands (246.354489ms)
+  ✔ delivers /plan as the literal plan-skill wrapper through the pack command (236.323178ms)
+✔ installed pack with a real role-free pi-herdr-agents host (482.994399ms)
+﹣ legacy bundled host characterization (0.0593ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+ℹ tests 42
+ℹ suites 12
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9145.885554

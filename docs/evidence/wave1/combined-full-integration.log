@@ -1,0 +1,205 @@
+
+> pi-herdr-agents@2.0.5 test:integration
+> node --experimental-strip-types --test --test-concurrency=1 test/integration/*.test.ts
+
+▶ hang advisory integration
+  ✔ notifies once for a blocked active child, recovers on progress, and suppresses interactive steers (1.047399ms)
+✔ hang advisory integration (1.502094ms)
+Disposed current-test-owned fixture w7N /tmp/pi-integ-w3GZPB
+▶ PiHarnessAdapter (real Pi/Herdr) HarnessAdapter conformance
+  ✔ spawn returns a handle whose harness equals adapter.name and startedAt is recent (52.802749ms)
+Disposed current-test-owned fixture w7P /tmp/pi-integ-8TLJ1T
+  ✔ getState never throws and returns one of the five states (46.655022ms)
+Disposed current-test-owned fixture w7Q /tmp/pi-integ-m6p5nC
+  ✔ awaitCompletion resolves done evidence (1181.18182ms)
+Disposed current-test-owned fixture w7R /tmp/pi-integ-qG0gDP
+  ✔ awaitCompletion resolves ping evidence with name and message (1393.758185ms)
+Disposed current-test-owned fixture w7S /tmp/pi-integ-C6w7e0
+  ✔ awaitCompletion resolves error evidence with errorMessage (1280.954804ms)
+Disposed current-test-owned fixture w7T /tmp/pi-integ-BhjX9I
+  ✔ awaitCompletion rejects when the signal aborts (95.895636ms)
+Disposed current-test-owned fixture w7V /tmp/pi-integ-2Sz3O6
+  ✔ interrupt leaves getState not done (45.434498ms)
+Disposed current-test-owned fixture w7W /tmp/pi-integ-wcw3TF
+  ✔ kill then getState returns done or unknown (50.464127ms)
+Disposed current-test-owned fixture w7X /tmp/pi-integ-3LBT9G
+  ✔ resume of a known session returns a new handle with the same sessionId (1241.978772ms)
+Published late sidecar 200ms after adapter-confirmed Herdr pane absence
+Disposed current-test-owned fixture w7Y /tmp/pi-integ-OMH3eN
+  ✔ late sidecar after pane absence resolves done when supported (5077.032932ms)
+Disposed current-test-owned worktree workspace w70
+Disposed empty current-test-owned bucket /home/g/.herdr/worktrees/pi-integ-aUpm7D
+Disposed current-test-owned fixture w7Z /tmp/pi-integ-aUpm7D
+Disposed current-test-owned fixture w81 /tmp/pi-integ-zxcaMJ
+  ✔ resume honors the fixture's explicit managed-session policy (1778.996732ms)
+✔ PiHarnessAdapter (real Pi/Herdr) HarnessAdapter conformance (12246.988432ms)
+✔ cleans partial fixture acquisition before dispose is returned (16.472852ms)
+Disposed current-test-owned fixture w82 /tmp/pi-integ-F2qjsA
+✔ real persistent task outcome keeps Pi alive and saved policy refuses resume (1087.238029ms)
+Disposed current-test-owned fixture w83 /tmp/pi-integ-3pQGUa
+✔ real Pi fallback attempts preserve the legacy ID and isolate session evidence (2333.787351ms)
+Disposed current-test-owned fixture w84 /tmp/pi-integ-qLwu2W
+✔ real Pi completion before wait, independent cancellation, and first terminal evidence (2208.011956ms)
+▶ herdr terminal [herdr]
+  ✔ keeps focus on the current pane while creating and targeting subagent tabs (212.294595ms)
+  ✔ splits the stable parent without stealing focus or closing it (179.617821ms)
+  ✔ creates an isolated worktree workspace without stealing focus (2096.495954ms)
+  ✔ creates a surface, sends a command, reads output, and closes it (42.891335ms)
+  ✔ preserves shell special characters in echo output (152.960142ms)
+  ✔ sends a long command via script file without truncation (2045.936056ms)
+  ✔ reads screen asynchronously (36.840038ms)
+  ✔ manages multiple surfaces concurrently (60.929548ms)
+  ✔ writes output to a file and verifies via surface (2097.761184ms)
+  ✔ delivers Escape as byte 27 to the target surface (4101.508374ms)
+✔ herdr terminal [herdr] (11029.117746ms)
+▶ persistent-specialist [herdr]
+  ✔ delivers sequential tasks, rejects busy work, and stops cleanly (11032.953783ms)
+✔ persistent-specialist [herdr] (11033.812178ms)
+native moved-parent evidence {"inherited":{"pane_id":"w8H:p2","tab_id":"w8H:t2","workspace_id":"w8H"},"before":{"agent_status":"unknown","cwd":"/tmp/pi-integ-X5QolM","focused":false,"foreground_cwd":"/tmp/pi-integ-X5QolM","pane_id":"w8H:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":40},"tab_id":"w8H:t2","terminal_id":"term_65d1cdb7d985d132","terminal_title":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","workspace_id":"w8H"},"move":{"changed":true,"closed_tab_id":"w8H:t2","created_tab":{"agent_status":"unknown","focused":false,"label":"2","number":2,"pane_count":1,"tab_id":"w8J:t2","workspace_id":"w8J"},"focused_pane_id":"w8J:p2","pane":{"agent_status":"unknown","cwd":"/tmp/pi-integ-X5QolM","focused":false,"foreground_cwd":"/tmp/pi-integ-X5QolM","pane_id":"w8J:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":40},"tab_id":"w8J:t2","terminal_id":"term_65d1cdb7d985d132","terminal_title":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","workspace_id":"w8J"},"previous_pane_id":"w8H:p2","previous_tab_id":"w8H:t2","previous_workspace_id":"w8H","target_layout":{"area":{"height":40,"width":120,"x":0,"y":0},"focused_pane_id":"w8J:p2","panes":[{"focused":true,"pane_id":"w8J:p2","rect":{"height":40,"width":120,"x":0,"y":0}}],"splits":[],"tab_id":"w8J:t2","workspace_id":"w8J","zoomed":false}},"after":{"agent_status":"unknown","cwd":"/tmp/pi-integ-X5QolM","focused":false,"foreground_cwd":"/tmp/pi-integ-X5QolM","pane_id":"w8J:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":40},"tab_id":"w8J:t2","terminal_id":"term_65d1cdb7d985d132","terminal_title":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-X5QolM/moved-parent.sh'","workspace_id":"w8J"},"child":{"id":"73e8f11a","name":"placement-1","task":"Reply with only PLACEMENT_COMPLETE.","surface":"w8J:p3","startTime":1791228384124,"sessionFile":"/tmp/pi-integ-X5QolM/.pi/agent/sessions/--tmp-pi-integ-X5QolM--/2026-10-05T19-26-24-140Z_73e8f11a-5c726bdc-736a1315-7b3c.jsonl","launchScriptFile":"/tmp/pi-integ-X5QolM/artifacts/parent/subagent-scripts/placement-1-73e8f11a.sh","activityFile":"/tmp/pi-integ-X5QolM/artifacts/parent/subagent-activity/73e8f11a.json","interactive":false,"runtimePlan":{"provider":"pi-integration","modelId":"test","model":"pi-integration/test","thinking":"off","modelSource":"request","thinkingSource":"request"},"lifecycle":{"process":{"kind":"starting","startedAt":1791228384124},"turn":{"kind":"unknown"},"activityHealth":{"kind":"unseen"},"activityDetail":null,"pane":{"kind":"unknown"},"hasWorked":false,"lastActivitySequence":null,"delivery":"pending"}}}
+▶ grouped public launch placement
+  ✔ places an unmatched child in the live caller workspace after its parent pane moves (2105.856452ms)
+  ✔ fills four panes before overflow, counts user panes, and reuses their tab after all children close (618.482736ms)
+  ✔ respects configured capacity during overlapping launches and rolls back only a failed child (400.341244ms)
+  ✖ ordinary: closes panes only after accepted delivery (46.523404ms)
+  ✖ rejected delivery: closes panes only after accepted delivery (44.181463ms)
+  ✖ help: closes panes only after accepted delivery (43.262957ms)
+  ✖ provider error: closes panes only after accepted delivery (44.651196ms)
+  ✖ fallback: closes panes only after accepted delivery (45.748991ms)
+  ✖ fallback rejected delivery: closes panes only after accepted delivery (43.978795ms)
+  ✖ parent quit after rejected persistent task delivery: closes ordinary pane and process (43.432974ms)
+{"error":{"code":"workspace_group_close_required","message":"workspace has linked worktree workspaces; use --group (close_group=true in the API) to close the group"},"id":"cli:workspace:close"}
+  ✖ parent quit after rejected persistent task delivery: retains managed root (49.416993ms)
+  ✔ launches a worktree from a linked checkout through the real Herdr path (2184.083289ms)
+  ✔ keeps the writer root shell and places a reviewer in the retained worktree tab (2150.21224ms)
+  ✔ resolves a descendant checkout to its owning workspace despite a misleading shell cwd (293.678414ms)
+✖ grouped public launch placement (8116.480229ms)
+✔ dirty cleanup warning matcher rejects stale inventory (0.64269ms)
+▶ subagent-lifecycle [herdr]
+  ✔ spawns a subagent that writes a file and verifies the session (2119.931906ms)
+  ✔ delivers one model-visible custom completion message (2075.292094ms)
+  ✔ runs a non-auto-exit coordinator through discovery and synthesis waves (4094.336104ms)
+{"error":{"code":"workspace_not_found","message":"workspace w99 not found"},"id":"cli:worktree:remove"}
+  ✔ retains a completed worktree, refuses dirty cleanup, and explicitly removes it without deleting history (9223.396678ms)
+  ℹ Stale inventory: old predicate accepts; warning predicate rejects.
+  ℹ Dirty refusal notification observed; checkout and uncommitted file intact.
+  ℹ History assertions passed: integration/ticket-8ktblvohmuvn54yr = 4dee222ab6903d0f9e31290c4d9bf88709930ae7; Implement 8ktblvohmuvn54yr reachable; checkout /home/g/.herdr/worktrees/pi-integ-qNPjDb/integration-ticket-8ktblvohmuvn54yr and workspace w99 absent; source /tmp/pi-integ-qNPjDb.
+  ✔ delivers completion after the parent starts a new session (14174.70861ms)
+  ✔ keeps a long active tool call from surfacing false stalled status (123181.999915ms)
+  ✔ spawns two subagents in parallel and both complete (2112.660939ms)
+  ✔ fork mode creates a child session linked to the parent (2113.275302ms)
+  ✔ subagent caller_ping sends notification back to the parent (2118.57144ms)
+  ✔ rejects public resume of a legacy Pi session without a saved policy (4149.092048ms)
+  ✔ preserves restricted child tools and spawning denial across public resume (3020.52537ms)
+  ✔ subagent discovers project-local test agents (2061.956781ms)
+  ✔ passes systemPrompt to subagent (2060.908949ms)
+  ✔ falls back after a provider failure and delivers the selected model (18067.411313ms)
+  ✔ advances after an account-style HTTP rejection without repeating that model (4115.389149ms)
+  ✔ reports every attempted model when all fallbacks fail (32071.134403ms)
+✔ subagent-lifecycle [herdr] (226762.559734ms)
+▶ event-driven supervision integration
+  ✔ delivers an ordinary child once despite duplicate late file wakes (87.745839ms)
+  ✔ folds persistent .tasks wakes while idle, then stops after task two (107.58165ms)
+  ✔ reconciles dropped file notifications within the five-second budget (4800.730217ms)
+  ✔ falls back to polling after watcher failure without an extra parent steer (5801.996308ms)
+  ✔ keeps forcePolling outcomes identical for done, error, and ping evidence (3109.976552ms)
+✔ event-driven supervision integration (13909.246466ms)
+▶ HerdrSurfaceProvider SurfaceProvider conformance
+  ✔ isAvailable returns a boolean and never throws (30.569853ms)
+  ✔ createSurface returns an id listed by listSurfaces with name and cwd (58.006569ms)
+  ✔ runCommand then readScreen shows the command output (638.474112ms)
+  ✔ inspectSurface returns a PaneInspection for a live surface (56.272131ms)
+  ✔ closeSurface then waitForSurfaceAbsence resolves (65.619546ms)
+  ✔ grouped placement overflows to a new tab at the cap (123.463318ms)
+  ✔ setupHint returns a non-empty string (28.472811ms)
+  ✔ attachSurface returns a handle with sendKeys and close (56.199583ms)
+  ✔ createWorktreeSurface registers neutral worktree inventory and removeWorktreeSurface removes it (69.542587ms)
+✔ HerdrSurfaceProvider SurfaceProvider conformance (1128.479662ms)
+ℹ tests 72
+ℹ suites 8
+ℹ pass 64
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 294858.621619
+
+✖ failing tests:
+
+test at test/integration/placement.test.ts:432:4
+✖ ordinary: closes panes only after accepted delivery (46.523404ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:432:4
+✖ rejected delivery: closes panes only after accepted delivery (44.181463ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:432:4
+✖ help: closes panes only after accepted delivery (43.262957ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:432:4
+✖ provider error: closes panes only after accepted delivery (44.651196ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:432:4
+✖ fallback: closes panes only after accepted delivery (45.748991ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:432:4
+✖ fallback rejected delivery: closes panes only after accepted delivery (43.978795ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:495:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:623:4
+✖ parent quit after rejected persistent task delivery: closes ordinary pane and process (43.432974ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:711:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/integration/placement.test.ts:623:4
+✖ parent quit after rejected persistent task delivery: retains managed root (49.416993ms)
+  TypeError: Cannot read properties of undefined (reading 'notify')
+      at file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/pi-extension/subagents/index.ts:2329:12
+      at TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-host/test/integration/placement.test.ts:711:37)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7)

@@ -1,0 +1,67 @@
+{
+  "since": "2026-10-05T19:32:26.620Z",
+  "observations": 65,
+  "parents": 18,
+  "children": 47,
+  "roles": [
+    "test-echo",
+    null,
+    "test-coordinator",
+    "test-ping",
+    "test-restricted"
+  ],
+  "resumed": [
+    {
+      "sessionFile": "/tmp/pi-integ-ADvycL/.pi/agent/sessions/--tmp-pi-integ-ADvycL--/2026-10-05T19-33-11-477Z_69eea56b-d679-445c-bd52-226bdbe53a56-32f4f51b-a86b0c90-cfb2.jsonl",
+      "pids": [
+        930450,
+        931556
+      ],
+      "childIds": [
+        "69eea56b-d679-445c-bd52-226bdbe53a56",
+        "cd12bdb4"
+      ]
+    },
+    {
+      "sessionFile": "/tmp/pi-integ-LmVWe8/.pi/agent/sessions/--tmp-pi-integ-LmVWe8--/2026-10-05T19-36-44-966Z_88676bdd-552a-45c2-8d05-999d10d6f005-75003015-1fe86eb9-a48a.jsonl",
+      "pids": [
+        990042,
+        991137
+      ],
+      "childIds": [
+        "88676bdd-552a-45c2-8d05-999d10d6f005",
+        "e56697d0"
+      ]
+    }
+  ],
+  "worktreeChildren": [
+    {
+      "cwd": "/home/g/.herdr/worktrees/pi-integ-ylOtwW/pi-integ-harness-6a4a4823-c8ea-4d07-91eb-d2100833c568",
+      "pid": 897723,
+      "childId": "4763430c-4795-4f1f-8259-f9f0b1e55e1d"
+    },
+    {
+      "cwd": "/home/g/.herdr/worktrees/pi-integ-pDcLNt/placement-persistent-quit",
+      "pid": 947315,
+      "childId": "8902db8b-f26c-44bf-83fc-bd66729e1b5a"
+    },
+    {
+      "cwd": "/home/g/.herdr/worktrees/pi-integ-uhpYZL/integration-linked-child-dtmap12hmuvnec7a",
+      "pid": 949453,
+      "childId": "utswjx8tmuvnec7a"
+    },
+    {
+      "cwd": "/home/g/.herdr/worktrees/pi-integ-66OZCF/placement-writer",
+      "pid": 952102,
+      "childId": "a33bf08a"
+    },
+    {
+      "cwd": "/home/g/.herdr/worktrees/pi-integ-hA5AuB/integration-ticket-v6dzgvbkmuvnemck",
+      "pid": 967078,
+      "childId": "cb1a441c-5216-4109-a7d2-cd8919e8d1f3"
+    }
+  ],
+  "userWorktreeHandoffsObserved": 0,
+  "allHaveBothPacks": true,
+  "limitation": "Startup observations do not prove model obedience. No new user-driven handoff session is required by these fixtures; its child-marker contract is covered by W0 probes and host launch-policy tests."
+}

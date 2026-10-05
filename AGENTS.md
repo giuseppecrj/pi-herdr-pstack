@@ -4,9 +4,9 @@ This package supplies the full unprefixed pstack skill inventory and a small Pi 
 
 ## Current authorized scope
 
-Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md` and `04-wave0-contract.md` in `docs/plans/` before implementation.
+Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md` before implementation. The Wave 2 contract supersedes historical authorization limits in earlier planning snapshots.
 
-The user authorized Waves 0–1 only, repository initialization, isolated branches/worktrees and local commits. Stop for human review after Wave 1. No pushes, PR creation, merges, package publication, version changes triggering releases, or changes to the normal Pi installation/configuration. Wave 2 setup/mode behavior and bulk skill porting are not authorized yet.
+The user accepted Wave 1 and explicitly authorized Wave 2: setup/mode runtime and the two methodology entry points. Local candidate branches/worktrees and commits remain allowed; stop at the Wave 2 review gate before bulk W3/W4 skill porting. The user separately authorized the completed private GitHub repository creation and initial W1 branch pushes. No new pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations are authorized by the W2 approval.
 
 Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. The target inventory is the full upstream inventory, not a curated first release. `poteto` moves here; the other six existing roles move to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are removed, not migrated into this pack.
 

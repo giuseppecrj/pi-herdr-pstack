@@ -1,0 +1,28 @@
+✖ installed packs visible in real worker child (fork=false) (76160.757263ms)
+✖ installed packs visible in real poteto child (fork=true) (76279.773644ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 152589.155503
+
+✖ failing tests:
+
+test at ../../../../tmp/pi-herdr-wave1-qa-y7ClZe/combined-child-visibility.test.mjs:14:3
+✖ installed packs visible in real worker child (fork=false) (76160.757263ms)
+  Error: Timeout (75000ms) waiting for file: /tmp/pi-integ-KbSmyF/child-result.txt matching /worker_PASS/
+      at Module.waitForFile (file:///home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host/test/integration/harness.ts:490:8)
+      at async TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-child-visibility.test.mjs:61:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at ../../../../tmp/pi-herdr-wave1-qa-y7ClZe/combined-child-visibility.test.mjs:14:3
+✖ installed packs visible in real poteto child (fork=true) (76279.773644ms)
+  Error: Timeout (75000ms) waiting for file: /tmp/pi-integ-4UhFzl/child-result.txt matching /poteto_PASS/
+      at Module.waitForFile (file:///home/g/.herdr/worktrees/pi-herdr-agents/wave1-pack-neutral-host/test/integration/harness.ts:490:8)
+      at async TestContext.<anonymous> (file:///tmp/pi-herdr-wave1-qa-y7ClZe/combined-child-visibility.test.mjs:61:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

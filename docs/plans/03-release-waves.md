@@ -1,6 +1,6 @@
 # Dependency-aware implementation and release waves
 
-Status: execution sequencing plan. The user subsequently approved Waves 0–1, local repository initialization, isolated branches/worktrees and local commits, with two implementation workers maximum. Stop after W1 for human review. No pushes, PRs, merges, publication or normal Pi installation changes are authorized. The planning snapshot below is historical; current frozen inputs and evidence are in [the Wave 0 contract](./04-wave0-contract.md).
+Status: execution sequencing plan. **Wave 1 is accepted and Wave 2 is explicitly authorized**, with two implementation workers maximum and one real Herdr integration suite at a time. See [the Wave 2 contract](./06-wave2-contract.md) for current scope, accepted inputs and the separately completed initial private GitHub pushes. No new pushes, PRs, merges, publication, normal Pi installation changes, paid live-model evaluations or W3/W4 implementation are authorized. The initial planning snapshot below is historical.
 
 Inputs: [shared decisions](./README.md), [pi-herdr-agents extraction](./01-host-pack-extraction.md), [full pstack port](./02-pstack-pack.md), and the `agent-release-waves` procedure. Those plans remain the detailed acceptance specifications. This document assigns ownership, sequence and integration gates; it does not narrow the full skill inventory.
 

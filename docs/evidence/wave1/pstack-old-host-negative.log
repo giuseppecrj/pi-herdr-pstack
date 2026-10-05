@@ -1,0 +1,104 @@
+▶ installed pack without pi-herdr-agents
+  ✔ loads without registering commands or skills in Wave 1 (214.136026ms)
+✔ installed pack without pi-herdr-agents (214.974397ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✖ lists only poteto with pstack provenance, with no collisions or retired commands (250.7693ms)
+  ✖ coexists with pi-herdr-roles without role or command collisions (244.002424ms)
+✖ installed pack with a real role-free pi-herdr-agents host (495.16953ms)
+﹣ legacy bundled host characterization (0.046484ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+ℹ tests 3
+ℹ suites 3
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 806.278381
+
+✖ failing tests:
+
+test at test/rpc.test.ts:108:2
+✖ lists only poteto with pstack provenance, with no collisions or retired commands (250.7693ms)
+  AssertionError [ERR_ASSERTION]: • adversarial-reviewer (package) — Coordinator for bounded adversarial code review with independent reviewers and parent synthesis
+  • planner (package) — Interactive planning agent that resolves material unknowns and writes an executable implementation plan
+  • poteto (package) — Autonomous engineering agent that investigates deeply, makes the smallest safe change, delegates independent work, and verifies the real result
+  • reviewer (package) — Code review agent - reviews changes for quality, security, and correctness
+  • scout (package) — Fast codebase reconnaissance - maps existing code, conventions, and patterns for a task
+  • visual-tester (package) — Optional visual QA tester — navigates web UIs via Chrome CDP when available, spots visual issues, tests interactions, produces structured reports
+  • worker (package) — Implements a complete task or plan section - writes code, runs tests, commits only when asked
+  Supervision: wake+batch; 0 watchers
+  ! Role pack cannot replace bundled role "poteto"; use a global or project override instead.
+  + actual - expected
+  
+    [
+  +   'adversarial-reviewer (package)',
+  +   'planner (package)',
+  +   'poteto (package)',
+  +   'reviewer (package)',
+  +   'scout (package)',
+  +   'visual-tester (package)',
+  +   'worker (package)'
+  -   'poteto (package:pi-herdr-pstack)'
+    ]
+  
+      at TestContext.<anonymous> (file:///home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation/test/rpc.test.ts:112:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Promise.all (index 0)
+      at async Suite.run (node:internal/test_runner/test:1905:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'adversarial-reviewer (package)', 'planner (package)', 'poteto (package)', 'reviewer (package)', 'scout (package)', 'visual-tester (package)', 'worker (package)' ],
+    expected: [ 'poteto (package:pi-herdr-pstack)' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/rpc.test.ts:130:2
+✖ coexists with pi-herdr-roles without role or command collisions (244.002424ms)
+  AssertionError [ERR_ASSERTION]: • adversarial-reviewer (package) — Coordinator for bounded adversarial code review with independent reviewers and parent synthesis
+  • planner (package) — Interactive planning agent that resolves material unknowns and writes an executable implementation plan
+  • poteto (package) — Autonomous engineering agent that investigates deeply, makes the smallest safe change, delegates independent work, and verifies the real result
+  • reviewer (package) — Code review agent - reviews changes for quality, security, and correctness
+  • scout (package) — Fast codebase reconnaissance - maps existing code, conventions, and patterns for a task
+  • visual-tester (package) — Optional visual QA tester — navigates web UIs via Chrome CDP when available, spots visual issues, tests interactions, produces structured reports
+  • worker (package) — Implements a complete task or plan section - writes code, runs tests, commits only when asked
+  Supervision: wake+batch; 0 watchers
+  ! Role pack cannot replace bundled role "poteto"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "adversarial-reviewer"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "planner"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "reviewer"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "scout"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "visual-tester"; use a global or project override instead.
+  ! Role pack cannot replace bundled role "worker"; use a global or project override instead.
+  + actual - expected
+  
+    [
+  +   'adversarial-reviewer (package)',
+  +   'planner (package)',
+  +   'poteto (package)',
+  +   'reviewer (package)',
+  +   'scout (package)',
+  +   'visual-tester (package)',
+  +   'worker (package)'
+  -   'adversarial-reviewer (package:pi-herdr-roles)',
+  -   'planner (package:pi-herdr-roles)',
+  -   'poteto (package:pi-herdr-pstack)',
+  -   'reviewer (package:pi-herdr-roles)',
+  -   'scout (package:pi-herdr-roles)',
+  -   'visual-tester (package:pi-herdr-roles)',
+  -   'worker (package:pi-herdr-roles)'
+    ]
+  
+      at TestContext.<anonymous> (file:///home/g/.herdr/worktrees/pi-herdr-pstack/wave1-pstack-foundation/test/rpc.test.ts:140:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'adversarial-reviewer (package)', 'planner (package)', 'poteto (package)', 'reviewer (package)', 'scout (package)', 'visual-tester (package)', 'worker (package)' ],
+    expected: [ 'adversarial-reviewer (package:pi-herdr-roles)', 'planner (package:pi-herdr-roles)', 'poteto (package:pi-herdr-pstack)', 'reviewer (package:pi-herdr-roles)', 'scout (package:pi-herdr-roles)', 'visual-tester (package:pi-herdr-roles)', 'worker (package:pi-herdr-roles)' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

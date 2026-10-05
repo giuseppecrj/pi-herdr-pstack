@@ -1,0 +1,7 @@
+{
+  "candidate": "e262c584f54a7c8d60eb1fa5510f47c1299e3801",
+  "trackedFilesCompared": 165,
+  "onlyChangedFiles": [
+    "test/integration/harness.ts"
+  ]
+}
