@@ -1,18 +1,18 @@
 # pi-herdr-pstack contributor instructions
 
-This package supplies the full unprefixed pstack skill inventory and a small Pi extension using pi-herdr-agents' public role-pack protocol. It must not own another child runner, scheduler, model store, package installer or general shell-permission engine.
+This package supplies the full unprefixed pstack skill inventory and a small Pi extension using pi-herdr-agents' public APIs. It must not own another child runner, scheduler, model store, package installer or general shell-permission engine.
 
 ## Current authorized scope
 
-Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md` before implementation. The Wave 2 contract supersedes historical authorization limits in earlier planning snapshots.
+Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md` and `09-wave2-no-poteto-role.md` before implementation. The latest amendment removes the poteto role and supersedes earlier adapter/bootstrap requirements. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
 
 The user accepted Wave 1 and explicitly authorized Wave 2: setup/mode runtime and the two methodology entry points. Local candidate branches/worktrees and commits remain allowed; stop at the Wave 2 review gate before bulk W3/W4 skill porting. The user separately authorized the completed private GitHub repository creation and initial W1 branch pushes. No new pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations are authorized by the W2 approval.
 
-Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. The target inventory is the full upstream inventory, not a curated first release. `poteto` moves here; the other six existing roles move to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are removed, not migrated into this pack.
+Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. The target inventory is the full upstream inventory, not a curated first release. The user removed the named `poteto` role from the W2 target; retain `poteto-mode` and use deliberate bare delegates. The other six existing roles belong to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are removed, not migrated into this pack.
 
 ## Implementation boundaries
 
-- Use `pi-herdr-subagents:roles:discover:v1` with synchronous registration and shutdown unsubscription. Do not import pi-herdr-agents internals.
+- Do not import pi-herdr-agents internals. W2 contributes no named roles and must not register an empty role directory. If a later authorized wave supplies a role, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
 - Declare pi-herdr-agents as a peer and an explicit Pi installation prerequisite. A peer declaration is not extension activation.
 - Keep initial experimental packages private. A temporary peer range is not a published compatibility promise; record the exact candidate host SHA used in tests.
 - Preserve applicable upstream license notices and record file provenance.
