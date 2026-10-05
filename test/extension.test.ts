@@ -11,10 +11,10 @@ import {
 	SessionManager,
 	SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import piHerdrPstack from "../pi-extension/pstack/index.ts";
 import {
 	AGENTS_DIR,
 	ROLE_DISCOVERY_EVENT,
+	registerRolePack,
 } from "../pi-extension/pstack/roles.ts";
 import { PACK_ROOT } from "./helpers/rpc.ts";
 
@@ -50,8 +50,8 @@ describe("role-pack v1 bridge", () => {
 				if (event === "session_shutdown") shutdown.push(handler);
 			},
 		};
-		// SAFETY: the W1 factory only uses events and on at load time.
-		piHerdrPstack(api as unknown as ExtensionAPI);
+		// SAFETY: the bridge only uses events and on at load time.
+		registerRolePack(api as unknown as ExtensionAPI);
 		assert.deepEqual(registered, ["session_shutdown"]);
 		assert.deepEqual(discover(bus, 1), [AGENTS_DIR]);
 		assert.deepEqual(discover(bus, 2), [], "only apiVersion 1 is accepted");
@@ -61,7 +61,7 @@ describe("role-pack v1 bridge", () => {
 });
 
 describe("role-pack v1 bridge in a real SDK session", () => {
-	it("registers once across reloads, not after dispose, and adds no commands", async () => {
+	it("registers once across reloads, not after dispose, beside its two commands", async () => {
 		const root = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-sdk-"));
 		const cwd = join(root, "work");
 		const agentDir = join(root, "agent");
@@ -85,7 +85,10 @@ describe("role-pack v1 bridge in a real SDK session", () => {
 			const extensions = resourceLoader.getExtensions();
 			assert.deepEqual(extensions.errors, []);
 			assert.equal(extensions.extensions.length, 1);
-			assert.deepEqual([...extensions.extensions[0].commands.keys()], []);
+			assert.deepEqual(
+				[...extensions.extensions[0].commands.keys()].toSorted(),
+				["poteto-mode", "setup-pstack"],
+			);
 			const { session } = await createAgentSession({
 				cwd,
 				agentDir,

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, it } from "node:test";
 import { configuredHostRoot, IsolatedPi, PACK_ROOT } from "./helpers/rpc.ts";
@@ -55,17 +57,22 @@ function roleLines(listing: string): string[] {
 		.toSorted();
 }
 
+const OWN_COMMANDS = ["poteto-mode", "setup-pstack"];
+
 describe("installed pack without pi-herdr-agents", () => {
-	it("loads without registering commands or skills in Wave 1", async () => {
+	it("registers only its two commands and two skills, without host diagnostics", async () => {
 		const pi = new IsolatedPi({ packages: [PACK_ROOT] });
 		try {
-			const owned = (await commands(pi)).filter((command) =>
-				command.path.startsWith(`${PACK_ROOT}/`),
+			const owned = (await commands(pi)).filter(
+				(command) =>
+					command.path.startsWith(`${PACK_ROOT}/`) &&
+					!command.path.includes("/test/fixtures/"),
 			);
-			assert.deepEqual(
-				owned.filter((command) => !command.path.includes("/test/fixtures/")),
-				[],
-			);
+			assert.deepEqual(owned.map(({ name }) => name).toSorted(), [
+				...OWN_COMMANDS,
+				"skill:poteto-mode",
+				"skill:setup-pstack",
+			]);
 			assert.equal(pi.stderr, "");
 		} finally {
 			await pi.close();
@@ -89,12 +96,15 @@ function assertNoCommandCollisions(listed: CommandInfo[]) {
 	);
 	for (const retired of RETIRED_COMMANDS)
 		assert.equal(names.includes(retired), false, `retired /${retired}`);
-	assert.equal(
-		listed.some((command) =>
-			command.path.startsWith(`${PACK_ROOT}/pi-extension/`),
-		),
-		false,
-		"pstack registers no commands in Wave 1",
+	assert.deepEqual(
+		listed
+			.filter((command) =>
+				command.path.startsWith(`${PACK_ROOT}/pi-extension/`),
+			)
+			.map(({ name }) => name)
+			.toSorted(),
+		OWN_COMMANDS,
+		"pstack registers exactly its two commands",
 	);
 }
 
@@ -126,6 +136,69 @@ describe("installed pack with a real role-free pi-herdr-agents host", {
 			await pi.close();
 		}
 	});
+
+	for (const confirmed of [true, false])
+		it(`applies /setup-pstack only after the RPC dialog is ${confirmed ? "accepted" : "declined"}`, async () => {
+			const config = `${JSON.stringify({
+				status: { enabled: false },
+				keep: { me: true },
+				models: { tasks: { coding: ["faux/faux-1"] } },
+			})}\n`;
+			const pi = new IsolatedPi({
+				packages: [PACK_ROOT, hostRoot ?? ""],
+				herdrAgentsConfig: config,
+			});
+			const path = join(pi.agentDir, "herdr-agents", "config.json");
+			try {
+				await pi.prompt(
+					`/test-arm-tool pstack_apply_task_models ${JSON.stringify({ changes: { review: ["faux/faux-2"] } })}`,
+				);
+				const from = pi.records.length;
+				pi.send({
+					type: "prompt",
+					message: "/setup-pstack use faux-2 for review",
+				});
+				const dialog = await pi.waitFor(
+					(record) =>
+						record.type === "extension_ui_request" &&
+						record.method === "confirm",
+					from,
+				);
+				assert.equal(dialog.timeout, 120_000);
+				assert.match(
+					String(dialog.message),
+					new RegExp(
+						`"expectedConfigRevision": "sha256:${createHash("sha256").update(config).digest("hex")}"`,
+					),
+				);
+				assert.equal(
+					readFileSync(path, "utf8"),
+					config,
+					"nothing written before approval",
+				);
+				pi.send({ type: "extension_ui_response", id: dialog.id, confirmed });
+				const end = await pi.waitFor(
+					(record) =>
+						record.type === "tool_execution_end" &&
+						record.toolName === "pstack_apply_task_models",
+					from,
+				);
+				await pi.waitFor((record) => record.type === "agent_settled", from);
+				const saved = JSON.parse(readFileSync(path, "utf8"));
+				if (confirmed) {
+					assert.equal(end.isError, false, JSON.stringify(end.result));
+					assert.deepEqual(saved.models.tasks, {
+						coding: ["faux/faux-1"],
+						review: ["faux/faux-2"],
+					});
+					assert.deepEqual(saved.keep, { me: true });
+				} else {
+					assert.equal(readFileSync(path, "utf8"), config);
+				}
+			} finally {
+				await pi.close();
+			}
+		});
 
 	it("coexists with pi-herdr-roles without role or command collisions", {
 		skip:

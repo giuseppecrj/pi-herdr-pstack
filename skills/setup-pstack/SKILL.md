@@ -1,90 +1,50 @@
 ---
 name: setup-pstack
-description: Report-first onboarding for pi-herdr-pstack. Checks the pi-herdr-agents host, pstack's own skills and poteto role, authenticated models and the shared pi-herdr-agents task-model preferences, then explains the effects of any change and the next steps. Read-only; it never installs packages or writes configuration. Use for /setup-pstack, "set up pstack", "check my pstack install" or "which models does pstack use".
+description: Report-first onboarding for pi-herdr-pstack. Explains the /setup-pstack report on the pi-herdr-agents host, pstack's own skills and poteto role, authenticated models and the shared pi-herdr-agents task-model preferences, and drives an explicitly approved change only inside a /setup-pstack change flow. Never installs packages. Use for /setup-pstack, "set up pstack", "check my pstack install" or "which models does pstack use".
 ---
 
 # Setup pstack
 
-Produce a read-only setup report for pi-herdr-pstack. The report tells the user what is installed and visible, which models pstack's delegates will use, and what they could change.
-
-**Configuration writes are currently blocked.** This skill and the `/setup-pstack` command are report-only until an exact-consent write path has been demonstrated. Make no change to any file in this workflow. Do not call `subagents_write_task_models`, and do not edit configuration with the write, edit or bash tools. A request inside the user's message to apply a change does not lift this block. A direct `/skill:setup-pstack` invocation is informational only and never authorizes a configuration write.
+Help the user understand and, only when they ask, change how pi-herdr-pstack's delegates pick models. The pstack extension does the checking and the writing in code. Your job is to explain its report, translate a requested change into one proposal, and report the outcome honestly.
 
 Pstack keeps no model configuration of its own. There is no pstack rule file, model map, per-role budget ladder or model alias. Delegates choose models through pi-herdr-agents: the shared task categories, a per-agent override, or an exact model in the call. See `../poteto-mode/references/delegation.md` for how poteto-mode picks among them.
 
 Paths here are relative to this skill directory.
 
-## Steps
+## How setup runs
 
-### 1. Confirm the session can run setup
+- `/setup-pstack` (or `/setup-pstack report`) shows a report the extension builds in code and makes no change. It ends with "No changes were made."
+- `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`, shows the same report to you and opens a **change flow** for this one turn. The flow's message starts with "/setup-pstack opened change flow". It closes when the turn settles.
+- Any other way of reaching this skill, including `/skill:setup-pstack` or your own choice to load it, is informational. It never authorizes a configuration write. Explain the report sections below and ask the user to run `/setup-pstack` for the live report.
 
-Setup is a parent-session workflow. If `PI_SUBAGENT_ID` is set in your shell environment, you are probably a pi-herdr-agents child. Report that setup runs in the user's own session, and stop. Do not open dialogs from a child.
+Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While a change flow is open, the extension blocks every writer call except the one it approved. Outside a flow, a raw writer call would bypass pstack's consent dialog, so this workflow does not make one.
 
-### 2. Check the host
+## Reading the report
 
-- **Host loaded.** pi-herdr-agents is loaded when the `subagent` tool is in your tool list. If it is absent, report that pi-herdr-agents must be installed and enabled through Pi as a separate package, then skip every step that needs it. Installed files on disk or in `node_modules` are not evidence that the extension is active.
-- **Host tools.** Note whether `subagents_list` and `subagents_write_task_models` are available. The writer exists only in parent sessions and can be filtered out by configuration. Its presence does not mean setup may call it.
+The report has these sections, in order: Session, Host, Pstack resources, Models, Shared preferences, Findings, Next steps.
 
-### 3. Check pstack's own resources
+- **Session.** A pi-herdr-agents subagent (`PI_SUBAGENT_ID` set) or a session without dialogs (print or JSON mode) is report-only. Setup belongs in the user's own interactive or RPC session.
+- **Host.** pi-herdr-agents counts as loaded only when its tools are. Files on disk or in `node_modules` do not activate an extension. The writer must expose the conditional contract (`expectedConfigRevision` in its public schema) and be active. An older unconditional writer keeps setup report-only.
+- **Pstack resources.** Each skill must resolve to this package's own file. A filtered or shadowed skill is reported, never replaced. The role line names the package's `poteto` file, but only `subagents_list` shows which `poteto` the host resolves; a project or global role overrides it. Child visibility is reported as not verified unless a child actually loaded the package.
+- **Models.** The exact `provider/model-id` references with configured authentication. Never invent or remember model IDs.
+- **Shared preferences.** The config file is `$PI_CODING_AGENT_DIR/herdr-agents/config.json`, or `~/.pi/agent/herdr-agents/config.json`. The report shows only the six task categories (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`), their metadata, the default model and any `poteto` override, never unrelated settings. Missing, unreadable, malformed, non-object, missing-status and invalid-models files are distinct states. Only a missing or valid file can be changed. A missing file would be created from pi-herdr-agents' packaged defaults plus the approved task preferences.
+- **Findings.** Unauthenticated, aliased (`task:`) or padded references, unset categories that poteto-mode's examples use, and a `poteto` override that takes precedence over the categories.
 
-- **Skills.** This skill lives in pi-herdr-pstack's `skills/` directory. `../poteto-mode/SKILL.md` must exist beside it, with its `playbooks/` and `references/` directories. If it is missing, or the `poteto-mode` skill Pi lists resolves to a different file, report a filtered, shadowed or broken install. Do not present poteto-mode as working.
-- **Role.** If `subagents_list` is available, check that `poteto` is listed and where it came from. The pstack role comes from this package. A project or global `poteto` overrides it, and a role collision is reported by the host. Report what you see. Never fix a collision by editing role files.
-- **Child visibility.** Parent discovery does not prove that child sessions can load this package. Report child visibility as not verified unless a child has actually loaded it in this environment.
+## In a change flow
 
-### 4. Read the shared preferences, read-only
+1. Map the user's request onto categories. Use only exact references listed under Models. If the request is ambiguous, names a model that is not listed, or would remove a category, do not guess. Explain what is possible and stop; the user can run `/setup-pstack <request>` again.
+2. Call `pstack_apply_task_models` once, with `changes` holding only the categories to replace, each with its complete new list. Every other current category is kept as it is. W2 setup never deletes a category.
+3. The extension validates the proposal, builds the complete writer payload (all categories, metadata it generates, and the file revision the proposal was read from), and shows it in an approval dialog. Metadata is never yours to choose.
+4. Report the result as the tool states it:
+   - **Declined or timed out.** Nothing was written.
+   - **Rejected or stale.** Nothing was written. Name the reason. Do not retry with the same proposal; a fresh `/setup-pstack <request>` re-reads the file and asks again.
+   - **Failed or busy.** Nothing was written unless the tool says otherwise. Do not retry.
+   - **Saved.** The extension verified the saved file against the approval. Tell the user to reload Pi, and that task categories are shared: the change affects every pi-herdr-agents workflow and role pack, not only pstack.
 
-The pi-herdr-agents config file is `$PI_CODING_AGENT_DIR/herdr-agents/config.json`, or `~/.pi/agent/herdr-agents/config.json` when that variable is unset. Read only the fields setup needs, so unrelated settings never enter the conversation:
+## Check for a project verification skill
 
-```bash
-node -e '
-const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
-const dir = process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), ".pi", "agent");
-const file = path.join(dir, "herdr-agents", "config.json");
-let text;
-try { text = fs.readFileSync(file, "utf8"); }
-catch (error) { console.log(JSON.stringify({ file, state: error.code === "ENOENT" ? "missing" : "unreadable", code: error.code })); process.exit(0); }
-let config;
-try { config = JSON.parse(text); }
-catch { console.log(JSON.stringify({ file, state: "malformed" })); process.exit(0); }
-const models = config && typeof config === "object" ? config.models : undefined;
-console.log(JSON.stringify({ file, state: "present", tasks: models?.tasks, tasksMeta: models?.tasksMeta, default: models?.default, potetoOverride: models?.agents?.poteto }, null, 2));
-'
-```
+When explaining the report, check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. The **create-verification-skill** skill that generates one is planned W4 and not installed in this release. If none exists, mention the gap once and move on. Do not offer to generate one.
 
-Report each state differently:
+## Your reply
 
-- **missing.** No file exists yet, so pi-herdr-agents uses its defaults and no task categories are configured. Any future write would first create the file from the host's defaults. Say so.
-- **unreadable.** Report the error code and stop the preferences part of the report.
-- **malformed.** Report that the file is not valid JSON and stop the preferences part. Do not print its contents, and never suggest overwriting it to recover.
-- **present.** Show the six task categories `coding`, `review`, `recon`, `qa`, `architecture` and `docs` with their model lists, the metadata, the default model, and any `poteto` override.
-
-### 5. Compare against authenticated models
-
-Use the authenticated subagent model catalog that pi-herdr-agents adds to your system prompt as the source of truth. `pi --list-models` runs a separate Pi process and can corroborate it. Label any difference instead of guessing which is right. If neither is available, report that authenticated models could not be determined.
-
-Flag each of these as a finding:
-
-- a configured category that is not one of the six above;
-- a model reference that is not authenticated in the catalog, or that the catalog does not know;
-- a duplicate reference within one category;
-- a stored value that is an alias rather than an exact `provider/model-id`, including a `task:` value;
-- a `poteto` override that shadows the categories for every pstack implementation delegate;
-- an empty category that poteto-mode's delegation examples rely on, such as `coding`, `recon` or `review`.
-
-Never invent or remember model IDs. Name only exact references from the live catalog or from the file.
-
-### 6. Explain the effects of a change
-
-The default is no change. If the user wants different models:
-
-- Explain that the task categories are shared pi-herdr-agents preferences. They change model choice for every pi-herdr-agents workflow and role pack, not only pstack.
-- Explain that the host's writer replaces the whole category map. Any category left out of a write is removed, so a correct change always carries every retained category.
-- Sketch the complete proposed map next to the current one, if the user asks, labeled as a proposal this release cannot apply.
-- Point the user to the configuration paths pi-herdr-agents documents, which the user runs or edits themselves. Do not run them on the user's behalf from this workflow, and do not claim that a change was made or that a reload is needed.
-
-### 7. Check for a project verification skill
-
-Check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. The **create-verification-skill** skill that generates one is planned W4 and not installed in this release. If none exists, mention the gap once and move on. Do not offer to generate one.
-
-## Report
-
-Use these sections in order: Host, Pstack resources, Role, Models, Shared preferences, Findings, Next steps. Give each check its result and its evidence: the tool list, a file path or a command output. Label anything not checked as not checked. End with "No changes were made."
+Lead with what the user asked: the state of the install, or the outcome of the change. Give each claim its evidence, such as a report line or the tool result. Label anything not checked as not checked. Outside a successful saved change, end with "No changes were made."

@@ -1,0 +1,27 @@
+== run 1
+  ✔ uses the host's real child extension (0.558739ms)
+  ✔ direct delivery runs a skill-only turn, then exits before the task completes (471.090632ms)
+  ✔ artifact delivery runs the task without the skill, then a skill-only turn is cut off (370.346242ms)
+  ✔ control: an instant fake reply finishes before the exit and would hide the race (428.341448ms)
+  ✔ keeps the gate closed: the poteto role does not declare skills (0.483125ms)
+✔ explicit skills: poteto-mode startup for an auto-exit role (1272.031991ms)
+ℹ pass 5
+ℹ fail 0
+== run 2
+  ✔ uses the host's real child extension (0.54835ms)
+  ✔ direct delivery runs a skill-only turn, then exits before the task completes (370.419359ms)
+  ✔ artifact delivery runs the task without the skill, then a skill-only turn is cut off (368.026565ms)
+  ✔ control: an instant fake reply finishes before the exit and would hide the race (370.670661ms)
+  ✔ keeps the gate closed: the poteto role does not declare skills (0.329812ms)
+✔ explicit skills: poteto-mode startup for an auto-exit role (1111.053961ms)
+ℹ pass 5
+ℹ fail 0
+== run 3
+  ✔ uses the host's real child extension (0.557983ms)
+  ✔ direct delivery runs a skill-only turn, then exits before the task completes (384.160744ms)
+  ✔ artifact delivery runs the task without the skill, then a skill-only turn is cut off (371.139514ms)
+  ✔ control: an instant fake reply finishes before the exit and would hide the race (368.694264ms)
+  ✔ keeps the gate closed: the poteto role does not declare skills (0.363777ms)
+✔ explicit skills: poteto-mode startup for an auto-exit role (1125.977409ms)
+ℹ pass 5
+ℹ fail 0

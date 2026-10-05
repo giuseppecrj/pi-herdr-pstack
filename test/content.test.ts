@@ -107,7 +107,8 @@ describe("poteto role", () => {
 		assert.equal(fields.get("system-prompt"), "append");
 		assert.equal(fields.get("model"), undefined);
 		assert.equal(fields.get("thinking"), undefined);
-		// W1 contract: poteto-mode is added only after the real skill ships (W2).
+		// W2 gate: explicit skills: poteto-mode waits for a startup path that
+		// keeps the task; see test/child-skill-startup.test.ts.
 		assert.equal(fields.get("skills"), undefined);
 		assert.equal(fields.get("skill"), undefined);
 	});
@@ -127,18 +128,46 @@ describe("poteto role", () => {
 	});
 });
 
-describe("Wave 1 scope", () => {
-	it("ships no skills, setup or mode implementation yet", () => {
-		assert.equal(existsSync(join(PACK_ROOT, "skills")), false);
-		assert.deepEqual(
-			readdirSync(join(PACK_ROOT, "pi-extension", "pstack")).toSorted(),
-			["index.ts", "roles.ts"],
-		);
-		const extension = `${read("pi-extension/pstack/index.ts")}\n${read("pi-extension/pstack/roles.ts")}`;
-		assert.doesNotMatch(extension, /registerCommand|registerTool|appendEntry/);
+describe("Wave 2 runtime scope", () => {
+	const modules = readdirSync(
+		join(PACK_ROOT, "pi-extension", "pstack"),
+	).toSorted();
+	const source = modules
+		.map((name) => read(`pi-extension/pstack/${name}`))
+		.join("\n");
+
+	it("ships the role bridge plus mode and setup modules only", () => {
+		assert.deepEqual(modules, [
+			"config.ts",
+			"index.ts",
+			"mode.ts",
+			"resources.ts",
+			"roles.ts",
+			"setup.ts",
+		]);
+	});
+
+	it("imports nothing private from pi-herdr-agents and writes no files itself", () => {
 		assert.doesNotMatch(
-			extension,
+			source,
 			/pi-herdr-agents\/|maestro|pi-extension\/subagents/,
+		);
+		assert.doesNotMatch(
+			source,
+			/\b(?:writeFileSync|appendFileSync|renameSync|rmSync|unlinkSync|mkdirSync|copyFileSync|writeFile|appendFile)\b/,
+		);
+		assert.doesNotMatch(source, /new Proxy|defineProperty|forceSystemPrompt/);
+		assert.doesNotMatch(
+			source,
+			/\.execute\(/,
+			"no discovered raw execute callback",
+		);
+	});
+
+	it("keeps the W1 role-pack bridge byte for byte", () => {
+		assert.equal(
+			sha256(read("pi-extension/pstack/roles.ts")),
+			"7e1f9ab2f6d9aa30716ca6929a700f840abd243d422868b8f6889b3944befd9e",
 		);
 	});
 });
@@ -153,30 +182,47 @@ describe("package manifest", () => {
 		assert.deepEqual(manifest.peerDependencies, {
 			"@earendil-works/pi-coding-agent": "*",
 			"pi-herdr-agents": "*",
+			typebox: "*",
 		});
 		assert.equal(manifest.dependencies, undefined);
 		assert.deepEqual(manifest.pi, {
 			extensions: ["./pi-extension/pstack/index.ts"],
+			skills: ["./skills"],
 		});
 	});
 
-	it("packs the role, bridge and notices without plans or development files", () => {
+	it("packs the role, extension, skills and notices without plans or development files", () => {
 		const [pack] = JSON.parse(
 			execFileSync("npm", ["pack", "--dry-run", "--json"], {
 				cwd: PACK_ROOT,
 				encoding: "utf8",
 			}),
 		) as Array<{ files: Array<{ path: string }> }>;
-		assert.deepEqual(pack.files.map(({ path }) => path).toSorted(), [
-			"LICENSE",
-			"README.md",
-			"THIRD_PARTY_NOTICES.md",
-			"agents/poteto.md",
-			"docs/compatibility.md",
-			"docs/provenance.md",
-			"package.json",
-			"pi-extension/pstack/index.ts",
-			"pi-extension/pstack/roles.ts",
-		]);
+		const skills = execFileSync("git", ["ls-files", "skills"], {
+			cwd: PACK_ROOT,
+			encoding: "utf8",
+		})
+			.split("\n")
+			.filter(Boolean);
+		assert.equal(skills.length, 17);
+		assert.deepEqual(
+			pack.files.map(({ path }) => path).toSorted(),
+			[
+				"LICENSE",
+				"README.md",
+				"THIRD_PARTY_NOTICES.md",
+				"agents/poteto.md",
+				"docs/compatibility.md",
+				"docs/provenance.md",
+				"package.json",
+				"pi-extension/pstack/config.ts",
+				"pi-extension/pstack/index.ts",
+				"pi-extension/pstack/mode.ts",
+				"pi-extension/pstack/resources.ts",
+				"pi-extension/pstack/roles.ts",
+				"pi-extension/pstack/setup.ts",
+				...skills,
+			].toSorted(),
+		);
 	});
 });

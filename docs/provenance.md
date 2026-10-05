@@ -17,6 +17,14 @@ pi-herdr-agents checkout is available, compares each file to the source commit.
 `examples/role-pack/extension.ts` and ADR-0003), package metadata, tests,
 `README.md`, `THIRD_PARTY_NOTICES.md` and these documents are new.
 
+## Wave 2: runtime
+
+`pi-extension/pstack/{config,mode,resources,setup}.ts` and their tests are new.
+`roles.ts` is unchanged from Wave 1. `agents/poteto.md` remains the byte-identical
+Wave 1 move: the approved thin adapter waits for a working explicit skill
+startup (see [compatibility](compatibility.md#role-skill-startup)), so its
+provenance fixture is unchanged.
+
 ## Wave 2: methodology skills
 
 The `skills/poteto-mode/` and `skills/setup-pstack/` files are adaptations of
@@ -35,7 +43,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | `skills/poteto-mode/references/bugbot-triage.md` | mimir file of the same name | adapted |
 | `skills/poteto-mode/references/delegation.md` | derived from both hubs' Subagents sections | new |
 | `skills/poteto-mode/references/authorization.md` | derived from both hubs' Autonomy sections | new |
-| `skills/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted, substantially rewritten |
+| `skills/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted, substantially rewritten; revised by the runtime owner to describe the implemented change flow |
 
 The fixture records, for every shipped file, its SHA-256, each source path and
 blob hash at the pinned commit, and what changed. The adaptations share four

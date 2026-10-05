@@ -542,19 +542,23 @@ describe("authorization boundaries", () => {
 		);
 	});
 
-	it("keeps setup report-only without invoking the writer", () => {
+	it("leaves configuration writes to the setup extension's approved flow", () => {
 		const setup = read("skills/setup-pstack/SKILL.md");
-		assert.match(setup, /\*\*Configuration writes are currently blocked\.\*\*/);
-		assert.match(setup, /End with "No changes were made\."/);
+		assert.match(setup, /never authorizes a configuration write/);
+		assert.match(setup, /never call `subagents_write_task_models` yourself/);
+		assert.match(setup, /Call `pstack_apply_task_models` once/);
+		assert.match(setup, /Metadata is never yours to choose/);
+		assert.match(setup, /W2 setup never deletes a category/);
+		assert.match(setup, /Do not retry/);
+		assert.match(setup, /end with "No changes were made\."/);
 		for (const line of setup
 			.split("\n")
 			.filter((text) => text.includes("subagents_write_task_models")))
 			assert.match(line, /\b(?:not|never)\b/i, line);
-		const snippet = /```bash\n([\s\S]*?)\n```/.exec(setup);
-		assert.ok(snippet);
 		assert.doesNotMatch(
-			snippet[1],
-			/write|append|rename|unlink|mkdir|rmSync|copyFile|chmod/i,
+			setup,
+			/```(?:bash|sh|js)?\n/,
+			"no manual config snippet",
 		);
 	});
 });

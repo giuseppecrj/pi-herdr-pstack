@@ -336,7 +336,7 @@
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",
-			"sha256": "fab8d7146a0773ee6ac1f7f89609120d3a101c824e31a682e50e5c96f1a4baf4",
+			"sha256": "291c1c2783a662d73eecf9f446f7c29c7adb90608f5b95622cdecb410de80296",
 			"status": "adapted",
 			"sources": [
 				{
@@ -346,7 +346,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check as a read-only report on pi-herdr-agents shared task preferences. Configuration writes are blocked pending an exact-consent proof."
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational."
 		}
 	],
 	"planned": [
