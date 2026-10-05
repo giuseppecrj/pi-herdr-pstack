@@ -86,3 +86,57 @@ makes the run unrecognized, which clears the apply tool and lets later writes
 through. A user message that copies the marker text protects its own run, which
 fails closed. Real Herdr, TUI, installed-package and live-model checks were not
 run.
+
+## Entry-based run identity follow-up (`76f877f`)
+
+A third cross-family review of `61048b0` found that the guard treated a setup
+prompt whose line-anchored marker no longer matched as consumed and dropped
+protection (P1). An ordinary input hook that only normalized whitespace, or one
+that stripped the marker, let raw and relayed writer calls through in the setup
+run. Idle cleanup ran only at `session_start`, so navigating the session tree
+back into a setup run left an unsettled marker. The next unrelated run's writer
+was then blocked once (P3).
+
+The fix removes prompt-text identity. The command appends a
+`pi-herdr-pstack:setup-run` `opened` entry before it sends the setup prompt. The
+first new run's `before_agent_start` claims it and appends `started`.
+Settlement appends `settled`. The guard protects the claimed run in memory, and
+after a reload it protects any running turn whose branch shows an opened run
+without a settled entry. The claiming run gets apply authority only if its
+prompt still contains the random run ID. If the ID is missing, the run fails
+closed: it stays protected until it settles, the apply tool is removed, and the
+user is notified to run `/setup-pstack` again. That includes a consumed setup
+message, which blocks the next new run's writer once, and a stripped ID. Stale
+started runs are settled at idle `session_start`, at `session_tree` and at the
+next new run's `before_agent_start`. The approved-apply path is unchanged.
+
+Inputs are as above, except that the logs ran on fix commit `76f877f` (base
+`61048b00202aea16952f6a0c31eb0a82ca148d1f`) with the evidence files
+uncommitted. Host `b04906b6` and roles `22e1816` were clean; Node 26.8.2,
+npm 11.19.1, Pi 1.0.3.
+
+| Log | What it shows |
+| --- | --- |
+| `identity-check-full.log` | `npm run check` with all inputs: typecheck, lint, format and 107 passing tests, none skipped. New SDK tests cover the whitespace-normalizing hook: direct and relayed writes are blocked and the dialog still applies the approved payload. They also cover the ID-stripping hook (blocked, apply refused, one user notice), tree navigation to the assistant message before the settled entry followed by an allowed unrelated write, a consumed setup message (the next run is blocked once, then the host behaves normally), a custom-message run (allowed, no apply authority), and a setup prompt delayed by an input handler past another run (both protected). Unit tests cover entry reconstruction and every settlement path. The three reload cases pass unchanged except that they now count the `settled` state. |
+| `identity-test-default-noenv.log` | `npm test` with no integration inputs: 62 pass, 3 skipped, each with its reason. |
+| `identity-npm-pack-dry-run.log` | 28 packed files, unchanged. |
+| `identity-mutation-checks.log`, `run-mutations.sh`, `mutate.py` | Seventeen new faults (`N1`–`N17`) plus earlier ones against the setup SDK and unit tests, with the source restored and checked with `git diff`. |
+
+Mutation results: all new faults are caught. These include the reviewed P1
+shape (`N1N2`: an unconfirmed run loses protection and confirmation needs the
+exact marker line) and the reviewed P3 shape (`N3N4`: no settlement at
+`session_tree` or the next new run). `N4` alone is caught only by the unit test,
+because `session_tree` settles first in the SDK test. `M2`, `M3` and `M5`–`M12`
+stay caught. As before, `M1` and `M1b` are not caught on their own, because the
+branch record protects the same calls. Each is caught when paired with `N5`,
+which removes branch protection. `M13`–`M20` target the earlier marker-based
+source and no longer apply.
+
+Limits: the reviewer's `/tmp` probes were not rerun, because they import
+another checkout; the SDK tests reproduce their hooks. Apply authority still
+depends on the run ID surviving in the prompt. A transform that drops it fails
+closed rather than open. A reload after the command but before its prompt
+starts leaves an `opened` entry that the next new run claims without apply
+authority. A run that claims a reservation it does not own is blocked once. A
+displaced setup prompt is recognized only by this extension instance.
+Real Herdr, TUI, installed-package and live-model checks were not run.
