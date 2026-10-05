@@ -19,10 +19,18 @@
     "case-c.log": "3f2320d283114dbdd9e7389420c58f8f74066c09fb9c3febf4c52848c9ac74df",
     "case-d.log": "0a38de91d3ce94d45581fcc3114986d7b41b6fc69ab1d59f9c43170108c0d9b2",
     "case-e.log": "d3c05cc8cf33644d3cd23ccd02b52ca8c3ffb054b59715a376f14209682e89d4",
-    "fake-provider.diff": "027a5881c0fe94944b8cba7402afb6e31fc6a2bd7ba50739cfbf5ae65fe87fe3",
     "full-suite.log": "b63f970aae1b1ede4ba0bf852e2e7049edcac28592bc73592a7080151025681e",
-    "run.sh": "7807ce965da226661f398eb1cf954135388c3f2fa581b71c1fb0e28e4d3439a1",
+    "fake-provider.diff": "027a5881c0fe94944b8cba7402afb6e31fc6a2bd7ba50739cfbf5ae65fe87fe3",
     "subagent-cancel.test.ts": "12934ddb946822561d6ff2b2bf955aede7d89e62a1ce5d5010286ed4af4c0c55",
-    "workspaces-baseline.json": "b7f9767174fbc57e7c5977943f4d9a762d5e0ba5c35eb8335289b1c336e74b64"
+    "run.sh": "7807ce965da226661f398eb1cf954135388c3f2fa581b71c1fb0e28e4d3439a1",
+    "workspaces-baseline.json": "b7f9767174fbc57e7c5977943f4d9a762d5e0ba5c35eb8335289b1c336e74b64",
+    "cancel-cases-37d8c62.log": "a9c0c18ceb95db5a04b390e13858d298fd25420f860603eb3267d1f57be5bfc1",
+    "full-suite-37d8c62.log": "63abb7073c9c57ed753c49513b76c600a372fe09d8257b6312bee2167c3e5750",
+    "cancel-cases-3572b4f.log": "d3d3f807eab0f262169d24321e0fb7500a604fb0c7d802f8c8a79a580151af23",
+    "full-suite-3572b4f.log": "ccff081447f530c265efee17c66bd348ee11b40d7fb231ed147bdeac4d6b5602"
+  },
+  "reruns": {
+    "3572b4f": "5/5 cancel cases, full suite 77/77 (72 existing + 5 cancel)",
+    "37d8c62": "5/5 cancel cases, full suite 77/77; identity sidecar path exercised by the real child"
   }
 }

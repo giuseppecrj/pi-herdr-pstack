@@ -1,0 +1,15 @@
+▶ subagent-cancel [herdr]
+  ✔ (a) cancels a slow ordinary child: one cancelled result, pane closed, no fallback (12409.988683ms)
+  ✔ (b) negative control: closing the pane by hand starts the fallback model (7860.496696ms)
+  ✔ (c) cancels a worktree child: workspace, checkout, commit and handoff retained (11324.658028ms)
+  ✔ (d) rejects cancel of a persistent specialist and points to subagent_stop (7322.041876ms)
+  ✔ (e) double cancel is idempotent: one result, no error, no fallback (10293.023109ms)
+✔ subagent-cancel [herdr] (49211.661428ms)
+ℹ tests 5
+ℹ suites 1
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49329.887194
