@@ -1,0 +1,15 @@
+### Bug fix
+
+**You own this task. Plan, review, verify.** Delegate investigation and the fix to subagents, stay in the lead.
+
+Be scientific. Every shipped line traces to runtime evidence. Belt-and-suspenders that "might help" is a hypothesis, not a fix. It does not ship. When evidence refutes a hypothesis, revert what it motivated. The smallest change the evidence justifies ships, nothing more.
+
+1. Reproduce it yourself on the matching surface, with the tooling the project or session provides (hub Non-negotiables). Don't hand the repro to the user. A debug or instrumentation protocol that says to ask the user does not override this. You drive the instrumented runtime. Ask the user only with a stated, specific reason the available tooling cannot reach the target, and only after driving it as far as it goes. Won't reproduce directly, force it: synthesize the trigger, tighten conditions, or instrument until it fires.
+2. Binary-search the cause. Form the candidate hypotheses, then rule them out until one survives. Seed them with the **how** skill (planned W4) over the affected subsystem and the **why** skill (planned W4) for regression history. Until they ship, read the subsystem and its `git log` directly or through a bare investigator. Each pass, take the split that cuts the most remaining problem space, get runtime evidence, eliminate. When program state is unclear, add instrumentation or logging and read it as the code runs. Don't guess. Drive a long or stubborn hunt as an explicit loop with a written stop condition, as in `playbooks/autonomous-run.md`. Confirm the surviving *mechanism* with runtime evidence before the step-3 design fan-out.
+3. Plan the fix. If it crosses a function boundary, run the **architect** skill (planned W4) first. Until it ships, compare two or three fix shapes yourself and record `architect skipped: planned W4`. Delegate implementation to a `poteto` subagent with `model: "task:coding"`, or an exact model when the fix is the hardest kind, and a specific scope, per `references/delegation.md`.
+4. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass. Flag it. Unit tests show branch behavior, not bug absence.
+5. When the commit policy allows commits, stage them so the failing repro lands before the fix in git history. See the **tdd** skill (planned W3) for the failing-test-first cadence when the bug has a cheap local test path. Until it ships, write the failing test, watch it fail for the right reason, then apply the fix on top. Skip it when the test would be expensive, integration-heavy, or unclear.
+   This is the canonical **principle-sequence-verifiable-units** shape (planned W3), the failing test first and the fix on top.
+6. Run **Opening a PR** (`playbooks/opening-a-pr.md`) only when the task authorizes a pull request. Otherwise stop at the verified local result.
+
+**Reply:** what was broken, root cause, fix, how you verified. Paste failing-then-passing repro output verbatim.
