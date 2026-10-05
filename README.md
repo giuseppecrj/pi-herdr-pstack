@@ -62,7 +62,8 @@ run is not evidence that a live model follows `poteto`'s instructions.
 
 | Variable | Effect |
 | --- | --- |
-| `PI_HERDR_AGENTS_HOST` | Host package root for combined-host RPC checks; skipped when unset. |
+| `PI_HERDR_AGENTS_HOST` | Role-free host package root for combined-host RPC checks; role-free expectations always apply, so a legacy bundled host fails. Skipped when unset. |
+| `PI_HERDR_AGENTS_LEGACY_HOST` | Opt-in pre-extraction host root for separate legacy bundled-role characterization; skipped when unset. |
 | `PI_HERDR_ROLES_PACK` | Also install pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for provenance reconstruction. Defaults to a sibling `../pi-herdr-agents` containing the source commit; skipped otherwise. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
