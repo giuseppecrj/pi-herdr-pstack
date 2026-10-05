@@ -18,6 +18,7 @@ import {
 	APPLY_TOOL,
 	CONFIRM_TIMEOUT_MS,
 	REPORT_MESSAGE_TYPE,
+	RUN_ENTRY_TYPE,
 	WRITER,
 } from "../pi-extension/pstack/setup.ts";
 import { configuredHostRoot, PACK_ROOT } from "./helpers/rpc.ts";
@@ -971,6 +972,122 @@ describe("setup run protection lasts until the run settles", needsHost, () => {
 		);
 	});
 
+	for (const { label, decide, at, apply } of [
+		{
+			label: "during the approved nested dispatch",
+			decide: () => true,
+			at: "nested",
+			apply: /the approval for that pstack_apply_task_models call has ended/,
+		},
+		{
+			label: "after a declined apply",
+			decide: () => false,
+			at: "after-apply",
+			apply: /declined or the approval dialog timed out/,
+		},
+		{
+			label: "after a successful apply",
+			decide: () => true,
+			at: "after-apply",
+			apply: /Verified the saved file/,
+		},
+	] as const)
+		it(`keeps raw and relayed writes blocked in the same run after a reload ${label}`, async () => {
+			const holder: SdkPi[] = [];
+			const executions = writerExecutions();
+			const lifecycle: string[] = [];
+			let reloaded = false;
+			const reloadFixture: ExtensionFactory = (api) => {
+				api.on("agent_start", () => {
+					lifecycle.push("agent_start");
+				});
+				api.on("agent_settled", () => {
+					lifecycle.push("agent_settled");
+				});
+				const reload = async () => {
+					reloaded = true;
+					// Fresh extension instances join the running turn.
+					await holder[0]?.session.reload();
+				};
+				api.on("tool_execution_start", async (event) => {
+					if (
+						at === "nested" &&
+						!reloaded &&
+						event.toolName === WRITER &&
+						event.parentToolCallId
+					)
+						await reload();
+				});
+				api.on("tool_execution_end", async (event) => {
+					if (
+						at === "after-apply" &&
+						!reloaded &&
+						event.toolName === APPLY_TOOL
+					)
+						await reload();
+				});
+			};
+			await withHost(
+				decide,
+				async (pi) => {
+					holder.push(pi);
+					pi.respond([
+						fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+						fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+						fauxAssistantMessage([
+							fauxToolCall("test_relay", { tool: WRITER, args: RAW }),
+						]),
+						fauxAssistantMessage("done"),
+					]);
+					await pi.prompt("/setup-pstack review");
+					assert.equal(reloaded, true);
+					assert.deepEqual(lifecycle, ["agent_start", "agent_settled"]);
+					const [result] = pi.toolResults(APPLY_TOOL);
+					assert.match(result.text, apply);
+					const [raw] = pi.toolResults(WRITER);
+					assert.equal(raw.isError, true);
+					assert.match(
+						raw.text,
+						/until this \/setup-pstack run settles, only its approved/,
+					);
+					assert.match(
+						pi.toolResults("test_relay")[0].text,
+						/pi-herdr-pstack setup blocked/,
+					);
+					assert.equal(confirmCalls(pi).length, 1);
+					const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
+					assert.deepEqual(
+						saved.models.tasks,
+						label === "after a successful apply"
+							? { ...BASE.models.tasks, review: REVIEW_CHANGE.changes.review }
+							: BASE.models.tasks,
+						"retained categories survive; no raw replacement",
+					);
+					assert.equal(
+						executions.count(),
+						label === "after a successful apply" ? 1 : 0,
+					);
+					const settledEntries = pi.session.sessionManager
+						.getBranch()
+						.filter(
+							(entry) =>
+								entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE,
+						);
+					assert.equal(
+						settledEntries.length,
+						1,
+						"the run is recorded as settled",
+					);
+					assert.equal(
+						pi.session.getActiveToolNames().includes(APPLY_TOOL),
+						false,
+					);
+					await assertHostWriterOutsideSetup(pi);
+				},
+				{ extensions: [relayTool, executions.factory, reloadFixture] },
+			);
+		});
+
 	it("writes nothing when the session is replaced while approval is pending", async () => {
 		const holder: SdkPi[] = [];
 		let replacement: Promise<void> | undefined;
@@ -1200,3 +1317,74 @@ describe(
 		});
 	},
 );
+
+describe("an unstarted setup reservation", needsHost, () => {
+	const consumeSetupPrompt: ExtensionFactory = (api) => {
+		api.on("input", (event) =>
+			event.text.includes("/setup-pstack opened change flow")
+				? { action: "handled" as const }
+				: undefined,
+		);
+	};
+
+	it("does not block the next unrelated prompt when an input handler consumed the setup message", async () => {
+		await withHost(
+			() => true,
+			async (pi) => {
+				await pi.prompt("/setup-pstack review");
+				assert.equal(pi.session.messages.length, 0, "no setup run started");
+				await assertHostWriterOutsideSetup(pi);
+				assert.equal(
+					pi.session.getActiveToolNames().includes(APPLY_TOOL),
+					false,
+				);
+				assert.equal(confirmCalls(pi).length, 0);
+			},
+			{ extensions: [consumeSetupPrompt] },
+		);
+	});
+
+	it("does not block a later run triggered by a custom message", async () => {
+		await withHost(
+			() => true,
+			async (pi) => {
+				await pi.prompt("/setup-pstack review");
+				pi.armToolCall(WRITER, RAW);
+				await pi.session.sendCustomMessage(
+					{ customType: "test-trigger", content: "go", display: false },
+					{ triggerTurn: true },
+				);
+				await pi.idle();
+				const [result] = pi.toolResults(WRITER);
+				assert.equal(result.isError, false, result.text);
+			},
+			{ extensions: [consumeSetupPrompt] },
+		);
+	});
+
+	it("still protects a setup prompt that an input handler transformed", async () => {
+		const wrap: ExtensionFactory = (api) => {
+			api.on("input", (event) => ({
+				action: "transform" as const,
+				text: `Wrapped by a test.\n\n${event.text}`,
+			}));
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				pi.respond([
+					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+					fauxAssistantMessage("done"),
+				]);
+				await pi.prompt("/setup-pstack review");
+				const [raw] = pi.toolResults(WRITER);
+				assert.equal(raw.isError, true);
+				assert.match(raw.text, /until this \/setup-pstack run settles/);
+				assert.equal(executions.count(), 0);
+				await assertHostWriterOutsideSetup(pi);
+			},
+			{ extensions: [wrap, executions.factory] },
+		);
+	});
+});

@@ -1,9 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
 	ExtensionContext,
 	ExtensionToolContext,
+	SessionEntry,
 	ToolInfo,
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
@@ -30,6 +32,10 @@ export const WRITER = "subagents_write_task_models";
 export const APPLY_TOOL = "pstack_apply_task_models";
 export const REPORT_MESSAGE_TYPE = "pi-herdr-pstack:setup-report";
 export const CONFIRM_TIMEOUT_MS = 120_000;
+/** Session entry pstack appends when a recorded change-flow run settles. */
+export const RUN_ENTRY_TYPE = "pi-herdr-pstack:setup-run";
+const RUN_MARKER =
+	/^\/setup-pstack opened change flow ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\. It ends when this turn settles\.$/m;
 const EXTENSION_FILE = fileURLToPath(new URL("./index.ts", import.meta.url));
 /** Categories poteto-mode's delegation examples route through. */
 const METHODOLOGY_CATEGORIES: readonly TaskCategory[] = [
@@ -327,7 +333,10 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
  * apply attempt is still open.
  */
 type Flow = {
-	generation: number;
+	/** Marks the run's prompt, so the run is recognizable in the session branch. */
+	runId: string;
+	/** The reserved prompt reached the model; until then another run may start first. */
+	started: boolean;
 	sessionId: string;
 	/** The run may still open its one approval dialog. */
 	applyOpen: boolean;
@@ -431,8 +440,44 @@ function isApplyCall(ctx: ExtensionContext, toolCallId: string): boolean {
 		);
 }
 
+/** The change-flow run a prompt opens, if it carries a run marker. */
+export function markedRun(text: string): string | undefined {
+	return RUN_MARKER.exec(text)?.[1];
+}
+
+/**
+ * The change-flow run the branch records as opened but not settled. The run's
+ * prompt carries its marker and pstack appends a settled entry when it
+ * settles, so an extension instance that joins a running turn after /reload
+ * can tell it is still that setup run. Only the latest marker counts.
+ */
+export function unsettledRun(
+	branch: readonly SessionEntry[],
+): string | undefined {
+	const settled = new Set<string>();
+	for (const entry of branch.toReversed()) {
+		if (entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE) {
+			if (isRecord(entry.data) && typeof entry.data.runId === "string")
+				settled.add(entry.data.runId);
+			continue;
+		}
+		if (entry.type !== "message" || entry.message.role !== "user") continue;
+		const { content } = entry.message;
+		const parts = typeof content === "string" ? [content] : content;
+		const runId = markedRun(
+			parts
+				.map((part) => {
+					if (typeof part === "string") return part;
+					return part.type === "text" ? part.text : "";
+				})
+				.join("\n"),
+		);
+		if (runId !== undefined) return settled.has(runId) ? undefined : runId;
+	}
+	return undefined;
+}
+
 export function registerSetup(pi: ExtensionAPI): void {
-	let generation = 0;
 	/** The protected setup run, from the change command until that run settles. */
 	let flow: Flow | undefined;
 	let authorization: Authorization | undefined;
@@ -465,17 +510,49 @@ export function registerSetup(pi: ExtensionAPI): void {
 		deactivateApply();
 	}
 
-	pi.on("session_start", () => {
+	/** Records that the branch's unsettled change-flow run is over. */
+	function settleRecordedRun(ctx: ExtensionContext) {
+		try {
+			const runId = unsettledRun(ctx.sessionManager.getBranch());
+			if (runId !== undefined)
+				pi.appendEntry(RUN_ENTRY_TYPE, { runId, state: "settled" });
+		} catch {
+			// A stale context; the successor settles the run instead.
+		}
+	}
+
+	/** The reserved prompt never started: an input handler consumed it. */
+	function abandonReservation() {
+		if (flow && !flow.started) {
+			revokeApply();
+			flow = undefined;
+		}
+	}
+
+	pi.on("session_start", (_event, ctx) => {
 		revokeApply();
 		flow = undefined;
+		// A run that a crash or shutdown left unsettled is over once nothing runs.
+		// After /reload during a run, the guard below keeps it protected instead.
+		if (ctx.isIdle()) settleRecordedRun(ctx);
 	});
 	pi.on("session_shutdown", () => {
 		revokeApply();
 		ended = true;
 	});
-	pi.on("agent_settled", () => {
+	pi.on("before_agent_start", (event) => {
+		if (!flow || flow.started) return;
+		if (markedRun(event.prompt) === flow.runId) flow.started = true;
+		else abandonReservation();
+	});
+	pi.on("agent_start", () => {
+		// A run without before_agent_start, such as a triggered custom message.
+		abandonReservation();
+	});
+	pi.on("agent_settled", (_event, ctx) => {
 		revokeApply();
 		flow = undefined;
+		settleRecordedRun(ctx);
 	});
 
 	pi.on("tool_call", (event, ctx) => {
@@ -499,8 +576,20 @@ export function registerSetup(pi: ExtensionAPI): void {
 				// A stale context cannot rule it out.
 				underApply = true;
 			}
-		// Outside a setup run the host's writer behaves exactly as without pstack.
-		if (!flow && !underApply) return;
+		if (!flow && !underApply) {
+			let joined: boolean;
+			try {
+				// After a reload, the running turn may be a setup run this instance
+				// never opened. Its approval is gone, but its protection is not.
+				joined =
+					!ctx.isIdle() &&
+					unsettledRun(ctx.sessionManager.getBranch()) !== undefined;
+			} catch {
+				joined = true;
+			}
+			// Outside a setup run the host's writer behaves exactly as without pstack.
+			if (!joined) return;
+		}
 		const approved = authorization;
 		let problem: string | undefined =
 			`until this /setup-pstack run settles, only its approved ${APPLY_TOOL} call may write`;
@@ -706,9 +795,10 @@ export function registerSetup(pi: ExtensionAPI): void {
 				);
 				return;
 			}
-			generation += 1;
+			const runId = randomUUID();
 			flow = {
-				generation,
+				runId,
+				started: false,
 				sessionId: ctx.sessionManager.getSessionId(),
 				applyOpen: true,
 				revoked: false,
@@ -719,7 +809,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 				skillWrapper(
 					"setup-pstack",
 					[
-						`/setup-pstack opened change flow ${generation}. It ends when this turn settles.`,
+						`/setup-pstack opened change flow ${runId}. It ends when this turn settles.`,
 						"",
 						report.text.replace(/\n\nNo changes were made\.$/, ""),
 						"",

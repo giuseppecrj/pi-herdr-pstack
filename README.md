@@ -72,8 +72,12 @@ moved here was removed in Wave 2 at the user's request; see
   after the one approval was declined, used, failed or revoked by another
   `/setup-pstack`. The approval binds that one nested call and payload and
   freezes the validated arguments; a late nested call under an ended approval,
-  after a reload or in a replaced or shut-down session is refused. The host's
-  conditional writer rejects a file that changed after approval.
+  after a reload or in a replaced or shut-down session is refused. A `/reload`
+  during the run ends its approval but not its protection: the setup prompt
+  carries a run ID and pstack appends a settled entry when the run settles, so
+  the fresh extension instance blocks raw and relayed writes until then. A
+  setup prompt that an input handler consumes never starts and blocks nothing.
+  The host's conditional writer rejects a file that changed after approval.
 - Declined, rejected, stale or cancelled attempts stop before the writer runs.
   Once the writer has been called, an error result does not prove nothing was
   written: pstack rereads the file and reports it as unchanged, as holding the

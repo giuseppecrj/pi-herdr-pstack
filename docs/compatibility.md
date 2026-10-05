@@ -68,6 +68,19 @@ handlers for a nested call before `tool_call`, so another extension can revoke,
 reload or replace the session in that window; the guard treats a late nested
 call under a known apply call as expired, not as an unrelated call. After a
 reload, the new instance recognizes the apply call from the active branch.
+
+A reload during the run keeps the run protected without restoring any
+approval. The setup prompt carries a `/setup-pstack opened change flow <run
+ID>` marker, and pstack appends a `pi-herdr-pstack:setup-run` custom entry
+(model context excludes it) when that run settles. While Pi is not idle and the
+active branch's latest marker has no settled entry, the guard blocks every
+writer call, raw or beneath another tool. A run that a crash or shutdown left
+without that entry is recorded as settled at the next idle `session_start`. A user message
+that copies the marker text protects its own run; that fails closed. The reserved
+prompt starts the run only if `before_agent_start` sees its marker; any other
+prompt, or a run without `before_agent_start`, starting first means an input
+handler consumed the setup message, so the reservation and apply tool are
+cleared. An input transform that keeps the marker remains a protected setup run.
 Results are judged from the saved file because a later `tool_result` handler
 can mark a completed write as an error.
 
