@@ -32,10 +32,14 @@ export const WRITER = "subagents_write_task_models";
 export const APPLY_TOOL = "pstack_apply_task_models";
 export const REPORT_MESSAGE_TYPE = "pi-herdr-pstack:setup-report";
 export const CONFIRM_TIMEOUT_MS = 120_000;
-/** Session entry pstack appends when a recorded change-flow run settles. */
+const UNCONFIRMED_NOTICE =
+	"pi-herdr-pstack could not confirm this run as the /setup-pstack change flow: another extension changed or consumed its prompt. Shared task-model writes are blocked until the run settles and no change can be applied in it. Run /setup-pstack <request> again.";
+/**
+ * Session entries pstack appends for a change-flow run: `opened` by the
+ * command before it sends the setup prompt, `started` when a new run claims
+ * it, and `settled` when that run is over.
+ */
 export const RUN_ENTRY_TYPE = "pi-herdr-pstack:setup-run";
-const RUN_MARKER =
-	/^\/setup-pstack opened change flow ([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\. It ends when this turn settles\.$/m;
 const EXTENSION_FILE = fileURLToPath(new URL("./index.ts", import.meta.url));
 /** Categories poteto-mode's delegation examples route through. */
 const METHODOLOGY_CATEGORIES: readonly TaskCategory[] = [
@@ -333,10 +337,15 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
  * apply attempt is still open.
  */
 type Flow = {
-	/** Marks the run's prompt, so the run is recognizable in the session branch. */
+	/** Names the run in pstack's own session entries. */
 	runId: string;
-	/** The reserved prompt reached the model; until then another run may start first. */
+	/** A new run claimed the reservation; until then another run may start first. */
 	started: boolean;
+	/**
+	 * The claiming run's prompt carries this run's id. Without it the run is
+	 * still protected, but it cannot apply changes.
+	 */
+	confirmed: boolean;
 	sessionId: string;
 	/** The run may still open its one approval dialog. */
 	applyOpen: boolean;
@@ -440,39 +449,29 @@ function isApplyCall(ctx: ExtensionContext, toolCallId: string): boolean {
 		);
 }
 
-/** The change-flow run a prompt opens, if it carries a run marker. */
-export function markedRun(text: string): string | undefined {
-	return RUN_MARKER.exec(text)?.[1];
-}
+export type RecordedRun = { runId: string; state: "opened" | "started" };
 
 /**
- * The change-flow run the branch records as opened but not settled. The run's
- * prompt carries its marker and pstack appends a settled entry when it
- * settles, so an extension instance that joins a running turn after /reload
- * can tell it is still that setup run. Only the latest marker counts.
+ * The change-flow run pstack's own entries on the branch record as not yet
+ * settled. Prompt text is never consulted, so input handlers cannot hide a
+ * run. Only the latest opened run counts.
  */
-export function unsettledRun(
+export function recordedRun(
 	branch: readonly SessionEntry[],
-): string | undefined {
-	const settled = new Set<string>();
+): RecordedRun | undefined {
+	const states = new Map<string, Set<unknown>>();
 	for (const entry of branch.toReversed()) {
-		if (entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE) {
-			if (isRecord(entry.data) && typeof entry.data.runId === "string")
-				settled.add(entry.data.runId);
+		if (entry.type !== "custom" || entry.customType !== RUN_ENTRY_TYPE)
+			continue;
+		if (!isRecord(entry.data) || typeof entry.data.runId !== "string") continue;
+		const { runId, state } = entry.data;
+		if (state !== "opened") {
+			states.set(runId, (states.get(runId) ?? new Set()).add(state));
 			continue;
 		}
-		if (entry.type !== "message" || entry.message.role !== "user") continue;
-		const { content } = entry.message;
-		const parts = typeof content === "string" ? [content] : content;
-		const runId = markedRun(
-			parts
-				.map((part) => {
-					if (typeof part === "string") return part;
-					return part.type === "text" ? part.text : "";
-				})
-				.join("\n"),
-		);
-		if (runId !== undefined) return settled.has(runId) ? undefined : runId;
+		const later = states.get(runId);
+		if (later?.has("settled")) return undefined;
+		return { runId, state: later?.has("started") ? "started" : "opened" };
 	}
 	return undefined;
 }
@@ -487,6 +486,11 @@ export function registerSetup(pi: ExtensionAPI): void {
 	 * recognized as one rather than as an unrelated call.
 	 */
 	const applyCalls = new Set<string>();
+	/**
+	 * Runs whose reservation another run claimed first. If their own prompt
+	 * starts later, it is still protected.
+	 */
+	const displacedRuns = new Set<string>();
 	/** This instance's session shut down or was replaced; its context is stale. */
 	let ended = false;
 
@@ -510,23 +514,50 @@ export function registerSetup(pi: ExtensionAPI): void {
 		deactivateApply();
 	}
 
-	/** Records that the branch's unsettled change-flow run is over. */
+	function recorded(ctx: ExtensionContext): RecordedRun | undefined {
+		return recordedRun(ctx.sessionManager.getBranch());
+	}
+
+	function record(runId: string, state: "opened" | "started" | "settled") {
+		try {
+			pi.appendEntry(RUN_ENTRY_TYPE, { runId, state });
+		} catch {
+			// A stale runtime; its successor reads the branch as it stands.
+		}
+	}
+
+	/**
+	 * Records that the branch's started change-flow run is over. A run that is
+	 * only opened stays recorded: its prompt may still start, and the next new
+	 * run claims it instead.
+	 */
 	function settleRecordedRun(ctx: ExtensionContext) {
 		try {
-			const runId = unsettledRun(ctx.sessionManager.getBranch());
-			if (runId !== undefined)
-				pi.appendEntry(RUN_ENTRY_TYPE, { runId, state: "settled" });
+			const run = recorded(ctx);
+			if (run?.state === "started") record(run.runId, "settled");
 		} catch {
 			// A stale context; the successor settles the run instead.
 		}
 	}
 
-	/** The reserved prompt never started: an input handler consumed it. */
-	function abandonReservation() {
-		if (flow && !flow.started) {
-			revokeApply();
-			flow = undefined;
-		}
+	/**
+	 * Starts protecting a new run as a setup run whose identity pstack cannot
+	 * confirm. It never gains apply authority.
+	 */
+	function protectUnconfirmed(runId: string, ctx: ExtensionContext) {
+		flow = {
+			runId,
+			started: true,
+			confirmed: false,
+			sessionId: ctx.sessionManager.getSessionId(),
+			applyOpen: false,
+			revoked: true,
+			applying: false,
+		};
+		authorization = undefined;
+		deactivateApply();
+		record(runId, "started");
+		if (ctx.hasUI) ctx.ui.notify(UNCONFIRMED_NOTICE, "warning");
 	}
 
 	pi.on("session_start", (_event, ctx) => {
@@ -536,20 +567,60 @@ export function registerSetup(pi: ExtensionAPI): void {
 		// After /reload during a run, the guard below keeps it protected instead.
 		if (ctx.isIdle()) settleRecordedRun(ctx);
 	});
+	pi.on("session_tree", (_event, ctx) => {
+		// Navigation needs an idle session. A branch that now ends inside a setup
+		// run records that run as over, and restored tools do not reopen apply.
+		if (flow?.started === false) return;
+		revokeApply();
+		flow = undefined;
+		settleRecordedRun(ctx);
+	});
 	pi.on("session_shutdown", () => {
 		revokeApply();
 		ended = true;
 	});
-	pi.on("before_agent_start", (event) => {
-		if (!flow || flow.started) return;
-		if (markedRun(event.prompt) === flow.runId) flow.started = true;
-		else abandonReservation();
-	});
-	pi.on("agent_start", () => {
-		// A run without before_agent_start, such as a triggered custom message.
-		abandonReservation();
+	pi.on("before_agent_start", (event, ctx) => {
+		// Every new run emits this; steering and follow-ups inside a run do not.
+		const pending = flow?.started === false ? flow : undefined;
+		if (pending) {
+			// Fail closed: the first new run after the command is treated as the
+			// setup run, whatever input handlers did to its prompt. It may apply
+			// changes only if its prompt still carries the run's id.
+			pending.started = true;
+			pending.confirmed = event.prompt.includes(pending.runId);
+			if (pending.confirmed) record(pending.runId, "started");
+			else {
+				displacedRuns.add(pending.runId);
+				protectUnconfirmed(pending.runId, ctx);
+			}
+			return;
+		}
+		// A setup run that never reported settling is over now.
+		if (flow) {
+			revokeApply();
+			flow = undefined;
+		}
+		let run: RecordedRun | undefined;
+		try {
+			run = recorded(ctx);
+		} catch {
+			run = undefined;
+		}
+		if (run?.state === "started") record(run.runId, "settled");
+		const displaced = [...displacedRuns].find((runId) =>
+			event.prompt.includes(runId),
+		);
+		if (displaced !== undefined) {
+			displacedRuns.delete(displaced);
+			protectUnconfirmed(displaced, ctx);
+		} else if (run?.state === "opened")
+			// Opened by a command this instance did not see, such as one before a
+			// reload: this may be its prompt.
+			protectUnconfirmed(run.runId, ctx);
 	});
 	pi.on("agent_settled", (_event, ctx) => {
+		// A run that did not claim the reservation leaves it waiting.
+		if (flow?.started === false) return;
 		revokeApply();
 		flow = undefined;
 		settleRecordedRun(ctx);
@@ -576,23 +647,26 @@ export function registerSetup(pi: ExtensionAPI): void {
 				// A stale context cannot rule it out.
 				underApply = true;
 			}
-		if (!flow && !underApply) {
-			let joined: boolean;
-			try {
-				// After a reload, the running turn may be a setup run this instance
-				// never opened. Its approval is gone, but its protection is not.
-				joined =
-					!ctx.isIdle() &&
-					unsettledRun(ctx.sessionManager.getBranch()) !== undefined;
-			} catch {
-				joined = true;
-			}
+		if (!flow?.started && !underApply) {
+			// While a reservation waits, the running run did not claim it, so it is
+			// not the setup prompt.
+			let joined = false;
+			if (!flow)
+				try {
+					// After a reload, the running turn may be a setup run this instance
+					// never opened. Its approval is gone, but its protection is not.
+					joined = !ctx.isIdle() && recorded(ctx) !== undefined;
+				} catch {
+					joined = true;
+				}
 			// Outside a setup run the host's writer behaves exactly as without pstack.
 			if (!joined) return;
 		}
 		const approved = authorization;
 		let problem: string | undefined =
 			`until this /setup-pstack run settles, only its approved ${APPLY_TOOL} call may write`;
+		if (flow?.started && !flow.confirmed)
+			problem = `${problem}. pstack could not confirm this run as the /setup-pstack change flow (another extension changed or consumed its prompt), so it cannot apply changes; run /setup-pstack again`;
 		if (approved) problem = authorizationProblem(approved, parent, event.input);
 		else if (underApply)
 			problem = `the approval for that ${APPLY_TOOL} call has ended (declined, cancelled, revoked, stale or already used)`;
@@ -621,6 +695,8 @@ export function registerSetup(pi: ExtensionAPI): void {
 				ended ||
 				!active ||
 				!active.applyOpen ||
+				!active.started ||
+				!active.confirmed ||
 				active.sessionId !== ctx.sessionManager.getSessionId()
 			)
 				throw new Error(
@@ -795,15 +871,21 @@ export function registerSetup(pi: ExtensionAPI): void {
 				);
 				return;
 			}
+			// An earlier reservation whose prompt never started may still start.
+			if (flow?.started === false) displacedRuns.add(flow.runId);
 			const runId = randomUUID();
 			flow = {
 				runId,
 				started: false,
+				confirmed: false,
 				sessionId: ctx.sessionManager.getSessionId(),
 				applyOpen: true,
 				revoked: false,
 				applying: false,
 			};
+			// Identifies the run from pstack's own state, never from prompt text
+			// that input handlers can change.
+			record(runId, "opened");
 			pi.setActiveTools([...pi.getActiveTools(), APPLY_TOOL]);
 			pi.sendUserMessage(
 				skillWrapper(

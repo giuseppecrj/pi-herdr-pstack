@@ -22,11 +22,10 @@ import {
 	APPLY_TOOL,
 	approvalMessage,
 	authorizationProblem,
-	markedRun,
+	recordedRun,
 	RUN_ENTRY_TYPE,
 	refProblem,
 	registerSetup,
-	unsettledRun,
 	WRITER,
 	writerContract,
 } from "../pi-extension/pstack/setup.ts";
@@ -299,32 +298,31 @@ const RUN_A = "00000000-0000-4000-8000-00000000000a";
 const RUN_B = "00000000-0000-4000-8000-00000000000b";
 
 function userEntry(text: string): SessionEntry {
-	// SAFETY: unsettledRun reads only type, role and content.
+	// SAFETY: recordedRun reads only type, customType and data.
 	return {
 		type: "message",
 		message: { role: "user", content: [{ type: "text", text }] },
 	} as SessionEntry;
 }
 
-function marker(runId: string): SessionEntry {
-	return userEntry(
-		`<skill name="setup-pstack">...</skill>\n\n/setup-pstack opened change flow ${runId}. It ends when this turn settles.\n\nUser request: x`,
-	);
-}
-
-function settled(runId: string): SessionEntry {
-	// SAFETY: unsettledRun reads only type, customType and data.
+function run(runId: string, state: string): SessionEntry {
+	// SAFETY: recordedRun reads only type, customType and data.
 	return {
 		type: "custom",
 		customType: RUN_ENTRY_TYPE,
-		data: { runId, state: "settled" },
+		data: { runId, state },
 	} as SessionEntry;
 }
+
+const opened = (runId: string) => run(runId, "opened");
+const started = (runId: string) => [opened(runId), run(runId, "started")];
+const settled = (runId: string) => run(runId, "settled");
 
 /** registerSetup on a minimal API, driven by emitting events directly. */
 function fakeSetup() {
 	const handlers = new Map<string, Array<(...args: unknown[]) => unknown>>();
 	const appended: Array<{ customType: string; data: unknown }> = [];
+	const notices: string[] = [];
 	const api = {
 		on: (name: string, handler: (...args: unknown[]) => unknown) =>
 			handlers.set(name, [...(handlers.get(name) ?? []), handler]),
@@ -342,6 +340,8 @@ function fakeSetup() {
 		// SAFETY: the handlers under test read only these context members.
 		({
 			isIdle: () => idle,
+			hasUI: true,
+			ui: { notify: (message: string) => notices.push(message) },
 			sessionManager: { getBranch: () => branch, getSessionId: () => "s" },
 		}) as unknown as ExtensionContext;
 	const emit = (name: string, event: object, ctx: ExtensionContext) =>
@@ -362,73 +362,149 @@ function fakeSetup() {
 			},
 			ctx,
 		)?.[0] as { block: true; reason: string } | undefined;
-	return { emit, writer, context, appended };
+	const settledRuns = () =>
+		appended.flatMap(({ data }) =>
+			(data as { state: string }).state === "settled"
+				? [(data as { runId: string }).runId]
+				: [],
+		);
+	return { emit, writer, context, appended, notices, settledRuns };
 }
 
 describe("setup run identity in the session branch", () => {
-	it("finds the latest marked run until its settled entry", () => {
-		assert.equal(markedRun("/setup-pstack opened change flow 1."), undefined);
-		assert.equal(unsettledRun([]), undefined);
-		assert.equal(unsettledRun([marker(RUN_A)]), RUN_A);
-		assert.equal(unsettledRun([marker(RUN_A), settled(RUN_A)]), undefined);
+	it("reads only pstack's own entries, and only the latest opened run", () => {
+		assert.equal(recordedRun([]), undefined);
+		assert.deepEqual(recordedRun([opened(RUN_A)]), {
+			runId: RUN_A,
+			state: "opened",
+		});
+		assert.deepEqual(recordedRun(started(RUN_A)), {
+			runId: RUN_A,
+			state: "started",
+		});
+		assert.equal(recordedRun([...started(RUN_A), settled(RUN_A)]), undefined);
 		// A steering message inside the run does not end its protection.
-		assert.equal(unsettledRun([marker(RUN_A), userEntry("steer")]), RUN_A);
-		assert.equal(
-			unsettledRun([marker(RUN_A), settled(RUN_A), marker(RUN_B)]),
-			RUN_B,
+		assert.deepEqual(recordedRun([...started(RUN_A), userEntry("steer")]), {
+			runId: RUN_A,
+			state: "started",
+		});
+		assert.deepEqual(
+			recordedRun([...started(RUN_A), settled(RUN_A), opened(RUN_B)]),
+			{ runId: RUN_B, state: "opened" },
 		);
 		assert.equal(
-			unsettledRun([marker(RUN_A), marker(RUN_B), settled(RUN_B)]),
+			recordedRun([...started(RUN_A), ...started(RUN_B), settled(RUN_B)]),
 			undefined,
-			"only the latest marker counts",
+			"only the latest opened run counts",
+		);
+		assert.equal(
+			recordedRun([
+				userEntry(
+					`/setup-pstack opened change flow ${RUN_A}. It ends when this turn settles.`,
+				),
+			]),
+			undefined,
+			"prompt text is not an identity",
 		);
 	});
 
 	it("blocks raw writes in a running turn the branch records as an unsettled setup run", () => {
 		const setup = fakeSetup();
-		const running = setup.context([marker(RUN_A)]);
-		assert.match(
-			setup.writer(undefined, running)?.reason ?? "",
-			/until this \/setup-pstack run settles/,
-		);
-		assert.match(
-			setup.writer("relay-1", running)?.reason ?? "",
-			/until this \/setup-pstack run settles/,
-		);
+		for (const branch of [started(RUN_A), [opened(RUN_A)]]) {
+			const running = setup.context(branch);
+			assert.match(
+				setup.writer(undefined, running)?.reason ?? "",
+				/until this \/setup-pstack run settles/,
+			);
+			assert.match(
+				setup.writer("relay-1", running)?.reason ?? "",
+				/until this \/setup-pstack run settles/,
+			);
+			assert.equal(
+				setup.writer(undefined, setup.context(branch, true)),
+				undefined,
+				"an idle session has no running setup turn",
+			);
+		}
 		assert.equal(
-			setup.writer(undefined, setup.context([marker(RUN_A)], true)),
-			undefined,
-			"an idle session has no running setup turn",
-		);
-		assert.equal(
-			setup.writer(undefined, setup.context([marker(RUN_A), settled(RUN_A)])),
+			setup.writer(
+				undefined,
+				setup.context([...started(RUN_A), settled(RUN_A)]),
+			),
 			undefined,
 		);
 		assert.equal(setup.writer(undefined, setup.context([])), undefined);
 	});
 
-	it("records settlement once, and settles a run left open by an earlier process when idle", () => {
+	it("settles a started run on settlement, idle start, tree navigation and the next new run", () => {
 		const setup = fakeSetup();
-		setup.emit("agent_settled", {}, setup.context([marker(RUN_A)], true));
+		setup.emit("agent_settled", {}, setup.context(started(RUN_A), true));
 		setup.emit(
 			"agent_settled",
 			{},
-			setup.context([marker(RUN_A), settled(RUN_A)], true),
+			setup.context([...started(RUN_A), settled(RUN_A)], true),
 		);
 		setup.emit(
 			"session_start",
 			{ reason: "resume" },
-			setup.context([marker(RUN_B)], true),
+			setup.context(started(RUN_B), true),
 		);
 		setup.emit(
 			"session_start",
 			{ reason: "reload" },
-			setup.context([marker(RUN_B)]),
+			setup.context(started(RUN_B)),
+		);
+		assert.deepEqual(setup.settledRuns(), [RUN_A, RUN_B]);
+
+		const tree = fakeSetup();
+		tree.emit("session_tree", {}, tree.context(started(RUN_A), true));
+		assert.deepEqual(tree.settledRuns(), [RUN_A]);
+
+		const next = fakeSetup();
+		const branch = started(RUN_A);
+		next.emit(
+			"before_agent_start",
+			{ prompt: "unrelated" },
+			next.context(branch),
+		);
+		assert.deepEqual(next.settledRuns(), [RUN_A]);
+		assert.equal(
+			next.writer(undefined, next.context([...branch, settled(RUN_A)])),
+			undefined,
+			"the new run is not protected",
+		);
+		assert.deepEqual(next.notices, []);
+	});
+
+	it("leaves an opened run for the next new run, which it protects without apply authority", () => {
+		const setup = fakeSetup();
+		const branch = [opened(RUN_A)];
+		setup.emit(
+			"session_start",
+			{ reason: "reload" },
+			setup.context(branch, true),
+		);
+		setup.emit("session_tree", {}, setup.context(branch, true));
+		setup.emit("agent_settled", {}, setup.context(branch, true));
+		assert.deepEqual(setup.appended, [], "an opened run is not settled early");
+
+		setup.emit(
+			"before_agent_start",
+			{ prompt: `whatever ${RUN_A}` },
+			setup.context(branch),
 		);
 		assert.deepEqual(setup.appended, [
-			{ customType: RUN_ENTRY_TYPE, data: { runId: RUN_A, state: "settled" } },
-			{ customType: RUN_ENTRY_TYPE, data: { runId: RUN_B, state: "settled" } },
+			{ customType: RUN_ENTRY_TYPE, data: { runId: RUN_A, state: "started" } },
 		]);
+		assert.equal(setup.notices.length, 1);
+		assert.match(setup.notices[0], /could not confirm this run/);
+		assert.match(
+			setup.writer(undefined, setup.context([]))?.reason ?? "",
+			/could not confirm this run as the \/setup-pstack change flow[\s\S]*run \/setup-pstack again/,
+		);
+		setup.emit("agent_settled", {}, setup.context(started(RUN_A), true));
+		assert.deepEqual(setup.settledRuns(), [RUN_A]);
+		assert.equal(setup.writer(undefined, setup.context([])), undefined);
 	});
 
 	it("remembers apply calls this instance saw, without the branch lookup", () => {

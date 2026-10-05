@@ -70,17 +70,30 @@ call under a known apply call as expired, not as an unrelated call. After a
 reload, the new instance recognizes the apply call from the active branch.
 
 A reload during the run keeps the run protected without restoring any
-approval. The setup prompt carries a `/setup-pstack opened change flow <run
-ID>` marker, and pstack appends a `pi-herdr-pstack:setup-run` custom entry
-(model context excludes it) when that run settles. While Pi is not idle and the
-active branch's latest marker has no settled entry, the guard blocks every
-writer call, raw or beneath another tool. A run that a crash or shutdown left
-without that entry is recorded as settled at the next idle `session_start`. A user message
-that copies the marker text protects its own run; that fails closed. The reserved
-prompt starts the run only if `before_agent_start` sees its marker; any other
-prompt, or a run without `before_agent_start`, starting first means an input
-handler consumed the setup message, so the reservation and apply tool are
-cleared. An input transform that keeps the marker remains a protected setup run.
+approval. Pstack identifies the run from its own `pi-herdr-pstack:setup-run`
+custom entries (model context excludes them), never from prompt text that
+input handlers can rewrite: the command appends `opened` before it sends the
+setup prompt, the run that claims it appends `started`, and settlement appends
+`settled`. While Pi is not idle and the active branch's latest opened run has
+no settled entry, the guard blocks every writer call, raw or beneath another
+tool.
+
+`before_agent_start` fires once per new run, not for steering or follow-ups, so
+the first new run after the command claims the reservation, whatever input
+handlers did to its prompt. It may apply changes only if its prompt still
+contains the run's random ID; otherwise it fails closed: it stays protected
+until it settles, the apply tool is removed, and the user is told to run
+`/setup-pstack` again. That is the outcome when another extension strips the
+ID or consumes the setup message: the next new run's writer calls are blocked
+once. A run triggered without `before_agent_start`, such as a custom message,
+cannot be the setup prompt; it neither claims the reservation nor gets apply
+authority. A setup prompt that starts after another run claimed its
+reservation is still protected without apply authority.
+
+A started run that is left unsettled, by a crash or shutdown or by navigating
+the session tree back into the run, is recorded as settled at the next idle
+`session_start`, at `session_tree`, or when the next new run starts. An opened
+run that never started is left for the next new run to claim.
 Results are judged from the saved file because a later `tool_result` handler
 can mark a completed write as an error.
 

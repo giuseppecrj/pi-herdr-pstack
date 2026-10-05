@@ -73,6 +73,17 @@ function confirmCalls(pi: SdkPi) {
 	return pi.uiCalls.filter((call) => call.method === "confirm");
 }
 
+/** The states pstack recorded for its setup runs on the current branch. */
+function runStates(pi: SdkPi): unknown[] {
+	return pi.session.sessionManager
+		.getBranch()
+		.flatMap((entry) =>
+			entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE
+				? [(entry.data as { state?: unknown }).state]
+				: [],
+		);
+}
+
 /** UI whose confirm dialog records itself and then runs `decide`. */
 function dialog(
 	decide: (
@@ -1067,16 +1078,10 @@ describe("setup run protection lasts until the run settles", needsHost, () => {
 						executions.count(),
 						label === "after a successful apply" ? 1 : 0,
 					);
-					const settledEntries = pi.session.sessionManager
-						.getBranch()
-						.filter(
-							(entry) =>
-								entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE,
-						);
-					assert.equal(
-						settledEntries.length,
-						1,
-						"the run is recorded as settled",
+					assert.deepEqual(
+						runStates(pi),
+						["opened", "started", "settled"],
+						"the run is recorded as settled once",
 					);
 					assert.equal(
 						pi.session.getActiveToolNames().includes(APPLY_TOOL),
@@ -1318,6 +1323,136 @@ describe(
 	},
 );
 
+describe("setup run identity does not depend on prompt text", needsHost, () => {
+	const UNCONFIRMED =
+		/could not confirm this run as the \/setup-pstack change flow[\s\S]*run \/setup-pstack (?:<request> )?again/i;
+
+	/** Raw and relayed writes in one run, then an unrelated run. */
+	function rawThenRelay(pi: SdkPi) {
+		pi.respond([
+			fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+			fauxAssistantMessage([
+				fauxToolCall("test_relay", { tool: WRITER, args: RAW }),
+			]),
+			fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+			fauxAssistantMessage("done"),
+		]);
+	}
+
+	it("keeps a whitespace-normalized setup run protected and able to apply", async () => {
+		const normalize: ExtensionFactory = (api) => {
+			api.on("input", (event) => ({
+				action: "transform" as const,
+				text: event.text.replace(/\s+/g, " "),
+			}));
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				applyThenRaw(pi);
+				await pi.prompt("/setup-pstack review");
+				const [apply, again] = pi.toolResults(APPLY_TOOL);
+				assert.match(apply.text, /Verified the saved file/);
+				assert.equal(again.isError, true);
+				assert.equal(confirmCalls(pi).length, 1, "the dialog was shown");
+				const [raw] = pi.toolResults(WRITER);
+				assert.equal(raw.isError, true);
+				assert.match(raw.text, /until this \/setup-pstack run settles/);
+				assert.match(
+					pi.toolResults("test_relay")[0].text,
+					/pi-herdr-pstack setup blocked/,
+				);
+				assert.equal(executions.count(), 1, "only the approved write ran");
+				assert.deepEqual(
+					JSON.parse(readFileSync(pi.configPath, "utf8")).models.tasks,
+					{ ...BASE.models.tasks, review: REVIEW_CHANGE.changes.review },
+				);
+				assert.deepEqual(runStates(pi), ["opened", "started", "settled"]);
+				await assertHostWriterOutsideSetup(pi);
+			},
+			{ extensions: [normalize, relayTool, executions.factory] },
+		);
+	});
+
+	it("fails closed for a setup run whose run id an input handler removed", async () => {
+		const strip: ExtensionFactory = (api) => {
+			api.on("input", (event) => ({
+				action: "transform" as const,
+				text: event.text.replace(
+					/\/setup-pstack opened change flow \S+ It ends when this turn settles\./,
+					"",
+				),
+			}));
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				rawThenRelay(pi);
+				await pi.prompt("/setup-pstack review");
+				const [raw] = pi.toolResults(WRITER);
+				assert.equal(raw.isError, true);
+				assert.match(raw.text, UNCONFIRMED);
+				const [relay] = pi.toolResults("test_relay");
+				assert.match(relay.text, /pi-herdr-pstack setup blocked/);
+				assert.match(relay.text, UNCONFIRMED);
+				const [apply] = pi.toolResults(APPLY_TOOL);
+				assert.equal(apply.isError, true, "no apply authority");
+				assert.match(
+					apply.text,
+					/pstack_apply_task_models not found|No open \/setup-pstack change flow/,
+				);
+				assert.equal(confirmCalls(pi).length, 0);
+				assert.equal(
+					pi.notifications().filter((text) => UNCONFIRMED.test(text)).length,
+					1,
+					"the user is told why",
+				);
+				assert.equal(executions.count(), 0);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+				assert.deepEqual(runStates(pi), ["opened", "started", "settled"]);
+				await assertHostWriterOutsideSetup(pi);
+			},
+			{ extensions: [strip, relayTool, executions.factory] },
+		);
+	});
+
+	it("settles a run left open by tree navigation, so an unrelated run can write", async () => {
+		await withHost(
+			() => false,
+			async (pi) => {
+				pi.armToolCall(WRITER, RAW);
+				await pi.prompt("/setup-pstack review");
+				assert.equal(pi.toolResults(WRITER)[0].isError, true);
+				const branch = pi.session.sessionManager.getBranch();
+				const settledAt = branch.findLastIndex(
+					(entry) =>
+						entry.type === "custom" && entry.customType === RUN_ENTRY_TYPE,
+				);
+				const before = branch[settledAt - 1];
+				assert.equal(
+					before.type === "message" && before.message.role,
+					"assistant",
+					"the settled entry follows the run's last assistant message",
+				);
+				await pi.session.navigateTree(before.id);
+				assert.deepEqual(
+					runStates(pi),
+					["opened", "started", "settled"],
+					"navigation records the run as over on the new branch",
+				);
+				assert.equal(
+					pi.session.getActiveToolNames().includes(APPLY_TOOL),
+					false,
+				);
+				await assertHostWriterOutsideSetup(pi);
+				assert.deepEqual(pi.notifications(), []);
+			},
+		);
+	});
+});
+
 describe("an unstarted setup reservation", needsHost, () => {
 	const consumeSetupPrompt: ExtensionFactory = (api) => {
 		api.on("input", (event) =>
@@ -1327,18 +1462,37 @@ describe("an unstarted setup reservation", needsHost, () => {
 		);
 	};
 
-	it("does not block the next unrelated prompt when an input handler consumed the setup message", async () => {
+	it("fails closed for the next new run once when an input handler consumed the setup message", async () => {
 		await withHost(
 			() => true,
 			async (pi) => {
 				await pi.prompt("/setup-pstack review");
 				assert.equal(pi.session.messages.length, 0, "no setup run started");
+				// pstack cannot tell a consumed setup prompt from a transformed one,
+				// so the next new run is protected as the setup run, without apply.
+				pi.respond([
+					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+					fauxAssistantMessage("done"),
+				]);
+				await pi.prompt("an unrelated request");
+				const [blocked] = pi.toolResults(WRITER);
+				assert.equal(blocked.isError, true);
+				assert.match(blocked.text, /could not confirm this run/);
+				assert.equal(pi.toolResults(APPLY_TOOL)[0].isError, true);
+				assert.equal(
+					pi.notifications().filter((text) => /could not confirm/.test(text))
+						.length,
+					1,
+				);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+				assert.equal(confirmCalls(pi).length, 0);
+				// Only once: the following run keeps the host's own behavior.
 				await assertHostWriterOutsideSetup(pi);
 				assert.equal(
 					pi.session.getActiveToolNames().includes(APPLY_TOOL),
 					false,
 				);
-				assert.equal(confirmCalls(pi).length, 0);
 			},
 			{ extensions: [consumeSetupPrompt] },
 		);
@@ -1349,7 +1503,11 @@ describe("an unstarted setup reservation", needsHost, () => {
 			() => true,
 			async (pi) => {
 				await pi.prompt("/setup-pstack review");
-				pi.armToolCall(WRITER, RAW);
+				pi.respond([
+					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+					fauxAssistantMessage("done"),
+				]);
 				await pi.session.sendCustomMessage(
 					{ customType: "test-trigger", content: "go", display: false },
 					{ triggerTurn: true },
@@ -1357,8 +1515,58 @@ describe("an unstarted setup reservation", needsHost, () => {
 				await pi.idle();
 				const [result] = pi.toolResults(WRITER);
 				assert.equal(result.isError, false, result.text);
+				// That run did not claim the reservation, so it has no apply authority.
+				const [apply] = pi.toolResults(APPLY_TOOL);
+				assert.equal(apply.isError, true);
+				assert.match(apply.text, /No open \/setup-pstack change flow/);
+				assert.equal(confirmCalls(pi).length, 0);
 			},
 			{ extensions: [consumeSetupPrompt] },
+		);
+	});
+
+	it("protects a setup prompt that starts after another run claimed its reservation", async () => {
+		let release: () => void = () => {};
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const slowSetupInput: ExtensionFactory = (api) => {
+			api.on("input", async (event) => {
+				if (event.text.includes("/setup-pstack opened change flow")) await gate;
+			});
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				await pi.session.prompt("/setup-pstack review");
+				// The setup prompt waits in an input handler; another prompt runs first.
+				pi.armToolCall(WRITER, RAW);
+				await pi.prompt("an unrelated request");
+				assert.match(
+					pi.toolResults(WRITER)[0].text,
+					/could not confirm this run/,
+				);
+				pi.respond([
+					fauxAssistantMessage([fauxToolCall(WRITER, RAW)]),
+					fauxAssistantMessage([fauxToolCall(APPLY_TOOL, REVIEW_CHANGE)]),
+					fauxAssistantMessage("done"),
+				]);
+				release();
+				// The released prompt starts its own run asynchronously.
+				for (let i = 0; i < 200 && pi.toolResults(WRITER).length < 2; i++)
+					await pi.idle();
+				await pi.idle();
+				const [, late] = pi.toolResults(WRITER);
+				assert.equal(late.isError, true, "the late setup prompt is protected");
+				assert.match(late.text, /could not confirm this run/);
+				assert.equal(pi.toolResults(APPLY_TOOL)[0].isError, true);
+				assert.equal(confirmCalls(pi).length, 0);
+				assert.equal(executions.count(), 0);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+				await assertHostWriterOutsideSetup(pi);
+			},
+			{ extensions: [slowSetupInput, executions.factory] },
 		);
 	});
 

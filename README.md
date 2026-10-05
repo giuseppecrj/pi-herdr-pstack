@@ -73,10 +73,13 @@ moved here was removed in Wave 2 at the user's request; see
   `/setup-pstack`. The approval binds that one nested call and payload and
   freezes the validated arguments; a late nested call under an ended approval,
   after a reload or in a replaced or shut-down session is refused. A `/reload`
-  during the run ends its approval but not its protection: the setup prompt
-  carries a run ID and pstack appends a settled entry when the run settles, so
-  the fresh extension instance blocks raw and relayed writes until then. A
-  setup prompt that an input handler consumes never starts and blocks nothing.
+  during the run ends its approval but not its protection: pstack records the
+  run as opened, started and settled in its own session entries, so the fresh
+  extension instance blocks raw and relayed writes until then. Run identity
+  never depends on prompt text that input handlers can rewrite. If another
+  extension removes the run ID from the setup prompt or consumes it, the next
+  new run is protected as the setup run without apply authority, and the user
+  is told to run `/setup-pstack` again.
   The host's conditional writer rejects a file that changed after approval.
 - Declined, rejected, stale or cancelled attempts stop before the writer runs.
   Once the writer has been called, an error result does not prove nothing was
