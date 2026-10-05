@@ -1,6 +1,6 @@
-# Wave 1 handoff — awaiting human acceptance
+# Wave 1 handoff — accepted
 
-Date: 2026-10-05. **Waves 0–1 implementation and verification are complete; human acceptance is pending. Stop here.** Wave 2, integration into main branches, publishing and installation changes remain unauthorized.
+Date: 2026-10-05. **The user accepted Wave 1 and subsequently explicitly authorized Wave 2.** The evidence below records the completed W0–1 milestone. See [the Wave 2 contract](./06-wave2-contract.md) for current authority and the separately approved private GitHub creation/initial pushes. Integration into main branches, publishing and installation changes remain unauthorized.
 
 ## Exact candidate vector
 
@@ -96,6 +96,6 @@ These reviews do not substitute for human acceptance.
 
 ## Human gate / rollback
 
-**Requested decision: accept Wave 1, or identify changes before acceptance.** Wave 2 requires a separate explicit go-ahead, even though its setup/mode semantics were previously approved.
+**Accepted by the user.** The user then separately authorized Wave 2; see the current contract. This does not authorize later waves or shipping.
 
-No push, PR, merge, publication, stable installation change or paid live-model evaluation occurred. To decline this candidate, simply leave the candidate branches unintegrated; normal installation and original host main are unchanged. Retain the clean candidate worktrees for review. Remove them only after review/preservation and explicit cleanup authorization, retaining their branches and commits. Do not reset the original checkout or alter PRs #66–#68.
+During the local W0–1 implementation and verification recorded above, no push, PR, merge, publication, stable installation change or paid live-model evaluation occurred. The user subsequently authorized creation of the two private GitHub repositories and initial pushes of their main and W1 candidate branches; those uploads are complete, without merging. To decline this candidate, simply leave the candidate branches unintegrated; normal installation and original host main are unchanged. Retain the clean candidate worktrees for review. Remove them only after review/preservation and explicit cleanup authorization, retaining their branches and commits. Do not reset the original checkout or alter PRs #66–#68.
