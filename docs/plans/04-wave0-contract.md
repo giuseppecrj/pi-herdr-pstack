@@ -1,6 +1,6 @@
 # Wave 0: approved execution contract
 
-Status: preparation in progress. The user approved all seven execution questions. This file is the current authority/scope record; it supersedes historical planning statements that initialization or local commits were not authorized.
+Status: Wave 0 preparation complete; Wave 1 implementation may start against these local inputs. The user approved all seven execution questions. This file is the current authority/scope record; it supersedes historical planning statements that initialization or local commits were not authorized.
 
 ## Authority and stop point
 
@@ -84,4 +84,21 @@ Pstack must eventually operate without pi-herdr-roles; its own roles and explici
 
 ## Evidence and baseline SHAs
 
-New repository baseline SHAs, API probe outcomes, worker candidate paths, exact test commands/results and final review are recorded as preparation/integration completes. No acceptance check above is currently claimed to have passed.
+Initial local repository commits:
+
+- pi-herdr-pstack: `34eeb826014948472d815cea5fd7e5c75b90240c` (approved plans/instructions; the subsequent evidence commit is the W1 worker base).
+- pi-herdr-roles: `f31b3ca9c20e04b4ad6f31dc2040507fe30ffe63` (instructions/ignore rules), with candidate branch `wave1/role-pack` created.
+- pi-herdr-agents: unchanged at `c2177dff835da44937e614e8a03d0405d442e848`.
+
+Read-only compatibility recon used a new `/tmp/packwave0-probe-jV2arF` directory, Pi binary 1.0.3 and SDK types 1.0.3, with an in-process faux provider and no external model/network request. The frozen host's real public event lists a sample pack role with package provenance; existing role-pack APIs and literal skill-wrapper delivery for `/plan` have no blocking API gap.
+
+Important observed boundaries:
+
+- Original host node_modules contains SDK 0.84.0 despite the lock selecting 1.0.0. Do not typecheck against that stale tree or modify it. Candidate dependencies are isolated; record their actual versions.
+- Preserve `/plan`'s direct `<skill name="plan" location="...">` prompt wrapper after relocating its file. Do not rely on slash text expanding implicitly. Two registered `plan` commands become `plan:1`/`plan:2` on Pi 1.0.3 and bare `/plan` can become literal prompt text, so host removal and pack addition must be tested together.
+- Fresh/resumed pi-herdr-agents children receive `PI_SUBAGENT_ID`; user-driven worktree handoff does not. The variable is inherited by nested shell processes and is a context hint, not a security boundary. Document/test this W1 contract without extending the protocol.
+- RPC can emit duplicate session-start events. Forked sessions can contain parent custom entries. These are later mode idempotence/ownership test cases, not W1 implementation scope.
+- Role `skills:` startup may create a separate model turn, and a missing skill can become literal prompt text. W1 therefore does not add that field to poteto.
+- Probe limitations: no TUI tree/compaction test, no real Herdr child launch, no installed-child resource visibility test, and no host full-suite run. Those remain explicit W1/later integration gates.
+
+No W1 acceptance check above is claimed to have passed yet. Worker candidate SHAs, paths, exact checks and review will be recorded in the Wave 1 handoff.
