@@ -1,0 +1,53 @@
+{
+  "name": "pi-herdr-pstack",
+  "version": "0.1.0-experimental.0",
+  "private": true,
+  "description": "Experimental pstack role pack for pi-herdr-agents (Wave 1 foundation: poteto role only)",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "herdr",
+    "subagents",
+    "pstack"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Giuseppe Rodriguez",
+    "url": "https://github.com/giuseppecrj"
+  },
+  "type": "module",
+  "files": [
+    "pi-extension/",
+    "agents/",
+    "docs/compatibility.md",
+    "docs/provenance.md",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test",
+    "format": "biome format --write pi-extension test",
+    "format:check": "biome format pi-extension test",
+    "lint": "oxlint pi-extension test",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "pi-herdr-agents": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./pi-extension/pstack/index.ts"
+    ]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.11",
+    "@earendil-works/pi-ai": "1.0.3",
+    "@earendil-works/pi-coding-agent": "1.0.3",
+    "@types/node": "^22.20.5",
+    "oxlint": "^1.80.0",
+    "typescript": "5.9.3"
+  }
+}
