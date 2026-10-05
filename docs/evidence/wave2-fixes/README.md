@@ -42,3 +42,47 @@ live models. Pi 1.0.3 itself refuses an aborted nested call before `tool_call`,
 so the replacement-between-approval-and-dispatch test accepts either Pi's
 refusal or pstack's cancelled-turn block; the signal check is covered by the
 unit test and `M7`.
+
+## Reload and reservation follow-up (`b0207b4`)
+
+A cross-family review of `b5d8e99` found that a `/reload` during a setup run
+left the fresh extension instance without a flow, so raw and relayed writer
+calls later in that same run were not blocked (P1). It also found that a setup
+prompt consumed by an input handler left the reservation open and blocked the
+next unrelated run's writer once (P3). The fix keeps run identity in the
+session branch: the setup prompt carries a run ID and pstack appends a
+`pi-herdr-pstack:setup-run` settled entry when the run settles. The guard
+blocks every writer call while Pi is busy and the branch's latest marker is
+unsettled. Approval is not restored. The reservation starts only when
+`before_agent_start` sees its marker.
+
+Inputs are as above, except that the logs ran on fix commit
+`b0207b4` (base `b5d8e9993700608e7306876c12600cac045fc523`) with the evidence
+files uncommitted. Host `b04906b6` and roles `22e1816` were clean; Node
+26.8.2, npm 11.19.1, Pi 1.0.3.
+
+| Log | What it shows |
+| --- | --- |
+| `reload-check-full.log` | `npm run check` with all inputs: typecheck, lint, format and 102 passing tests (92 before). The new tests cover reload during the approved nested dispatch, after a decline and after a success, each followed by raw and relayed writes in the same run, one `agent_start`/`agent_settled` pair and normal host behavior in the next run. They also cover a setup prompt consumed by an input handler followed by a prompt or a triggered custom message, a marker-preserving input transform, and isolated unit tests for branch reconstruction and the remembered apply-call IDs. |
+| `reload-test-default-noenv.log` | `npm test` with no integration inputs: 61 pass, 3 skipped, each with its reason. |
+| `reload-npm-pack-dry-run.log` | 28 packed files, unchanged. |
+| `reload-mutation-checks.log`, `run-mutations.sh`, `mutate.py` | Twenty-three faults, each run against the setup SDK and unit tests, then the source restored and checked with `git diff`. |
+
+Mutation results: the eight new faults are caught (`M13`–`M20`). These remove
+the branch-based run protection (the reviewed P1 shape), the settled entry,
+idle-only reconstruction, settlement at idle `session_start`, abandoning an
+unstarted reservation by prompt or by `agent_start`, and latest-marker
+selection. `M2`, which ignores the remembered apply-call IDs, is now caught by
+the isolated unit test. Earlier faults `M3` and `M5`–`M12` stay caught. `M1`
+and `M1b`, which end the in-memory protection early, are no longer caught on
+their own: once the setup prompt is in the branch, the branch record protects
+the same calls. Each paired with `M13` is caught (`M1M13`, `M1bM13`).
+
+Limits: the reviewer's `/tmp` probes were not rerun, because they import
+another checkout; the new SDK tests reproduce their reload timing. A reload
+inside `before_agent_start`, before the setup prompt is persisted and the run
+is marked active, is not reconstructed. A transform that removes the marker
+makes the run unrecognized, which clears the apply tool and lets later writes
+through. A user message that copies the marker text protects its own run, which
+fails closed. Real Herdr, TUI, installed-package and live-model checks were not
+run.
