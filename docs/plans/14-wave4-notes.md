@@ -134,3 +134,17 @@ All five findings accepted as correctness fixes in a bounded fix round on `wave4
 
 Gates note: the G1-G7 worker exhausted its provider session limit while composing its report, after writing `test/integration/wave4-gates.test.ts`, `gates-final.log` and `regression-full.log` under `/tmp/w4-gates-logs/`; the parent reads that evidence directly rather than relaunching.
 
+## Host facts from gates G1-G7 (real Herdr, host 7d35371, deterministic provider)
+
+All eight gate cases passed (`docs/evidence/wave4-gates/`). Facts the reconcile step must reflect in `fan-out.md` and the workflow skills:
+
+- **G5, MCP visibility:** a bare child launched WITHOUT a `tools` key sees the fixture MCP server's tools (`mcp__<server>__<tool>`) plus codemode; a child launched with `tools: "read, bash"` sees no MCP tools. The `why`/`recall` investigator rule (omit `tools`) is confirmed; the restricted-tools fallback text ("report source control only and name the gaps") applies only when the operator restricted tools.
+- **G7, nesting:** a bare child that launches a grandchild and ends its turn is delivered to the parent BEFORE the grandchild finishes; the grandchild's result reaches neither the parent nor the child session (0 results in either). The leaf rule is therefore a host fact, not a preference: a child cannot wait for its own children, and any skill a child runs must use its single-pass path.
+- **G6/G6b, caller_ping:** the parent receives the ping; an ordinary child does not continue tool work after pinging (it exits). A child must put everything it needs in the ping message.
+- **G4, watcher child:** a 90-second blocking `gh --watch` produced exactly one host no-progress advisory after about one minute of idle, classified `blocked-tool`, and the delivery woke the parent. The watcher pattern works; skills must state that one informational advisory per minute of blocked wait is expected and is not a stall to act on, and should bound each watch arm (`--interval`, a step cap) so the wait stays visibly finite.
+- **G1-G3:** fan-out of three bare children with one initial message each and synthesis after the third delivery; dropout and cancel produce exactly one terminal result each; candidate worktrees are retained, listed, and removal is refused while a child is live.
+
+**Regression:** 76/77 on the host's integration suite with the gate fixture overlay. The one failure, cancel case (d), passed every functional assertion (persistent specialist rejected with the subagent_stop pointer, no result delivered, no fallback, child pane untouched) and failed only the final `unrelatedUntouched` check on a pane in the runner's own workspace that closed during the run. This is the same environmental class narrowed once in `fa483ea`; host follow-up: drop the runner-workspace snapshot from that helper and keep the parent and bystander pane checks. Not a cancel defect.
+
+**Cleanup:** 54 empty `~/.herdr/worktrees/pi-integ-*` residue directories from today's fixture runs (dead gitdirs, zero content) removed by the parent; `/tmp/pi-integ-*` leftovers hold only 8 KB artifact dirs and were left in place.
+
