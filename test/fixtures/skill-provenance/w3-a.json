@@ -16,7 +16,7 @@
 	"files": [
 		{
 			"path": "skills/benchmark-checklist/SKILL.md",
-			"sha256": "7c2e63ae5c7bd64a572e4dceaf9f182399eb4c4c870fd9c9ad99152f796eb3e9",
+			"sha256": "24c606c3c94cb0e51d64917e71feb7ad6d64273ed93c7c02c7c70f18145b22d1",
 			"status": "adapted",
 			"sources": [
 				{
@@ -26,12 +26,12 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Relative link to principle-explain-the-number became a backticked path; the Opening a PR and Perf issue playbooks named by title gained their backticked ../poteto-mode/playbooks paths (edit class 1); the Hillclimb playbook gained its path, a planned W4 marker and an interim rule to apply the checklist to any self-frozen harness without reporting a hillclimb loop as run (edit class 3)."
+			"explanation": "Relative link to principle-explain-the-number became a backticked path; the Opening a PR and Perf issue playbooks named by title gained their backticked ../poteto-mode/playbooks paths (edit class 1); the Hillclimb playbook gained its path, a planned W4 marker and an interim rule to apply the checklist to any self-frozen harness without reporting a hillclimb loop as run (edit class 3). W4 reconcile: the Hillclimb planned W4 marker and its interim rule are retired now that the playbook ships; the playbook path stays."
 		},
 		{
 			"path": "skills/blast-radius/SKILL.md",
-			"sha256": "647647cea5840789ffb6303556f7f863c8ec9f8e0d71c0fceebc57ec1d3cd506",
-			"status": "adapted",
+			"sha256": "5f02db9101ccf26c20254718f0fcd5c2c7ac5d4292b0e0923d0944ac47237aff",
+			"status": "copied",
 			"sources": [
 				{
 					"source": "mimir",
@@ -40,7 +40,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line."
+			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line. W4 reconcile: the planned W4 markers and interim fallbacks for how, why and arena are retired now that they ship, restoring the upstream lines; the file is again a byte-identical copy."
 		},
 		{
 			"path": "skills/correct/SKILL.md",
@@ -296,8 +296,8 @@
 		},
 		{
 			"path": "skills/principle-prove-it-works/SKILL.md",
-			"sha256": "316161dcc42e7b78f6da205e2eb84b515a0cd8db5c5b41c5a38d3e4e0627dee1",
-			"status": "adapted",
+			"sha256": "ec79a15025bac8d33d62011c54f3b612733fd2a024e623b531b3637aa75070e2",
+			"status": "copied",
 			"sources": [
 				{
 					"source": "mimir",
@@ -306,7 +306,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The show-me-your-work reference is marked planned W4 with an interim rule: keep the trail as a local Markdown decision log and say the skill was unavailable (edit class 3)."
+			"explanation": "The show-me-your-work reference is marked planned W4 with an interim rule: keep the trail as a local Markdown decision log and say the skill was unavailable (edit class 3). W4 reconcile: the show-me-your-work planned W4 marker and interim rule are retired, restoring the upstream line; the file is again a byte-identical copy."
 		},
 		{
 			"path": "skills/principle-redesign-from-first-principles/SKILL.md",

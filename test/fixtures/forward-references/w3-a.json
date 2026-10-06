@@ -1,31 +1,5 @@
 {
 	"schemaVersion": 1,
-	"description": "Exact unresolved references from shipped W3-A files to inventory rows or playbooks that are not shipped yet. Owned by the W3-A writer; see test/skill-content.test.ts for the rules.",
-	"exceptions": [
-		{
-			"sourcePath": "skills/benchmark-checklist/SKILL.md",
-			"targetPath": "skills/poteto-mode/playbooks/hillclimb.md",
-			"owningWave": "W4"
-		},
-		{
-			"sourcePath": "skills/blast-radius/SKILL.md",
-			"targetPath": "skills/arena/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/blast-radius/SKILL.md",
-			"targetPath": "skills/how/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/blast-radius/SKILL.md",
-			"targetPath": "skills/why/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/principle-prove-it-works/SKILL.md",
-			"targetPath": "skills/show-me-your-work/SKILL.md",
-			"owningWave": "W4-B"
-		}
-	]
+	"description": "Exact unresolved references from shipped W3-A files to inventory rows or playbooks that are not shipped yet. Owned by the W3-A writer; see test/skill-content.test.ts for the rules. All tuples retired at the W4 reconcile, when every inventory row and playbook shipped; the W4 gate chose no W5 deferrals, so this list is empty.",
+	"exceptions": []
 }

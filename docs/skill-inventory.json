@@ -17,7 +17,7 @@
     {
       "name": "architect",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -37,7 +37,7 @@
     {
       "name": "arena",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -51,7 +51,7 @@
     {
       "name": "automate-me",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -121,7 +121,7 @@
     {
       "name": "create-verification-skill",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -141,7 +141,7 @@
     {
       "name": "figure-it-out",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -155,7 +155,7 @@
     {
       "name": "how",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -173,7 +173,7 @@
     {
       "name": "interrogate",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -195,7 +195,7 @@
     {
       "name": "maintain-verification-skill",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -209,7 +209,7 @@
     {
       "name": "make-bot-ui",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "cursor",
       "sourceFiles": {
         "cursor": [
@@ -687,7 +687,7 @@
     {
       "name": "recall",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -701,7 +701,7 @@
     {
       "name": "reflect",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -734,7 +734,7 @@
     {
       "name": "show-me-your-work",
       "wave": "W4-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -752,7 +752,7 @@
     {
       "name": "swarm",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -838,7 +838,7 @@
     {
       "name": "why",
       "wave": "W4-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [

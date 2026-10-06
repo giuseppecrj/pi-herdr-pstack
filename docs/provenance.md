@@ -131,3 +131,59 @@ that pointed at Wave 3 rows (54 in `hub.json`, 1 cross-batch in `w3-a.json`, 8
 cross-batch in `w3-b.json`). The 93 remaining tuples all point at Wave 4 rows or
 playbooks. Two short example sentences in the copied `technical-writing` skill
 are attributed to Diátaxis and ASD-STE100 in `THIRD_PARTY_NOTICES.md`.
+
+## Wave 4: 14 skills, 11 playbooks and two scripts
+
+Wave 4 shipped the last 14 inventory rows and the 11 remaining poteto-mode
+playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
+23 playbooks ship. Each batch owns its fixtures:
+
+- W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
+  `interrogate`, `reflect`, `figure-it-out`. 33 files, 21 copied and 12 adapted,
+  all from mimir.
+- W4-B (`w4-b.json`): `show-me-your-work`, `recall`, `automate-me`,
+  `create-verification-skill`, `maintain-verification-skill`, `make-bot-ui`.
+  11 files, 4 copied and 7 adapted. `scripts/log.sh` is copied with its
+  upstream mode `100755`. `make-bot-ui` is adapted from Cursor
+  `make-bot-ui/SKILL.md` at `2cbf58508f40de470d7490b55c51d71241928fa2` and
+  substantially re-authored for Pi: a loopback-bound local page whose server
+  starts one `pi -p` run per request, with the key in a local file and exposure
+  or installs only on authorization. Cursor's frontmatter name `Make Bot UI`
+  became `make-bot-ui`.
+- W4-P (`w4-p.json`): `playbooks/{hillclimb,eval,visual-parity,authoring-a-skill,babysit,shipping,autopilot-full,autopilot-stack,multi-phase-plan,orchestrate,worktree-cleanup}.md`
+  and `scripts/check-plan.mjs` (mode `100644`), all 12 adapted from mimir.
+  `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
+  enforced `/loop` and repository-root markers.
+
+Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
+added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
+the shared fan-out protocol. The package now ships 113 skill files: 49 copied,
+61 adapted and 3 new.
+
+The remaining upstream helper scripts stay excluded in `w2.json`, each
+disposition naming its replacement: `scripts/orch/*` (the Orchestrate playbook
+as a depth-1 coordinator with a hand-kept store), `scripts/watch-pr/*` (the
+one-shot watcher child in `fan-out.md` and stated `gh` field conditions),
+`scripts/worktree-audit.sh` (`worktree_list` and per-path `worktree_remove`),
+and `scripts/{bootstrap.ts,bun.lock,package.json}` (no runtime installer or
+script dependencies).
+
+The reconcile step retired every forward-reference tuple: the 93 that Wave 3
+left (42 in `hub.json`, 5 in `w3-a.json`, 46 in `w3-b.json`) and the 9
+cross-batch tuples the batches recorded (2 in `w4-a.json`, 1 in `w4-b.json`, 6
+in `w4-p.json`). No target was deferred to Wave 5, so every fixture under
+`test/fixtures/forward-references/` is empty. It also removed every
+`planned W4` marker and interim "until it ships" clause from the hub, the base
+playbooks, `bugbot-triage.md`, `setup-pstack`, `poteto-help`, the six Wave 3
+files and the Wave 4 files that cited each other, and rewrote each route to name
+the workflow's real behavior and scope-down limits. `blast-radius` and
+`principle-prove-it-works` became byte-identical copies again.
+
+The content test now exempts fenced code blocks from the placeholder-marker and
+model-name bans (inline code too for placeholder markers, and for model names
+in byte-identical copies), and checks every fence with the `marked` lexer.
+That let three W4-A edits made only to satisfy the old bans be reverted:
+`why/references/sources/code-archaeology.md` and
+`reflect/references/synthesizer.md` are byte-identical mimir copies again, and
+`architect/references/runner-prompt.md` keeps upstream's `// TODO` marker while
+staying adapted for its other edits.
