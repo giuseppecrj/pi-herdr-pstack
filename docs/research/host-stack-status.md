@@ -74,3 +74,7 @@ Release CI scaffolding (user request): `release/ci` branches in pi-herdr-roles (
 
 Wave 4 accepted by the user (2026-10-06): `wave4/integration` pushed, pstack PR #5 opened and merged (`e75395c`, 51 skills on main); worktree removed, branch retained. CI PRs (roles #2, pstack #4) remain open for the user; pstack #4 rebased onto the new main. Next: Wave 5 release decisions.
 
+## Wave 5 release (2026-10-06)
+
+User decision: merge the CI PRs, release host then packs at 0.1.0. CI PRs merged (roles `2820591`, pstack `cf2797f`); both publish workflows ran on the merge pushes and completed as successful no-release runs (private package), live proof of the policy. Release branches prepared: host `release/3.0.0` at `b8b23a0` (major: pack-neutral host removed bundled roles and commands; adds conditional writes, operating skill, subagent_cancel; also documents bare-spawn systemPrompt delivery and narrows the flaky cancel-test assertion), roles `release/0.1.0` at `603217e`, pstack `release/0.1.0` at `80baa52` (private removed, peers `pi-herdr-agents >=3.0.0`, SDK `^1.0.3`, pstack `typebox ^1.3.27`). Host-only Herdr suite on `7d35371`: 76/77 with one fixture `index.lock` race in setup (environmental); rerun on the release head is the gate before the host PR is opened. Merge order: host first, confirm npm, then roles and pstack.
+
