@@ -44,7 +44,7 @@ Apply the **principle-sequence-verifiable-units** principle skill, verifying eac
 
 ## Phase D: Keep the audit trail
 
-Log the run via the **show-me-your-work** skill (planned W4), one canonical TSV with a row per decision and per unit, evidence as links. figure-it-out's work is usually ambitious enough to commit the trail so the reviewer can read it in the PR. Commit it when confidence has to be shown. Prefer evidence produced by committed scripts. The trail plus the diff is what lets the human come back and trust the work.
+Log the run via the **show-me-your-work** skill (planned W4), one canonical TSV with a row per decision and per unit, evidence as links. Until that skill ships, keep the TSV by hand as a local append-only decision log (add rows, never rewrite them) and say in the hand-back that show-me-your-work was unavailable. figure-it-out's work is usually ambitious enough to commit the trail so the reviewer can read it in the PR. Commit it when confidence has to be shown. Prefer evidence produced by committed scripts. The trail plus the diff is what lets the human come back and trust the work.
 
 ## Phase E: Verify and hand back
 

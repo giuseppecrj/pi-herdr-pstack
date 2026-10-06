@@ -44,7 +44,7 @@
 		},
 		{
 			"path": "skills/architect/references/runner-prompt.md",
-			"sha256": "60c636ed7ec1d04e113ba0c953ab2f675dc61807db6cc163b67550d00895caf2",
+			"sha256": "ae8307b583bbf9f3428a03f08f0378103d7d61bcd377d32ab11e5160c584d2cb",
 			"status": "adapted",
 			"sources": [
 				{
@@ -54,7 +54,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The literal // TODO pseudocode marker trips the shipped-file placeholder ban and became // todo; not one of the listed edit classes, flagged for the reviewer."
+			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The literal // TODO pseudocode marker trips the shipped-file placeholder ban and became // todo; not one of the listed edit classes, flagged for the reviewer. Per fan-out section 5, the 'git worktree when available, otherwise a per-runner subdirectory' fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one."
 		},
 		{
 			"path": "skills/architect/SKILL.md",
@@ -72,7 +72,7 @@
 		},
 		{
 			"path": "skills/arena/SKILL.md",
-			"sha256": "0324281a99667cf584edf69c7e657fabce4af9e4a90559653423511ac894acd1",
+			"sha256": "30de642a4a2636c472c66382e840a76a83fdba6111bf0e694a7f379391ddd9df",
 			"status": "adapted",
 			"sources": [
 				{
@@ -82,11 +82,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
+			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3). Per fan-out sections 3 and 5: the 'same model N times' option is kept only as a disclosed context-isolated mode whose cross-family result is reported incomplete; the worktree-or-/tmp output fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one; 'prefer a family different from the parent's' became a cross-judge family independent of every candidate author's family, or a disclosed same-family judge with the cross-judgment incomplete."
 		},
 		{
 			"path": "skills/figure-it-out/SKILL.md",
-			"sha256": "47df82f0fd4a8e3d4313e68783d7e0db2b8163e182b1f7afc6f238dbeb8656d1",
+			"sha256": "20bfd1e649aa30777f0fb7b8d116e5cbea4a2927767f39501242d4646ea35bc4",
 			"status": "adapted",
 			"sources": [
 				{
@@ -96,7 +96,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The todolist and its todos became a visible checklist and its items; seven short principle names became full names (edit classes 1 and 3); the cross-batch show-me-your-work reference (W4-B) is marked planned W4 on its line with an exact tuple in the w4-a forward-reference fixture (edit class 4)."
+			"explanation": "The todolist and its todos became a visible checklist and its items; seven short principle names became full names (edit classes 1 and 3); the cross-batch show-me-your-work reference (W4-B) is marked planned W4 on its line with an exact tuple in the w4-a forward-reference fixture (edit class 4). The planned line adds the interim rule: until show-me-your-work ships, keep the TSV by hand as a local append-only decision log and say show-me-your-work was unavailable."
 		},
 		{
 			"path": "skills/how/references/explainer-prompt.md",
@@ -268,7 +268,7 @@
 		},
 		{
 			"path": "skills/reflect/SKILL.md",
-			"sha256": "be7e456720134fb689de9af0cf0018796418ba14a368b8a4e734e75748535d22",
+			"sha256": "6d4ef9bab312e574e866cbc95648ce7148ce55791f2c5981b61ae6ad73cbb691",
 			"status": "adapted",
 			"sources": [
 				{
@@ -278,7 +278,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4)."
+			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable."
 		},
 		{
 			"path": "skills/swarm/SKILL.md",

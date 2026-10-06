@@ -27,8 +27,8 @@ The N candidates will receive the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. The rubric is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Runners are diversity seats: each gets an exact authenticated `provider/model-id` from the live catalog, one model family per seat, per `../poteto-mode/references/fan-out.md` section 3, which also covers having fewer families than seats. If a launch rejects a model, run that seat on another model of the same family and say so. Spawn more when the arena covers multiple design directions. Same model N times when the work is generation-bound rather than judgment-sensitive.
-4. Assign output paths. Each candidate writes to its own location (its own `worktree` branch where possible, per `../poteto-mode/references/fan-out.md` section 5, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **principle-separate-before-serializing-shared-state** principle skill.
+3. Pick the runners. Runners are diversity seats: each gets an exact authenticated `provider/model-id` from the live catalog, one model family per seat, per `../poteto-mode/references/fan-out.md` section 3, which also covers having fewer families than seats. If a launch rejects a model, run that seat on another model of the same family and say so. Spawn more when the arena covers multiple design directions. Same-family seats, including the same model N times when the work is generation-bound rather than judgment-sensitive, are allowed only when disclosed as context-isolated, not cross-family, and the cross-family result is then reported incomplete.
+4. Assign output paths. Each candidate writes to its own location (its own managed `worktree` branch from committed HEAD, per `../poteto-mode/references/fan-out.md` section 5; if the host cannot create one, report that launch as blocked rather than substituting a directory), per the **principle-separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
 
@@ -52,7 +52,7 @@ If a candidate fails to produce output, proceed with N-1 and note the dropout in
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one exact authenticated `provider/model-id` from the live catalog for the cross-judge, a diversity seat. Prefer a different model family from the parent's. Spawn one readonly judge subagent on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, choose one exact authenticated `provider/model-id` from the live catalog for the cross-judge, a diversity seat. Its family must differ from every candidate author's family, not only the parent's, per `../poteto-mode/references/fan-out.md` section 3; if no such family is authenticated, disclose a same-family context-isolated judge and report the cross-judgment incomplete. Spawn one readonly judge subagent on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
 ```json subagent
 {
