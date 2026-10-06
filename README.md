@@ -1,11 +1,11 @@
 # pi-herdr-pstack
 
-> **Experimental, private, unpublished — Wave 4 candidate.** This package
-> contributes the full pstack inventory: 51 skills and the 23 poteto-mode
-> playbooks, the `/poteto-mode` and `/setup-pstack` commands and one bare
-> delegate prompt. It ships no named roles. Several workflows are scoped down
-> for Pi (see below). Nothing is published or released; npm holds only a
-> placeholder under the package name.
+> **Version 0.1.0.** This package contributes the full pstack inventory: 51
+> skills and the 23 poteto-mode playbooks, the `/poteto-mode` and
+> `/setup-pstack` commands and one bare delegate prompt. It ships no named
+> roles. Several workflows are scoped down for Pi (see below). It requires
+> pi-herdr-agents `>=3.0.0`, installed and enabled through Pi separately; see
+> [compatibility](docs/compatibility.md) for the tested revisions.
 
 A Pi methodology pack for [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents).
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs
@@ -132,15 +132,16 @@ moved here was removed in Wave 2 at the user's request; see
 
 pi-herdr-agents is a peer dependency and an explicit Pi installation
 prerequisite: **a peer declaration does not activate an extension**. Install and
-enable both through Pi. This package is not yet published (`npm:pi-herdr-pstack`
-is only a placeholder), so install it from the GitHub repository or a local
-path, with an isolated agent directory:
+enable both through Pi. After the 0.1.0 release lands on npm, install the host
+first and then this pack:
 
 ```bash
-export PI_CODING_AGENT_DIR=/tmp/pstack-experiment/agent
-pi install /path/to/candidate/pi-herdr-agents
-pi install git:github.com/giuseppecrj/pi-herdr-pstack   # or /path/to/pi-herdr-pstack
+pi install npm:pi-herdr-agents   # >=3.0.0
+pi install npm:pi-herdr-pstack
 ```
+
+Until then, install from the GitHub repository or a local path instead (for
+example `pi install git:github.com/giuseppecrj/pi-herdr-pstack`).
 
 Install the pack where pi-herdr-agents children load packages too (normally the
 same user settings). While pstack is installed, pi-herdr-agents'
@@ -174,9 +175,8 @@ faux-provider run is not evidence that a live model follows the skills.
 
 ## Release
 
-The package is private and has never been released. A GitHub Actions workflow
-publishes to npm with trusted publishing once the package is made public with a
-stable version; until then it reports a notice and releases nothing. CI runs
+0.1.0 is the first public release. A GitHub Actions workflow publishes each
+stable version bump on `main` to npm with trusted publishing. CI runs
 `npm run check` without the optional variables above, so their checks skip
 there. See [RELEASING.md](RELEASING.md) and [CHANGELOG.md](CHANGELOG.md).
 

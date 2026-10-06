@@ -30,7 +30,7 @@ const provenance = JSON.parse(read("test/fixtures/provenance.json")) as {
 const manifest = JSON.parse(read("package.json")) as {
 	name: string;
 	version: string;
-	private: boolean;
+	private?: boolean;
 	license: string;
 	keywords: string[];
 	peerDependencies: Record<string, string>;
@@ -139,16 +139,16 @@ describe("Wave 2 runtime scope", () => {
 });
 
 describe("package manifest", () => {
-	it("is a private experimental Pi package with host peers", () => {
+	it("is a public released Pi package with host peers", () => {
 		assert.equal(manifest.name, "pi-herdr-pstack");
-		assert.equal(manifest.private, true);
-		assert.match(manifest.version, /^0\.\d+\.\d+-experimental\.\d+$/);
+		assert.equal(manifest.private, undefined);
+		assert.equal(manifest.version, "0.1.0");
 		assert.equal(manifest.license, "MIT");
 		assert.ok(manifest.keywords.includes("pi-package"));
 		assert.deepEqual(manifest.peerDependencies, {
-			"@earendil-works/pi-coding-agent": "*",
-			"pi-herdr-agents": "*",
-			typebox: "*",
+			"@earendil-works/pi-coding-agent": "^1.0.3",
+			"pi-herdr-agents": ">=3.0.0",
+			typebox: "^1.3.27",
 		});
 		assert.equal(manifest.dependencies, undefined);
 		assert.deepEqual(manifest.pi, {
