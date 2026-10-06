@@ -1,6 +1,6 @@
 # Wave 4 execution contract
 
-Status: **draft for the user's approval. Planning only.** The user accepted Wave 3 and authorized Wave 4 planning. No worktree, commit, Herdr run or child may start until the user approves this contract and answers the open decisions in [the notes](./14-wave4-notes.md). This contract follows the style of `12-wave3-contract.md`. It inherits AGENTS.md, plan 09 (no `poteto` role), plan 10 (unconditional writer gate) and the W3 edit-class rules unchanged.
+Status: **approved by the user on 2026-10-06.** Decisions: autopilot-full and autopilot-stack ship scoped down (D1); orchestrate ships as the depth-1 single-session coordinator (D2); no timers (D3); `make-bot-ui` is re-authored for Pi as a loopback-bound local page that starts a Pi run (D4); `gh` only (D5); watcher-child wait semantics (D6); no live-model evaluation without further authorization (D7); deterministic `gh` stub for forge evidence (D8); implementation may start (D9). Routine calls are in [the notes](./14-wave4-notes.md). Pushes, PRs and merges of the result still need the user. This contract follows the style of `12-wave3-contract.md`. It inherits AGENTS.md, plan 09 (no `poteto` role), plan 10 (unconditional writer gate) and the W3 edit-class rules unchanged.
 
 ## Accepted inputs (proposed I3 vector)
 
