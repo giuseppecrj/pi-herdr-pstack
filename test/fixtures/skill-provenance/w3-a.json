@@ -15,6 +15,34 @@
 	},
 	"files": [
 		{
+			"path": "skills/benchmark-checklist/SKILL.md",
+			"sha256": "7c2e63ae5c7bd64a572e4dceaf9f182399eb4c4c870fd9c9ad99152f796eb3e9",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "benchmark-checklist/SKILL.md",
+					"sha256": "6a767e788a60428fa14e645ee10fe2e49896e514ff654f668b1d824deb9038e8",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative link to principle-explain-the-number became a backticked path; the Opening a PR and Perf issue playbooks named by title gained their backticked ../poteto-mode/playbooks paths (edit class 1); the Hillclimb playbook gained its path, a planned W4 marker and an interim rule to apply the checklist to any self-frozen harness without reporting a hillclimb loop as run (edit class 3)."
+		},
+		{
+			"path": "skills/blast-radius/SKILL.md",
+			"sha256": "0bc273fb5b5cecd3347cbc9de03dc12c21364aa02e4ce2bf07af435603a271a0",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "blast-radius/SKILL.md",
+					"sha256": "5f02db9101ccf26c20254718f0fcd5c2c7ac5d4292b0e0923d0944ac47237aff",
+					"use": "primary"
+				}
+			],
+			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference is marked planned W3 for the W3-A batch branch only; reconcile removes the marker when unslop ships."
+		},
+		{
 			"path": "skills/correct/SKILL.md",
 			"sha256": "bf482bacc972b3f124a4af8bf9364b4b3e280cb5845e44c326ea4f4565e5c904",
 			"status": "copied",
@@ -29,6 +57,20 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
+			"path": "skills/principle-attack-the-premise/SKILL.md",
+			"sha256": "18b1159d50e412b782c89a69b097207199a7ca37baa4c9df864cff389bbb2d11",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-attack-the-premise/SKILL.md",
+					"sha256": "c87bd7536f772f8a403ad8155535ee17a1bbec9a353156693eb3bb1520c87ae3",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
+		},
+		{
 			"path": "skills/principle-boundary-discipline/SKILL.md",
 			"sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
 			"status": "copied",
@@ -41,6 +83,20 @@
 				}
 			],
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-build-the-lever/SKILL.md",
+			"sha256": "c32e2875e1e21b0e03920ae80a918b9762733d01f31a5186513e2e2615751b35",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-build-the-lever/SKILL.md",
+					"sha256": "458b269eab8e95a1573276955312f7d2a13ae8599879a9efc748248f6bc34b56",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
 		},
 		{
 			"path": "skills/principle-encode-lessons-in-structure/SKILL.md",
@@ -83,6 +139,20 @@
 				}
 			],
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-explain-the-number/SKILL.md",
+			"sha256": "4253907fcf0df011eec68cb41383678268fc8efc64669053e750e8e11d6a3642",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-explain-the-number/SKILL.md",
+					"sha256": "5aac99e7ce0bb1b37e2579acf4fe88c32a1456d9d46afd4a57cfe1df9092e89c",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
 		},
 		{
 			"path": "skills/principle-fix-root-causes/SKILL.md",
@@ -169,6 +239,20 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
+			"path": "skills/principle-minimize-reader-load/SKILL.md",
+			"sha256": "b042f313773db2dbfc1319bac128cb02872016625f0886834885fc8eb97df2cd",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-minimize-reader-load/SKILL.md",
+					"sha256": "42551c5dc74cd578163c148da552db3ff67d29b78600ef216bfd311fb828fe69",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
+		},
+		{
 			"path": "skills/principle-model-the-domain/SKILL.md",
 			"sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
 			"status": "copied",
@@ -211,6 +295,20 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
+			"path": "skills/principle-prove-it-works/SKILL.md",
+			"sha256": "316161dcc42e7b78f6da205e2eb84b515a0cd8db5c5b41c5a38d3e4e0627dee1",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-prove-it-works/SKILL.md",
+					"sha256": "ec79a15025bac8d33d62011c54f3b612733fd2a024e623b531b3637aa75070e2",
+					"use": "primary"
+				}
+			],
+			"explanation": "The show-me-your-work reference is marked planned W4 with an interim rule: keep the trail as a local Markdown decision log and say the skill was unavailable (edit class 3)."
+		},
+		{
 			"path": "skills/principle-redesign-from-first-principles/SKILL.md",
 			"sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe",
 			"status": "copied",
@@ -237,6 +335,20 @@
 				}
 			],
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-sequence-verifiable-units/SKILL.md",
+			"sha256": "3d9336a0ec40edc99e20d11252fb7067a2f33cb4dcd358741c8cdca215a24e07",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-sequence-verifiable-units/SKILL.md",
+					"sha256": "2ccbbacc56ace5afdfb8670cef19d7bd009fb2a0033b9a741cbdf2b6baf72187",
+					"use": "primary"
+				}
+			],
+			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
 		},
 		{
 			"path": "skills/principle-subtract-before-you-add/SKILL.md",
@@ -267,6 +379,20 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
+			"path": "skills/principle-type-system-discipline/SKILL.md",
+			"sha256": "dc04e55fd8056617e09cc5c140b45954a01013ef412eafc978fb919594221840",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-type-system-discipline/SKILL.md",
+					"sha256": "c83da8031ffb4c86410030d3e261f659598fca2b7d8158fd9dc269d70a3a025e",
+					"use": "primary"
+				}
+			],
+			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
+		},
+		{
 			"path": "skills/tdd/SKILL.md",
 			"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
 			"status": "copied",
@@ -279,6 +405,34 @@
 				}
 			],
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/typescript-best-practices/references/patterns.md",
+			"sha256": "d3882243062d325dccf53592dbefa5c177b246d70093190baf2e33b719b0b037",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "typescript-best-practices/references/patterns.md",
+					"sha256": "faa1362055374452efccac1b629677c61acfb0bcc6c4e3311836b5715638ee18",
+					"use": "primary"
+				}
+			],
+			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
+		},
+		{
+			"path": "skills/typescript-best-practices/SKILL.md",
+			"sha256": "66fc97bca797a2e039ac717c4c1d961b76414927d3be0f7acb86deb178d7321f",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "typescript-best-practices/SKILL.md",
+					"sha256": "b1dd84d1f9855bce15d9c64a196bb102513574dcbfed40cd8468ff01d58eede5",
+					"use": "primary"
+				}
+			],
+			"explanation": "Dropped the Cursor-only paths frontmatter, which Pi 1.0.3 ignores, keeping disable-model-invocation true per D6 (edit class 4); short principle names became full inventory names (edit class 2). Keeps Mimir's boundary-validation row wording per D6."
 		}
 	],
 	"planned": [],

@@ -1,5 +1,36 @@
 {
 	"schemaVersion": 1,
 	"description": "Exact unresolved references from shipped W3-A files to inventory rows or playbooks that are not shipped yet. Owned by the W3-A writer; see test/skill-content.test.ts for the rules.",
-	"exceptions": []
+	"exceptions": [
+		{
+			"sourcePath": "skills/benchmark-checklist/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/hillclimb.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/blast-radius/SKILL.md",
+			"targetPath": "skills/arena/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/blast-radius/SKILL.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/blast-radius/SKILL.md",
+			"targetPath": "skills/unslop/SKILL.md",
+			"owningWave": "W3-B"
+		},
+		{
+			"sourcePath": "skills/blast-radius/SKILL.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/principle-prove-it-works/SKILL.md",
+			"targetPath": "skills/show-me-your-work/SKILL.md",
+			"owningWave": "W4-B"
+		}
+	]
 }
