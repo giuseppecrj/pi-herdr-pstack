@@ -106,3 +106,11 @@ Read-only planning. No repository was edited, and no installation, Herdr session
 
 D1 (autopilots scoped down or deferred), D2 (orchestrate scoped down or deferred), D4 (`make-bot-ui` re-authored or excluded), D7 (live-model evaluation authority), D9 (approval to start).
 
+## User decisions (2026-10-06)
+
+- D1: scoped-down autopilots (root-run program, fresh leaf owners per round, audits on delivery, explicit grant naming push/PR/merge).
+- D2: orchestrate as a depth-1 single-session coordinator with a hand-kept file store; states it is not an unattended runner.
+- D4: `make-bot-ui` re-authored for Pi (`name: make-bot-ui`; local page posting to a loopback server that starts a Pi run; key in a local file, never in chat; exposure only with explicit authorization).
+- D7: no live-model evaluation; deterministic gates prove host mechanics only.
+- D9: approved. Implementation starts from the C0 checkpoint.
+
