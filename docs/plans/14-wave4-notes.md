@@ -114,3 +114,11 @@ D1 (autopilots scoped down or deferred), D2 (orchestrate scoped down or deferred
 - D7: no live-model evaluation; deterministic gates prove host mechanics only.
 - D9: approved. Implementation starts from the C0 checkpoint.
 
+## Parent decisions on W4-A questions (2026-10-06)
+
+- Fixed reviewer prompts with placeholders (interrogate reviewer-prompt, reflect reviewers) go verbatim in `systemPrompt` with placeholder values in `task`, as the contract says; reconcile aligns `fan-out.md` §2 to this wording.
+- The three edits forced by the banned-pattern test on copied upstream code blocks (`why/references/sources/code-archaeology.md` rg pattern, `architect/references/runner-prompt.md` `// TODO`, `reflect/references/synthesizer.md` model slug example) are to be reverted to byte-identical copies at reconcile, with the content test exempting fenced code blocks from the placeholder and model-slug bans.
+- Seat mapping: `task:recon` for the how explainer and why synthesizer, `task:review` for the three reflect reviewers.
+- Cursor's extra swarm sentence (contradiction 13) stays out; Mimir wording is primary.
+- Upstream slash wording such as `/arena` inside prose stays as written.
+
