@@ -54,3 +54,7 @@ Reconcile landed at `f884fa8` (35 rows shipped, 68 planned-W3 markers and 63 tup
 
 Wave 3 accepted by the user (2026-10-06): `wave3/integration` pushed, pstack PR #3 opened and merged (`1cbf75f`); worktree removed, branch retained. Wave 4 planning launched (read-only draft to /tmp first). Open follow-up outside this repo: document in the host README and operating skill that a bare child's `systemPrompt` is delivered as a role block in the first message for standalone children only and dropped for forks.
 
+## Wave 4 in progress and npm names (2026-10-06)
+
+Wave 4 approved at `2f5de1a`. C0 `wave4/integration` at `dc48221`: shared `references/fan-out.md` protocol, generalized content tests (schema-valid examples, systemPrompt implies fork:false, extended banned list, W5 tuples, script mode checks), per-owner fixtures for w4-a/w4-b/w4-p, scripts unit tests; parent rerun 121 passed with 3 explained skips. Batches launched from C0: `wave4/engineering` (W4-A, 8 workflow skills, 33 files) and `wave4/capabilities` (W4-B 6 skills then W4-P 11 playbooks + check-plan.mjs). npm: `pi-herdr-roles` and `pi-herdr-pstack` reserved by the user via npm staged publishing (`0.0.0-stage`, two-file placeholders, maintainer giuseppecrj); `pi-herdr-agents` already published at 2.0.5. Wave 5 (release) will replace the placeholders.
+
