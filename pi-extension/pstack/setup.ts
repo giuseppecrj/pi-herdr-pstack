@@ -271,7 +271,7 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		);
 	}
 	lines.push(
-		"  Roles: none. Pstack contributes no named roles; poteto-mode delegates are bare.",
+		"  Roles: none. Pstack contributes no named roles; comment-sicko is a bare delegate driven by /skill:no-comments, and poteto-mode delegates are bare.",
 		"  Child visibility: not verified. Parent discovery does not prove child sessions load this package.",
 	);
 
