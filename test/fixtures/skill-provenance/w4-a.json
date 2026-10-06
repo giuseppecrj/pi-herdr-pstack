@@ -153,6 +153,188 @@
 				}
 			],
 			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's extra ISSUES sentence was not merged."
+		},
+		{
+			"path": "skills/why/references/epistemics.md",
+			"sha256": "fcc0f559c072832c869a5ada72434b4849320a637ae63c09e8ee14f7ad787059",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/epistemics.md",
+					"sha256": "fcc0f559c072832c869a5ada72434b4849320a637ae63c09e8ee14f7ad787059",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/investigator-prompt.md",
+			"sha256": "6892956a7ab0b5ee6c4babaf4f793703abe89b350ea7cb9463b4a56eea1c8266",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/investigator-prompt.md",
+					"sha256": "6892956a7ab0b5ee6c4babaf4f793703abe89b350ea7cb9463b4a56eea1c8266",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/source-playbook.md",
+			"sha256": "cc67782082b5f37e5884ef5c5f420609b6ac7bf80749137b578c55af19544733",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/source-playbook.md",
+					"sha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a",
+					"use": "primary"
+				}
+			],
+			"explanation": "The eight relative Markdown links to ./sources/<file>.md became backticked skill-relative references/sources/<file>.md paths (edit class 1)."
+		},
+		{
+			"path": "skills/why/references/sources/code-archaeology.md",
+			"sha256": "b14e3763ec17a19d00c11a6ad92900a297bf6c09e14e2bfabca6978ae2821451",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/code-archaeology.md",
+					"sha256": "8c14aa382f0de40829b2668d43e3f54814480bb93a486c9282ada4003f6b9dbd",
+					"use": "primary"
+				}
+			],
+			"explanation": "The rg pattern (TODO|FIXME|HACK|XXX|NOTE) trips the shipped-file placeholder ban; it became (TODOs?|FIXMEs?|HACK|XXX|NOTE), which matches exactly the same lines because rg matches substrings. Not one of the listed edit classes; flagged for the reviewer."
+		},
+		{
+			"path": "skills/why/references/sources/databricks.md",
+			"sha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/databricks.md",
+					"sha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/datadog.md",
+			"sha256": "ebe9c07bac28e47757ee7f16fb93b0c01d427a08c501957d047f395a2f37b7e7",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/datadog.md",
+					"sha256": "ebe9c07bac28e47757ee7f16fb93b0c01d427a08c501957d047f395a2f37b7e7",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/incident-postmortem.md",
+			"sha256": "a899470f05f86029630a13a2696491cc708ca7b56a6e822a69ff6e954d6ff8cf",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/incident-postmortem.md",
+					"sha256": "a899470f05f86029630a13a2696491cc708ca7b56a6e822a69ff6e954d6ff8cf",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/linear.md",
+			"sha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/linear.md",
+					"sha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/notion.md",
+			"sha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/notion.md",
+					"sha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/sentry.md",
+			"sha256": "6f292bc4fb1548e956f95e1900b9481abf5134254419f1cd9edec95428c82d73",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/sentry.md",
+					"sha256": "6f292bc4fb1548e956f95e1900b9481abf5134254419f1cd9edec95428c82d73",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/sources/slack.md",
+			"sha256": "58fee61d024b3700b407e7acbed367944720ff05adfddb6954d36c88368f3ba7",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/sources/slack.md",
+					"sha256": "58fee61d024b3700b407e7acbed367944720ff05adfddb6954d36c88368f3ba7",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/why/references/synthesizer-prompt.md",
+			"sha256": "0b121121957f832feb19befa2b15c4eec27c3356b712ae316887b3cd3e4f177b",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/references/synthesizer-prompt.md",
+					"sha256": "733a3e9cf897b1aca56aaddeae01a3832e4bfed024c2f602db2d1bf807d7a73b",
+					"use": "primary"
+				}
+			],
+			"explanation": "The example citation link [PR #123](url) is rejected as a relative Markdown link; its target became the https://<pr-url> placeholder so the output format still shows a linked PR (edit class 1)."
+		},
+		{
+			"path": "skills/why/SKILL.md",
+			"sha256": "86667d4a82f2b01543ef84c76de4c3cb8e5c3e9fb00b59973b7a61623c5a7562",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "why/SKILL.md",
+					"sha256": "eba19f5d2f91068620185feef50fc9808aeb53abdcdc44f525def457dabfd7df",
+					"use": "primary"
+				}
+			],
+			"explanation": "agent: poteto-agent and the configured why-investigators and why-synthesizer models with their inherit-parent defaults became bare subagent launches on task:recon with the delegation.md Investigator prompt as systemPrompt (fork: false) and the filled template as task; the single-message launch became independent calls in one turn citing ../poteto-mode/references/fan-out.md; restricted-tool mode became omitting the tools list so MCP stays visible, with the contract fallback to source control plus named gaps when a child cannot see its MCP; one json subagent example per seat type (edit classes 2-3)."
 		}
 	],
 	"planned": [],
