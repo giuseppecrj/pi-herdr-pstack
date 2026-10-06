@@ -64,3 +64,11 @@ Read-only planning. No repository, installation, Herdr session, child agent or m
 ## Open for the user
 
 D1 (comment-sicko edits or reports), D2 (role or bare delegate), D4 (port `poteto-help` now as a re-authoring, or defer it), D12 (approval to start).
+
+## User decisions (2026-10-06)
+
+- D1: comment-sicko edits files (`read, bash, edit`), comments only.
+- D2: bare delegate; the upstream role body becomes `skills/no-comments/references/comment-sicko.md`; no `agents/`, no role registration.
+- D4: port `poteto-help` now as a Pi re-authoring.
+- D12: approved. Implementation starts from the C0 checkpoint.
+

@@ -1,6 +1,6 @@
 # Wave 3 execution contract
 
-Status: **draft for the human W3 gate; planning only.** The user accepted Wave 2 and authorized Wave 3 *planning*. Nothing in this document authorizes implementation, worktrees, commits, pushes or Herdr runs until the user approves it and answers the decisions in [notes](./12-wave3-notes.md). It follows the style of `docs/plans/06-wave2-contract.md` and `07-wave2-entry-contract.md` and inherits AGENTS.md, plans 09 (no `poteto` role) and 10 (unconditional writer gate) unchanged.
+Status: **approved by the user on 2026-10-06.** Decisions: comment-sicko edits files (D1); comment-sicko is a **bare delegate**, not a registered role (D2); `poteto-help` ports now as a Pi re-authoring (D4); implementation may start (D12). Routine calls are recorded in [notes](./12-wave3-notes.md). Pushes, merges and publication still need the user. It follows the style of `docs/plans/06-wave2-contract.md` and `07-wave2-entry-contract.md` and inherits AGENTS.md, plans 09 (no `poteto` role) and 10 (unconditional writer gate) unchanged.
 
 ## Accepted inputs (proposed I2 vector)
 
@@ -16,7 +16,7 @@ Status: **draft for the human W3 gate; planning only.** The user accepted Wave 2
 
 ## Exact scope
 
-35 inventory rows (W3-A 29, W3-B 6) and one pstack role. Every listed source file exists at the pinned commits, and `git ls-files` shows no additional file under these directories. **No W3 source file is a script, lockfile or executable.** Only `poteto-help` lacks a Mimir copy.
+35 inventory rows (W3-A 29, W3-B 6) and one bare-delegate prompt for comment-sicko. Every listed source file exists at the pinned commits, and `git ls-files` shows no additional file under these directories. **No W3 source file is a script, lockfile or executable.** Only `poteto-help` lacks a Mimir copy.
 
 ### W3-A: 29 rows, 30 files, primary source Mimir
 
@@ -37,9 +37,9 @@ Status: **draft for the human W3 gate; planning only.** The user accepted Wave 2
 | `teach` | `teach/SKILL.md` | Mimir (identical) | `how`/`why` (W4-A) are its main mechanism; "image-generation tool" is not a Pi tool |
 | `no-comments` | `no-comments/SKILL.md` | Mimir (already uses `subagent` + `agent: "comment-sicko"`; Cursor uses `Task`/`subagent_type`) | `how`, `why`, `architect` (W4-A); named-role call |
 | `poteto-help` | `SKILL.md`, `references/prompting.md`, `references/recipes.md` | **Cursor only** | Cursor-specific throughout. See below |
-| role `comment-sicko` | `agents/comment-sicko.md` | Mimir (has Pi frontmatter; Cursor's has only name/description) | `/skill:how`, `/skill:why` (W4-A); description says "read-only" but the body deletes comments |
+| delegate prompt `comment-sicko` | `agents/comment-sicko.md` (source) → `skills/no-comments/references/comment-sicko.md` (destination) | Mimir (has Pi frontmatter; Cursor's has only name/description) | `/skill:how`, `/skill:why` (W4-A); frontmatter dropped (it is a prompt, not a role); description said "read-only" but the body deletes comments: it becomes an editor |
 
-Target file count: 39 (30 + 8 + 1). The final checked numbers are 37 loaded skills (2 + 35) and one role file.
+Target file count: 39 (30 + 8 + 1). The final checked numbers are 37 loaded skills (2 + 35) and one delegate prompt under `skills/no-comments/references/`. No `agents/` directory and no role registration.
 
 ## What "adapted" means
 
@@ -64,14 +64,13 @@ Expected outcome: 17 principles plus `tdd`, `correct`, `unslop`, `bro` and `tech
 - **`poteto-help`.** This is a Pi re-authoring that uses the Cursor file as structure, not a port. Remove: `/add-plugin`, Custom Modes and Option+Enter, `~/.cursor/rules/pstack-models.mdc`, reasoning-budget ladder, `auto`/`inherit-parent` model refs, `poteto-agent`/`subagent_type`, cloud agents, `/loop`, `cursor-team-kit`/`/deslop`/`control-*`, Cursor Plan Mode, Cursor docs links, and `../../docs/guide/*.md` links (not in the inventory or the package). Replace them with facts this package actually ships: the explicit pi-herdr-agents + pstack install prerequisite; the `/setup-pstack` report-first flow and its single approved write; `/poteto-mode` enable/task/status/off with sticky versus non-sticky `/skill:poteto-mode`; `/skill:<name>` invocation; no named roles except `comment-sicko`; the writer gate (`/subagents-init` refused while pstack is loaded). The routing table keeps every inventory row. W4 rows are marked planned W4 and are not offered as working. Recipes are converted to `/skill:` and Pi phrasing. Recipes that rely on `/loop` or cloud agents are dropped or marked unavailable, per D5. The public link target is D5.
 - **`unslop`, `bro`, `technical-writing`.** Copy.
 
-### `comment-sicko`: a pstack role through the public discovery protocol
+### `comment-sicko`: a bare delegate owned by `no-comments`
 
-- File `agents/comment-sicko.md` is the only direct `.md` child of `agents/`. Place no docs there; the host reads every direct child as a role.
-- Registration restores the W1-tested bridge shape (`78f6529:pi-extension/pstack/roles.ts`): a synchronous `pi.events.on("pi-herdr-subagents:roles:discover:v1")`, `apiVersion === 1` gate, `register(<package>/agents)`, and unsubscribe on `session_shutdown`. No private host imports, no copying into user role directories. `package.json` `files` gains `agents/`. This restores a planned capability. It is not a new runtime feature.
-- Frontmatter: `name: comment-sicko`, a truthful `description`, `tools` per D1, `spawning: false`, `auto-exit: true`, `system-prompt: append`. **No `skills:` key and no `model:` key.**
-- **Startup method: the role body is the methodology.** Deliver the task as the single initial prompt. Rationale: at host `7d35371`, `buildPromptArgs` still sends each `skills:` entry as a separate `/skill:` prompt before the task. In W2 this made an auto-exit child complete on the startup turn without executing the task (`docs/research/wave2-interim-validation.md`, `/tmp/pstack-w2-role-startup/startup.log`). Also, `no-comments` is the *parent-side* driver that spawns this role. Preloading it into the child would tell the child to spawn itself. "`no-comments` is its skill" therefore means "the skill that owns and calls this role", not a preload. If a later wave needs skill content inside the child, use the turn-free structured-section bootstrap proven in W2, behind its own gate. Not in W3.
-- The `/skill:how` and `/skill:why` lines get planned W4 markers and the interim rule from Group A. The role file is included in the reference checker and the provenance fixtures.
-- False present-tense claims change in the same integrated candidate: hub lines 9 and 112, `references/delegation.md:15`, `setup-pstack/SKILL.md:28`, the README, `docs/compatibility.md`, `docs/provenance.md`, and the `Roles: none` line in `pi-extension/pstack/setup.ts`. The setup report states that pstack contributes `comment-sicko` through role-pack v1 and points to `/subagent list` for effective resolution. It does not add a catalog probe (D8).
+- The upstream role body becomes `skills/no-comments/references/comment-sicko.md`, a reference prompt with no frontmatter. Pstack registers **no** role directory and ships **no** `agents/` folder; the W2 "no roles" assertions stay true. This follows plan 09's precedent and the user's decision.
+- `no-comments` launches it with the public single-call schema: `name`, `task` (scope: files or diff), `systemPrompt` set to the full contents of the reference prompt (read the file, do not paraphrase), `tools: "read, bash, edit"` (D1: it edits comments and nothing else), explicit `model` (`task:review` or an exact `<provider>/<model-id>` metavariable), `thinking`, `fork: false`. No `agent` key anywhere in pstack. No worktree: it edits the caller's checkout while the parent waits, and the parent reviews the diff.
+- The prompt text says plainly that it edits comments only, never application code, and reports touched files and deletion counts. `/skill:how` and `/skill:why` lines get planned W4 markers and the interim rule from Group A. The persona line is kept.
+- Startup: the task is the single initial prompt and the prompt text arrives as the system prompt, so there is no separate skill turn and the W2 premature-exit gate does not apply. If the reference file is missing or filtered, `no-comments` stops and reports; it never launches a bare child without the prompt.
+- False present-tense claims stay true: the hub, `references/delegation.md`, `setup-pstack/SKILL.md`, README, `docs/compatibility.md` and `setup.ts` continue to say pstack ships no named roles. The hub's "No other named role" line gains one sentence pointing at the comment-sicko delegate as the worked example of a bare specialist.
 
 ## Retiring planned-W3 markers and forward references
 
@@ -85,41 +84,35 @@ Current fixture: 96 tuples, of which 54 point at W3 (47 W3-A, 7 W3-B) and 42 at 
 
 ### Content tests must enforce (C0 generalizes `test/skill-content.test.ts`; later steps change fixtures, not assertions)
 
-- The shipped tree (`skills/**`, `agents/**`) equals the union of provenance-file entries. Every file belongs to an inventory row or the role. No empty directories and no stray files.
+- The shipped tree (`skills/**`) equals the union of provenance-file entries. Every file belongs to an inventory row; the comment-sicko prompt belongs to the `no-comments` row. No `agents/` directory, no empty directories and no stray files.
 - The real Pi 1.0.3 loader returns exactly the shipped rows' names with zero diagnostics. Only `setup-pstack` is model-invocable unless D6 changes `typescript-best-practices`. No `paths` key.
 - **Hash provenance for every file**: source path, source hash, destination hash, status. A copied file's hashes are equal. An adapted file has exactly one primary source and a substantive explanation. Every inventory source file of each shipped row is accounted for once. Source hashes are reproduced from the pinned commits. Parent QA sets `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` and `PI_HERDR_AGENTS_SOURCE` so that no hash or schema check is skipped.
 - **Notices**: the existing Lauren Tan, Ivan Porto Carrero and HazAT MIT checks still pass. `docs/provenance.md` documents the W3 adaptation, the role, and both source commits.
 - **No placeholders**: TODO/TBD/FIXME, lorem, "coming soon" or empty bodies are banned. Replace the W2 `>1000 chars` rule with "copied, or at least half the primary source's length unless explained", so that `bro` passes honestly.
 - **References**: exact tuples in both directions, a planned marker on the same line, absent targets, and `owningWave` matching the inventory. Relative Markdown links are rejected. Short principle names are banned in all shipped files.
-- **Banned patterns** extend to every shipped file: `subagent_type`, `poteto-agent`, `inherit-parent`, `set_tasks`, Cursor `Task` spawning, Custom Mode, `~/.cursor`, `.mdc`, `/add-plugin`, cloud agents, `cursor-team-kit`, `/deslop`, `/loop`, concrete model IDs, `/iterate`, `/btw`, and bare Cursor-style `/how` or `/why` slash commands. `comment-sicko` is allowed only in `no-comments`, the role file, the hub, delegation and setup lines that describe it, and in docs.
-- **Delegation**: existing bare-example rules remain. Exactly one named-role example family is allowed (`agent: "comment-sicko"` in `no-comments`), schema-valid at `7d35371`.
+- **Banned patterns** extend to every shipped file: `subagent_type`, `poteto-agent`, `inherit-parent`, `set_tasks`, Cursor `Task` spawning, Custom Mode, `~/.cursor`, `.mdc`, `/add-plugin`, cloud agents, `cursor-team-kit`, `/deslop`, `/loop`, concrete model IDs, `/iterate`, `/btw`, and bare Cursor-style `/how` or `/why` slash commands. `comment-sicko` is allowed only under `skills/no-comments/`, in the hub and delegation sentences that describe the delegate, and in docs.
+- **Delegation**: existing bare-example rules remain and the `agent:` ban stays absolute. The `no-comments` example must pass `systemPrompt`, `tools`, `model`, `thinking` and `fork`, schema-valid at `7d35371`.
 - **Hub**: 24 summaries, each naming its shipped leaf without a planned marker. W4 playbook routes are still `(planned W4)`.
-- **Package**: `test/content.test.ts` expects `agents/comment-sicko.md`, the bridge module, the `files` entry and the new packed-file count. `npm pack --dry-run` lists all 39 new files and no plans or evidence.
+- **Package**: `test/content.test.ts` keeps its no-`agents/`, no-role-bridge assertions and gains the new packed-file count. `npm pack --dry-run` lists all 39 new files and no plans or evidence.
 
 ## Ownership, parallelism and review
 
 | Step | Writer | Owns exclusively | Base / output |
 | C0 checkpoint | parent (single writer) | this contract and the AGENTS.md scope line; test harness generalization; fixture split; inventory W2 status flip; host repin | `wave3/integration` from `e3e8bbe`; must stay 111/111 with W2 content unchanged |
 | W3-A | worker 1, worktree `wave3/technical` from C0 | `skills/{24 principle-*,tdd,typescript-best-practices,benchmark-checklist,blast-radius,correct}/**`, `test/fixtures/{forward-references,skill-provenance}/w3-a.json` | commits on its branch |
-| W3-B | worker 2, worktree `wave3/communication` from C0 | `skills/{unslop,technical-writing,no-comments,teach,bro,poteto-help}/**`, `agents/comment-sicko.md`, the `w3-b.json` fixtures | commits on its branch |
+| W3-B | worker 2, worktree `wave3/communication` from C0 | `skills/{unslop,technical-writing,no-comments,teach,bro,poteto-help}/**` (including `no-comments/references/comment-sicko.md`), the `w3-b.json` fixtures | commits on its branch |
 | Integrate | parent | merges only; per-batch review | `wave3/integration` |
 | Reconcile | one writer after W3-A ends (methodology-owner handoff recorded by parent) | hub, playbooks, `references/*`, `setup-pstack/SKILL.md`, `hub.json`, `w2.json`, cross-batch tuple retirement in batch fixtures, inventory W3 status flip | single commit series |
-| Role wiring | second writer, may overlap Reconcile (disjoint files) | `pi-extension/pstack/{roles,index,setup}.ts`, `package.json` `files`, `test/content.test.ts`, role unit tests, `test/fixtures/provenance.json` if touched, README, `docs/compatibility.md`, `docs/provenance.md`, `THIRD_PARTY_NOTICES.md` | commits on `wave3/integration` after Reconcile's checkpoint, or a sibling worktree merged by parent |
 
 At most two implementation writers exist at any time. Workers do not edit hub, extension, manifest/lockfile, inventory, shared tests, docs or notices; they propose central text in their reports. Workers run only isolated unit/content checks (`npm run check` with the source env vars set). No worker runs Herdr, a paid model, or spawns agents. No worker pushes, merges or releases. Reports use the 03 §7 template with exact base/result SHAs.
 
-**Review protocol.** Each of W3-A, W3-B, Reconcile and Role wiring gets one fresh read-only review on its exact SHA. The reviewer is an authenticated exact model from a different provider and family than the author (recheck the live catalog at launch; record identities). The reviewer receives the pinned sources, this contract and the edit-class rules. It checks every adapted file against its primary source and spot-checks copied hashes. A final integration synthesis review covers the assembled vector. Missing eligible reviewer capacity leaves the gate incomplete.
+**Review protocol.** Each of W3-A, W3-B and Reconcile gets one fresh read-only review on its exact SHA. The reviewer is an authenticated exact model from a different provider and family than the author (recheck the live catalog at launch; record identities). The reviewer receives the pinned sources, this contract and the edit-class rules. It checks every adapted file against its primary source and spot-checks copied hashes. A final integration synthesis review covers the assembled vector. Missing eligible reviewer capacity leaves the gate incomplete.
 
 **Parent combined QA** runs only on the reconciled and role-wired candidate, one suite at a time on one Herdr instance:
 
 1. Pstack `npm run check` with all source env vars (no skips), `npm pack --dry-run`, `git diff --check`, and active LSP diagnostics on changed TS. Not Herdr.
-2. **Comment-sicko real-child gate** (deterministic provider, isolated outer/child `PI_CODING_AGENT_DIR`, test-owned HOME/XDG). Pass conditions:
-   - fresh (`fork: false`) and forked launches list the role as `package:pi-herdr-pstack`;
-   - the single initial provider request contains the role body and the task;
-   - a task marker executes before completion, then auto-exit occurs and the result is delivered;
-   - a project/global `comment-sicko` override follows host precedence visibly;
-   - with pstack's role filtered out, `no-comments` stops, and no bare substitute is launched.
-3. **Combined host integration** `pi-herdr-agents@7d35371 npm run test:integration` with roles + pstack loaded (W2 overlay method), because the extension load path changes. Expect no regressions against the 77/77 baseline at that host.
+2. **Comment-sicko real-child gate** (deterministic provider, isolated outer/child `PI_CODING_AGENT_DIR`, test-owned HOME/XDG). Pass conditions: a bare launch with `systemPrompt` read from `skills/no-comments/references/comment-sicko.md` and `tools: "read, bash, edit"` receives the prompt as its system prompt and the task as its single first message; it edits a fixture file's comments and nothing else; a task marker executes before completion; auto-exit occurs and one result is delivered; no fallback request is made. With the reference file removed, `no-comments` stops and no child is launched.
+3. **Combined host integration** `pi-herdr-agents@7d35371 npm run test:integration` with roles + pstack loaded (W2 overlay method). The extension load path does not change in W3 (no role bridge), so this is a regression check against the 77/77 baseline at that host.
 
 Keep every failure log. Distinguish skipped from passed.
 
@@ -131,6 +124,6 @@ The W3 handoff records the exact I3 vector (host, roles, pstack SHAs; Pi version
 
 - W4 rows, W4 playbooks or helper scripts; `how`/`why`/`architect`/`arena` stand-ins beyond the interim rules above.
 - Live-model or paid evaluations. A scripted provider is not evidence that a model obeys the prose.
-- New runtime features: no catalog probing, no skill-preload bootstrap, no changes to mode or setup semantics or the writer gate, no host changes. Role-pack registration is the only extension change.
+- New runtime features: no catalog probing, no skill-preload bootstrap, no changes to mode or setup semantics or the writer gate, no host changes. There is no extension change in W3 beyond the one-line setup report wording (D8).
 - Pushes, PRs, merges, publication, version bumps, normal Pi install/config changes, global skill copies. Each needs the user.
-- Renaming or prefixing skills; adding roles other than `comment-sicko`; depending on pi-herdr-roles.
+- Renaming or prefixing skills; adding any named role; depending on pi-herdr-roles.

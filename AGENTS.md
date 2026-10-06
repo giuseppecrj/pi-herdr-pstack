@@ -4,7 +4,7 @@ This package supplies the full unprefixed pstack skill inventory and a small Pi 
 
 ## Current authorized scope
 
-Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md`, `09-wave2-no-poteto-role.md` and `10-wave2-unconditional-writer-gate.md` before implementation. The latest amendment makes the host writer gate unconditional while pstack is loaded and supersedes the run-identity design; 09 removed the poteto role. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
+Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md`, `09-wave2-no-poteto-role.md`, `10-wave2-unconditional-writer-gate.md` and the approved `12-wave3-contract.md` with `12-wave3-notes.md` before implementation. Wave 3 (35 skills, bare comment-sicko delegate) is authorized; Wave 4 is not. The latest amendment makes the host writer gate unconditional while pstack is loaded and supersedes the run-identity design; 09 removed the poteto role. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
 
 The user accepted Wave 1 and explicitly authorized Wave 2: setup/mode runtime and the two methodology entry points. Local candidate branches/worktrees and commits remain allowed; stop at the Wave 2 review gate before bulk W3/W4 skill porting. The user separately authorized the completed private GitHub repository creation and initial W1 branch pushes. No new pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations are authorized by the W2 approval.
 
@@ -12,7 +12,7 @@ Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer.
 
 ## Implementation boundaries
 
-- Do not import pi-herdr-agents internals. W2 contributes no named roles and must not register an empty role directory. If a later authorized wave supplies a role, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
+- Do not import pi-herdr-agents internals. W2 and W3 contribute no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/no-comments/references/`. If a later authorized wave supplies a role, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
 - Declare pi-herdr-agents as a peer and an explicit Pi installation prerequisite. A peer declaration is not extension activation.
 - Keep initial experimental packages private. A temporary peer range is not a published compatibility promise; record the exact candidate host SHA used in tests.
 - Preserve applicable upstream license notices and record file provenance.
