@@ -128,3 +128,9 @@ D1 (autopilots scoped down or deferred), D2 (orchestrate scoped down or deferred
 - Reconcile also exempts fenced code blocks from the TODO/FIXME placeholder ban and the model-slug ban, then reverts the three test-forced edits in W4-A to byte-identical copies.
 - Reviewer's input caveat: planning main was read before the parent's W4-A decisions landed (`2f99982`); findings were judged against the contract and fan-out protocol, which agree with those decisions.
 
+## Parent decisions on the W4-B/W4-P review (2026-10-06)
+
+All five findings accepted as correctness fixes in a bounded fix round on `wave4/capabilities`: remove the unverifiable RPC alternative from `make-bot-ui`; detect merge queues before any merge command in `shipping`; define owner-round continuation in the autopilots so a round updates the original PR branch (retained owner checkout, or a new worktree based on the previous head with the PR branch carried in the brief); validate Host on every `make-bot-ui` route and prefer a design where the page never holds the key; fix the multi-phase-plan skeleton's reference convention, "lane VM" wording, unmarked skill references and a malformed fence at line 153 found by the parent's scan. The three author judgment calls (quoted blinded words, `task:qa` lane model, `docs/plans/<slug>.md` default) are accepted.
+
+Gates note: the G1-G7 worker exhausted its provider session limit while composing its report, after writing `test/integration/wave4-gates.test.ts`, `gates-final.log` and `regression-full.log` under `/tmp/w4-gates-logs/`; the parent reads that evidence directly rather than relaunching.
+
