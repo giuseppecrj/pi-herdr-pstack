@@ -186,8 +186,10 @@ describe("package manifest", () => {
 		assert.deepEqual(
 			pack.files.map(({ path }) => path).toSorted(),
 			[
+				"CHANGELOG.md",
 				"LICENSE",
 				"README.md",
+				"RELEASING.md",
 				"THIRD_PARTY_NOTICES.md",
 				"docs/compatibility.md",
 				"docs/provenance.md",
