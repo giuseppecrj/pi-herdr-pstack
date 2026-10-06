@@ -13,7 +13,22 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/arena/SKILL.md",
+			"sha256": "0324281a99667cf584edf69c7e657fabce4af9e4a90559653423511ac894acd1",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "arena/SKILL.md",
+					"sha256": "0361e2337465cd9d2a9bd1a383702b168f6c09f7819cfa80b99154c3da77a9db",
+					"use": "primary"
+				}
+			],
+			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }
