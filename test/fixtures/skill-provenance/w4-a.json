@@ -27,6 +27,20 @@
 				}
 			],
 			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
+		},
+		{
+			"path": "skills/swarm/SKILL.md",
+			"sha256": "dd8be91babd5c2a642f289cd4feb1e196bd071c847ca4f968d3d97f59926c0fb",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "swarm/SKILL.md",
+					"sha256": "805bf6243ce6c1331d85e5b81ee0cc33634de0e5f2b6a44bbee92bc72fb1d9ad",
+					"use": "primary"
+				}
+			],
+			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's extra ISSUES sentence was not merged."
 		}
 	],
 	"planned": [],
