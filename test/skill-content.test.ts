@@ -9,6 +9,7 @@ import {
 	formatSkillsForPrompt,
 	loadSkillsFromDir,
 } from "@earendil-works/pi-coding-agent";
+import { lexer, type Tokens, walkTokens } from "marked";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
@@ -234,6 +235,8 @@ const EXAMPLE_PARAMS = new Set([
 ]);
 const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
+/** A concrete model name; methodology names families and task categories. */
+const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
 const DELEGATION = "skills/poteto-mode/references/delegation.md";
 
 /** Problems with one call against the pinned host schema; empty when valid. */
@@ -323,18 +326,58 @@ const shippedRows = inventory.skills.filter(
 );
 const MARKDOWN_FILES = SHIPPED_FILES.filter((path) => path.endsWith(".md"));
 
-/** Lines outside fenced code blocks, numbered from 1. */
-function proseLines(path: string): Array<{ line: number; text: string }> {
-	let fenced = false;
+type Fence = { info: string; open: string; content: string[] };
+
+/**
+ * Each line's fenced block, or undefined for prose, following the CommonMark
+ * fence rules (backtick or tilde runs of three or more, closed by a run of the
+ * same character at least as long with nothing after it). The delegation
+ * contract checks these blocks against the `marked` lexer.
+ */
+function fences(path: string): Array<Fence | undefined> {
+	let open: Fence | undefined;
 	return read(path)
 		.split("\n")
-		.flatMap((text, index) => {
-			if (text.startsWith("```")) {
-				fenced = !fenced;
-				return [];
+		.map((text) => {
+			if (open) {
+				const fence = open;
+				const run = new RegExp(
+					`^\\s*\\${fence.open[0]}{${fence.open.length},}\\s*$`,
+				);
+				if (run.test(text)) open = undefined;
+				else fence.content.push(text);
+				return fence;
 			}
-			return fenced ? [] : [{ line: index + 1, text }];
+			const start = /^\s*(`{3,}(?=[^`]*$)|~{3,})(.*)$/.exec(text);
+			if (!start) return undefined;
+			open = { open: start[1], info: start[2].trim(), content: [] };
+			return open;
 		});
+}
+
+/** Lines outside fenced code blocks, numbered from 1. */
+function proseLines(path: string): Array<{ line: number; text: string }> {
+	const fenced = fences(path);
+	return read(path)
+		.split("\n")
+		.flatMap((text, index) =>
+			fenced[index] ? [] : [{ line: index + 1, text }],
+		);
+}
+
+/** Prose with inline code spans removed. */
+const withoutCodeSpans = (text: string) => text.replace(/(`+)[^`]*?\1/g, "");
+
+/**
+ * The text a ban applies to: a Markdown file's prose, without inline code when
+ * `inlineCode` is false; any other file in full. Code quotes, so a placeholder
+ * marker or model name inside it is upstream content, not a claim.
+ */
+function bannable(path: string, inlineCode = false): string {
+	if (!path.endsWith(".md")) return read(path);
+	return proseLines(path)
+		.map(({ text }) => (inlineCode ? text : withoutCodeSpans(text)))
+		.join("\n");
 }
 
 type Reference = { sourcePath: string; targetPath: string; text: string };
@@ -547,7 +590,8 @@ describe("shipped skill tree", () => {
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			assert.ok(body(path).trim().length > 0, `${path} has an empty body`);
-			assert.doesNotMatch(text, /\b(?:TODO|TBD|FIXME)\b/, path);
+			// Fenced blocks and inline code may quote markers, as in an rg pattern.
+			assert.doesNotMatch(bannable(path), /\b(?:TODO|TBD|FIXME)\b/, path);
 			assert.doesNotMatch(
 				text,
 				/coming soon|lorem ipsum|placeholder skill/i,
@@ -721,14 +765,59 @@ describe("references and forward exceptions", () => {
 });
 
 describe("delegation contract", () => {
+	/** Fenced code blocks as the Markdown lexer sees them, nested ones included. */
+	const lexedFences = (path: string) => {
+		const blocks: Tokens.Code[] = [];
+		walkTokens(lexer(read(path)), (token) => {
+			if (token.type === "code" && token.codeBlockStyle !== "indented")
+				blocks.push(token as Tokens.Code);
+		});
+		return blocks;
+	};
+	/** Parseable examples; the fence check below reports any that do not parse. */
 	const examples = MARKDOWN_FILES.flatMap((path) =>
-		[...read(path).matchAll(/```json subagent\n([\s\S]*?)\n```/g)].map(
-			([, body]) => ({
-				path,
-				call: JSON.parse(body) as Record<string, unknown>,
+		lexedFences(path)
+			.filter(({ lang }) => lang === "json subagent")
+			.flatMap(({ text }) => {
+				try {
+					return [{ path, call: JSON.parse(text) as Record<string, unknown> }];
+				} catch {
+					return [];
+				}
 			}),
-		),
 	);
+
+	it("closes every fenced block, with nothing after a closing fence, and parses every subagent example", () => {
+		for (const path of MARKDOWN_FILES) {
+			const lexed = lexedFences(path);
+			const scanned = [...new Set(fences(path))].filter(
+				(fence) => fence !== undefined,
+			);
+			assert.deepEqual(
+				lexed.map(({ lang }) => lang ?? ""),
+				scanned.map(({ info }) => info),
+				`${path}: the fence scanner and the Markdown lexer disagree`,
+			);
+			for (const block of lexed) {
+				const lines = block.raw.replace(/\n+$/, "").split("\n");
+				const run = /^\s*(`{3,}|~{3,})/.exec(lines[0])?.[1] ?? "```";
+				const fence = `^\\s*\\${run[0]}{${run.length},}`;
+				assert.match(
+					lines.length > 1 ? (lines.at(-1) ?? "") : "",
+					new RegExp(`${fence}\\s*$`),
+					`${path}: the fence opened by ${JSON.stringify(lines[0])} never closes`,
+				);
+				for (const line of lines.slice(1, -1))
+					assert.doesNotMatch(
+						line,
+						new RegExp(`${fence}\\s*\\S`),
+						`${path}: text follows a closing fence: ${line}`,
+					);
+				if (block.lang === "json subagent")
+					assert.doesNotThrow(() => JSON.parse(block.text), path);
+			}
+		}
+	});
 
 	it("gives runnable examples only the public single-call parameters", () => {
 		assert.ok(examples.length >= 4);
@@ -878,7 +967,6 @@ describe("delegation contract", () => {
 			/\/deslop\b/,
 			/\/loop\b/,
 			/\bomp\b/,
-			/\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/,
 			/\/(?:iterate|btw)\b/,
 			// Cursor-style slash commands; Pi invokes skills as /skill:how.
 			/(?<![\w:/.-])\/(?:how|why)\b/,
@@ -911,6 +999,11 @@ describe("delegation contract", () => {
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+			// Fenced blocks may quote a model name; so may inline code in a
+			// byte-identical upstream copy, as in reflect's drift example.
+			const copied =
+				provenanceFiles.find((file) => file.path === path)?.status === "copied";
+			assert.doesNotMatch(bannable(path, !copied), MODEL_SLUG, path);
 		}
 	});
 

@@ -56,7 +56,7 @@ Look for out-of-band docs:
 rg -l -i 'architecture.decision' --glob '*.md'
 
 # TODOs and FIXMEs near the target
-rg -n -C2 '(TODOs?|FIXMEs?|HACK|XXX|NOTE)' <target_file>
+rg -n -C2 '(TODO|FIXME|HACK|XXX|NOTE)' <target_file>
 
 # Related tests. Names often encode the "why"
 rg -l '<symbol>' --glob '*test*'

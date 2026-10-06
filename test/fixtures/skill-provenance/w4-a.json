@@ -44,7 +44,7 @@
 		},
 		{
 			"path": "skills/architect/references/runner-prompt.md",
-			"sha256": "ae8307b583bbf9f3428a03f08f0378103d7d61bcd377d32ab11e5160c584d2cb",
+			"sha256": "3c25296b217ed60e738262a6c69a931771f55b56452dfbc439efb105c10149bd",
 			"status": "adapted",
 			"sources": [
 				{
@@ -54,7 +54,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The literal // TODO pseudocode marker trips the shipped-file placeholder ban and became // todo; not one of the listed edit classes, flagged for the reviewer. Per fan-out section 5, the 'git worktree when available, otherwise a per-runner subdirectory' fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one."
+			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The upstream `// TODO` pseudocode marker, once lowered to pass the placeholder ban, was restored at reconcile, when the content test exempted inline code. Per fan-out section 5, the 'git worktree when available, otherwise a per-runner subdirectory' fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one."
 		},
 		{
 			"path": "skills/architect/SKILL.md",
@@ -240,8 +240,8 @@
 		},
 		{
 			"path": "skills/reflect/references/synthesizer.md",
-			"sha256": "61d83d41946bec7a22039e6bffb86acdeb7e9be896a2b93e4eee5499d108f8fe",
-			"status": "adapted",
+			"sha256": "01858c53bb55b7269d88bf480f9a84bc842dd8b7c10c8321d11e16bc51fed407",
+			"status": "copied",
 			"sources": [
 				{
 					"source": "mimir",
@@ -250,7 +250,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The drop-list example renaming gpt-4 to gpt-4o trips the shipped-file ban on model-name-prefix slugs; it became the neutral model-v4 to model-v4o rename, keeping the example of a drifting implementation detail. Not one of the listed edit classes; flagged for the reviewer."
+			"explanation": "Byte-identical copy. A W4-A edit made only to pass the shipped-file ban on concrete model slugs (the drift example's inline code) was reverted at reconcile, when the content test exempted quoted code."
 		},
 		{
 			"path": "skills/reflect/references/tooling-reviewer.md",
@@ -338,8 +338,8 @@
 		},
 		{
 			"path": "skills/why/references/sources/code-archaeology.md",
-			"sha256": "b14e3763ec17a19d00c11a6ad92900a297bf6c09e14e2bfabca6978ae2821451",
-			"status": "adapted",
+			"sha256": "8c14aa382f0de40829b2668d43e3f54814480bb93a486c9282ada4003f6b9dbd",
+			"status": "copied",
 			"sources": [
 				{
 					"source": "mimir",
@@ -348,7 +348,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The rg pattern (TODO|FIXME|HACK|XXX|NOTE) trips the shipped-file placeholder ban; it became (TODOs?|FIXMEs?|HACK|XXX|NOTE), which matches exactly the same lines because rg matches substrings. Not one of the listed edit classes; flagged for the reviewer."
+			"explanation": "Byte-identical copy. A W4-A edit made only to pass the shipped-file ban on placeholder markers (the rg pattern in a fenced bash block) was reverted at reconcile, when the content test exempted quoted code."
 		},
 		{
 			"path": "skills/why/references/sources/databricks.md",
