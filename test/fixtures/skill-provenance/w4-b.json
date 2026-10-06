@@ -13,7 +13,222 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/automate-me/SKILL.md",
+			"sha256": "26ba9f07283a4f1e52ec5abc9fe9c5f162d3dc261f13b5818876564953cc0849",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "automate-me/SKILL.md",
+					"sha256": "8aa14170b659df5c279a166549656253ca2ee34f8668ce5078ae03c77684cbeb",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "automate-me/SKILL.md",
+					"sha256": "1510979b0b71b54284427a19c09918f8b1fdfc168f9b7f9e30098793a5ec88ef",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. The Pi Agent Skills standard becomes Pi skill authoring, defined once as Pi's skills documentation plus ../poteto-mode/playbooks/authoring-a-skill.md, with Pi's name and description limits in the frontmatter step. The recall tool becomes the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, and slice miners are bare task:recon children per ../poteto-mode/references/fan-out.md reading only the session files the parent lists. The placeholder 'a user question' becomes asking in the reply and ending the turn. Placement writes the project's .pi/skills freely and ~/.pi/agent/skills only after explicit confirmation. Landing commits under the commit policy; push and PR each need explicit authorization per references/authorization.md. Cursor's AskQuestion, create-skill and ~/.cursor paths are not used."
+		},
+		{
+			"path": "skills/create-verification-skill/SKILL.md",
+			"sha256": "ca1cf236aaf20ead9d65ed4c4eecab87f4402dc70a2d04891d3a0ffe87241e62",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "create-verification-skill/SKILL.md",
+					"sha256": "919bbf44692f95eaafe52cd78d2ef14e77bc9be5da677fcd189d7d88ff49b059",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "create-verification-skill/SKILL.md",
+					"sha256": "644f2551403c1bca01a2855b34611b6e7be0ce0dc5b204514c376c0f6a6e6ac4",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. The relative Markdown link to references/feature-map-example/ becomes a backticked skill-relative path. One sentence says project .pi/skills writes need no permission and a ~/.pi/agent/skills copy needs explicit confirmation. Step 5 adds that pstack schedules nothing, so any maintenance cadence is the user's. Cursor's .cursor paths and bare /create-verification-skill commands are not used."
+		},
+		{
+			"path": "skills/create-verification-skill/references/feature-map-example/README.md",
+			"sha256": "1c79fd05f291a20889ed7f28395066562eeac1dfd2c440f5506e677931342f88",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "create-verification-skill/references/feature-map-example/README.md",
+					"sha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "create-verification-skill/references/feature-map-example/README.md",
+					"sha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file, which equals Cursor. The two relative Markdown links in the Features index become bold feature names with backticked sibling file names, as the reference checker bans relative links. Nothing else changed."
+		},
+		{
+			"path": "skills/create-verification-skill/references/feature-map-example/create-note.md",
+			"sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "create-verification-skill/references/feature-map-example/create-note.md",
+					"sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "create-verification-skill/references/feature-map-example/create-note.md",
+					"sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir example feature file, which also equals the Cursor file."
+		},
+		{
+			"path": "skills/create-verification-skill/references/feature-map-example/search.md",
+			"sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "create-verification-skill/references/feature-map-example/search.md",
+					"sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "create-verification-skill/references/feature-map-example/search.md",
+					"sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir example feature file, which also equals the Cursor file."
+		},
+		{
+			"path": "skills/maintain-verification-skill/SKILL.md",
+			"sha256": "b6bb890810f7ece30e983665d07ad9deab824cc0771868e9d4e766216a3a145a",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "maintain-verification-skill/SKILL.md",
+					"sha256": "9a1637f1707cc0482c93af4d279ca2278b26e7f0059c1f238e1f9522e9dab8bc",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "maintain-verification-skill/SKILL.md",
+					"sha256": "515c0eaa054b3f6be1b1fb06f2c2f173c80fddb58bbcac57576f89c479bc68e8",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file, not copied: the contract's copy candidate needed two Pi edits. Step 2's concurrent read-only subagents become bare Investigator children with task:recon launched per ../poteto-mode/references/fan-out.md. The changed outcome and step 6 keep the one-PR shape but say commits follow the commit policy and that pushing and opening the PR each need explicit authorization (references/authorization.md); without it the run stops at the local diff. Cursor's bare slash commands and .cursor paths are not used."
+		},
+		{
+			"path": "skills/make-bot-ui/SKILL.md",
+			"sha256": "44456050421fd3656970d04b153c6421853dc05e7011ddd7905107acadb443be",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "make-bot-ui/SKILL.md",
+					"sha256": "3624c8ef16cf2e48deb2a4049e72c6962a9431c8d6c6af90e7bd7ea0375224ec",
+					"use": "primary"
+				}
+			],
+			"explanation": "Re-authored for Pi under user decision D4 with the Cursor file as primary structure (the row has no pi-mimir source). The frontmatter name Make Bot UI becomes make-bot-ui and keeps disable-model-invocation true. The Cursor webhook routine, update_state, the secret-request card, the remote webhook URL and the chat-header shortcut panel are removed. The skill now guides a local page that POSTs to a server bound to 127.0.0.1, with Host, Origin, content-type, constant-time key, size and field validation, no CORS, one run at a time, and each accepted body written to a runs/ file and attached to a pi -p run through an argument array, with fixed instructions in --append-system-prompt and the body treated as untrusted data. The key is generated into a mode-600 local file and never printed or pasted in chat. A proof section probes loopback before calling it live. Kept from Cursor: one try with a timeout, probing with a harmless payload, never asking for Tailscale credentials, not creating a second hostname on an online node, and matching field names; installation, Tailscale exposure and any bind beyond loopback each need explicit authorization. Review fixes: the RPC alternative is removed, so every request is a fresh pi -p process with the same tool limits and a clean context. Host and any Origin are validated before every route including GET /; the served page holds no secret, the user enters the key in a memory-only password field, and the server reads the key file on each POST. The proof list adds a hostile-Host GET that returns 403 and checks that no response body contains the key."
+		},
+		{
+			"path": "skills/recall/SKILL.md",
+			"sha256": "6b0428bf6324312e8e363e9ad5f31ae28ec8b4aaf575ba26656a9287363dc643",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "recall/SKILL.md",
+					"sha256": "a8fb8697fb5edbe29fe006eca5641075346ed3562e0b5717a91595fd58c97755",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "recall/SKILL.md",
+					"sha256": "d265b0e5b6dc5b89c0407f3387d24462c988e1990a37d5359735137908128c5a",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used."
+		},
+		{
+			"path": "skills/show-me-your-work/SKILL.md",
+			"sha256": "86950439a00c4d5fada31663ab09483a21bf653042a579de326560228f73f907",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/SKILL.md",
+					"sha256": "c0b225a98ee0b62e7d94e5ebfcfc65bedad62f8b0dad7e94cbbe0de666c89a5f",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/SKILL.md",
+					"sha256": "bcff5f7f9fd23f92c12b251f9cd6b947e9485e1055cfacb6fdd9cae0789d7550",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. The transcript audit keeps $PI_SESSION_FILE and replaces the nonexistent recall tool with the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, never another project's sessions. A start row's evidence names the run's session file instead of an agent id. Committing the log also requires the task's commit policy (references/authorization.md). The short principle name becomes principle-encode-lessons-in-structure. The cross-model trail review becomes a fan-out.md diversity seat: one schema-valid bare subagent example with the delegation.md Reviewer prompt, an exact <provider>/<model-id> from another family, tools read, bash and fork false, given the log path and the parent's session file path; with no other family it runs same-family and is labelled context-isolated in the Attention line; a child keeping a trail launches no reviewer and leaves the review to its parent. Cursor's agent-transcripts wording and missing illustration sentence are not used."
+		},
+		{
+			"path": "skills/show-me-your-work/references/decision-log-template.tsv",
+			"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/references/decision-log-template.tsv",
+					"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/references/decision-log-template.tsv",
+					"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir header row, which also equals the Cursor file."
+		},
+		{
+			"path": "skills/show-me-your-work/scripts/log.sh",
+			"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/scripts/log.sh",
+					"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/scripts/log.sh",
+					"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir script (also equal to Cursor), git mode 100755 preserved; test/scripts.test.ts covers the header, tab and newline stripping and the formula prefix."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }
