@@ -1,0 +1,34 @@
+# Host PR stack and operating skill: status
+
+User decisions on 2026-10-05: stack the host pull requests linearly (Wave 1, Wave 2, operating skill, cancel); the skill must describe the final Wave 2 host including cancel; copy the skill into the global skills folder only after an independent review.
+
+## Stack on `giuseppecrj/pi-herdr-agents`
+
+| Layer | PR | Branch | Head | Base |
+| --- | --- | --- | --- | --- |
+| 1 | #70 | `wave1/pack-neutral-host` | `e262c584` | `main` `c2177dff` |
+| 2 | #71 | `wave2/conditional-model-writes` | `b04906b6` | layer 1 |
+| 3 | #72 | `agent-cancel/skill` | `2692c51` | layer 2 |
+| 4 | #73 | `agent-cancel/runtime` | `fa483ea` | layer 3 |
+
+Layers 1 and 2 were pushed and opened after their reviews had already passed. Layer 3 went up after two review passes (nine findings fixed, two leftovers fixed by the parent). Layer 4 opened as #73 after five cross-family review rounds (every finding fixed and re-verified), units 829 passed / 1 skipped, and real-Herdr integration 77/77 at the final head.
+
+Open PRs #66, #67 and #68 remain untouched. #67 overlaps the fallback path; the cancel author reports its `index.ts` change targets code that no longer exists on this base, and that the stale-context bug it fixes likely persists here. Coordinate before merging either.
+
+## Operating skill
+
+`skills/pi-herdr-agents/SKILL.md` is the host's only shipped skill. Verified facts:
+
+- An explicit `pi` manifest disables conventional `skills/` discovery (Pi 1.0.3 packages doc). The worker's first commit omitted `pi.skills`, and the real loader returned nothing; the parent added the entry and re-verified.
+- Independent reviews checked every claim against the Wave 2 README and the live tool schema. Corrections included: task results do not stop persistent specialists; fallback lists are rejected with worktrees; managed-worktree sessions cannot be resumed; the thinking enum and precedence; the writer removes omitted categories; persistent specialists are forced non-interactive and never auto-exit.
+- Global copy: `/home/g/.pi/agent/skills/pi-herdr-agents/SKILL.md`, byte-identical to the skill at `4a3992d`, which is unchanged through the final cancel head `fa483ea`. The real loader finds it with no diagnostics.
+
+## Cancel runtime (layer 4, PR #73)
+
+`agent-cancel/runtime` final head `fa483ea`. History: `05e53b8` first implementation; `3572b4f` edge-case fixes; `37d8c62` launch-verified process identity replaces command-line matching (Pi rewrites its process title); `f146db2` capture race and deadline bounds; `4a3992d` failed-SIGTERM and clock-checked timeout; `fa483ea` scopes the integration test's untouched-pane check to the runner's own workspace after one environmental failure (a finishing subagent closed its own pane mid-run; two isolated reruns passed). Parent reran units at every head (final 829 passed, 1 skipped). Real-Herdr cancel cases passed at `3572b4f`, `37d8c62`, `f146db2` and `fa483ea`, full integration 77/77 each time; evidence in `docs/evidence/host-cancel-qa/`. Acknowledged residual: the OS-level PID reuse window between the final identity check and `kill(2)`.
+
+## Pstack Wave 2 (separate repo)
+
+`wave2/skills-only-fixes` now at `9839e7d` (checkpoint `6f36a1b` copies planning `96dbd16`, code `9bef548`). Role removed; mode and setup implemented; the setup writer guard is now the unconditional gate the user chose in [plan 10](../plans/10-wave2-unconditional-writer-gate.md): every host writer call blocks while pstack is loaded except the one exact approved nested call, with the approval held only in memory for that dispatch. All run-identity code is deleted (setup.ts: 50 insertions, 253 deletions). Parent check 111/111 with every input set. Earlier history: four cross-family reviews of the run-tracking design each found a new approval bypass (`b5d8e99`, `61048b0`, `b10a40c`), which is why the design was replaced rather than patched a fifth time. Combined real-Herdr run at `b10a40c` passed 72/72 (`docs/evidence/wave2-combined/`); the extension load path did not change in `9839e7d`. Cross-family review of the gate: no blockers (eight independent scenarios against the real host writer). Pstack stack opened: PR #1 `wave1/pstack-foundation` -> `main`, PR #2 `wave2/skills-only-fixes` -> `wave1/pstack-foundation`. Handoff brief: `docs/plans/11-wave2-handoff.md`.
+
+Evidence directories: `/tmp/agentcancel-skill-parent`, `/tmp/agentcancel-parent-v19xdY`, `/tmp/pstack-w2fix-parent-XgmgSx`, `/tmp/pi-skill-load-probe`.

@@ -1,0 +1,14 @@
+{
+  "subject": "Wave 2 combined real-Herdr integration run",
+  "host": "b04906b6d6d0f81ac23a64753a5aec2b506c6423 (git archive)",
+  "pstack": "b10a40c07f289c545b7e64c09dbbbccd6abc6322 (git archive, node_modules symlinked)",
+  "roles": "22e1816725ba0910573f667f52e97c9757ca0305 (checkout, clean)",
+  "overlay": "harness.ts only: settings.json packages + explicit -e flags; see harness-overlay.patch",
+  "isolation": "outer HOME, XDG_*, PI_CODING_AGENT_DIR under /tmp/pstack-w2-combined; per-test agent dirs from the harness",
+  "result": "72 passed, 0 failed, 0 skipped; no fixture workspaces left in Herdr",
+  "note": "passes on the host lifecycle suite with both packs loaded; it is not evidence for the pstack setup guard, whose fourth cross-family review still found approval bypasses at b10a40c",
+  "sha256": {
+    "combined-full-integration.log": "3288a1dcc335688aa72d680af5b1e3976e31eab5d1a4b2e03b0a51dde3c1735f",
+    "harness-overlay.patch": "5045ea682459f9006c1ef307e15c7530e82d0c436a42307b7021d7533e141567"
+  }
+}

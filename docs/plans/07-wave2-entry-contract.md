@@ -18,6 +18,8 @@ After discussion, the user explicitly approved replacing the old generic `poteto
 
 The runtime owner performs this change and updates provenance/tests only after the real hub exists. Test explicit skill startup before adding `skills: poteto-mode`: it must load the full content without losing the actual task, premature auto-exit or unintended sticky activation. A failed startup gate is reported, not bypassed. Do not add `poteto-agent`, another generic worker role or `comment-sicko` in W2. `comment-sicko` belongs to **pstack in W3**, not to the optional roles package.
 
+**Subsequent real-child gate:** native `skills: poteto-mode` startup failed for a forked child on host b04906b6: startup completed before the assigned task executed. A turn-free public structured-section bootstrap passed fresh and forked real Herdr cases with the complete hub on actual task requests. Use that package-owned loading approach, not the failing native kickoff, and re-prove it in the final candidate with missing/filtered/shadowed-resource handling. See [interim evidence and follow-ups](../research/wave2-interim-validation.md). This changes no host launch policy and does not turn on sticky mode.
+
 ## W2 methodology files
 
 Exactly two top-level skills. Shared references:
