@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
 
-This skill orchestrates three others: an inline mining pass (see step 1), Pi skill authoring (authoring), and the **unslop** skill (prose discipline). Pi skill authoring here means Pi's skills documentation (`docs/skills.md` in the installed Pi package) plus the skill-authoring playbook, `../poteto-mode/playbooks/authoring-a-skill.md` (planned W4). It sequences them; it doesn't replace them.
+This skill orchestrates three others: an inline mining pass (see step 1), Pi skill authoring (authoring), and the **unslop** skill (prose discipline). Pi skill authoring here means Pi's skills documentation (`docs/skills.md` in the installed Pi package) plus the skill-authoring playbook, `../poteto-mode/playbooks/authoring-a-skill.md`. It sequences them; it doesn't replace them.
 
 ## Flow
 
@@ -104,4 +104,4 @@ Run a description-optimization loop only if the skill's trigger accuracy turns o
 
 - The **poteto-mode** skill: example of the output shape.
 - The **unslop** skill: prose discipline for every line.
-- Pi's skills documentation and `../poteto-mode/playbooks/authoring-a-skill.md` (planned W4): skill authoring process and writing guidelines.
+- Pi's skills documentation and `../poteto-mode/playbooks/authoring-a-skill.md`: skill authoring process and writing guidelines.
