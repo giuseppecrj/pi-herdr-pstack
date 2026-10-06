@@ -1,28 +1,38 @@
 # Compatibility
 
-Status: private Wave 4 candidate (full inventory, 51 skills and 23 playbooks).
-Nothing here is a published compatibility promise.
+Status: pi-herdr-pstack `0.1.0`, the first public release (full inventory, 51
+skills and 23 playbooks).
 
-## Intended host
+## Host baseline
 
-Only a **role-free pi-herdr-agents candidate** is an intended host. Setup writes
-additionally need the Wave 2 conditional writer. Runtime tests were run against
-host `b04906b6d6d0f81ac23a64753a5aec2b506c6423` (branch
-`wave2/conditional-model-writes`, based on the W1 host `e262c584`); the parent
-integration owner records the final combined revision vector. Run the combined
-checks with:
+The compatibility baseline is the published **pi-herdr-agents `3.0.0`**: the
+first role-free host release, with the conditional task-model writer
+(`expectedConfigRevision`) that setup writes need, the operating skill and
+`subagent_cancel`. The package declares `"pi-herdr-agents": ">=3.0.0"`,
+`"@earendil-works/pi-coding-agent": "^1.0.3"` and `"typebox": "^1.3.27"` (the
+version Pi 1.0.3 resolves in the lockfile). The temporary `"*"` peer ranges
+used during the private wave experiments are gone.
+
+| Component | Tested revision |
+| --- | --- |
+| pi-herdr-agents | `7d35371f5d7d0df3edd208a1d5c9a187767d563b` (main at the 3.0.0 line, before its version commit) |
+| pi-herdr-roles (coexistence) | `2820591` |
+| Pi SDK and CLI | `1.0.3` |
+
+Host versions after 3.0.0 are allowed by the range but were not tested for this
+release. Run the combined checks with:
 
 ```bash
-PI_HERDR_AGENTS_HOST=/path/to/candidate/pi-herdr-agents \
+PI_HERDR_AGENTS_HOST=/path/to/pi-herdr-agents \
 PI_HERDR_ROLES_PACK=/path/to/pi-herdr-roles \
 npm test
 ```
 
-`"pi-herdr-agents": "*"` in `peerDependencies` is temporary scaffolding for
-private local experiments. A publication-compatible range must name a released
-role-free host and is a later release gate. npm `pi-herdr-agents@2.0.5`
-predates Maestro, bundles its own roles and workflow commands and is **not** a
-supported host.
+Earlier wave runtime tests used host `b04906b6d6d0f81ac23a64753a5aec2b506c6423`
+(branch `wave2/conditional-model-writes`, based on the W1 host `e262c584`);
+that branch is superseded by the 3.0.0 line. npm `pi-herdr-agents@2.0.5` and
+earlier predate Maestro, bundle their own roles and workflow commands and are
+**not** supported hosts.
 
 Pstack contributes no named roles and registers no role directory. Alone with a
 role-free host, `subagents_list` lists no roles; with pi-herdr-roles it lists
@@ -59,7 +69,8 @@ behavior. `skills/poteto-mode/references/fan-out.md` states them for agents.
 ## Pi runtime
 
 Developed and tested against Pi `1.0.3` (`@earendil-works/pi-coding-agent`
-`1.0.3` dev dependency and CLI).
+`1.0.3` dev dependency and CLI). The peer range is `^1.0.3`; other Pi versions
+are untested.
 
 ## Observed behavior with a host that still bundles roles
 
