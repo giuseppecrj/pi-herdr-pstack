@@ -4,6 +4,7 @@ Status: **Wave 1 accepted; Wave 2 explicitly authorized and in progress.** See [
 - [11-wave2-handoff.md](./11-wave2-handoff.md): Wave 2 candidate complete; exact revision vector, evidence and limits for the human gate.
 - [12-wave3-contract.md](./12-wave3-contract.md) and [12-wave3-notes.md](./12-wave3-notes.md): Wave 3 draft contract and decision notes; planning only until the user approves.
 - [13-wave3-handoff.md](./13-wave3-handoff.md): Wave 3 candidate complete at `d611b6a`; revision vector, gates and limits for the human gate.
+- [14-wave4-contract.md](./14-wave4-contract.md) and [14-wave4-notes.md](./14-wave4-notes.md): Wave 4 draft contract and decision notes; planning only until the user approves.
 
 ## Two workstreams
 
