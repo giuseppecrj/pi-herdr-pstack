@@ -8,10 +8,11 @@ Pstack uses only the public pi-herdr-agents surface:
 - **Results.** Delivered automatically as a new turn, including the child's `Session:` path.
 - **Liveness.** Host stall and no-progress advisory wakes.
 - **Control.** `subagent_cancel` and `subagent_interrupt` from the parent, and `caller_ping` from a child.
+- **Tools.** A child launched without a `tools` key sees the MCP tools configured for Pi. A child given a `tools` list sees none. Omit `tools` for a child that needs an MCP server, as the why investigators do.
 - **Worktrees.** Retained after the child finishes, listed with `worktree_list` and removed only with `worktree_remove`.
 - **Session files.** `$PI_SESSION_FILE` in bash, and the per-cwd session directory rule in `playbooks/session-pickup.md`.
 
-There is no scheduler, timer, durable ledger, remote worker, parallel task array or child-side wait. A bare child exits once its turn settles, so it cannot wait for children of its own.
+There is no scheduler, timer, durable ledger, remote worker, parallel task array or child-side wait. A bare child exits once its turn settles, so it cannot wait for children of its own. Its result reaches you before any grandchild it launched finishes, and that grandchild's result reaches no one. Children are leaves because of how the host works, not only by preference.
 
 ## 1. Fan-out lives in the parent session only
 
@@ -22,8 +23,8 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 
 ## 2. Prompts
 
-- **Fixed prompt.** A reference file that is a complete prompt, with no placeholders, goes verbatim in `systemPrompt`, with `fork: false`. The specifics go in `task`. In a `json subagent` example, write the placeholder as `<the full text of references/<file>.md, verbatim>`, with the path relative to the launching skill's directory.
-- **Template.** A reference file with placeholders is filled in and sent as `task`. Its `systemPrompt` is the matching Investigator, Reviewer or Verifier prompt from `references/delegation.md`, again with `fork: false`. In an example, write `<the Investigator prompt in references/delegation.md, verbatim>` from inside poteto-mode, or `<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>` from any other skill. Use Reviewer or Verifier in place of Investigator as the seat requires.
+- **Fixed prompt.** A reference file written as a complete prompt goes verbatim in `systemPrompt`, with `fork: false`, even when it contains placeholder tokens. The values for those placeholders, and every other specific, go in `task`. Examples: `../architect/references/runner-prompt.md`, `../interrogate/references/reviewer-prompt.md` and the reflect reviewers. In a `json subagent` example, write the placeholder as `<the full text of references/<file>.md, verbatim>`, with the path relative to the launching skill's directory.
+- **Template.** A reference file written as a brief to fill in is filled in and sent as `task`. Its `systemPrompt` is the matching Investigator, Reviewer or Verifier prompt from `references/delegation.md`, again with `fork: false`. Examples: the how explorer and explainer, and the why investigator and synthesizer. In an example, write `<the Investigator prompt in references/delegation.md, verbatim>` from inside poteto-mode, or `<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>` from any other skill. Use Reviewer or Verifier in place of Investigator as the seat requires.
 - Every `systemPrompt` needs `fork: false`. The host drops a bare child's `systemPrompt` in a forked session.
 
 ## 3. Models
@@ -36,7 +37,7 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 ## 4. Dropouts and stalls
 
 - A failed child is a dropout. Proceed with N−1, record the dropout on the checklist and in the synthesis, and say what its absence costs.
-- A no-progress advisory gets one `subagent_cancel`. If the work is still needed, launch one fresh replacement with consolidated scope, and record both on the checklist. Do not relaunch the same brief twice.
+- A no-progress advisory gets one `subagent_cancel`, except for a watcher in its bounded wait (section 6). If the work is still needed, launch one fresh replacement with consolidated scope, and record both on the checklist. Do not relaunch the same brief twice.
 - Never poll, sleep, tail a session file or call a list tool to check on a child. Work on something independent or end your turn.
 
 ## 5. Writers
@@ -49,14 +50,15 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 
 When a step must wait for something outside the session, such as CI checks or a workflow run, launch one watcher child. It is a bare child with `tools: "read, bash"` that runs one bounded, blocking command, then reports what it saw. Its delivery is the wake.
 
-- Examples: `gh pr checks <pr> --watch` and `gh run watch <run-id> --exit-status`. State the condition that ends the wait and a bound on how long the command may block.
+- Examples: `gh pr checks <pr> --watch` and `gh run watch <run-id> --exit-status`. State the condition that ends the wait and bound each watch arm, with `timeout`, `--interval` or a step cap, so the wait stays visibly finite.
+- While the watcher blocks, expect one informational no-progress advisory for each idle minute. It is not a stall. Do not cancel the watcher for it. Cancel only when the stated bound has passed.
 - The watcher reads; it does not reply, push, merge or re-run anything.
 - After each wave of work, re-arm the wait explicitly by launching a fresh watcher. It is one-shot: never a sleep loop, never a timer, and nothing in pstack schedules it.
 - Without a delivery or an advisory, nothing wakes you. Audit at each wake, or when the operator asks.
 
 ## 7. Help and stop
 
-- A child that reaches an authorization boundary calls `caller_ping` and waits for the answer. It never guesses. Answer from `references/authorization.md`, or ask the user.
+- A child that reaches an authorization boundary calls `caller_ping`. It never guesses. An ordinary child exits after the ping and does not continue, so the ping carries everything: what it finished, what it found, where its work is, and the exact question. Answer from `references/authorization.md`, or ask the user, then give the work to a fresh child with consolidated scope.
 - When the operator says "stop" or "hold", call `subagent_cancel` on every running child and launch nothing new. Report what each child had finished.
 - "Release" means fresh children with consolidated scope, not resumed ones.
 

@@ -336,7 +336,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/references/fan-out.md",
-			"sha256": "e469b37621c787660300d7bfc478bceafcce3e34bdc59c0f1c951e0733c012e8",
+			"sha256": "24edef2a28ec542023d0c4b71469a6e3d99146cc423cb336ee4310d0aac8bf36",
 			"status": "new",
 			"sources": [
 				{
@@ -364,7 +364,7 @@
 					"use": "derived"
 				}
 			],
-			"explanation": "New W4 C0 methodology file (docs/plans/14-wave4-contract.md, 'What an honest Pi port means', items 1-7). Freezes the shared fan-out protocol that the W4 skills and playbooks cite instead of restating: parent-only fan-out with a visible checklist and synthesis after every terminal result; fixed prompts in systemPrompt and filled templates in task with the delegation.md prompts, always fork:false; task-category models for ordinary seats and exact distinct-family picks for diversity seats with a disclosed same-family fallback; one subagent_cancel then one fresh replacement for stalls, never polling; worktrees from committed HEAD for writers; the one-shot watcher child as the only wait primitive; caller_ping at authorization boundaries and cancel-all on stop or hold. Derived from the upstream hub's Subagents rules and the orchestrate, babysit and autopilot-full playbooks' fan-out, wait and stop behavior, rewritten for the public pi-herdr-agents surface; no upstream text is copied."
+			"explanation": "New W4 C0 methodology file (docs/plans/14-wave4-contract.md, 'What an honest Pi port means', items 1-7). Freezes the shared fan-out protocol that the W4 skills and playbooks cite instead of restating: parent-only fan-out with a visible checklist and synthesis after every terminal result; fixed prompts in systemPrompt and filled templates in task with the delegation.md prompts, always fork:false; task-category models for ordinary seats and exact distinct-family picks for diversity seats with a disclosed same-family fallback; one subagent_cancel then one fresh replacement for stalls, never polling; worktrees from committed HEAD for writers; the one-shot watcher child as the only wait primitive; caller_ping at authorization boundaries and cancel-all on stop or hold. Derived from the upstream hub's Subagents rules and the orchestrate, babysit and autopilot-full playbooks' fan-out, wait and stop behavior, rewritten for the public pi-herdr-agents surface; no upstream text is copied. W4 reconcile: section 2 says a fixed prompt goes verbatim in systemPrompt even when it carries placeholder tokens, with their values in task (architect runner, interrogate reviewer, reflect reviewers), and names the template examples (how explorer and explainer, why investigator and synthesizer). Adds the host facts from the real-Herdr W4 gates at 7d35371: a child without tools sees MCP tools and a restricted child does not (G5); a bare child is delivered before any grandchild finishes and the grandchild's result reaches no one, so children are leaves by host fact (G7); an ordinary child exits after caller_ping, so the ping carries everything (G6b); a blocked watcher draws one informational no-progress advisory per idle minute, which is not a stall, and each watch arm is bounded (G4)."
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",
