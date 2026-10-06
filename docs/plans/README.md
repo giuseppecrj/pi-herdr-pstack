@@ -3,6 +3,7 @@
 Status: **Wave 1 accepted; Wave 2 explicitly authorized and in progress.** See [the Wave 2 contract](./06-wave2-contract.md) for current scope and [the Wave 1 handoff](./05-wave1-handoff.md) for accepted inputs and evidence. Both new private GitHub repositories and initial W1 branch pushes were separately approved and completed. No new pushes, PRs, merges, publication, normal-installation changes, paid live-model evaluations or W3/W4 bulk porting are authorized by the W2 approval.
 - [11-wave2-handoff.md](./11-wave2-handoff.md): Wave 2 candidate complete; exact revision vector, evidence and limits for the human gate.
 - [12-wave3-contract.md](./12-wave3-contract.md) and [12-wave3-notes.md](./12-wave3-notes.md): Wave 3 draft contract and decision notes; planning only until the user approves.
+- [13-wave3-handoff.md](./13-wave3-handoff.md): Wave 3 candidate complete at `d611b6a`; revision vector, gates and limits for the human gate.
 
 ## Two workstreams
 
