@@ -1,5 +1,16 @@
 {
 	"schemaVersion": 1,
 	"description": "Exact unresolved references from shipped W3-B files to inventory rows or playbooks that are not shipped yet. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
-	"exceptions": []
+	"exceptions": [
+		{
+			"sourcePath": "skills/teach/SKILL.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/teach/SKILL.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		}
+	]
 }

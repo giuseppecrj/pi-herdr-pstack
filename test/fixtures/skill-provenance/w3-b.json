@@ -35,6 +35,26 @@
 			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Seven lines by design; it needs no adaptation."
 		},
 		{
+			"path": "skills/teach/SKILL.md",
+			"sha256": "d5f7ae491968bede303f626eab46bada5cafa0f5d42b15fe1550051a06de8dd8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"use": "context"
+				}
+			],
+			"explanation": "Method, steps and voice rules kept from the pinned pi-mimir file (identical to Cursor). The how and why skills it runs are W4-A, so every line naming them carries a planned W4 marker, and a new paragraph plus step 2 give the interim rule: until they ship, orient and trace the code and its history yourself, say the skills were unavailable, never claim they ran, and keep why's confidence-language rule for your own reasons. The description gains the same marker. Step 5's image-generation tool, which is not a Pi or pi-herdr-agents tool, becomes conditional on the session exposing one, with a mermaid or ASCII fallback that is announced; no tool name is invented. The reply line keeps the threads to chase with how or why and says what to do until they ship."
+		},
+		{
 			"path": "skills/technical-writing/SKILL.md",
 			"sha256": "d3b9323c7654ba43c267b346fb196ce7e5e0915e668bdb8d3610927e281a6431",
 			"status": "copied",
