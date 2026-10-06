@@ -1,7 +1,7 @@
 # Compatibility
 
-Status: private Wave 3 candidate. Nothing here is a published compatibility
-promise.
+Status: private Wave 4 candidate (full inventory, 51 skills and 23 playbooks).
+Nothing here is a published compatibility promise.
 
 ## Intended host
 
@@ -31,7 +31,30 @@ that pack's six roles. comment-sicko is a bare delegate prompt under
 public `subagent` schema with `systemPrompt`; pstack still ships no named roles.
 Wave 3 repins the delegation schema to host
 `7d35371f5d7d0df3edd208a1d5c9a187767d563b`, whose `SubagentParams` and task
-categories match the Wave 2 pin.
+categories match the Wave 2 pin. Wave 4 keeps that pin: every `json subagent`
+example is checked against host `7d35371`, and the Wave 4 real-Herdr gates ran
+against it.
+
+## Host facts the Wave 4 workflows rely on
+
+Observed at host `7d35371f5d7d0df3edd208a1d5c9a187767d563b` with a
+deterministic provider (gates G1 to G7); they prove host mechanics, not model
+behavior. `skills/poteto-mode/references/fan-out.md` states them for agents.
+
+- Fan-out: three bare children launched in one turn each get one initial
+  message and one delivery; dropout and cancel give exactly one terminal
+  result each; candidate worktrees are retained and listed, and removal is
+  refused while a child is live.
+- A child launched without `tools` sees MCP tools; a child with a `tools` list
+  does not.
+- A bare child is delivered before any grandchild it launched finishes, and the
+  grandchild's result reaches no one, so children are leaves.
+- An ordinary child exits after `caller_ping`.
+- A blocking watcher wait draws one informational no-progress advisory per idle
+  minute, and its delivery wakes the parent.
+- `worktree_list` and `worktree_remove` are registered only in parent sessions.
+- Pstack ships no timer: nothing wakes a coordinator except a delivery, an
+  advisory or the operator.
 
 ## Pi runtime
 
@@ -133,3 +156,8 @@ live-model behavior. These belong to the parent-owned sequential integration
 suite or later approved evaluations. The RPC and SDK checks exercise the same
 confirm API with scripted responses; session replacement and shutdown during a
 pending approval use the SDK's `AgentSessionRuntime`, not the TUI.
+
+Whether a live model follows the Wave 4 fan-out, seat-picking, babysit,
+shipping, autopilot, orchestrate and `make-bot-ui` prose was not evaluated; no
+live-model run was authorized. The real-Herdr gates above use a scripted
+provider.

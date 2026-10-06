@@ -1,10 +1,10 @@
 # pi-herdr-pstack
 
-> **Experimental, private, unpublished — Wave 3 candidate.** This package
-> contributes 37 skills of the full pstack inventory (the two Wave 2 skills and
-> the 35 Wave 3 skills), the `/poteto-mode` and `/setup-pstack` commands and one
-> bare delegate prompt. It ships no named roles. The other 14 skills are
-> planned for Wave 4 and are **not** shipped. Nothing is published or released.
+> **Experimental, private, unpublished — Wave 4 candidate.** This package
+> contributes the full pstack inventory: 51 skills and the 23 poteto-mode
+> playbooks, the `/poteto-mode` and `/setup-pstack` commands and one bare
+> delegate prompt. It ships no named roles. Several workflows are scoped down
+> for Pi (see below). Nothing is published or released.
 
 A Pi methodology pack for [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents).
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs
@@ -14,19 +14,34 @@ store, installer or shell-permission engine.
 ## Contents
 
 | Resource | Kind | Notes |
-| `poteto-mode` | skill | The single source of poteto's methodology: hub, three references, twelve base playbooks. Explicit-only (`disable-model-invocation: true`). |
+| `poteto-mode` | skill | The single source of poteto's methodology: the hub, four references (`authorization`, `bugbot-triage`, `delegation`, `fan-out`), 23 playbooks and the `check-plan.mjs` plan checker. Explicit-only (`disable-model-invocation: true`). |
 | `setup-pstack` | skill | Explains the setup report and drives one approved change inside a `/setup-pstack` change flow. |
 | 24 `principle-*` skills | skills | One rule each: `principle-attack-the-premise`, `principle-boundary-discipline`, `principle-build-the-lever`, `principle-encode-lessons-in-structure`, `principle-exhaust-the-design-space`, `principle-experience-first`, `principle-explain-the-number`, `principle-fix-root-causes`, `principle-foundational-thinking`, `principle-guard-the-context-window`, `principle-laziness-protocol`, `principle-make-operations-idempotent`, `principle-migrate-callers-then-delete-legacy-apis`, `principle-minimize-reader-load`, `principle-model-the-domain`, `principle-never-block-on-the-human`, `principle-outcome-oriented-execution`, `principle-prove-it-works`, `principle-redesign-from-first-principles`, `principle-separate-before-serializing-shared-state`, `principle-sequence-verifiable-units`, `principle-subtract-before-you-add`, `principle-test-behavior-not-implementation`, `principle-type-system-discipline`. poteto-mode cites them; the hub keeps a summary of each. |
-| `tdd`, `correct`, `benchmark-checklist`, `blast-radius`, `typescript-best-practices` | skills | Engineering technique: test-first fixes, repo lessons, vetting measured numbers, breakage outside a diff, TypeScript rules (load explicitly before `.ts`/`.tsx` edits). |
-| `unslop`, `technical-writing`, `no-comments`, `teach`, `bro` | skills | Prose and communication: AI-tell cleanup, documentation standards, comment removal through a bare delegate, plain explanations, plain-words recap. |
+| `how`, `why`, `teach`, `recall`, `blast-radius` | skills | Understanding code: mechanics, design rationale (MCP-backed investigators), plain explanations, catching up on this working directory's sessions, breakage outside a diff. |
+| `architect`, `arena`, `swarm`, `interrogate`, `figure-it-out` | skills | Design and fan-out: parallel design sketches, bakeoffs with grafting, coverage and race swarms, multi-model adversarial review, bespoke playbooks for large efforts. Diversity seats use one exact model per family and disclose a same-family fallback. |
+| `tdd`, `correct`, `benchmark-checklist`, `typescript-best-practices` | skills | Engineering technique: test-first fixes, repo lessons, vetting measured numbers, TypeScript rules (load explicitly before `.ts`/`.tsx` edits). |
+| `show-me-your-work`, `reflect`, `automate-me` | skills | Decision trails (with the `log.sh` helper), turning a session's lessons into approved skill edits, drafting a personal mode skill. Session reads stay in this working directory. |
+| `create-verification-skill`, `maintain-verification-skill` | skills | Generating and maintaining a project-local `.pi/skills/verify-*` harness that drives the real app. |
+| `unslop`, `technical-writing`, `no-comments`, `bro` | skills | Prose and communication: AI-tell cleanup, documentation standards, comment removal through a bare delegate, plain-words recap. |
+| `make-bot-ui` | skill | Re-authored for Pi: a loopback-only local page whose server starts one `pi -p` run per request. Exposure and installs need authorization. |
 | `poteto-help` | skill | Pi guide to installing pstack, the commands and which skill, playbook or principle fits a task. |
 | `/poteto-mode` | command | Sticky methodology mode for the current session branch. |
 | `/setup-pstack` | command | Report-first setup; shared task-model changes only with explicit approval. |
 
 All skills except `setup-pstack` are explicit-only: they load through
-`/skill:<name>` or when poteto-mode reads them for a step. Skills from Wave 4
-are named with a `planned W4` marker and an interim route wherever a shipped
-file refers to them.
+`/skill:<name>` or when poteto-mode reads them for a step.
+
+**Scoped-down workflows.** Pstack adds no scheduler, timer or ledger. Every
+fan-out runs in the parent session and children are leaves
+(`skills/poteto-mode/references/fan-out.md`). Babysit and Shipping use `gh`
+only and wait through a one-shot watcher child; Shipping lands the verified
+run only on an explicit request. Autopilot-full and Autopilot-stack are run by
+the root session, with fresh owner rounds and audits on each wake, never a
+timer. Orchestrate is a depth-1 single-session coordinator with a hand-kept
+store, not an unattended or multi-day runner. Worktree cleanup inventories with
+`worktree_list` and removes each path only on its own authorization. Nothing in
+pstack pushes, opens or merges PRs or removes worktrees without explicit
+authorization.
 
 Pstack registers no role directory and depends on neither pi-herdr-roles nor
 another pack. comment-sicko is a bare delegate prompt under
