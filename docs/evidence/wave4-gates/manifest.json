@@ -11,6 +11,8 @@
     "regression-full.log": "5040722d5daeaae509a995afed616065d2b6669fea285aca9240628f27414a92",
     "fake-provider.diff": "183e6eb725f8edaf07b319f9efbc6442d1ee0d1562b3ac6170a57eb2f1ed03d7",
     "wave4-gates.test.ts": "c98d5585094a0bbff071913f2d040527e17ef1252b8f4c43f6c8b431e198735b",
+    "g8-comment-sicko-2726104.log": "a58b2589be84a746de3764dcb3b0c76e26aa624aa3a8f9a3d273901724dd1c0a",
+    "combined-full-integration-2726104.log": "c4892c671d86d148b6555bea7f0f874f8a089691ebcdc1587fb547c69ce85df9",
     "gate-evidence/G1/g1-summary.txt": "426eabe237fe526fcc9ea1203613140f3a55c39987f230a5b796cc6f13003c0f",
     "gate-evidence/G1/provider-requests.json": "e1fd1fa6db3847bd8413eacf3252b14507e898092428e19b33d6eee383fc6892",
     "gate-evidence/G1/parent-session.jsonl": "c05bd4cc4944a8cb9a8e02cc1f755797516e5191a354a2c98987245d3c867e09",
@@ -43,5 +45,7 @@
     "gate-evidence/G7/provider-requests.json": "08374dbbd4f56b1b034529b05e1cba5bb571d515863e17658030917498b04d0a",
     "gate-evidence/G7/parent-session.jsonl": "14b7ea886da7e246ef44a5832428369e4a9637f03d43c0b37412f22d67f31daa",
     "gate-evidence/G7/parent-screen.txt": "2824f5562f5f8d1d17d569462e1f18fb45f9f04b78dec0a8dc7886293f392217"
-  }
+  },
+  "g8": "comment-sicko bare-delegate gate rerun on pstack 2726104 (reconciled head): 2/2 (fresh and fork)",
+  "combinedRegression": "host 7d35371 + roles 3b75aa4 + pstack 2726104 loaded: 77 passed, 0 failed, 0 skipped"
 }
