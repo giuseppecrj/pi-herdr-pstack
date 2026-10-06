@@ -1,0 +1,32 @@
+30a31,32
+> 	tools?: string;
+> 	thinking?: string;
+63a66,67
+> 	allText?: string;
+> 	systemText?: string;
+148a153,154
+> 		const tools = quotedValue(section, "tools");
+> 		const thinking = quotedValue(section, "thinking");
+156c162,168
+< 		if (systemPrompt) args.systemPrompt = systemPrompt;
+---
+> 		if (systemPrompt) {
+> 			try {
+> 				args.systemPrompt = JSON.parse(`"${systemPrompt}"`);
+> 			} catch {
+> 				args.systemPrompt = systemPrompt;
+> 			}
+> 		}
+157a170,172
+> 		if (section.includes("fork: false")) args.fork = false;
+> 		if (tools) args.tools = tools;
+> 		if (thinking) args.thinking = thinking;
+587a603,607
+> 	if (names.has("caller_ping") && user.includes("PSTACK_W3_GATE_") && user.includes("Run this bash command:")) {
+> 		const command = bashCommand(user.slice(user.lastIndexOf("Run this bash command:")));
+> 		if (command) return { toolCalls: [{ name: "bash", arguments: { command } }] };
+> 	}
+> 
+757a778,779
+> 			allText: requestText(chatRequest),
+> 			systemText: (chatRequest.messages ?? []).filter((m: any) => m.role === "system" || m.role === "developer").map((m: any) => messageText(m.content)).join("\n"),

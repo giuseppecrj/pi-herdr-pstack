@@ -1,0 +1,40 @@
+✖ comment-sicko bare delegate, fork=false (4094.812328ms)
+✖ comment-sicko bare delegate, fork=true (4068.777406ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8328.56939
+
+✖ failing tests:
+
+test at gate.test.mjs:18:3
+✖ comment-sicko bare delegate, fork=false (4094.812328ms)
+  AssertionError [ERR_ASSERTION]: delegate prompt delivered as the child system prompt
+      at TestContext.<anonymous> (file:///tmp/pstack-w3-gate/gate.test.mjs:75:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at gate.test.mjs:18:3
+✖ comment-sicko bare delegate, fork=true (4068.777406ms)
+  AssertionError [ERR_ASSERTION]: delegate prompt delivered as the child system prompt
+      at TestContext.<anonymous> (file:///tmp/pstack-w3-gate/gate.test.mjs:75:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,107 @@
+[
+  {
+    "model": "test",
+    "status": 200,
+    "tools": [
+      "bash",
+      "edit",
+      "read",
+      "subagent",
+      "subagent_cancel",
+      "subagent_interrupt",
+      "subagent_resume",
+      "subagent_send",
+      "subagent_stop",
+      "subagents_list",
+      "subagents_write_task_models",
+      "worktree_list",
+      "worktree_remove",
+      "write"
+    ],
+    "lastUser": "Call the subagent tool with these EXACT parameters:\n  name: \"w3gate-g93i1jtgmuw0t1go\"\n  systemPrompt: \"# Comment Sicko\\n\\nI find comments and suppression direct",
+    "systemLen": 11528,
+    "systemHead": "You are an expert coding assistant operating inside pi, a coding agent harness. You help users by reading files, executing commands, editing code, and writing new files.\n\n<tools>\n- read: Read file contents\n- bash: Execute bash commands (ls, grep, find, etc.)\n- edit: Make precise file edits with exac",
+    "allHasPersona": true,
+    "systemHasPersona": false
+  },
+  {
+    "model": "test",
+    "status": 200,
+    "tools": [
+      "bash",
+      "edit",
+      "read",
+      "subagent",
+      "subagent_cancel",
+      "subagent_interrupt",
+      "subagent_resume",
+      "subagent_send",
+      "subagent_stop",
+      "subagents_list",
+      "subagents_write_task_models",
+      "worktree_list",
+      "worktree_remove",
+      "write"
+    ],
+    "lastUser": "Call the subagent tool with these EXACT parameters:\n  name: \"w3gate-g93i1jtgmuw0t1go\"\n  systemPrompt: \"# Comment Sicko\\n\\nI find comments and suppression direct",
+    "systemLen": 11528,
+    "systemHead": "You are an expert coding assistant operating inside pi, a coding agent harness. You help users by reading files, executing commands, editing code, and writing new files.\n\n<tools>\n- read: Read file contents\n- bash: Execute bash commands (ls, grep, find, etc.)\n- edit: Make precise file edits with exac",
+    "allHasPersona": true,
+    "systemHasPersona": false
+  },
+  {
+    "model": "test",
+    "status": 200,
+    "tools": [
+      "bash",
+      "caller_ping",
+      "edit",
+      "read"
+    ],
+    "lastUser": "<file name=\"/tmp/pi-integ-k8Wp6x/artifacts/01a10ee6-91e5-709a-ae0f-130020196647/context/w3gate-g93i1jtgmuw0t1go-2026-10-06T01-49-14.md\">\n\n\n# Comment Sicko\n\nI fi",
+    "systemLen": 5793,
+    "systemHead": "You are an expert coding assistant operating inside pi, a coding agent harness. You help users by reading files, executing commands, editing code, and writing new files.\n\n<tools>\n- read: Read file contents\n- bash: Execute bash commands (ls, grep, find, etc.)\n- edit: Make precise file edits with exac",
+    "allHasPersona": true,
+    "systemHasPersona": false
+  },
+  {
+    "model": "test",
+    "status": 200,
+    "tools": [
+      "bash",
+      "caller_ping",
+      "edit",
+      "read"
+    ],
+    "lastUser": "<file name=\"/tmp/pi-integ-k8Wp6x/artifacts/01a10ee6-91e5-709a-ae0f-130020196647/context/w3gate-g93i1jtgmuw0t1go-2026-10-06T01-49-14.md\">\n\n\n# Comment Sicko\n\nI fi",
+    "systemLen": 5793,
+    "systemHead": "You are an expert coding assistant operating inside pi, a coding agent harness. You help users by reading files, executing commands, editing code, and writing new files.\n\n<tools>\n- read: Read file contents\n- bash: Execute bash commands (ls, grep, find, etc.)\n- edit: Make precise file edits with exac",
+    "allHasPersona": true,
+    "systemHasPersona": false
+  },
+  {
+    "model": "test",
+    "status": 200,
+    "tools": [
+      "bash",
+      "edit",
+      "read",
+      "subagent",
+      "subagent_cancel",
+      "subagent_interrupt",
+      "subagent_resume",
+      "subagent_send",
+      "subagent_stop",
+      "subagents_list",
+      "subagents_write_task_models",
+      "worktree_list",
+      "worktree_remove",
+      "write"
+    ],
+    "lastUser": "Sub-agent \"w3gate-g93i1jtgmuw0t1go\" completed (1s).\n\ncompleted\n\nRequested model: pi-integration/test\nModel used: pi-integration/test\n\nSession: /tmp/pi-integ-k8W",
+    "systemLen": 11528,
+    "systemHead": "You are an expert coding assistant operating inside pi, a coding agent harness. You help users by reading files, executing commands, editing code, and writing new files.\n\n<tools>\n- read: Read file contents\n- bash: Execute bash commands (ls, grep, find, etc.)\n- edit: Make precise file edits with exac",
+    "allHasPersona": true,
+    "systemHasPersona": false
+  }
+]

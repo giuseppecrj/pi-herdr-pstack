@@ -1,0 +1,12 @@
+{
+  "fork": false,
+  "child": {
+    "pid": 2659917,
+    "childId": "761f7f8d-508b-4482-8caf-fc92e620a97e"
+  },
+  "childRequests": 2,
+  "promptDelivered": true,
+  "taskExecuted": true,
+  "resultDelivered": true,
+  "fallbackRequests": 0
+}

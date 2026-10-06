@@ -1,0 +1,22 @@
+{
+  "subject": "Wave 3 parent QA gates",
+  "host": "7d35371 (git archive)",
+  "pstack": "f884fa8 (git archive)",
+  "roles": "3b75aa4",
+  "isolation": "outer HOME/XDG/PI_CODING_AGENT_DIR under /tmp/pstack-w3-gate; per-test agent dirs from the harness; deterministic local provider",
+  "commentSickoGate": "2/2 (fresh and fork): task executed, narrating comments removed and the why-comment kept, child bare (no PI_SUBAGENT_AGENT), pstack skills visible in the child, one initial prompt (no separate skill turn), no fallback request. Host characterization: a bare systemPrompt is prepended as a role block to the first child message (artifact-backed when long), not placed in the system prompt; fork mode drops it, so the delegate requires fork: false. The first run asserted the system-prompt channel and failed on that assertion only; see the first-run log.",
+  "combinedIntegration": "77 passed, 0 failed, 0 skipped with roles + pstack f884fa8 loaded on host 7d35371",
+  "overlays": "fake-provider: fork:false and tools/thinking passthrough, JSON-unescaped systemPrompt, request text capture, child marker recognizer; harness (combined run): settings.json packages + -e flags. Test-only; production host byte-identical.",
+  "sha256": {
+    "comment-sicko-gate.log": "425ce527eef346020a9f79100b56105a3a58c3a8bfb8e482c775e5c05532a3c5",
+    "comment-sicko-gate-first-run-wrong-assertion.log": "558958b0323e1e68403247b9760d43711b0971c856b652aefd443e99befc75e3",
+    "combined-full-integration.log": "3797f79dfb6ae8e4e0d69189e0581f94601ba9b78789d76a0ff76aac718675cc",
+    "gate.test.mjs": "889d8785a69cf0d8b66232f36d8dee72f04c09d2aa741b2557a55d395ca1c7f3",
+    "gate-fork-false-summary.json": "0edf8e6d3930ecf7d692847e89c380ad1c48735ec49728b8ca3c44a6d7e0edc7",
+    "gate-fork-false-provider-requests.json": "68b4090eedb528d61708dcab580ceb108ec91090d9e05a825f2596a42f4d343c",
+    "gate-fork-true-summary.json": "7d52fdad1e4f01c9fc79bf037273d8f6aa034a723477247134013ef1d66cc8ca",
+    "gate-fork-true-provider-requests.json": "2df1f9d6e312253a3542597cc15b229043bcc485fd897b14307a0b48a3c28e11",
+    "fake-provider-overlay.patch": "fe575f02004710f62983dd60edbb4c6ceab0759fefe0fe1f5fa6fcb90c3e38d3",
+    "combined-harness-overlay.patch": "95095abe26f80a32ea9fe2548f86edaffcd7a6728a22cbfb5076e787463db963"
+  }
+}

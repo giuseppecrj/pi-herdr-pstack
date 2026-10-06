@@ -1,0 +1,14 @@
+285a286,290
+> 			// Parent-owned combined-installation QA overlay; not a candidate change.
+> 			writeFileSync(join(agentDir, "settings.json"), JSON.stringify({packages: [
+> 				"/home/g/Projects/pi-herdr-roles",
+> 				"/tmp/pstack-w3-gate/pack",
+> 			]}));
+414c419,423
+< 	const extra = opts?.extraArgs ?? "";
+---
+> 	const extra = [
+> 		"-e /home/g/Projects/pi-herdr-roles/extensions/index.ts",
+> 		"-e /tmp/pstack-w3-gate/pack/pi-extension/pstack/index.ts",
+> 		opts?.extraArgs ?? "",
+> 	].join(" ");
