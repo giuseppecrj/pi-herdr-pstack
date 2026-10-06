@@ -85,6 +85,20 @@
 			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
 		},
 		{
+			"path": "skills/figure-it-out/SKILL.md",
+			"sha256": "47df82f0fd4a8e3d4313e68783d7e0db2b8163e182b1f7afc6f238dbeb8656d1",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "figure-it-out/SKILL.md",
+					"sha256": "7b8971c4e16818308e8849e3b1fcab76eb9d1ca36b89a9a0d127e7849844c9c4",
+					"use": "primary"
+				}
+			],
+			"explanation": "The todolist and its todos became a visible checklist and its items; seven short principle names became full names (edit classes 1 and 3); the cross-batch show-me-your-work reference (W4-B) is marked planned W4 on its line with an exact tuple in the w4-a forward-reference fixture (edit class 4)."
+		},
+		{
 			"path": "skills/how/references/explainer-prompt.md",
 			"sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
 			"status": "copied",

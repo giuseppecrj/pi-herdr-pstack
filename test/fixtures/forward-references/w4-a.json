@@ -6,6 +6,11 @@
 			"sourcePath": "skills/reflect/SKILL.md",
 			"targetPath": "skills/poteto-mode/playbooks/authoring-a-skill.md",
 			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/figure-it-out/SKILL.md",
+			"targetPath": "skills/show-me-your-work/SKILL.md",
+			"owningWave": "W4-B"
 		}
 	]
 }
