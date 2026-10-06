@@ -1,0 +1,3 @@
+g1-yn6umnmomuw2r5ei-a: requests=1 userMessages=1 tools=bash,caller_ping,edit,read,subagent,subagent_cancel,subagent_interrupt,subagent_resume,subagent_send,subagent_stop,subagents_list,write
+g1-yn6umnmomuw2r5ei-b: requests=1 userMessages=1 tools=bash,caller_ping,edit,read,subagent,subagent_cancel,subagent_interrupt,subagent_resume,subagent_send,subagent_stop,subagents_list,write
+g1-yn6umnmomuw2r5ei-c: requests=1 userMessages=1 tools=bash,caller_ping,edit,read,subagent,subagent_cancel,subagent_interrupt,subagent_resume,subagent_send,subagent_stop,subagents_list,write

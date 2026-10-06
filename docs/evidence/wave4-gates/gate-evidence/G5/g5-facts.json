@@ -1,0 +1,128 @@
+{
+  "openTools": [
+    "bash",
+    "caller_ping",
+    "codemode",
+    "edit",
+    "mcp__w4direct__w4_echo",
+    "read",
+    "subagent",
+    "subagent_cancel",
+    "subagent_interrupt",
+    "subagent_resume",
+    "subagent_send",
+    "subagent_stop",
+    "subagents_list",
+    "write"
+  ],
+  "restrictedTools": [
+    "bash",
+    "caller_ping",
+    "read"
+  ],
+  "openMcpRelated": [
+    "codemode",
+    "mcp__w4direct__w4_echo"
+  ],
+  "restrictedMcpRelated": [],
+  "stubServerEvents": [
+    {
+      "t": 1791254741944,
+      "pid": 3009964,
+      "label": "w4direct",
+      "started": true
+    },
+    {
+      "t": 1791254741947,
+      "pid": 3009964,
+      "label": "w4direct",
+      "method": "initialize"
+    },
+    {
+      "t": 1791254741948,
+      "pid": 3009965,
+      "label": "w4code",
+      "started": true
+    },
+    {
+      "t": 1791254741949,
+      "pid": 3009964,
+      "label": "w4direct",
+      "method": "notifications/initialized"
+    },
+    {
+      "t": 1791254741949,
+      "pid": 3009964,
+      "label": "w4direct",
+      "method": "tools/list"
+    },
+    {
+      "t": 1791254741951,
+      "pid": 3009965,
+      "label": "w4code",
+      "method": "initialize"
+    },
+    {
+      "t": 1791254741963,
+      "pid": 3009985,
+      "label": "w4direct",
+      "started": true
+    },
+    {
+      "t": 1791254741963,
+      "pid": 3009986,
+      "label": "w4code",
+      "started": true
+    },
+    {
+      "t": 1791254741966,
+      "pid": 3009985,
+      "label": "w4direct",
+      "method": "initialize"
+    },
+    {
+      "t": 1791254741966,
+      "pid": 3009986,
+      "label": "w4code",
+      "method": "initialize"
+    },
+    {
+      "t": 1791254741968,
+      "pid": 3009985,
+      "label": "w4direct",
+      "method": "notifications/initialized"
+    },
+    {
+      "t": 1791254741968,
+      "pid": 3009986,
+      "label": "w4code",
+      "method": "notifications/initialized"
+    },
+    {
+      "t": 1791254741968,
+      "pid": 3009985,
+      "label": "w4direct",
+      "method": "tools/list"
+    },
+    {
+      "t": 1791254741968,
+      "pid": 3009986,
+      "label": "w4code",
+      "method": "tools/list"
+    },
+    {
+      "t": 1791254741979,
+      "pid": 3009965,
+      "label": "w4code",
+      "method": "notifications/initialized"
+    },
+    {
+      "t": 1791254741979,
+      "pid": 3009965,
+      "label": "w4code",
+      "method": "tools/list"
+    }
+  ],
+  "openSystemMentionsMcp": true,
+  "restrictedSystemMentionsMcp": true
+}

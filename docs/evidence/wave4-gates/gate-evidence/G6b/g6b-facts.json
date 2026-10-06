@@ -1,0 +1,9 @@
+{
+  "pingDeliveredAt": "2026-10-06T02:45:57.299Z",
+  "childRequests": 2,
+  "childContinuedToolWorkAfterPing": false,
+  "afterFileMtime": null,
+  "parentCustomTypes": [
+    "subagent_ping"
+  ]
+}

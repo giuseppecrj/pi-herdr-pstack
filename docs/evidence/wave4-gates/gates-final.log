@@ -1,0 +1,30 @@
+{"error":{"code":"workspace_not_found","message":"workspace w127 not found"},"id":"cli:workspace:close"}
+▶ wave4 gates [herdr]
+  ✔ G1 fan-out: three bare children, one initial message each, synthesizer after the third delivery (6262.220668ms)
+{"error":{"code":"workspace_not_found","message":"workspace w128 not found"},"id":"cli:workspace:close"}
+  ✔ G2 dropout and cancel: one failure, one cancel, exactly one terminal result each, third unaffected (11042.257503ms)
+{"error":{"code":"workspace_not_found","message":"workspace w129 not found"},"id":"cli:workspace:close"}
+  ✔ G3 candidate worktrees: retained, listed, removal refused while a child is live (7609.545762ms)
+G4 advisories (1): [{"at":"2026-10-06T02:45:12.331Z","content":"Subagent status:\n• g4-hji42zpnmuw2romw-watch no-progress advisory: 1m idle while active. Classification: blocked-tool; the outstanding tool may still complete. Last entry: assistant. Session: /tmp/pi-integ-29JK7d/.pi/agent/sessions/--tmp-pi-integ-29JK7d--/2026-10-06T02-44-10-041Z_68fc3759-e6cf-4926-ba48-c9e17db975ed-9c390799-90b0b5f5-461f.jsonl. Recovery options: interrupt, or after manual termination use subagent_resume or a new spawn."}]
+{"error":{"code":"workspace_not_found","message":"workspace w12C not found"},"id":"cli:workspace:close"}
+  ✔ G4 watcher child: blocking stub gh, delivery wakes the parent, advisories recorded (90233.776588ms)
+G5 facts: {"openTools":["bash","caller_ping","codemode","edit","mcp__w4direct__w4_echo","read","subagent","subagent_cancel","subagent_interrupt","subagent_resume","subagent_send","subagent_stop","subagents_list","write"],"restrictedTools":["bash","caller_ping","read"],"openMcpRelated":["codemode","mcp__w4direct__w4_echo"],"restrictedMcpRelated":[],"stubServerEvents":[{"t":1791254741944,"pid":3009964,"label":"w4direct","started":true},{"t":1791254741947,"pid":3009964,"label":"w4direct","method":"initialize"},{"t":1791254741948,"pid":3009965,"label":"w4code","started":true},{"t":1791254741949,"pid":3009964,"label":"w4direct","method":"notifications/initialized"},{"t":1791254741949,"pid":3009964,"label":"w4direct","method":"tools/list"},{"t":1791254741951,"pid":3009965,"label":"w4code","method":"initialize"},{"t":1791254741963,"pid":3009985,"label":"w4direct","started":true},{"t":1791254741963,"pid":3009986,"label":"w4code","started":true},{"t":1791254741966,"pid":3009985,"label":"w4direct","method":"initialize"},{"t":1791254741966,"pid":3009986,"label":"w4code","method":"initialize"},{"t":1791254741968,"pid":3009985,"label":"w4direct","method":"notifications/initialized"},{"t":1791254741968,"pid":3009986,"label":"w4code","method":"notifications/initialized"},{"t":1791254741968,"pid":3009985,"label":"w4direct","method":"tools/list"},{"t":1791254741968,"pid":3009986,"label":"w4code","method":"tools/list"},{"t":1791254741979,"pid":3009965,"label":"w4code","method":"notifications/initialized"},{"t":1791254741979,"pid":3009965,"label":"w4code","method":"tools/list"}],"openSystemMentionsMcp":true,"restrictedSystemMentionsMcp":true}
+{"error":{"code":"workspace_not_found","message":"workspace w12D not found"},"id":"cli:workspace:close"}
+  ✔ G5 child MCP visibility with and without tools (4282.775999ms)
+{"error":{"code":"workspace_not_found","message":"workspace w12E not found"},"id":"cli:workspace:close"}
+  ✔ G6 caller_ping round trip: parent receives the ping, child exits (11081.429913ms)
+G6b facts: {"pingDeliveredAt":"2026-10-06T02:45:57.299Z","childRequests":2,"childContinuedToolWorkAfterPing":false,"afterFileMtime":null,"parentCustomTypes":["subagent_ping"]}
+{"error":{"code":"workspace_not_found","message":"workspace w12F not found"},"id":"cli:workspace:close"}
+  ✔ G6b caller_ping then more tool work: does the child keep running after the ping? (13122.437886ms)
+G7 facts: {"childDeliveredBeforeGrandchildFinished":true,"grandStartedBeforeChildResult":false,"grandWorkFinished":true,"childResultTimestamp":"2026-10-06T02:46:10.069Z","grandDoneFileMtime":"2026-10-06T02:46:31.249Z","parentResultNames":["g7-rfrjbx02muw2u88m-child"],"grandResultInParentSession":0,"grandResultInChildSession":0,"childSessionCustomTypes":[],"parentCustomTypes":["subagent_result"],"childRequestCount":2,"grandRequestCount":2,"childExitSidecar":null,"childToolListHadSubagent":true,"workspacePanesAfter":["w12G:p1","w12G:p2","w12G:p4"],"parentPane":"w12G:p2","otherPaneTails":{"w12G:p4":["4.6%/128k (auto)                                                                                                                   test • minimal","To resume this session: pi --session 01a10f1a-b55c-7541-8411-78621870165f","__SUBAGENT_DONE_0__","","/tmp/pi-integ-lLqQs8 took 20.6s","➜"]},"parentEntrySummary":["session:","model_change:","thinking_level_change:","message:system","message:user","message:assistant","message:toolResult","message:assistant","custom_message:subagent_result","message:assistant"]}
+{"error":{"code":"workspace_not_found","message":"workspace w12G not found"},"id":"cli:workspace:close"}
+  ✔ G7 nesting: bare child launches a grandchild and ends its turn (38961.036604ms)
+✔ wave4 gates [herdr] (182598.252476ms)
+ℹ tests 8
+ℹ suites 1
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 182728.172301

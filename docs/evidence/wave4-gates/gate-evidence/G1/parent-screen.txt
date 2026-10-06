@@ -1,0 +1,43 @@
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G1_PARENT launched=3 delivered=2
+
+
+
+ ✓ g1-yn6umnmomuw2r5ei-b — completed (1s)
+ G1_CHILD_RESULT_g1-yn6umnmomuw2r5ei-b
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+
+ ▸ g1-yn6umnmomuw2r5ei-synth
+ W4_CHILD:yn6umnmomuw2r5ei:g1-yn6umnmomuw2r5ei-synth Report your aspect.
+ ▸ g1-yn6umnmomuw2r5ei-synth — pi-integration/test · minimal
+
+
+ G1_PARENT launched=4 delivered=3
+
+
+
+ ✓ g1-yn6umnmomuw2r5ei-synth — completed (1s)
+ G1_CHILD_RESULT_g1-yn6umnmomuw2r5ei-synth
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G1_PARENT launched=4 delivered=3
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-dMa0Ss
+6.0%/128k (auto)                                                                                                                    test • medium

@@ -1,0 +1,143 @@
+▶ hang advisory integration
+  ✔ notifies once for a blocked active child, recovers on progress, and suppresses interactive steers (1.191395ms)
+✔ hang advisory integration (1.766146ms)
+Disposed current-test-owned fixture w12H /tmp/pi-integ-AhRUfB
+▶ PiHarnessAdapter (real Pi/Herdr) HarnessAdapter conformance
+  ✔ spawn returns a handle whose harness equals adapter.name and startedAt is recent (54.18675ms)
+Disposed current-test-owned fixture w12J /tmp/pi-integ-bIkqyJ
+  ✔ getState never throws and returns one of the five states (77.792206ms)
+Disposed current-test-owned fixture w12K /tmp/pi-integ-E3AsAU
+  ✔ awaitCompletion resolves done evidence (1737.689878ms)
+Disposed current-test-owned fixture w12M /tmp/pi-integ-rcYRZS
+  ✔ awaitCompletion resolves ping evidence with name and message (1975.429022ms)
+Disposed current-test-owned fixture w12N /tmp/pi-integ-lMrpsO
+  ✔ awaitCompletion resolves error evidence with errorMessage (1730.314296ms)
+Disposed current-test-owned fixture w12P /tmp/pi-integ-KNRg9M
+  ✔ awaitCompletion rejects when the signal aborts (152.861801ms)
+Disposed current-test-owned fixture w12Q /tmp/pi-integ-hQhLVd
+  ✔ interrupt leaves getState not done (48.162331ms)
+Disposed current-test-owned fixture w12R /tmp/pi-integ-KtQBtf
+  ✔ kill then getState returns done or unknown (211.898579ms)
+Disposed current-test-owned fixture w12S /tmp/pi-integ-6zQOq1
+  ✔ resume of a known session returns a new handle with the same sessionId (1841.449362ms)
+Published late sidecar 200ms after adapter-confirmed Herdr pane absence
+Disposed current-test-owned fixture w12T /tmp/pi-integ-ZelXaN
+  ✔ late sidecar after pane absence resolves done when supported (5184.561745ms)
+Disposed current-test-owned worktree workspace w12W
+Disposed empty current-test-owned bucket /home/g/.herdr/worktrees/pi-integ-GRAg2C
+Disposed current-test-owned fixture w12V /tmp/pi-integ-GRAg2C
+Disposed current-test-owned fixture w12X /tmp/pi-integ-sBPQOk
+  ✔ resume honors the fixture's explicit managed-session policy (3073.042731ms)
+✔ PiHarnessAdapter (real Pi/Herdr) HarnessAdapter conformance (16090.746898ms)
+✔ cleans partial fixture acquisition before dispose is returned (28.920374ms)
+Disposed current-test-owned fixture w12Y /tmp/pi-integ-vkXmc2
+✔ real persistent task outcome keeps Pi alive and saved policy refuses resume (1701.939342ms)
+Disposed current-test-owned fixture w12Z /tmp/pi-integ-XADydT
+✔ real Pi fallback attempts preserve the legacy ID and isolate session evidence (3813.078703ms)
+Disposed current-test-owned fixture w120 /tmp/pi-integ-drcwoN
+✔ real Pi completion before wait, independent cancellation, and first terminal evidence (3582.781767ms)
+▶ herdr terminal [herdr]
+  ✔ keeps focus on the current pane while creating and targeting subagent tabs (226.09882ms)
+  ✔ splits the stable parent without stealing focus or closing it (216.594154ms)
+  ✔ creates an isolated worktree workspace without stealing focus (4165.881431ms)
+  ✔ creates a surface, sends a command, reads output, and closes it (108.114895ms)
+  ✔ preserves shell special characters in echo output (62.241021ms)
+  ✔ sends a long command via script file without truncation (2099.414471ms)
+  ✔ reads screen asynchronously (145.855062ms)
+  ✔ manages multiple surfaces concurrently (79.704193ms)
+  ✔ writes output to a file and verifies via surface (2140.175299ms)
+  ✔ delivers Escape as byte 27 to the target surface (4138.110106ms)
+✔ herdr terminal [herdr] (13386.313561ms)
+▶ persistent-specialist [herdr]
+  ✔ delivers sequential tasks, rejects busy work, and stops cleanly (11931.873714ms)
+✔ persistent-specialist [herdr] (11933.321501ms)
+native moved-parent evidence {"inherited":{"pane_id":"w13D:p2","tab_id":"w13D:t2","workspace_id":"w13D"},"before":{"agent_status":"unknown","cwd":"/tmp/pi-integ-odXBHc","focused":false,"foreground_cwd":"/tmp/pi-integ-odXBHc","pane_id":"w13D:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":43},"tab_id":"w13D:t2","terminal_id":"term_65d2306bd96259c0","terminal_title":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","workspace_id":"w13D"},"move":{"changed":true,"closed_tab_id":"w13D:t2","created_tab":{"agent_status":"unknown","focused":false,"label":"2","number":2,"pane_count":1,"tab_id":"w13E:t2","workspace_id":"w13E"},"focused_pane_id":"w13E:p2","pane":{"agent_status":"unknown","cwd":"/tmp/pi-integ-odXBHc","focused":false,"foreground_cwd":"/tmp/pi-integ-odXBHc","pane_id":"w13E:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":43},"tab_id":"w13E:t2","terminal_id":"term_65d2306bd96259c0","terminal_title":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","workspace_id":"w13E"},"previous_pane_id":"w13D:p2","previous_tab_id":"w13D:t2","previous_workspace_id":"w13D","target_layout":{"area":{"height":43,"width":145,"x":0,"y":0},"focused_pane_id":"w13E:p2","panes":[{"focused":true,"pane_id":"w13E:p2","rect":{"height":43,"width":145,"x":0,"y":0}}],"splits":[],"tab_id":"w13E:t2","workspace_id":"w13E","zoomed":false}},"after":{"agent_status":"unknown","cwd":"/tmp/pi-integ-odXBHc","focused":false,"foreground_cwd":"/tmp/pi-integ-odXBHc","pane_id":"w13E:p2","revision":2,"scroll":{"max_offset_from_bottom":0,"offset_from_bottom":0,"viewport_rows":43},"tab_id":"w13E:t2","terminal_id":"term_65d2306bd96259c0","terminal_title":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","terminal_title_stripped":"bash '/tmp/pi-integ-odXBHc/moved-parent.sh'","workspace_id":"w13E"},"child":{"id":"c0ab8283","name":"placement-1","task":"Reply with only PLACEMENT_COMPLETE.","surface":"w13E:p3","startTime":1791254879977,"sessionFile":"/tmp/pi-integ-odXBHc/.pi/agent/sessions/--tmp-pi-integ-odXBHc--/2026-10-06T02-47-59-997Z_c0ab8283-fa3e6c47-ea94bc9e-233e.jsonl","launchScriptFile":"/tmp/pi-integ-odXBHc/artifacts/parent/subagent-scripts/placement-1-c0ab8283.sh","activityFile":"/tmp/pi-integ-odXBHc/artifacts/parent/subagent-activity/c0ab8283.json","interactive":false,"runtimePlan":{"provider":"pi-integration","modelId":"test","model":"pi-integration/test","thinking":"off","modelSource":"request","thinkingSource":"request"},"lifecycle":{"process":{"kind":"starting","startedAt":1791254879977},"turn":{"kind":"unknown"},"activityHealth":{"kind":"unseen"},"activityDetail":null,"pane":{"kind":"unknown"},"hasWorked":false,"lastActivitySequence":null,"delivery":"pending"}}}
+▶ grouped public launch placement
+  ✔ places an unmatched child in the live caller workspace after its parent pane moves (4168.377297ms)
+  ✔ fills four panes before overflow, counts user panes, and reuses their tab after all children close (823.179858ms)
+  ✔ respects configured capacity during overlapping launches and rolls back only a failed child (510.014515ms)
+  ✔ ordinary: closes panes only after accepted delivery (3345.007307ms)
+  ✔ rejected delivery: closes panes only after accepted delivery (1606.059176ms)
+  ✔ help: closes panes only after accepted delivery (1705.014002ms)
+  ✔ provider error: closes panes only after accepted delivery (1638.766521ms)
+  ✔ fallback: closes panes only after accepted delivery (17632.113798ms)
+  ✔ fallback rejected delivery: closes panes only after accepted delivery (17099.131944ms)
+  ✔ parent quit after rejected persistent task delivery: closes ordinary pane and process (1436.41582ms)
+  ✔ parent quit after rejected persistent task delivery: retains managed root (2093.253489ms)
+  ✔ launches a worktree from a linked checkout through the real Herdr path (4255.324396ms)
+  ✔ keeps the writer root shell and places a reviewer in the retained worktree tab (4392.614001ms)
+  ✔ resolves a descendant checkout to its owning workspace despite a misleading shell cwd (344.612194ms)
+✔ grouped public launch placement (61054.707491ms)
+▶ subagent-cancel [herdr]
+  ✔ (a) cancels a slow ordinary child: one cancelled result, pane closed, no fallback (12364.974417ms)
+  ✔ (b) negative control: closing the pane by hand starts the fallback model (8331.23886ms)
+  ✔ (c) cancels a worktree child: workspace, checkout, commit and handoff retained (13857.353878ms)
+  ✖ (d) rejects cancel of a persistent specialist and points to subagent_stop (9354.161595ms)
+  ✔ (e) double cancel is idempotent: one result, no error, no fallback (12298.914863ms)
+✖ subagent-cancel [herdr] (56209.061615ms)
+✔ dirty cleanup warning matcher rejects stale inventory (0.75432ms)
+▶ subagent-lifecycle [herdr]
+  ✔ spawns a subagent that writes a file and verifies the session (4119.699811ms)
+  ✔ delivers one model-visible custom completion message (3036.451788ms)
+  ✔ runs a non-auto-exit coordinator through discovery and synthesis waves (6180.144177ms)
+{"error":{"code":"workspace_not_found","message":"workspace w14B not found"},"id":"cli:worktree:remove"}
+  ✔ retains a completed worktree, refuses dirty cleanup, and explicitly removes it without deleting history (13546.685941ms)
+  ℹ Stale inventory: old predicate accepts; warning predicate rejects.
+  ℹ Dirty refusal notification observed; checkout and uncommitted file intact.
+  ℹ History assertions passed: integration/ticket-qtgt3q7cmuw2zf0d = 4d6a78b88beb29fb2bd53486f46df5486393ae3f; Implement qtgt3q7cmuw2zf0d reachable; checkout /home/g/.herdr/worktrees/pi-integ-9EfeqP/integration-ticket-qtgt3q7cmuw2zf0d and workspace w14B absent; source /tmp/pi-integ-9EfeqP.
+  ✔ delivers completion after the parent starts a new session (16208.603749ms)
+  ✔ keeps a long active tool call from surfacing false stalled status (125259.427829ms)
+  ✔ spawns two subagents in parallel and both complete (4116.533246ms)
+  ✔ fork mode creates a child session linked to the parent (4079.754667ms)
+  ✔ subagent caller_ping sends notification back to the parent (2238.831849ms)
+  ✔ rejects public resume of a legacy Pi session without a saved policy (4277.47376ms)
+  ✔ preserves restricted child tools and spawning denial across public resume (4938.415487ms)
+  ✔ subagent discovers project-local test agents (4124.836797ms)
+  ✔ passes systemPrompt to subagent (4177.625951ms)
+  ✔ falls back after a provider failure and delivers the selected model (20179.760359ms)
+  ✔ advances after an account-style HTTP rejection without repeating that model (6149.944243ms)
+  ✔ reports every attempted model when all fallbacks fail (34151.74356ms)
+✔ subagent-lifecycle [herdr] (256790.240614ms)
+▶ event-driven supervision integration
+  ✔ delivers an ordinary child once despite duplicate late file wakes (88.407708ms)
+  ✔ folds persistent .tasks wakes while idle, then stops after task two (108.751322ms)
+  ✔ reconciles dropped file notifications within the five-second budget (4801.354416ms)
+  ✔ falls back to polling after watcher failure without an extra parent steer (5803.530025ms)
+  ✔ keeps forcePolling outcomes identical for done, error, and ping evidence (3117.086022ms)
+✔ event-driven supervision integration (13922.061242ms)
+▶ HerdrSurfaceProvider SurfaceProvider conformance
+  ✔ isAvailable returns a boolean and never throws (42.516751ms)
+  ✔ createSurface returns an id listed by listSurfaces with name and cwd (102.478719ms)
+  ✔ runCommand then readScreen shows the command output (1180.612826ms)
+  ✔ inspectSurface returns a PaneInspection for a live surface (57.391151ms)
+  ✔ closeSurface then waitForSurfaceAbsence resolves (70.853499ms)
+  ✔ grouped placement overflows to a new tab at the cap (197.911774ms)
+  ✔ setupHint returns a non-empty string (76.634879ms)
+  ✔ attachSurface returns a handle with sendKeys and close (100.903912ms)
+  ✔ createWorktreeSurface registers neutral worktree inventory and removeWorktreeSurface removes it (77.955167ms)
+✔ HerdrSurfaceProvider SurfaceProvider conformance (1910.319352ms)
+ℹ tests 77
+ℹ suites 9
+ℹ pass 76
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 443981.851663
+
+✖ failing tests:
+
+test at test/integration/subagent-cancel.test.ts:577:3
+✖ (d) rejects cancel of a persistent specialist and points to subagent_stop (9354.161595ms)
+  AssertionError [ERR_ASSERTION]: runner pane wCD:p3 must be untouched
+      at unrelatedUntouched (file:///tmp/w4-gates/test/integration/subagent-cancel.test.ts:296:12)
+      at TestContext.<anonymous> (file:///tmp/w4-gates/test/integration/subagent-cancel.test.ts:603:4)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

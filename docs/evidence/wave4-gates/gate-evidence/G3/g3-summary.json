@@ -1,0 +1,38 @@
+{
+  "baseSha": "489d56731b36004342ceb45bcf1ae7de441046f4",
+  "refusalText": "Live child holds the worktree; Live child or foreground process in pane w12B:p1; Live process 2994853 holds the checkout; Live process 2997088 holds the checkout; Live process 2997089 holds the checkout; Live process 2997394 holds the checkout; Live process 2998519 holds the checkout Warning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.",
+  "listResultEarly": "fix/local-git-credentials — /home/g/.herdr/worktrees/dotfiles/fix-local-git-credentials\nSource: /home/g/Projects/dotfiles · workspace: none · manifest: absent\nout-of-scope · Git: 1 dirty, 0 untracked, 0 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 1 changed files, 0 untracked; commit or request preserve explicitly\n\nwave4/capabilities — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-capabilities\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 11 dirty, 11 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 11 changed files, 11 untracked; commit or request preserve explicitly\n\nwave4/engineering — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-engineering\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 0 dirty, 0 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment\n\nwave4/integration — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-integration\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 0 dirty, 0 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment\n\nw4/cand-a-un9jc5fimuw2riri — /home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-a-un9jc5fimuw2riri\nSource: /tmp/pi-integ-YcfjyF · workspace: w12A · manifest: ready_for_review\nblocked · Git: 0 dirty, 0 untracked, 0 ignored, 0 conflicts · Live process 2998212 holds the checkout; Live process 2998213 holds the checkout\nWarning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.\n\nw4/cand-b-un9jc5fimuw2riri — /home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-b-un9jc5fimuw2riri\nSource: /tmp/pi-integ-YcfjyF · workspace: w12B · manifest: running\nblocked · Git: 0 dirty, 0 untracked, 0 ignored, 0 conflicts · Live child holds the worktree; Live child or foreground process in pane w12B:p1; Live process 2994853 holds the checkout; Live process 2997088 holds the checkout; Live process 2997089 holds the checkout; Live process 2997394 holds the checkout; Live process 2998297 holds the checkout\nWarning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.",
+  "listAfter": "fix/local-git-credentials — /home/g/.herdr/worktrees/dotfiles/fix-local-git-credentials\nSource: /home/g/Projects/dotfiles · workspace: none · manifest: absent\nout-of-scope · Git: 1 dirty, 0 untracked, 0 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 1 changed files, 0 untracked; commit or request preserve explicitly\n\nwave4/capabilities — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-capabilities\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 11 dirty, 11 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 11 changed files, 11 untracked; commit or request preserve explicitly\n\nwave4/engineering — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-engineering\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 0 dirty, 0 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment\n\nwave4/integration — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-integration\nSource: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent\nout-of-scope · Git: 0 dirty, 0 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment\n\nw4/cand-a-un9jc5fimuw2riri — /home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-a-un9jc5fimuw2riri\nSource: /tmp/pi-integ-YcfjyF · workspace: w12A · manifest: ready_for_review\neligible · Git: 0 dirty, 0 untracked, 0 ignored, 0 conflicts · clean\nWarning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.\n\nw4/cand-b-un9jc5fimuw2riri — /home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-b-un9jc5fimuw2riri\nSource: /tmp/pi-integ-YcfjyF · workspace: w12B · manifest: ready_for_review\nblocked · Git: 0 dirty, 0 untracked, 0 ignored, 0 conflicts · Live process 2999486 holds the checkout; Live process 2999487 holds the checkout\nWarning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.",
+  "worktrees": [
+    {
+      "branch": "main",
+      "is_bare": false,
+      "is_detached": false,
+      "is_linked_worktree": false,
+      "is_prunable": false,
+      "label": "pi-integ-YcfjyF",
+      "open_workspace_id": "w129",
+      "path": "/tmp/pi-integ-YcfjyF"
+    },
+    {
+      "branch": "w4/cand-a-un9jc5fimuw2riri",
+      "is_bare": false,
+      "is_detached": false,
+      "is_linked_worktree": true,
+      "is_prunable": false,
+      "label": "pi-integ-YcfjyF",
+      "open_workspace_id": "w12A",
+      "path": "/home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-a-un9jc5fimuw2riri"
+    },
+    {
+      "branch": "w4/cand-b-un9jc5fimuw2riri",
+      "is_bare": false,
+      "is_detached": false,
+      "is_linked_worktree": true,
+      "is_prunable": false,
+      "label": "pi-integ-YcfjyF",
+      "open_workspace_id": "w12B",
+      "path": "/home/g/.herdr/worktrees/pi-integ-YcfjyF/w4-cand-b-un9jc5fimuw2riri"
+    }
+  ]
+}

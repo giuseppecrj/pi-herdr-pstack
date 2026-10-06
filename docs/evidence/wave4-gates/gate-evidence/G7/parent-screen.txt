@@ -1,0 +1,43 @@
+
+[Skills]
+  agent-loop-hygiene, agent-loop-spec, agent-release-waves, diagnose-crash, omarchy
+
+[Extensions]
+  subagents
+
+
+ W4_PARENT:rfrjbx02muw2u88m:G7
+ Follow the scripted scenario.
+
+
+
+ ▸ g7-rfrjbx02muw2u88m-child
+ W4_CHILD:rfrjbx02muw2u88m:g7-rfrjbx02muw2u88m-child delegate
+ ▸ g7-rfrjbx02muw2u88m-child — pi-integration/test · minimal
+
+
+ G7_PARENT woke
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ Update Available
+ New version 1.0.4 is available. Run pi update
+ Changelog: https://pi.dev/changelog
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+ ✓ g7-rfrjbx02muw2u88m-child — completed (1s)
+ G7_CHILD_ENDS_TURN
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G7_PARENT woke
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-lLqQs8
+5.2%/128k (auto)                                                                                                                    test • medium

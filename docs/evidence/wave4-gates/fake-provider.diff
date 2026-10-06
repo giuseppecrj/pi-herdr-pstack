@@ -1,0 +1,77 @@
+15a16
+> 	tool_calls?: Array<{ function?: { name?: string; arguments?: string } }>;
+46c47,48
+< 	arguments: ToolCallArguments;
+---
+> 	// W4: scenario handlers also script tools/thinking/fork/worktree arguments.
+> 	arguments: ToolCallArguments | Record<string, unknown>;
+49c51
+< interface ResponsePlan {
+---
+> export interface ResponsePlan {
+63a66,93
+> 	// W4: richer request capture, populated for every 200 response.
+> 	system?: string;
+> 	userTexts?: string[];
+> 	allText?: string;
+> 	historyToolCalls?: string[];
+> }
+> 
+> /** W4: what a scripted scenario sees of one provider request. */
+> export interface ScenarioContext {
+> 	model?: string;
+> 	tools: string[];
+> 	system: string;
+> 	userTexts: string[];
+> 	allText: string;
+> 	lastRole?: string;
+> 	historyToolCalls: string[];
+> }
+> 
+> /** W4: a scenario returns a plan, or null to defer to the built-in scripts. */
+> export type Scenario = (
+> 	context: ScenarioContext,
+> ) => ResponsePlan | null | Promise<ResponsePlan | null>;
+> 
+> const scenarios: Scenario[] = [];
+> 
+> /** W4: scenarios run before every built-in script; resetProviderRequests clears them. */
+> export function registerScenario(scenario: Scenario): void {
+> 	scenarios.push(scenario);
+87a118
+> 	scenarios.length = 0;
+118a150,170
+> function scenarioContext(request: ChatRequest): ScenarioContext {
+> 	const messages = request.messages ?? [];
+> 	return {
+> 		model: request.model,
+> 		tools: [...toolNames(request)].sort(),
+> 		system: messages
+> 			.filter((m) => m.role === "system" || m.role === "developer")
+> 			.map((m) => messageText(m.content))
+> 			.join("\n"),
+> 		userTexts: messages
+> 			.filter((m) => m.role === "user")
+> 			.map((m) => messageText(m.content)),
+> 		allText: requestText(request),
+> 		lastRole: messages.at(-1)?.role,
+> 		historyToolCalls: messages
+> 			.flatMap((m) => m.tool_calls ?? [])
+> 			.map((call) => call.function?.name)
+> 			.filter(isString),
+> 	};
+> }
+> 
+551a604,608
+> 	for (const scenario of scenarios) {
+> 		const plan = await scenario(scenarioContext(request));
+> 		if (plan) return plan;
+> 	}
+> 
+751a809
+> 		const captured = scenarioContext(chatRequest);
+757a816,819
+> 			system: captured.system,
+> 			userTexts: captured.userTexts,
+> 			allText: captured.allText,
+> 			historyToolCalls: captured.historyToolCalls,

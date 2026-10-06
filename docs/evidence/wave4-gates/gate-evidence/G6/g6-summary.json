@@ -1,0 +1,17 @@
+{
+  "ping": "Sub-agent \"g6-4g8i6zuwmuw2tpk0-ping\" needs help (1s):\n\nW4_PING_NEEDS_HELP_4g8i6zuwmuw2tpk0\n\nSession: /tmp/pi-integ-Fb89OT/.pi/agent/sessions/--tmp-pi-integ-Fb89OT--/2026-10-06T02-45-44-470Z_42b70d9e-5fef-43e8-b1e4-02eca0d3876c-6369717c-6f8c05fc-51cd.jsonl\nResume: pi --session /tmp/pi-integ-Fb89OT/.pi/agent/sessions/--tmp-pi-integ-Fb89OT--/2026-10-06T02-45-44-470Z_42b70d9e-5fef-43e8-b1e4-02eca0d3876c-6369717c-6f8c05fc-51cd.jsonl",
+  "exitSidecarPresent": false,
+  "resultEntriesForChild": 0,
+  "entryTypes": [
+    "session:",
+    "model_change:",
+    "thinking_level_change:",
+    "message:system",
+    "message:user",
+    "message:assistant",
+    "message:toolResult",
+    "message:assistant",
+    "custom_message:subagent_ping",
+    "message:assistant"
+  ]
+}

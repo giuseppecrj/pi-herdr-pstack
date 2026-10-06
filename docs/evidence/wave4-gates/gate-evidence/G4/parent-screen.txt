@@ -1,0 +1,43 @@
+ Follow the scripted scenario.
+
+
+
+ ▸ g4-hji42zpnmuw2romw-watch
+ W4_CHILD:hji42zpnmuw2romw:g4-hji42zpnmuw2romw-watch Run `gh pr checks 1 --watch` once and report.
+ ▸ g4-hji42zpnmuw2romw-watch — pi-integration/test · minimal
+
+
+ G4_PARENT woke
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ Update Available
+ New version 1.0.4 is available. Run pi update
+ Changelog: https://pi.dev/changelog
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+ • Subagent status
+ g4-hji42zpnmuw2romw-watch no-progress advisory: 1m idle while active. Classification: blocked-tool; the outstanding tool may still compl...
+ ctrl+o to expand
+
+
+ G4_PARENT woke
+
+
+
+ ✓ g4-hji42zpnmuw2romw-watch — completed (1m 26s)
+ G4_WATCH_REPORT W4_GH_STUB SUCCESS
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G4_PARENT woke
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-29JK7d
+5.3%/128k (auto)                                                                                                                    test • medium

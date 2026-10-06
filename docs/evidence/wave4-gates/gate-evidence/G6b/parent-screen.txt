@@ -1,0 +1,43 @@
+ Press ctrl+o to show full startup help and loaded resources.
+
+ Pi can explain its own features and look up its docs. Ask it how to use or extend Pi.
+
+[Skills]
+  agent-loop-hygiene, agent-loop-spec, agent-release-waves, diagnose-crash, omarchy
+
+[Extensions]
+  subagents
+
+
+ W4_PARENT:pi5cq3jlmuw2ty40:G6b
+ Follow the scripted scenario.
+
+
+
+ ▸ g6b-pi5cq3jlmuw2ty40-ping
+ W4_CHILD:pi5cq3jlmuw2ty40:g6b-pi5cq3jlmuw2ty40-ping ask for help
+ ▸ g6b-pi5cq3jlmuw2ty40-ping — pi-integration/test · minimal
+
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ Update Available
+ New version 1.0.4 is available. Run pi update
+ Changelog: https://pi.dev/changelog
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ G6b_PARENT
+
+
+
+ ? g6b-pi5cq3jlmuw2ty40-ping — needs help
+ W4_PING_B_pi5cq3jlmuw2ty40
+ ctrl+o to expand
+
+
+ G6b_PARENT
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-AEnOBf
+5.2%/128k (auto)                                                                                                                    test • medium

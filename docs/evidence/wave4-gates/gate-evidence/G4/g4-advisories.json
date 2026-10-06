@@ -1,0 +1,17 @@
+{
+  "blockSeconds": 85,
+  "hangWarningMinutes": 1,
+  "childTools": [
+    "bash",
+    "caller_ping",
+    "read"
+  ],
+  "advisoryCount": 1,
+  "statuses": [
+    {
+      "at": "2026-10-06T02:45:12.331Z",
+      "content": "Subagent status:\n• g4-hji42zpnmuw2romw-watch no-progress advisory: 1m idle while active. Classification: blocked-tool; the outstanding tool may still complete. Last entry: assistant. Session: /tmp/pi-integ-29JK7d/.pi/agent/sessions/--tmp-pi-integ-29JK7d--/2026-10-06T02-44-10-041Z_68fc3759-e6cf-4926-ba48-c9e17db975ed-9c390799-90b0b5f5-461f.jsonl. Recovery options: interrupt, or after manual termination use subagent_resume or a new spawn."
+    }
+  ],
+  "resultTimestamp": "2026-10-06T02:45:36.774Z"
+}

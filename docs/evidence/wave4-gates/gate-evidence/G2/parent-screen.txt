@@ -1,0 +1,43 @@
+ ✗ g2-yx0jnhjhmuw2ra8g-fail — failed (provider/agent error) (1s)
+ Error: 400: {"message":"The 'account-rejected' model is not supported when using this account."}
+
+ The subagent did not produce a result. Next action: check the raw provider reason and verify model access for this account. Spawn a new sub
+
+ Requested model: pi-integration/account-rejected
+ … 3 more lines
+ ctrl+o to expand
+
+
+
+ ▸ g2-yx0jnhjhmuw2ra8g-cancel — cancel run
+ ▸ g2-yx0jnhjhmuw2ra8g-cancel — cancel confirmed
+
+
+
+
+ ■ g2-yx0jnhjhmuw2ra8g-cancel — cancelled (1s)
+ Termination was confirmed before this result; no model fallback, retry, or recovery was started.
+
+ Models attempted: pi-integration/test
+ ctrl+o to expand
+
+
+ G2_PARENT waiting
+
+
+
+ ✓ g2-yx0jnhjhmuw2ra8g-ok — completed (1s)
+ G2_OK_RESULT
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G2_PARENT waiting
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-fdECdt
+5.8%/128k (auto)                                                                                                                    test • medium

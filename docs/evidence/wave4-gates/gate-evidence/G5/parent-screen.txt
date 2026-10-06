@@ -1,0 +1,43 @@
+
+ ▸ g5-gjos5dcbmuw2tm9e-restricted
+ W4_CHILD:gjos5dcbmuw2tm9e:g5-gjos5dcbmuw2tm9e-restricted report
+ ▸ g5-gjos5dcbmuw2tm9e-restricted — pi-integration/test · minimal
+
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ Update Available
+ New version 1.0.4 is available. Run pi update
+ Changelog: https://pi.dev/changelog
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ G5_PARENT
+
+
+
+ ✓ g5-gjos5dcbmuw2tm9e-open — completed (1s)
+ G5_RESULT_g5-gjos5dcbmuw2tm9e-open
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G5_PARENT
+
+
+
+ ✓ g5-gjos5dcbmuw2tm9e-restricted — completed (1s)
+ G5_RESULT_g5-gjos5dcbmuw2tm9e-restricted
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+ ctrl+o to expand
+
+
+ G5_PARENT
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-53Ktvd
+5.4%/128k (auto)                                                                                                                    test • medium

@@ -1,0 +1,48 @@
+{
+  "childDeliveredBeforeGrandchildFinished": true,
+  "grandStartedBeforeChildResult": false,
+  "grandWorkFinished": true,
+  "childResultTimestamp": "2026-10-06T02:46:10.069Z",
+  "grandDoneFileMtime": "2026-10-06T02:46:31.249Z",
+  "parentResultNames": [
+    "g7-rfrjbx02muw2u88m-child"
+  ],
+  "grandResultInParentSession": 0,
+  "grandResultInChildSession": 0,
+  "childSessionCustomTypes": [],
+  "parentCustomTypes": [
+    "subagent_result"
+  ],
+  "childRequestCount": 2,
+  "grandRequestCount": 2,
+  "childExitSidecar": null,
+  "childToolListHadSubagent": true,
+  "workspacePanesAfter": [
+    "w12G:p1",
+    "w12G:p2",
+    "w12G:p4"
+  ],
+  "parentPane": "w12G:p2",
+  "otherPaneTails": {
+    "w12G:p4": [
+      "4.6%/128k (auto)                                                                                                                   test • minimal",
+      "To resume this session: pi --session 01a10f1a-b55c-7541-8411-78621870165f",
+      "__SUBAGENT_DONE_0__",
+      "",
+      "/tmp/pi-integ-lLqQs8 took 20.6s",
+      "➜"
+    ]
+  },
+  "parentEntrySummary": [
+    "session:",
+    "model_change:",
+    "thinking_level_change:",
+    "message:system",
+    "message:user",
+    "message:assistant",
+    "message:toolResult",
+    "message:assistant",
+    "custom_message:subagent_result",
+    "message:assistant"
+  ]
+}

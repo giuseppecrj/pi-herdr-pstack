@@ -1,0 +1,43 @@
+ holds the checkout; Live process 2997089 holds the checkout; Live process 2997394 holds the checkout; Live process 2998519 holds the checkout
+ Warning: Incomplete process coverage: same-user inspection is permission-limited; other-user processes are not inspected. A protected process
+ could hold the checkout undetected.; 3 process(es) (PIDs 1387, 1394, 62569) have unreadable details; not proven unrelated to the checkout.
+
+
+ G3_PARENT waiting
+
+
+
+ ✓ g3-un9jc5fimuw2riri-b — completed (3s)
+ G3_B_RESULT
+
+ Requested model: pi-integration/test
+ Model used: pi-integration/test
+
+ … 12 more lines
+ ctrl+o to expand
+
+
+
+ worktree_list
+ fix/local-git-credentials — /home/g/.herdr/worktrees/dotfiles/fix-local-git-credentials
+ Source: /home/g/Projects/dotfiles · workspace: none · manifest: absent
+ out-of-scope · Git: 1 dirty, 0 untracked, 0 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 1 changed
+ files, 0 untracked; commit or request preserve explicitly
+
+ wave4/capabilities — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-capabilities
+ Source: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent
+ out-of-scope · Git: 11 dirty, 11 untracked, 15185 ignored, 0 conflicts · Source repository is outside cwd containment; Dirty worktree: 11
+ changed files, 11 untracked; commit or request preserve explicitly
+
+ wave4/engineering — /home/g/.herdr/worktrees/pi-herdr-pstack/wave4-engineering
+ Source: /home/g/Projects/pi-herdr-pstack · workspace: none · manifest: absent
+ ... (15 more lines, ctrl+o to expand)
+
+
+ G3_PARENT waiting
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+/tmp/pi-integ-YcfjyF (main)
+6.9%/128k (auto)                                                                                                                    test • medium
