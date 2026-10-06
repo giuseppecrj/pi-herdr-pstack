@@ -75,6 +75,48 @@
 			"explanation": "Body of the pinned pi-mimir comment-sicko role file, shipped as the bare-delegate prompt that no-comments passes as systemPrompt (user decision D2). The frontmatter is dropped because this is a prompt, not a role. Its read-only reviewer description, which contradicted a body that deletes comments, is reworded as an opening paragraph: it deletes comments and suppressions, edits comments only and never application code, and reports touched files and deletion counts (D1). The persona line is kept verbatim. The /skill:how and /skill:why line is marked planned W4 with the interim rule (read the symbol, callers and history itself and report the skills unavailable). The dropped spawning: false and the tools change become one paragraph: bash is for reading and history, deletions go through the edit tool, and it does not commit, push or launch subagents. 'Report only.' becomes 'My last message is the report and nothing else.' so it no longer reads as read-only."
 		},
 		{
+			"path": "skills/poteto-help/SKILL.md",
+			"sha256": "cdfe47257268ec6a2bbcdae35b7167c125e94be056a0ac186082fd52bd23aa58",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/SKILL.md",
+					"sha256": "5fc65e4c30c52edcde690d18904e3a8cf6ba6c2424c672d1a5cb6d29ab28645c",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows (and cross-batch W3-A rows) marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row."
+		},
+		{
+			"path": "skills/poteto-help/references/prompting.md",
+			"sha256": "218288cb4e2e5db152a9f594766f1b004c3dd3e4e912f48a96a59d8195ee1f94",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/references/prompting.md",
+					"sha256": "463f450c44a60afd001a2f69fdf8a5dea174351f339369b12ec3c41515e564d3",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pinned Cursor file kept almost verbatim. /recall, /how, /why and /teach become /skill: invocations; recall, how and why lines are marked planned W4 with interim routes (point at the earlier Pi session file or branch per Session pickup; run the Investigation playbook). The 'give /loop that predicate' bullet, which relies on a Cursor feature, becomes 'write done as checks the agent can run after every step' (D5). 'chat' becomes 'session' and the new-task line names sticky /poteto-mode."
+		},
+		{
+			"path": "skills/poteto-help/references/recipes.md",
+			"sha256": "a8f4c879c983b0ecae1855bf5bea0301f48ad9a96938c7f413055bcf3e4cefd0",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/references/recipes.md",
+					"sha256": "1872323419a3e5c7783b1933f7a180ca26c25a6e1f4ec83bd65e091ebbfb812b",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention."
+		},
+		{
 			"path": "skills/teach/SKILL.md",
 			"sha256": "d5f7ae491968bede303f626eab46bada5cafa0f5d42b15fe1550051a06de8dd8",
 			"status": "adapted",
