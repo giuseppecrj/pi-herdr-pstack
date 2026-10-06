@@ -3,13 +3,13 @@ name: make-bot-ui
 description: >-
   Use when building a custom local UI (page, dashboard, buttons) whose clicks
   should start a Pi run on this computer. A loopback-bound local server turns
-  each POST into one `pi -p` or RPC run, keeps its key in a local file, and
-  treats the POST body as untrusted data.
+  each POST into one isolated `pi -p` run, keeps its key in a local file the
+  server never sends to the page, and treats the POST body as untrusted data.
 disable-model-invocation: true
 ---
 # How to make a bot UI
 
-Build a page the user clicks. The page POSTs JSON to a small server on this computer. The server checks the request and starts one Pi run that reads the JSON as data. Keep the key in a local file on the server side. Do not put the key in chat, in your reply, in this skill, in a log or in a committed file.
+Build a page the user clicks. The page POSTs JSON to a small server on this computer. The server checks the request and starts one Pi run that reads the JSON as data. Keep the key in a local file on the server side. The server never sends it to the page. Do not put the key in chat, in your reply, in this skill, in a log or in a committed file.
 
 Build everything inside one directory the user chose for this UI. Writing there is local, reversible work. Each of these needs the user's explicit authorization first (`../poteto-mode/references/authorization.md`): installing anything outside that directory, binding or forwarding the server beyond loopback, running it as a service or at login, and changing Pi settings or credentials. A general "be autonomous" does not cover them.
 
@@ -34,12 +34,12 @@ Do not print, `cat`, echo or log the value. Add `.bot-ui-key`, `runs/` and any l
 
 Bind to `127.0.0.1:<port>`, never `0.0.0.0` and never a LAN address. Use a runtime the directory already has, such as `node` or `python3`, with no new dependencies.
 
-- `GET /` serves the page. The server reads the key file at start and writes the key into the page it serves. Only a page loaded from this origin can read it.
+- Check every request before routing it, `GET /` included. Answer `403` unless the `Host` header is `127.0.0.1:<port>` or `localhost:<port>`, which blocks DNS rebinding, and unless any `Origin` header present equals the server's own origin.
+- `GET /` serves a static page that holds no secret. The page has a password field for the key. The user copies the key from `.bot-ui-key` themselves, never through chat. The page keeps it in memory only, never in storage or the URL, and sends it with each POST.
 - `POST /run` is the only action route. Reject the request unless all of these hold:
-  - the `Host` header is `127.0.0.1:<port>` or `localhost:<port>`, which blocks DNS rebinding;
-  - the `Origin` header equals the server's own origin;
+  - an `Origin` header is present and equals the server's own origin;
   - `Content-Type` is `application/json`;
-  - an `X-Bot-UI-Key` header matches the key, compared in constant time;
+  - an `X-Bot-UI-Key` header matches the key the server reads from `.bot-ui-key` on that request, compared in constant time;
   - the body is at most 16 KB and parses as one JSON object with only the named fields and a known `action`.
 - Send no CORS headers. Another site's preflight then fails.
 - Run one Pi process at a time. Answer `409` while one is busy.
@@ -56,16 +56,17 @@ pi -p --no-session --no-approve --no-extensions --no-skills --tools read \
 
 Kill the run after a stated timeout, such as two minutes. Save its stdout and exit code to `runs/<run-id>.out` and return them to the page. Try once, with no retry.
 
-For many requests, one long-lived `pi --mode rpc --no-session` process can replace the per-request `pi -p`. Send each request as a `prompt` command through the exported `RpcClient`, one at a time, with the same instructions and the same file attachment. Read Pi's `docs/rpc.md` before you write it.
+Start a fresh `pi -p` process for every request. Do not keep one long-lived Pi process serving many requests, because each request needs its own clean context and the same tool limits.
 
 ## Prove it before you say it is live
 
 Start the server and run these from this computer, reading the key into a header with `$(cat .bot-ui-key)` so the value never shows in output:
 
-1. `GET /` returns `200`.
-2. A POST without the key returns `401`, and one with `Origin: https://example.com` returns `403`.
-3. A POST with `Host: example.com` returns `403`.
-4. A POST with a harmless action that `prompt.md` ignores returns the run's "nothing to do" output and exit code `0`.
+1. `GET /` returns `200`, and its body does not contain the key. Check with `curl -s http://127.0.0.1:<port>/ | grep -c -F -f .bot-ui-key`, which must print `0`.
+2. A `GET /` with `Host: example.com` returns `403`, and its body does not contain the key, checked the same way.
+3. A POST without the key returns `401`, and one with `Origin: https://example.com` returns `403`.
+4. A POST with `Host: example.com` returns `403`.
+5. A POST with a harmless action that `prompt.md` ignores returns the run's "nothing to do" output and exit code `0`.
 
 Then click one real button in a browser if the session has a browser tool. If it has none, say that the click was not driven. Tell the user the loopback URL, `http://127.0.0.1:<port>/`, and how to stop the server.
 
@@ -73,7 +74,7 @@ Then click one real button in a browser if the session has a browser tool. If it
 
 Opening the page to a tailnet, a LAN or the internet is an external action. Do it only after the user explicitly authorizes that exposure by name.
 
-- Before asking, tell the user that anyone who can reach the port can load the page, and the page carries the key. Recommend the narrowest path. For a tailnet that is usually `tailscale serve`, which keeps the loopback bind.
+- Before asking, tell the user that anyone who can reach the port can load the page and try keys against it, so the key is the only barrier left. Recommend the narrowest path. For a tailnet that is usually `tailscale serve`, which keeps the loopback bind.
 - If `tailscale status` shows an online node, use it. Do not create a second hostname on a node that is already online. Installing Tailscale or running `tailscale up` is a separate installation that needs its own authorization.
 - If `tailscale up` prints a login URL, give that URL to the user, who approves the machine in a browser. Never ask for or type Tailscale credentials.
 - Add the exposed host name to the `Host` and `Origin` checks. Probe the exposed URL once and expect `200`.

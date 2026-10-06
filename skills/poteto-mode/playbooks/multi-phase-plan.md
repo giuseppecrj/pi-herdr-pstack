@@ -5,7 +5,7 @@
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
 2. Settle open questions by prototype before you write. Run `playbooks/prototype.md` for each. Keep the branch, the SHA, and the screenshots for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options (**principle-never-block-on-the-human**).
 3. Explore in bare investigator children per `references/fan-out.md`, with the Investigator prompt from `references/delegation.md` and `model: "task:recon"` (**principle-guard-the-context-window**). Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file to `docs/plans/<program-slug>.md` in the working tree, and commit it only when the commit policy allows. Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (**principle-sequence-verifiable-units**). Name the execution playbook in **How to read this**. Pick between `playbooks/autopilot-full.md` and `playbooks/autopilot-stack.md` per the rule at the end of `playbooks/autopilot-stack.md`. A standing program takes `playbooks/orchestrate.md`.
+4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file to `docs/plans/<program-slug>.md` in the working tree, and commit it only when the commit policy allows. Keep every heading and every sub-block in the order shown. Resolve each `<installed ... skill path>` placeholder to that skill's `SKILL.md` in the installed skill directories, and when a named skill is not installed, say so in Appendix C and name how the plan covers that step without it, such as root-launched lanes per `references/fan-out.md` in place of the swarm skill. One section per PR. One PR is one change with its own evidence (**principle-sequence-verifiable-units**). Name the execution playbook in **How to read this**. Pick between `playbooks/autopilot-full.md` and `playbooks/autopilot-stack.md` per the rule at the end of `playbooks/autopilot-stack.md`. A standing program takes `playbooks/orchestrate.md`.
 5. Write under `/skill:technical-writing` in full, then `/skill:unslop`. The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
 6. Run `scripts/check-plan.mjs` from this skill directory as `node <poteto-mode skill directory>/scripts/check-plan.mjs <plan.md>`, and fix every line it prints (**principle-encode-lessons-in-structure**).
 7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names, and its pushes, PRs and merges need the grants that playbook names. This playbook authors the plan only.
@@ -34,7 +34,7 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] State the protocol and this plan to the operator, then stop. Start execution only on the operator's explicit go.
 - [ ] Read these from the installed skill directories at program start. Re-read them at every audit.
   - [ ] The poteto-mode playbook `playbooks/<execution playbook>.md`.
-  - [ ] The swarm skill, `swarm/SKILL.md`.
+  - [ ] The swarm skill, `<installed swarm skill path>`.
   - [ ] The control skill, `<control skill path>`.
   - [ ] The poteto-mode playbook `playbooks/opening-a-pr.md`.
   - [ ] Each other leaf skill the program uses, `<skill>/SKILL.md`.
@@ -57,12 +57,12 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Open the PR ready, never draft, per **Opening a PR**, only under the operator's grant that names PR creation. Use `gh pr create --base <base-branch>`. A stack child targets its parent branch.
 - [ ] Run the repo's lint and typecheck once before the PR-facing push. Push with hooks on, only under the operator's grant that names pushing.
 - [ ] Run a manual diff cleanup pass before each commit and `/skill:no-comments` before review.
-- [ ] Triage every Bugbot and security-reviewer comment per `../references/bugbot-triage.md`.
+- [ ] Triage every Bugbot and security-reviewer comment per the poteto-mode reference `references/bugbot-triage.md`.
 - [ ] Rebase onto current trunk before babysit and again before the merge-ready report.
 
 ### Verdict and merge, for every PR
 
-- [ ] At the merge-ready head SHA, run the swarm per the swarm skill, `swarm/SKILL.md`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. One audit lane that reads the diff and the receipts and distrusts the PR body.
+- [ ] At the merge-ready head SHA, run the swarm per the swarm skill, `<installed swarm skill path>`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. One audit lane that reads the diff and the receipts and distrusts the PR body.
 - [ ] Clean only when every lane is `PASS`. Findings go back to the owner. A new head gets a fresh swarm and a fresh verdict.
 - [ ] <The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
 
@@ -120,7 +120,7 @@ Each live lane runs at the PR head. Drive the surface with the project's availab
 **Review gate.** The operator reviews before merge.
 
 - [ ] Copy lane <n> screenshots into `<media path>/<pr-id>-review-<slug>.png`.
-- [ ] Record a 30 to 60 second video of the change on a lane VM. Save it as `<media path>/<pr-id>-review.mp4`.
+- [ ] Record a 30 to 60 second video of the change in a live lane's verification environment at the PR head. Save it as `<media path>/<pr-id>-review.mp4`.
 - [ ] Post the screenshots and the video in chat. Stop at merge-ready. Wait for the operator's click.
 
 **Merge.**
@@ -149,7 +149,7 @@ Each live lane runs at the PR head. Drive the surface with the project's availab
 
 ## Appendix D. Links and reading list
 
-<Docs to read before editing. Which PRs get the how skill (`how/SKILL.md`) and the interrogate skill (`interrogate/SKILL.md`). The trail per the show-me-your-work skill (`show-me-your-work/SKILL.md`).>
+<Docs to read before editing. Which PRs get the how skill (`<installed how skill path>`) and the interrogate skill (`<installed interrogate skill path>`). The trail per the show-me-your-work skill (`<installed show-me-your-work skill path>`).>
 ````
 
 **Reply:** the plan path, the PR ids with their dependencies and the review-gated set, what the prototypes proved and what stays unproven, and the check script's output.

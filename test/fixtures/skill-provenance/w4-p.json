@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-full.md",
-			"sha256": "c7897d9caee5c5d98da3f3970209ef19a8acc4cdfbb4304c1038f5ed8ef3cfbe",
+			"sha256": "27fd436c01c1397c8dac7e5fe83eb61a98eb92fd8c4d2c63ef31a3efccb20438",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,11 +52,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-stack.md",
-			"sha256": "fdbc146a000eb75beb6e3ee16eae1ee3084043548dc411bb0589273812c6ef56",
+			"sha256": "68f224b1447a89534073452317060d9c4ee8ab30005b3804712c5a617538e23a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,7 +72,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1), with the same Scope limits as autopilot-full: root-run program, fresh owner rounds, audits on delivery, advisory or request with no timer, and pushes and PR creation or retargeting only under grants naming them; this playbook never merges. The hourly loop tick and git show origin/main package path become 'audit at every wake' re-reading the installed playbook; Origin and Graphite commands become gh only; stop cancels every child with subagent_cancel; link verdicts go in PR bodies or comments only when authorized and in the reply always. The ../references path is fixed and Autopilot-full gets its playbook path."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1), with the same Scope limits as autopilot-full: root-run program, fresh owner rounds, audits on delivery, advisory or request with no timer, and pushes and PR creation or retargeting only under grants naming them; this playbook never merges. The hourly loop tick and git show origin/main package path become 'audit at every wake' re-reading the installed playbook; Origin and Graphite commands become gh only; stop cancels every child with subagent_cancel; link verdicts go in PR bodies or comments only when authorized and in the reply always. The ../references path is fixed and Autopilot-full gets its playbook path. Review fix: owner rounds share one retained owner worktree and one canonical PR branch per Autopilot-full step 2, and push only that branch, never a sibling."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/babysit.md",
@@ -136,7 +136,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/multi-phase-plan.md",
-			"sha256": "884a257747040546f58c0afde20c3aaccb043b6db02a42e903ad1d401b49f265",
+			"sha256": "c8632f591476152bf8b242e96993560ba2ab8374022a4b92ea82a3404d6994d0",
 			"status": "adapted",
 			"sources": [
 				{
@@ -152,7 +152,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir playbook (authoring the plan only) together with scripts/check-plan.mjs, so the shipped skeleton passes the shipped checker. Step 3's agent poteto-agent becomes bare task:recon investigators per references/fan-out.md; step 4 writes to docs/plans/<program-slug>.md under the commit policy instead of the agent store; step 5 uses /skill: commands; step 6 runs scripts/check-plan.mjs from the skill directory instead of a repo-root pstack path; step 7 says execution's pushes, PRs and merges need the execution playbook's grants. The Verification paragraph and skeleton replace inherit-parent lanes with task:qa and mark swarm planned W4. In the skeleton, the git show origin/main reads become installed-skill reads, the hourly loop tick becomes an audit at every child delivery, advisory or operator request with a verbatim audit prompt, stand-down uses subagent_cancel, Spawn owners becomes Launch owner rounds, Origin, built-in PR tools and gt become gh with Graphite never required, PR creation and pushes cite grants, and Appendix D names skills instead of repo-root paths. Short principle names are fixed."
+			"explanation": "Adapted from the pinned pi-mimir playbook (authoring the plan only) together with scripts/check-plan.mjs, so the shipped skeleton passes the shipped checker. Step 3's agent poteto-agent becomes bare task:recon investigators per references/fan-out.md; step 4 writes to docs/plans/<program-slug>.md under the commit policy instead of the agent store; step 5 uses /skill: commands; step 6 runs scripts/check-plan.mjs from the skill directory instead of a repo-root pstack path; step 7 says execution's pushes, PRs and merges need the execution playbook's grants. The Verification paragraph and skeleton replace inherit-parent lanes with task:qa and mark swarm planned W4. In the skeleton, the git show origin/main reads become installed-skill reads, the hourly loop tick becomes an audit at every child delivery, advisory or operator request with a verbatim audit prompt, stand-down uses subagent_cancel, Spawn owners becomes Launch owner rounds, Origin, built-in PR tools and gt become gh with Graphite never required, PR creation and pushes cite grants, and Appendix D names skills instead of repo-root paths. Short principle names are fixed. Review fixes: the skeleton cites bugbot triage as the poteto-mode reference references/bugbot-triage.md, the review video is recorded in a live lane's verification environment instead of a lane VM, and the skeleton names swarm, how, interrogate and show-me-your-work as <installed ... skill path> placeholders that step 4 tells the author to resolve against installed skills, recording any missing one in Appendix C."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/orchestrate.md",
@@ -176,7 +176,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/shipping.md",
-			"sha256": "e974092aeacbf0dbdd419c4be93962fa081c38348b51b67915f7597591de0b08",
+			"sha256": "cca61a39af635232c68fc5e47d143aad20f444583800e243e59dbcbc0fbb8079",
 			"status": "adapted",
 			"sources": [
 				{
@@ -192,7 +192,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph says shipping starts only on an explicit merge, land or ship request, which authorizes merging the verified run only, and that pushes, force-pushes, retargets, verdict comments and auto-merge arming each need their own authorization. Origin commands and the excluded watcher script are removed; gh is the only forge. Per-PR verifiers are bare Verifier children launched in one turn per references/fan-out.md, and the parent posts verdicts only with authorization. Step 8 waits through a watcher child running gh pr checks --watch, keeps the upstream gh field conditions, reports and stops when checks finish with auto-merge pending or the trunk has a merge_queue rule, and never re-reads in a loop."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph says shipping starts only on an explicit merge, land or ship request, which authorizes merging the verified run only, and that pushes, force-pushes, retargets, verdict comments and auto-merge arming each need their own authorization. Origin commands and the excluded watcher script are removed; gh is the only forge. Per-PR verifiers are bare Verifier children launched in one turn per references/fan-out.md, and the parent posts verdicts only with authorization. Step 8 waits through a watcher child running gh pr checks --watch, keeps the upstream gh field conditions, reports and stops when checks finish with auto-merge pending or the trunk has a merge_queue rule, and never re-reads in a loop. Review fix: merge-queue detection moves to step 1, before any merge or auto-merge command; a merge_queue rule or a failed rules call reports state and stops, step 5 re-reads the rules call right before each merge or arm command, and step 8 no longer carries the queue check."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/visual-parity.md",
