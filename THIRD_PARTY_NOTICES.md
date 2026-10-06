@@ -41,8 +41,10 @@ New files in this package are offered under the same MIT terms.
 
 ## Upstream pstack
 
-The `skills/poteto-mode/` and `skills/setup-pstack/` methodology files are
-adapted from pstack, from two pinned sources:
+Every file under `skills/` is copied or adapted from pstack, from two pinned
+sources. Wave 2 shipped `skills/poteto-mode/` and `skills/setup-pstack/`; Wave 3
+shipped the other 35 skills and the comment-sicko delegate prompt at
+`skills/no-comments/references/comment-sicko.md`:
 
 - [casualjim/pi-mimir](https://github.com/casualjim/pi-mimir) at commit
   `f07dd981f62c9c994a5d043ede67d6c63c721454`, path `packages/pi-pstack/skills`.
@@ -102,3 +104,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## Short quoted examples in `technical-writing`
+
+`skills/technical-writing/SKILL.md` is copied byte-for-byte from the pinned
+pi-mimir source, and its text remains under the upstream MIT notices above. It
+contains two short example sentences quoted from third-party style guides. They
+are attributed here; the copied skill bytes are not changed.
+
+- "How to calibrate the radar array" (the How-to paragraph, line 43) is the
+  how-to guide title example from Diátaxis by Daniele Procida,
+  <https://diataxis.fr/how-to-guides/>, licensed under
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+- "If hot oil touches your skin, injuries can occur." (the warning-placement
+  rule, line 69) is the example from the ASD-STE100 Simplified Technical English
+  FAQ, <https://www.asd-ste100.org/STE_faq.html>.

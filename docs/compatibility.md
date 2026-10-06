@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: private Wave 2 candidate. Nothing here is a published compatibility
+Status: private Wave 3 candidate. Nothing here is a published compatibility
 promise.
 
 ## Intended host
@@ -26,7 +26,12 @@ supported host.
 
 Pstack contributes no named roles and registers no role directory. Alone with a
 role-free host, `subagents_list` lists no roles; with pi-herdr-roles it lists
-that pack's six roles.
+that pack's six roles. comment-sicko is a bare delegate prompt under
+`skills/no-comments/references/`, launched by `/skill:no-comments` through the
+public `subagent` schema with `systemPrompt`; pstack still ships no named roles.
+Wave 3 repins the delegation schema to host
+`7d35371f5d7d0df3edd208a1d5c9a187767d563b`, whose `SubagentParams` and task
+categories match the Wave 2 pin.
 
 ## Pi runtime
 
