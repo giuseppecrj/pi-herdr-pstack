@@ -80,3 +80,7 @@ User decision: merge the CI PRs, release host then packs at 0.1.0. CI PRs merged
 
 Host release gate: `test:integration` on `b8b23a0` 77/77. Release PRs open for the user's final look: pi-herdr-agents (3.0.0), pi-herdr-roles #3 (0.1.0), pi-herdr-pstack #6 (0.1.0). Merging the host PR publishes; the pack PRs follow once 3.0.0 is on npm. All worktrees removed; branches retained.
 
+## Released (2026-10-06)
+
+User: "merge". pi-herdr-agents PR #74 merged (`c59e20d`); trusted-publishing workflow succeeded; `pi-herdr-agents@3.0.0` on npm (gitHead `c59e20d`), tag and GitHub release v3.0.0. Then pi-herdr-roles PR #3 (`fc3383d`) and pi-herdr-pstack PR #6 (`043c4d8`) merged; both publish runs succeeded; `pi-herdr-roles@0.1.0` and `pi-herdr-pstack@0.1.0` on npm as `latest`, replacing the placeholders, with v0.1.0 tags and GitHub releases. Remaining user step: install the released packages into the real Pi (replaces the 2.0.5 host build); not done, as it is a normal Pi configuration change.
+
