@@ -1,6 +1,6 @@
 # Prompts worth copying
 
-Swap in the real paths, skills, and done checks. Informal wording works. Paths are relative to the poteto-help skill directory. `/poteto-mode <task>` turns sticky mode on and sends the task. Type `/skill:poteto-mode <task>` instead for one request without the mode. A recipe marked planned W3 or planned W4 needs a skill or playbook that is not installed yet. Do not hand it out as working. Give the interim route from `../poteto-mode/SKILL.md` instead.
+Swap in the real paths, skills, and done checks. Informal wording works. Paths are relative to the poteto-help skill directory. `/poteto-mode <task>` turns sticky mode on and sends the task. Type `/skill:poteto-mode <task>` instead for one request without the mode. A recipe marked planned W4 needs a skill or playbook that is not installed yet. Do not hand it out as working. Give the interim route from `../poteto-mode/SKILL.md` instead.
 
 ## Understand
 
@@ -15,7 +15,7 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 
 - Bug: `/poteto-mode <symptom>. repro first, then fix and verify.`
 - Bug in an app: `/poteto-mode repro this with /skill:verify-<app>. if it repros on main, fix it and show me a video as proof.`
-- Bug with a cheap test: `/poteto-mode repro <bug> first. if there's a cheap test path, use /skill:tdd. then fix and rerun.` (planned W3)
+- Bug with a cheap test: `/poteto-mode repro <bug> first. if there's a cheap test path, use /skill:tdd. then fix and rerun.`
 - Feature: `/poteto-mode add <behavior>. <current output> stays byte-identical. verify both.`
 - Refactor: `/poteto-mode move <code> into one module, zero behavior change. record the current output first and prove it's unchanged after.`
 - Perf: `/poteto-mode <operation> takes <time> on <fixture>. trace it, fix the measured cause, show me before and after.`

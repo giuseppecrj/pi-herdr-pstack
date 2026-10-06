@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/no-comments/SKILL.md",
-			"sha256": "76442947360dc42b3191a0ef4e9a356ef1d2eb6f1e697d77438071554d06790c",
+			"sha256": "e7e1c05fca12a5cbb2a332710ad102406326fc899387ba878f354798c6121f6c",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,7 +52,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 marks the two principle skills planned W3 for the cross-batch W3-A dependency. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used."
+			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 keeps the upstream principle sentence; its cross-batch planned W3 marker was retired at the W3 reconcile. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used."
 		},
 		{
 			"path": "skills/no-comments/references/comment-sicko.md",
@@ -76,7 +76,7 @@
 		},
 		{
 			"path": "skills/poteto-help/SKILL.md",
-			"sha256": "cdfe47257268ec6a2bbcdae35b7167c125e94be056a0ac186082fd52bd23aa58",
+			"sha256": "4f939c70b377f46284b78856aa479f426106d55ff29a0e15825fe17d8e4acf4a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -86,7 +86,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows (and cross-batch W3-A rows) marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row."
+			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row. W3 reconcile: retires the cross-batch planned W3 markers on the five W3-A rows; the availability paragraph names the 35 W3 skills; adds a 24-row principle sub-table routing to the shipped ../principle-*/SKILL.md leaves so every inventory row is routed; the setup-report claims now name the two skills the report actually resolves (poteto-mode and setup-pstack)."
 		},
 		{
 			"path": "skills/poteto-help/references/prompting.md",
@@ -104,7 +104,7 @@
 		},
 		{
 			"path": "skills/poteto-help/references/recipes.md",
-			"sha256": "a8f4c879c983b0ecae1855bf5bea0301f48ad9a96938c7f413055bcf3e4cefd0",
+			"sha256": "a9e8cad3c2891c12c21dadf2d037ecff883761ac5971692a4650f73a37af0476",
 			"status": "adapted",
 			"sources": [
 				{
@@ -114,7 +114,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention."
+			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired."
 		},
 		{
 			"path": "skills/teach/SKILL.md",

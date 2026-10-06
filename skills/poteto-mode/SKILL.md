@@ -18,30 +18,31 @@ Paths in this skill, its playbooks and its references are relative to this skill
 
 ## Availability in this release
 
-This release ships this hub, the `setup-pstack` skill, three references and twelve base playbooks. Every skill or playbook marked **planned W3** or **planned W4** is not installed yet.
+This release ships this hub, the `setup-pstack` skill, three references, twelve base playbooks, the 24 principle leaves, and eleven further skills: `tdd`, `typescript-best-practices`, `benchmark-checklist`, `blast-radius`, `correct`, `unslop`, `technical-writing`, `no-comments`, `teach`, `bro` and `poteto-help`. Every skill or playbook marked **planned W4** is not installed yet.
 
 - Never claim you read a planned skill or playbook, and never cite it as the source of a decision.
-- Where this file gives a summary or a manual equivalent, apply that and say so, for example "hub summary of Fix Root Causes".
+- Where this file gives a manual equivalent, apply that and say so, for example "architect skipped: planned W4" with the shapes you compared by hand.
 - Where no safe equivalent exists, keep the step in your checklist as `skip: <name> is planned, not installed`, stop the dependent part of the workflow and report it.
 - A same-named skill from another package is not this package's methodology. If one is installed, name its location before relying on it.
 
 ## Non-negotiables
 
-**Start every multi-step task with a visible checklist. Its first item is to read the Principles section below in full.** Use a task or todo tool when your session provides one. Otherwise keep the checklist in your reply or in a scratch file. The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it is padding. While a principle's leaf skill is planned, cite the hub summary, not the leaf.
+**Start every multi-step task with a visible checklist. Its first item is to read the Principles section below in full.** Use a task or todo tool when your session provides one. Otherwise keep the checklist in your reply or in a scratch file. The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it is padding. Read a principle's leaf skill in full before you cite it.
 
 Remaining triggers:
 
 - Nontrivial change, architecture decision, or "are we sure?" → the **how** skill (planned W4). Until it ships, do the read-only investigation yourself per `playbooks/investigation.md`.
 - Before asking the user to choose an approach, classify the fork. If the answer is a fact you could observe by running something (behavior, timing, layout, output, performance, even whether an eval separates), it is not the user's to answer. Sketch it with the Prototype playbook (`playbooks/prototype.md`) and let the result decide. A read-only Investigation whose deliverable is a cited answer stays an investigation and answers from the evidence. Ask only for a genuine product or preference call that no experiment can settle. Under a full-autonomy grant, decide the calls the grant covers, act, and report them. For a call only the operator can make, apply a default, explain it fully, and say in plain words what the operator could choose instead. Never hand the operator a shorthand token to type back. Gates the operator named and the actions in `references/authorization.md` still need the operator.
-- Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain** (planned W3).
+- Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
+- Reading or editing any .ts or .tsx file → the **typescript-best-practices** skill. It is explicit-only; load it with /skill:typescript-best-practices before the first TypeScript edit.
 - Code crossing a function boundary → the **architect** skill (planned W4) for parallel design exploration before implementing. Until it ships, write two or three candidate shapes with their tradeoffs before choosing one, and record `architect skipped: planned W4`.
 - Parallel fan-out → the **swarm** skill (planned W4) for coverage matrices, races, gauntlets and exploration partitions. Use the **arena** skill (planned W4) for design or code bakeoffs with base selection and grafting. Until they ship, fan out only through `references/delegation.md` with disjoint scopes and parent-owned synthesis, and do not present the result as a swarm or arena verdict.
 - Contested design → the **interrogate** skill (planned W4), a multi-model adversarial review, before shipping. Until it ships, run one independent bare review per `references/delegation.md` and say that the multi-model panel did not run.
 - Nontrivial multi-step → write the throughput checkpoint (step 3 of `playbooks/feature.md`).
-- Running a benchmark, measuring performance yourself, or reporting a speedup or regression you measured → the **benchmark-checklist** skill (planned W3) before you report or act on the number. Until it ships, apply the hub summary of Explain the Number and state the method, sample count, variance and what limits the number.
-- Any prose surface → the **unslop** skill (planned W3). Your reply is a prose surface. Until it ships, apply **Writing the reply** below. Agent-facing skill prose follows the Pi Agent Skills format.
-- Docs, RFCs, readmes, PR descriptions or commit messages → the **technical-writing** skill (planned W3). Until it ships, apply **Writing the reply** and the description shape in `playbooks/opening-a-pr.md`.
-- Before commit, inspect the diff yourself and remove slop, narrating comments and accidental files. Then apply the **unslop** and **no-comments** skills (both planned W3). Until they ship, apply **Writing the reply** and **Comments** below by hand. If another cleanup or UI-control skill is installed, detect it and say which one you used. Do not assume an optional package exists.
+- Running a benchmark, measuring performance yourself, or reporting a speedup or regression you measured → the **benchmark-checklist** skill before you report or act on the number.
+- Any prose surface → the **unslop** skill. Your reply is a prose surface. Agent-facing skill prose follows the Pi Agent Skills format.
+- Docs, RFCs, readmes, PR descriptions or commit messages → the **technical-writing** skill (`/skill:technical-writing`).
+- Before commit, inspect the diff yourself and remove slop, narrating comments and accidental files. Then apply the **unslop** and **no-comments** skills. If another cleanup or UI-control skill is installed, detect it and say which one you used. Do not assume an optional package exists.
 - Shipping UI, IDE or CLI behavior → drive the real surface with the tooling the project or session actually provides, such as its CLI, test harness or browser automation. For bug fixes, reproduce on that same surface first. If no available tool reaches the surface, say so. Do not substitute a proxy check and call it a pass.
 - Any PR-status request → the **Babysit** playbook (`playbooks/babysit.md`, planned W4). Opening a PR never triggers it. Until it ships, answer with a read-only status report when the task allows reading the forge, and stop before any babysit loop, push or thread reply.
 - Asked to land or ship a green stack → the **Shipping** playbook (`playbooks/shipping.md`, planned W4). Green is not safe. Nothing gets armed before an independent per-PR verdict, and only the contiguous verified run from the root lands. Until it ships, do not land, arm or merge through this methodology. Report that the workflow is unavailable.
@@ -51,46 +52,46 @@ Remaining triggers:
 
 ## Principles
 
-Each entry names when it applies. The 24 leaf skills are planned W3 and not installed in this release. Until a leaf ships, the summary below is the rule you apply, and you cite it as the hub summary. When a leaf ships, read it in full before you cite it.
+Each entry names when it applies. Read the leaf in full before you cite it.
 
 **Core**
 
-- **Laziness Protocol** (**principle-laziness-protocol**, planned W3). Refactoring, sizing a diff, or tempted to add abstractions, layers, or signal threading. Bias to deletion and the smallest change that solves the problem.
-- **Foundational Thinking** (**principle-foundational-thinking**, planned W3). Before writing logic: core types and data structures, scaffold-vs-feature sequencing, what concurrent actors share.
-- **Redesign from First Principles** (**principle-redesign-from-first-principles**, planned W3). Integrating a new requirement into an existing design. Redesign as if it had been foundational from day one.
-- **Subtract Before You Add** (**principle-subtract-before-you-add**, planned W3). Sequencing an addition, refactor, or rewrite. Remove dead weight first, then build on the simpler base.
-- **Minimize Reader Load** (**principle-minimize-reader-load**, planned W3). Reviewing or shaping code that's hard to trace. Count layers and hidden state, collapse one-caller wrappers, shrink mutable scope.
-- **Outcome-Oriented Execution** (**principle-outcome-oriented-execution**, planned W3). Planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture, don't preserve throwaway compatibility states.
-- **Experience First** (**principle-experience-first**, planned W3). Product, UX, or feature-scope tradeoffs. Choose user delight over implementation convenience.
-- **Exhaust the Design Space** (**principle-exhaust-the-design-space**, planned W3). A novel interaction or architectural decision with no precedent. Build 2-3 competing prototypes and compare before committing.
-- **Attack the Premise** (**principle-attack-the-premise**, planned W3). Two or more fixes that share one premise have failed the same gate. Take a census of which actors hold the imbalance before the next fix, then question the premise instead of writing another fix that assumes it.
-- **Build the Lever** (**principle-build-the-lever**, planned W3). Any non-trivial work. Build the tool that does or proves it (codemod, script, generator), not by hand. The tool is the artifact a reviewer reruns.
+- **Laziness Protocol** (**principle-laziness-protocol**). Refactoring, sizing a diff, or tempted to add abstractions, layers, or signal threading. Bias to deletion and the smallest change that solves the problem.
+- **Foundational Thinking** (**principle-foundational-thinking**). Before writing logic: core types and data structures, scaffold-vs-feature sequencing, what concurrent actors share.
+- **Redesign from First Principles** (**principle-redesign-from-first-principles**). Integrating a new requirement into an existing design. Redesign as if it had been foundational from day one.
+- **Subtract Before You Add** (**principle-subtract-before-you-add**). Sequencing an addition, refactor, or rewrite. Remove dead weight first, then build on the simpler base.
+- **Minimize Reader Load** (**principle-minimize-reader-load**). Reviewing or shaping code that's hard to trace. Count layers and hidden state, collapse one-caller wrappers, shrink mutable scope.
+- **Outcome-Oriented Execution** (**principle-outcome-oriented-execution**). Planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture, don't preserve throwaway compatibility states.
+- **Experience First** (**principle-experience-first**). Product, UX, or feature-scope tradeoffs. Choose user delight over implementation convenience.
+- **Exhaust the Design Space** (**principle-exhaust-the-design-space**). A novel interaction or architectural decision with no precedent. Build 2-3 competing prototypes and compare before committing.
+- **Attack the Premise** (**principle-attack-the-premise**). Two or more fixes that share one premise have failed the same gate. Take a census of which actors hold the imbalance before the next fix, then question the premise instead of writing another fix that assumes it.
+- **Build the Lever** (**principle-build-the-lever**). Any non-trivial work. Build the tool that does or proves it (codemod, script, generator), not by hand. The tool is the artifact a reviewer reruns.
 
 **Architecture**
 
-- **Model the Domain** (**principle-model-the-domain**, planned W3). Writing stateful logic, or code that branches a lot or repeats a shape assumption across files. Encode the domain in a structure (state machine, typed model, table or registry, reducer, boundary, the right collection) instead of scattered conditionals.
-- **Boundary Discipline** (**principle-boundary-discipline**, planned W3). Wiring validation, error handling, or framework adapters. Guards at system boundaries, trust internal types, keep business logic pure.
-- **Type System Discipline** (**principle-type-system-discipline**, planned W3). Designing types or a signature in any typed language. Make illegal states unrepresentable, brand primitives, parse external data at boundaries.
-- **Make Operations Idempotent** (**principle-make-operations-idempotent**, planned W3). Designing commands, lifecycle steps, or loops that run amid crashes and retries. Converge to the same end state.
-- **Migrate Callers Then Delete Legacy APIs** (**principle-migrate-callers-then-delete-legacy-apis**, planned W3). Introducing a new internal API while old callers exist. Migrate and delete in one wave.
-- **Separate Before Serializing Shared State** (**principle-separate-before-serializing-shared-state**, planned W3). Concurrent actors might write the same file, branch, key, or object. Eliminate the sharing first.
+- **Model the Domain** (**principle-model-the-domain**). Writing stateful logic, or code that branches a lot or repeats a shape assumption across files. Encode the domain in a structure (state machine, typed model, table or registry, reducer, boundary, the right collection) instead of scattered conditionals.
+- **Boundary Discipline** (**principle-boundary-discipline**). Wiring validation, error handling, or framework adapters. Guards at system boundaries, trust internal types, keep business logic pure.
+- **Type System Discipline** (**principle-type-system-discipline**). Designing types or a signature in any typed language. Make illegal states unrepresentable, brand primitives, parse external data at boundaries.
+- **Make Operations Idempotent** (**principle-make-operations-idempotent**). Designing commands, lifecycle steps, or loops that run amid crashes and retries. Converge to the same end state.
+- **Migrate Callers Then Delete Legacy APIs** (**principle-migrate-callers-then-delete-legacy-apis**). Introducing a new internal API while old callers exist. Migrate and delete in one wave.
+- **Separate Before Serializing Shared State** (**principle-separate-before-serializing-shared-state**). Concurrent actors might write the same file, branch, key, or object. Eliminate the sharing first.
 
 **Verification**
 
-- **Prove It Works** (**principle-prove-it-works**, planned W3). After a task, before declaring done. Verify against the real artifact, not a proxy or "it compiles".
-- **Fix Root Causes** (**principle-fix-root-causes**, planned W3). Debugging. Trace each symptom to its root cause, reproduce first, ask why until you reach it.
-- **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**, planned W3). Multi-step work (sweeps, migrations, runs of similar edits) and how you stack commits and PRs. Break work into small units that each end in a check, verify each before the next, and order delivery so the sequence proves itself.
-- **Test Behavior, Not Implementation** (**principle-test-behavior-not-implementation**, planned W3). Writing, changing, or keeping a test. Call the code the way its users do and assert the result against a literal expected value. If the test would still pass when every imported function returns `undefined`, rewrite the assertion or delete the test.
-- **Explain the Number** (**principle-explain-the-number**, planned W3). Before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). Find what limits it, and rule out that it measured something other than the work you think.
+- **Prove It Works** (**principle-prove-it-works**). After a task, before declaring done. Verify against the real artifact, not a proxy or "it compiles".
+- **Fix Root Causes** (**principle-fix-root-causes**). Debugging. Trace each symptom to its root cause, reproduce first, ask why until you reach it.
+- **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**). Multi-step work (sweeps, migrations, runs of similar edits) and how you stack commits and PRs. Break work into small units that each end in a check, verify each before the next, and order delivery so the sequence proves itself.
+- **Test Behavior, Not Implementation** (**principle-test-behavior-not-implementation**). Writing, changing, or keeping a test. Call the code the way its users do and assert the result against a literal expected value. If the test would still pass when every imported function returns `undefined`, rewrite the assertion or delete the test.
+- **Explain the Number** (**principle-explain-the-number**). Before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). Find what limits it, and rule out that it measured something other than the work you think.
 
 **Delegation**
 
-- **Guard the Context Window** (**principle-guard-the-context-window**, planned W3). Context fills up: large outputs, long files, repeated reads, fan-out planning. Route bulk to subagents, keep summaries in the main thread.
-- **Never Block on the Human** (**principle-never-block-on-the-human**, planned W3). Tempted to ask "should I do X?" on reversible work. Proceed, present the result, let the human course-correct. This covers reversible work only. It never covers the actions in `references/authorization.md`.
+- **Guard the Context Window** (**principle-guard-the-context-window**). Context fills up: large outputs, long files, repeated reads, fan-out planning. Route bulk to subagents, keep summaries in the main thread.
+- **Never Block on the Human** (**principle-never-block-on-the-human**). Tempted to ask "should I do X?" on reversible work. Proceed, present the result, let the human course-correct. This covers reversible work only. It never covers the actions in `references/authorization.md`.
 
 **Meta**
 
-- **Encode Lessons in Structure** (**principle-encode-lessons-in-structure**, planned W3). You catch yourself writing the same instruction a second time. Encode it as a lint, metadata flag, runtime check, or script instead of more text.
+- **Encode Lessons in Structure** (**principle-encode-lessons-in-structure**). You catch yourself writing the same instruction a second time. Encode it as a lint, metadata flag, runtime check, or script instead of more text.
 
 ## Autonomy
 
@@ -109,7 +110,7 @@ Nothing in pstack blocks these commands for you. Bash is not sandboxed, and a to
 Delegate through pi-herdr-agents' `subagent` tool. `references/delegation.md` has the brief template, the reference prompts and schema-valid examples.
 
 - **Every delegate is a deliberate bare delegate.** Omit `agent` and pass the matching reference prompt from `references/delegation.md` as `systemPrompt`: the Implementer for code, tests or docs, and the Investigator, Reviewer or Verifier for bounded read-only work.
-- **No named roles.** Pstack ships none and depends on no optional role pack. Name an installed role only when the user asks for it by name. If that role is not discoverable, stop and report it. Never swap in a bare agent for a named role that failed.
+- **No named roles.** Pstack ships none and depends on no optional role pack. Name an installed role only when the user asks for it by name. If that role is not discoverable, stop and report it. Never swap in a bare agent for a named role that failed. The worked example of a bare specialist is the comment-sicko delegate that `/skill:no-comments` launches with `../no-comments/references/comment-sicko.md` as its `systemPrompt`.
 
 **Defaults for each `subagent` call.** One bounded outcome per child. Point at files instead of inlining large payloads. Set `model` and `thinking` explicitly, with `task:<category>` for ordinary work and an exact authenticated `provider/model-id` from the live catalog for independence-sensitive review. Set the session mode explicitly with `fork`, and give each parallel writer its own `worktree`. Children are leaves. They do not push, merge, open PRs or launch further agents unless the brief says so. Results are delivered automatically, so never sleep, poll or tail a session waiting for them. Tool lists such as read and bash are behavioral limits, not a sandbox.
 

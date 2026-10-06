@@ -65,7 +65,7 @@
     {
       "name": "benchmark-checklist",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -79,7 +79,7 @@
     {
       "name": "blast-radius",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -93,7 +93,7 @@
     {
       "name": "bro",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -107,7 +107,7 @@
     {
       "name": "correct",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -220,7 +220,7 @@
     {
       "name": "no-comments",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -236,7 +236,7 @@
     {
       "name": "poteto-help",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "cursor",
       "sourceFiles": {
         "cursor": [
@@ -351,7 +351,7 @@
     {
       "name": "principle-attack-the-premise",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -365,7 +365,7 @@
     {
       "name": "principle-boundary-discipline",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -379,7 +379,7 @@
     {
       "name": "principle-build-the-lever",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -393,7 +393,7 @@
     {
       "name": "principle-encode-lessons-in-structure",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -407,7 +407,7 @@
     {
       "name": "principle-exhaust-the-design-space",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -421,7 +421,7 @@
     {
       "name": "principle-experience-first",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -435,7 +435,7 @@
     {
       "name": "principle-explain-the-number",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -449,7 +449,7 @@
     {
       "name": "principle-fix-root-causes",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -463,7 +463,7 @@
     {
       "name": "principle-foundational-thinking",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -477,7 +477,7 @@
     {
       "name": "principle-guard-the-context-window",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -491,7 +491,7 @@
     {
       "name": "principle-laziness-protocol",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -505,7 +505,7 @@
     {
       "name": "principle-make-operations-idempotent",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -519,7 +519,7 @@
     {
       "name": "principle-migrate-callers-then-delete-legacy-apis",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -533,7 +533,7 @@
     {
       "name": "principle-minimize-reader-load",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -547,7 +547,7 @@
     {
       "name": "principle-model-the-domain",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -561,7 +561,7 @@
     {
       "name": "principle-never-block-on-the-human",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -575,7 +575,7 @@
     {
       "name": "principle-outcome-oriented-execution",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -589,7 +589,7 @@
     {
       "name": "principle-prove-it-works",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -603,7 +603,7 @@
     {
       "name": "principle-redesign-from-first-principles",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -617,7 +617,7 @@
     {
       "name": "principle-separate-before-serializing-shared-state",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -631,7 +631,7 @@
     {
       "name": "principle-sequence-verifiable-units",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -645,7 +645,7 @@
     {
       "name": "principle-subtract-before-you-add",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -659,7 +659,7 @@
     {
       "name": "principle-test-behavior-not-implementation",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -673,7 +673,7 @@
     {
       "name": "principle-type-system-discipline",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -766,7 +766,7 @@
     {
       "name": "tdd",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -780,7 +780,7 @@
     {
       "name": "teach",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -794,7 +794,7 @@
     {
       "name": "technical-writing",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -808,7 +808,7 @@
     {
       "name": "typescript-best-practices",
       "wave": "W3-A",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -824,7 +824,7 @@
     {
       "name": "unslop",
       "wave": "W3-B",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [

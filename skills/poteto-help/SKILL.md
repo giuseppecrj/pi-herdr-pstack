@@ -14,7 +14,7 @@ This file maps questions to the skills and files that hold the answers. Those fi
 
 ## What this release ships
 
-This release ships the two W2 skills, `poteto-mode` and `setup-pstack`, and the W3 skills. Rows below marked **planned W3** or **planned W4** are not installed yet. Never offer one as a working command, never say one ran, and never quote it. Say it is planned, then give the interim route the hub (`../poteto-mode/SKILL.md`) names for it, if there is one.
+This release ships the two W2 skills, `poteto-mode` and `setup-pstack`, and the 35 W3 skills: the 24 principles and every other row below without a planned marker. Rows marked **planned W4** are not installed yet. Never offer one as a working command, never say one ran, and never quote it. Say it is planned, then give the interim route the hub (`../poteto-mode/SKILL.md`) names for it, if there is one.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -30,7 +30,7 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether each pstack skill resolves to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset.
+- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention the gap when the question is about proving a change works. The **create-verification-skill** skill that generates one is planned W4, so do not offer it.
 
 ## Get set up
@@ -72,37 +72,37 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Know why code is shaped this way, or where a number came from | `/skill:why` (planned W4) |
 | Understand a change or subsystem, explained plainly | `/skill:teach` |
 | Catch up on their own recent work on a topic | `/skill:recall` (planned W4) |
-| Know what a small diff could break outside itself | `/skill:blast-radius` (planned W3) |
+| Know what a small diff could break outside itself | `/skill:blast-radius` |
 | Settle types and module shape before code that crosses a function boundary | `/skill:architect` (planned W4) |
 | Get several attempts at one brief, merged into the best one | `/skill:arena` (planned W4) |
 | Run parallel checks over slices, or race workers | `/skill:swarm` (planned W4) |
 | Have several models review a diff and try to break it | `/skill:interrogate` (planned W4) |
-| Fix a bug test-first when a cheap local test exists | `/skill:tdd` (planned W3) |
-| Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` (planned W3) |
+| Fix a bug test-first when a cheap local test exists | `/skill:tdd` |
+| Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` |
 | Strip comments before review, using a reviewer that didn't write them | `/skill:no-comments` |
 | Clean AI tells out of prose | `/skill:unslop` |
 | Write docs, an RFC, a README, a PR description, or a commit message to a standard | `/skill:technical-writing` |
 | Hear the last reply again in plain words | `/skill:bro` |
 | Give agents a scripted way to drive the app and prove behavior | `/skill:create-verification-skill` (planned W4) |
 | Bring a verification skill and its feature map back in line with the app | `/skill:maintain-verification-skill` (planned W4) |
-| Vet a performance number before reporting or acting on it | `/skill:benchmark-checklist` (planned W3) |
+| Vet a performance number before reporting or acting on it | `/skill:benchmark-checklist` |
 | Run a large or cross-cutting change, or one to review after stepping away | `/skill:figure-it-out` (planned W4) |
 | Keep a decision log during a run, and review it afterward | `/skill:show-me-your-work` (planned W4) |
 | See which models pstack's delegates use, or change them with approval | `/setup-pstack`, explained by `/skill:setup-pstack` |
 | Turn their own working habits into a personal mode skill | `/skill:automate-me` (planned W4) |
 | Turn what a finished task taught into skill edits | `/skill:reflect` (planned W4) |
-| Stop agents from repeating the same mistakes in this repo | `/skill:correct` (planned W3) |
+| Stop agents from repeating the same mistakes in this repo | `/skill:correct` |
 | Build a page whose buttons wake a bot over a webhook | `/skill:make-bot-ui` (planned W4) |
 | Find their way around pstack | `/skill:poteto-help` |
 
-If a skill directory next to this one is missing from the table, read its frontmatter and route by its description. The `principle-*` directories are covered under principles below.
+If a skill directory next to this one is missing from the table, read its frontmatter and route by its description. The `principle-*` directories have their own table under principles below.
 
 Close calls:
 
 - `/skill:how` explains what the code does. `/skill:why` explains the reasons. `/skill:teach` runs one or both and explains the result plainly. Until how and why ship (planned W4), `/skill:teach` traces the code and its history itself and says so.
 - `/skill:arena` gives every worker the same brief and merges the best parts. `/skill:swarm` splits work into slices or a race and returns one report. Both are planned W4.
 - `/skill:architect` (planned W4) implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
-- `/skill:interrogate` (planned W4) reviews the diff. `/skill:blast-radius` (planned W3) looks for breakage outside the diff and proves the one fact that makes the change safe.
+- `/skill:interrogate` (planned W4) reviews the diff. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
 - `/skill:recall` (planned W4) rebuilds context across recent sessions. Resuming one specific session or branch is the Session pickup playbook, `../poteto-mode/playbooks/session-pickup.md`.
 - `/skill:figure-it-out` (planned W4) designs one rigorous run. The Orchestrate playbook (`../poteto-mode/playbooks/orchestrate.md`, planned W4) runs a program that spans days and many PRs. The Autonomous run playbook, `../poteto-mode/playbooks/autonomous-run.md`, drives one task to a finish condition.
 
@@ -126,14 +126,40 @@ Without poteto-mode, a phrase such as "babysit this pr" is an ordinary request, 
 
 pstack has no planning skill. For work that spans phases or stacked PRs, asking poteto-mode for a plan runs the Multi-phase plan playbook (`../poteto-mode/playbooks/multi-phase-plan.md`, planned W4), which writes the plan and doesn't implement it. Until it ships, poteto-mode writes the phases into its checklist from the closest base playbook and says the plan playbook was unavailable. For a design question, the Prototype playbook (`../poteto-mode/playbooks/prototype.md`) settles it in code first.
 
-Principles are one-rule skills that poteto-mode reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/skill:principle-<name>` still loads one on demand. The Principles section of `../poteto-mode/SKILL.md` lists all 24 with a summary each.
+Principles are one-rule skills that poteto-mode reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/skill:principle-<name>` still loads one on demand. The Principles section of `../poteto-mode/SKILL.md` lists all 24 with a summary each. To recommend one, read its file first:
+
+| The user wants to | Principle |
+| Refactor, size a diff, or resist an extra abstraction | `../principle-laziness-protocol/SKILL.md` |
+| Settle core types, data structures and shared state before logic | `../principle-foundational-thinking/SKILL.md` |
+| Fold a new requirement into a design as if it had been there from day one | `../principle-redesign-from-first-principles/SKILL.md` |
+| Remove dead weight before an addition, refactor or rewrite | `../principle-subtract-before-you-add/SKILL.md` |
+| Make hard-to-trace code easier to follow | `../principle-minimize-reader-load/SKILL.md` |
+| Run a planned rewrite or migration straight to the target | `../principle-outcome-oriented-execution/SKILL.md` |
+| Weigh product, UX or scope tradeoffs for the user | `../principle-experience-first/SKILL.md` |
+| Compare competing prototypes for a decision with no precedent | `../principle-exhaust-the-design-space/SKILL.md` |
+| Stop after two fixes that share one premise have failed | `../principle-attack-the-premise/SKILL.md` |
+| Build the script or codemod that does or proves the work | `../principle-build-the-lever/SKILL.md` |
+| Replace scattered conditionals with a structure that models the domain | `../principle-model-the-domain/SKILL.md` |
+| Place validation, error handling and adapters at system boundaries | `../principle-boundary-discipline/SKILL.md` |
+| Design types that make illegal states unrepresentable | `../principle-type-system-discipline/SKILL.md` |
+| Make commands and loops safe to rerun after crashes and retries | `../principle-make-operations-idempotent/SKILL.md` |
+| Replace an internal API and delete the old one in one wave | `../principle-migrate-callers-then-delete-legacy-apis/SKILL.md` |
+| Stop concurrent actors writing the same file, branch or key | `../principle-separate-before-serializing-shared-state/SKILL.md` |
+| Prove a task is done on the real artifact | `../principle-prove-it-works/SKILL.md` |
+| Trace a bug to its root cause instead of patching the symptom | `../principle-fix-root-causes/SKILL.md` |
+| Break multi-step work into small units that each end in a check | `../principle-sequence-verifiable-units/SKILL.md` |
+| Write or keep a test that checks behavior, not internals | `../principle-test-behavior-not-implementation/SKILL.md` |
+| Find what limits a measured number before trusting it | `../principle-explain-the-number/SKILL.md` |
+| Keep bulky output out of the main thread | `../principle-guard-the-context-window/SKILL.md` |
+| Proceed on reversible work instead of asking first | `../principle-never-block-on-the-human/SKILL.md` |
+| Turn a repeated instruction into a lint, check or script | `../principle-encode-lessons-in-structure/SKILL.md` |
 
 ## Fix a run that went wrong
 
 | Symptom | Fix |
 |---|---|
 | The mode stopped applying after a few turns | It was loaded with `/skill:poteto-mode`, which covers one request. Run `/poteto-mode on`, or start each task with `/poteto-mode <task>`. `/poteto-mode status` shows the state. |
-| `/poteto-mode` refused to turn on | The `poteto-mode` skill is filtered out or shadowed by another file. The message says which. `/setup-pstack` reports where each skill resolves. |
+| `/poteto-mode` refused to turn on | The `poteto-mode` skill is filtered out or shadowed by another file. The message says which. `/setup-pstack` reports where the `poteto-mode` and `setup-pstack` skills resolve. |
 | `/poteto-mode <task>` did nothing | It is refused while a turn is running, and nothing is queued. Send it again when the session is idle. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. `/poteto-mode off` stops the reminders. |
 | A new model choice had no effect | A saved `/setup-pstack` change needs a Pi reload. An explicit `model` in a `subagent` call also wins over the task categories. |

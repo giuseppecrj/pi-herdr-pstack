@@ -19,11 +19,6 @@
 		},
 		{
 			"sourcePath": "skills/blast-radius/SKILL.md",
-			"targetPath": "skills/unslop/SKILL.md",
-			"owningWave": "W3-B"
-		},
-		{
-			"sourcePath": "skills/blast-radius/SKILL.md",
 			"targetPath": "skills/why/SKILL.md",
 			"owningWave": "W4-A"
 		},

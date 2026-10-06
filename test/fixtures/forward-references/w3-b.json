@@ -18,16 +18,6 @@
 			"owningWave": "W4-A"
 		},
 		{
-			"sourcePath": "skills/no-comments/SKILL.md",
-			"targetPath": "skills/principle-fix-root-causes/SKILL.md",
-			"owningWave": "W3-A"
-		},
-		{
-			"sourcePath": "skills/no-comments/SKILL.md",
-			"targetPath": "skills/principle-redesign-from-first-principles/SKILL.md",
-			"owningWave": "W3-A"
-		},
-		{
 			"sourcePath": "skills/no-comments/references/comment-sicko.md",
 			"targetPath": "skills/how/SKILL.md",
 			"owningWave": "W4-A"
@@ -59,11 +49,6 @@
 		},
 		{
 			"sourcePath": "skills/poteto-help/SKILL.md",
-			"targetPath": "skills/blast-radius/SKILL.md",
-			"owningWave": "W3-A"
-		},
-		{
-			"sourcePath": "skills/poteto-help/SKILL.md",
 			"targetPath": "skills/architect/SKILL.md",
 			"owningWave": "W4-A"
 		},
@@ -84,23 +69,8 @@
 		},
 		{
 			"sourcePath": "skills/poteto-help/SKILL.md",
-			"targetPath": "skills/tdd/SKILL.md",
-			"owningWave": "W3-A"
-		},
-		{
-			"sourcePath": "skills/poteto-help/SKILL.md",
-			"targetPath": "skills/typescript-best-practices/SKILL.md",
-			"owningWave": "W3-A"
-		},
-		{
-			"sourcePath": "skills/poteto-help/SKILL.md",
 			"targetPath": "skills/maintain-verification-skill/SKILL.md",
 			"owningWave": "W4-B"
-		},
-		{
-			"sourcePath": "skills/poteto-help/SKILL.md",
-			"targetPath": "skills/benchmark-checklist/SKILL.md",
-			"owningWave": "W3-A"
 		},
 		{
 			"sourcePath": "skills/poteto-help/SKILL.md",
@@ -121,11 +91,6 @@
 			"sourcePath": "skills/poteto-help/SKILL.md",
 			"targetPath": "skills/reflect/SKILL.md",
 			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-help/SKILL.md",
-			"targetPath": "skills/correct/SKILL.md",
-			"owningWave": "W3-A"
 		},
 		{
 			"sourcePath": "skills/poteto-help/SKILL.md",
@@ -201,11 +166,6 @@
 			"sourcePath": "skills/poteto-help/references/recipes.md",
 			"targetPath": "skills/recall/SKILL.md",
 			"owningWave": "W4-B"
-		},
-		{
-			"sourcePath": "skills/poteto-help/references/recipes.md",
-			"targetPath": "skills/tdd/SKILL.md",
-			"owningWave": "W3-A"
 		},
 		{
 			"sourcePath": "skills/poteto-help/references/recipes.md",

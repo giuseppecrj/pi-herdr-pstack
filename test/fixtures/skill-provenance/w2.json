@@ -16,7 +16,7 @@
 	"files": [
 		{
 			"path": "skills/poteto-mode/SKILL.md",
-			"sha256": "db68a4a9ca578f285991bbb65a415915a91b26482b7b142a52797f0f6fbd76cb",
+			"sha256": "db01c48fab3421af0df30124a06cae4ad14e794b108172042d78ebf31f0c52d8",
 			"status": "adapted",
 			"sources": [
 				{
@@ -32,11 +32,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries (each marked planned W3), Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required."
+			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries, Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required. W3 reconcile: the 24 principle summaries name their shipped leaves without markers and the preamble says to read the leaf in full before citing it; the availability section lists the W3 skills that ship; W3 interim clauses for benchmark-checklist, unslop, technical-writing and no-comments are retired, restoring the upstream trigger wording; adds the D6 routing line for typescript-best-practices (explicit-only) and the comment-sicko delegate as the worked bare-specialist example. W4 routes stay marked."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autonomous-run.md",
-			"sha256": "212e8bd1910e9482e692d38f6041fd788d68eded338efb2b4ce46dac9bcfa780",
+			"sha256": "5f8c2415880cb3e19af55a14950060ed5c63c87356ca874bcc0c34c398f8af04",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,11 +52,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Replaces /loop with automatic subagent delivery and a bounded bare watcher child; states that autonomy is not external-action authority; show-me-your-work planned W4 with a local decision-log fallback."
+			"explanation": "Replaces /loop with automatic subagent delivery and a bounded bare watcher child; states that autonomy is not external-action authority; show-me-your-work planned W4 with a local decision-log fallback. W3 reconcile: the principle-sequence-verifiable-units marker is retired now that the leaf ships."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/bug-fix.md",
-			"sha256": "7a941e6f1debb81786c63f8269a926996cde225e525dc2a4524abb32b2982c49",
+			"sha256": "8463c0453a51c3c225e624c4ee63d5b73b170c5463bb53fe892359e4ebd76b38",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,11 +72,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Replaces control-skill, /loop and model-default wording with project tooling, an explicit stop-condition loop and bare implementer task:coding delegation; marks how/why/architect/tdd planned with manual equivalents; commits and PR gated by task authorization. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+			"explanation": "Replaces control-skill, /loop and model-default wording with project tooling, an explicit stop-condition loop and bare implementer task:coding delegation; marks how/why/architect planned with manual equivalents; commits and PR gated by task authorization. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role. W3 reconcile: the tdd and principle markers and the tdd interim clause are retired, restoring the upstream tdd sentence."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/feature.md",
-			"sha256": "2e7654bebd069f0ad8f125259a7c4496625d332688246f884a02da4e88d18579",
+			"sha256": "f3b46f4b124c8f6504053d14c89a41a3d6032a3e489396b1c5064965111c7fd8",
 			"status": "adapted",
 			"sources": [
 				{
@@ -92,11 +92,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the throughput checkpoint and mandatory delegation; delegates to a bare implementer with task categories; marks how/architect/arena/interrogate planned with safe manual equivalents; leaf delegates own the diff when further delegation is not authorized; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+			"explanation": "Keeps the throughput checkpoint and mandatory delegation; delegates to a bare implementer with task categories; marks how/architect/arena/interrogate planned with safe manual equivalents; leaf delegates own the diff when further delegation is not authorized; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role. W3 reconcile: the three principle markers are retired now that the leaves ship."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/investigation.md",
-			"sha256": "b01269764cf6968d8b9818a57a95a963bd48cd5ca56fba17a476952963898ee8",
+			"sha256": "69e17a2475d01e93259de98b3c2e332ac3d0cbfdc73d2b37c04a0bc7fa82bf05",
 			"status": "adapted",
 			"sources": [
 				{
@@ -112,11 +112,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Routes how/why to planned W4 with a direct read-only investigation fallback; unslop marked planned W3 with the hub reply rules as fallback."
+			"explanation": "Routes how/why to planned W4 with a direct read-only investigation fallback; unslop step restored to the upstream wording at the W3 reconcile, when unslop shipped."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/opening-a-pr.md",
-			"sha256": "002e3a8840bf86d0b62da01416957cc489b7d766372b795fa92f90bbb244304b",
+			"sha256": "115307865a705a15428f17711397c5ac2d0504fa8e4e4f4547874c87354ced9c",
 			"status": "adapted",
 			"sources": [
 				{
@@ -132,7 +132,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4."
+			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/pause-safely.md",
@@ -156,7 +156,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/perf-issue.md",
-			"sha256": "66720959ec6a4deb26d9ff5a0f8c31db10768e64c9f550b9a74a1ad5dcf85b37",
+			"sha256": "2e81982c1ad89bc8ca16bb064efff7c4ecb8af2c416a3d0c7ca7e48a09957254",
 			"status": "adapted",
 			"sources": [
 				{
@@ -172,11 +172,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the mantras and measurement story; benchmark-checklist planned W3 with an Explain the Number fallback; hillclimb playbook planned W4; bare implementer task:coding delegation; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+			"explanation": "Keeps the mantras and measurement story; benchmark-checklist routed as shipped (its W3 marker and Explain the Number fallback retired at the W3 reconcile); hillclimb playbook planned W4; bare implementer task:coding delegation; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role. W3 reconcile: the principle-sequence-verifiable-units marker is retired."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/prototype.md",
-			"sha256": "a70340530e6db71065ce8724ecb38850e76c85e9553187b275c21b5125a80d97",
+			"sha256": "0b0ff1341eb26ac765af0f6cb010a0e795f363a62be451a5d9711743f8acbc7f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -192,11 +192,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the throwaway decision method; uses session-provided search and screenshot tooling with an explicit unverified label when absent; keeps scratch work out of commits and project dependencies."
+			"explanation": "Keeps the throwaway decision method; uses session-provided search and screenshot tooling with an explicit unverified label when absent; keeps scratch work out of commits and project dependencies. W3 reconcile: the principle-exhaust-the-design-space marker is retired now that the leaf ships."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/refactoring.md",
-			"sha256": "ab22749718e58f212ee495c91fac2163597cb4dc984d65ed952f30c3384ff32d",
+			"sha256": "33a39de754e835eb957b51db5879d1240c14744627f2584a509b62d81bb242be",
 			"status": "adapted",
 			"sources": [
 				{
@@ -212,11 +212,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the pinned-contract method; normalizes principle references to full skill names marked planned W3; replaces control-skill smoke runs with project tooling; delegates to a bare implementer; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+			"explanation": "Keeps the pinned-contract method; normalizes principle references to full skill names (their planned W3 markers retired at the W3 reconcile); replaces control-skill smoke runs with project tooling; delegates to a bare implementer; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/runtime-forensics.md",
-			"sha256": "e0267fb6c3a6c27e1a83d89d4ac8bbc258bcd23bef84ac36bf7857ffa6a0c23c",
+			"sha256": "69d405b00a7828f82a3c04ac144d695d0bdc81c50e43aeb36f252a039de292f0",
 			"status": "adapted",
 			"sources": [
 				{
@@ -232,11 +232,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Replaces the control skill with session/project profiling tooling and limits live instrumentation to local processes the agent owns; principle reference marked planned W3."
+			"explanation": "Replaces the control skill with session/project profiling tooling and limits live instrumentation to local processes the agent owns; principle reference uses the full skill name; its planned W3 marker retired at the W3 reconcile."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/session-pickup.md",
-			"sha256": "8aa2af8f4903c1ffbdecade6ce6eeed66a1db6336e7dc1c00787f1b2a7708f44",
+			"sha256": "07dc4acf524276a924b5bf7bc9c436693abadcc63d2bfcd4cef24cd1b545972e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -252,11 +252,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Uses Pi session files ($PI_SESSION_FILE and the per-directory session store) instead of Cursor transcripts; recall planned W4; prior authority does not carry over."
+			"explanation": "Uses Pi session files ($PI_SESSION_FILE and the per-directory session store) instead of Cursor transcripts; recall planned W4; prior authority does not carry over. W3 reconcile: the two principle markers are retired now that the leaves ship."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/trace-forensics.md",
-			"sha256": "0bb481e5de78a056f2bc14264282d1f78849617fad616277c8c4e053234a8c7a",
+			"sha256": "04e40c54470f5f2afc0b58f56b3cc8fd0b0e3724e706994e878fd5761c1e5183",
 			"status": "adapted",
 			"sources": [
 				{
@@ -272,7 +272,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Unchanged method; principle reference normalized to its full skill name and marked planned W3."
+			"explanation": "Unchanged method; principle reference normalized to its full skill name; its planned W3 marker retired at the W3 reconcile."
 		},
 		{
 			"path": "skills/poteto-mode/references/authorization.md",
@@ -336,7 +336,7 @@
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",
-			"sha256": "01fa7b702e104052ee3dd971af0e3f9eae5ab8183f0369021de8f60fb5789ed5",
+			"sha256": "60bf8ac391677e07322d36e33fc66d0b61b3e80007c5b59b97d83e15d37e5f20",
 			"status": "adapted",
 			"sources": [
 				{
@@ -346,7 +346,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement."
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement. W3 reconcile: adds that /skill:no-comments launches its comment editor as a bare delegate, not a role."
 		}
 	],
 	"planned": [

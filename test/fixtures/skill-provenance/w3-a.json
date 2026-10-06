@@ -30,7 +30,7 @@
 		},
 		{
 			"path": "skills/blast-radius/SKILL.md",
-			"sha256": "0bc273fb5b5cecd3347cbc9de03dc12c21364aa02e4ce2bf07af435603a271a0",
+			"sha256": "647647cea5840789ffb6303556f7f863c8ec9f8e0d71c0fceebc57ec1d3cd506",
 			"status": "adapted",
 			"sources": [
 				{
@@ -40,7 +40,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference is marked planned W3 for the W3-A batch branch only; reconcile removes the marker when unslop ships."
+			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line."
 		},
 		{
 			"path": "skills/correct/SKILL.md",
