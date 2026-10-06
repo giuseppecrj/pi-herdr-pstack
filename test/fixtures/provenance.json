@@ -1,0 +1,22 @@
+{
+	"sourceRepository": "https://github.com/giuseppecrj/pi-herdr-agents",
+	"sourceCommit": "c2177dff835da44937e614e8a03d0405d442e848",
+	"files": [
+		{
+			"path": "agents/poteto.md",
+			"source": "agents/poteto.md",
+			"sourceSha256": "2a54298ef804777e5538d2aa7b9ee0b14186656186a1a936b6a4104068020629",
+			"sha256": "2a54298ef804777e5538d2aa7b9ee0b14186656186a1a936b6a4104068020629",
+			"status": "unchanged",
+			"replacements": []
+		},
+		{
+			"path": "LICENSE",
+			"source": "LICENSE",
+			"sourceSha256": "3818f785cb9e8941b27c7f13ebf233022394275b05539660dc6a6ffbd8bb5b4d",
+			"sha256": "3818f785cb9e8941b27c7f13ebf233022394275b05539660dc6a6ffbd8bb5b4d",
+			"status": "unchanged",
+			"replacements": []
+		}
+	]
+}
