@@ -13,7 +13,68 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/bro/SKILL.md",
+			"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "bro/SKILL.md",
+					"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "bro/SKILL.md",
+					"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Seven lines by design; it needs no adaptation."
+		},
+		{
+			"path": "skills/technical-writing/SKILL.md",
+			"sha256": "d3b9323c7654ba43c267b346fb196ce7e5e0915e668bdb8d3610927e281a6431",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "technical-writing/SKILL.md",
+					"sha256": "d3b9323c7654ba43c267b346fb196ce7e5e0915e668bdb8d3610927e281a6431",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "technical-writing/SKILL.md",
+					"sha256": "f5c512ffeec70bc4e0dee50f7bb4c26742e1be77967a6e8b15d1921e1c209ceb",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file. Mimir is primary because it adds the review checklist that Cursor lacks and already uses Pi's /skill:technical-writing syntax."
+		},
+		{
+			"path": "skills/unslop/SKILL.md",
+			"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "unslop/SKILL.md",
+					"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "unslop/SKILL.md",
+					"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Stable rule numbers with gaps are upstream ids that other skills cite, so they stay as written."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }
