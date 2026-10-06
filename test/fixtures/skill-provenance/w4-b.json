@@ -13,7 +13,68 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/show-me-your-work/SKILL.md",
+			"sha256": "86950439a00c4d5fada31663ab09483a21bf653042a579de326560228f73f907",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/SKILL.md",
+					"sha256": "c0b225a98ee0b62e7d94e5ebfcfc65bedad62f8b0dad7e94cbbe0de666c89a5f",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/SKILL.md",
+					"sha256": "bcff5f7f9fd23f92c12b251f9cd6b947e9485e1055cfacb6fdd9cae0789d7550",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. The transcript audit keeps $PI_SESSION_FILE and replaces the nonexistent recall tool with the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, never another project's sessions. A start row's evidence names the run's session file instead of an agent id. Committing the log also requires the task's commit policy (references/authorization.md). The short principle name becomes principle-encode-lessons-in-structure. The cross-model trail review becomes a fan-out.md diversity seat: one schema-valid bare subagent example with the delegation.md Reviewer prompt, an exact <provider>/<model-id> from another family, tools read, bash and fork false, given the log path and the parent's session file path; with no other family it runs same-family and is labelled context-isolated in the Attention line; a child keeping a trail launches no reviewer and leaves the review to its parent. Cursor's agent-transcripts wording and missing illustration sentence are not used."
+		},
+		{
+			"path": "skills/show-me-your-work/references/decision-log-template.tsv",
+			"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/references/decision-log-template.tsv",
+					"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/references/decision-log-template.tsv",
+					"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir header row, which also equals the Cursor file."
+		},
+		{
+			"path": "skills/show-me-your-work/scripts/log.sh",
+			"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "show-me-your-work/scripts/log.sh",
+					"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "show-me-your-work/scripts/log.sh",
+					"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir script (also equal to Cursor), git mode 100755 preserved; test/scripts.test.ts covers the header, tab and newline stripping and the formula prefix."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }
