@@ -31,12 +31,14 @@
     "full-suite-f146db2.log": "0eb8913ae657c9513d9c95d6943797cb309c686dc30c62915a5202f760d5e1da",
     "full-suite-4a3992d-run1.log": "3deccc97f5edece2e8ec0ccb1f8a775715766f3239afd589ff5b14f4b2369334",
     "case-a-4a3992d-rerun1.log": "a7ddf80605143a5662416a0f4b13ac5519d7ddf2ab7cf192294efda7ef5a0b1f",
-    "case-a-4a3992d-rerun2.log": "229cdf14de2bc55b966e9c896c30489ca14ae742442d199bbcf6e3bcb7727d13"
+    "case-a-4a3992d-rerun2.log": "229cdf14de2bc55b966e9c896c30489ca14ae742442d199bbcf6e3bcb7727d13",
+    "full-suite-fa483ea.log": "f92db42c256b43eb6fb291e508172ae494e47f7c9e69ff233c8452a0edef0352"
   },
   "reruns": {
     "3572b4f": "5/5 cancel cases, full suite 77/77 (72 existing + 5 cancel)",
     "37d8c62": "5/5 cancel cases, full suite 77/77; identity sidecar path exercised by the real child",
     "f146db2": "full integration 77/77 with the cancel test committed in-branch (no overlay)",
-    "4a3992d": "first full run 76/77: case (a) failed on \"outer pane wCP:pD must be untouched\"; that pane belonged to a concurrently finishing subagent worker that exited and closed its own pane. Two isolated reruns of case (a) passed. Classified as an over-broad test assertion (snapshots panes outside the fixture), not a cancel defect; test scope tightened in the next commit and the suite rerun."
+    "4a3992d": "first full run 76/77: case (a) failed on \"outer pane wCP:pD must be untouched\"; that pane belonged to a concurrently finishing subagent worker that exited and closed its own pane. Two isolated reruns of case (a) passed. Classified as an over-broad test assertion (snapshots panes outside the fixture), not a cancel defect; test scope tightened in the next commit and the suite rerun.",
+    "fa483ea": "full integration 77/77 after scoping the untouched-pane assertion to the runner workspace; final head of the cancel branch"
   }
 }
