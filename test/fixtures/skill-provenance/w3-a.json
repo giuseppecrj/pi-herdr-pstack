@@ -13,7 +13,274 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/correct/SKILL.md",
+			"sha256": "bf482bacc972b3f124a4af8bf9364b4b3e280cb5845e44c326ea4f4565e5c904",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "correct/SKILL.md",
+					"sha256": "bf482bacc972b3f124a4af8bf9364b4b3e280cb5845e44c326ea4f4565e5c904",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-boundary-discipline/SKILL.md",
+			"sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-boundary-discipline/SKILL.md",
+					"sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-encode-lessons-in-structure/SKILL.md",
+			"sha256": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-encode-lessons-in-structure/SKILL.md",
+					"sha256": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-exhaust-the-design-space/SKILL.md",
+			"sha256": "8583310d7297b7823d75494faa57b003564d436807febecdecbd8321abe5cf6e",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-exhaust-the-design-space/SKILL.md",
+					"sha256": "8583310d7297b7823d75494faa57b003564d436807febecdecbd8321abe5cf6e",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-experience-first/SKILL.md",
+			"sha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-experience-first/SKILL.md",
+					"sha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-fix-root-causes/SKILL.md",
+			"sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-fix-root-causes/SKILL.md",
+					"sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-foundational-thinking/SKILL.md",
+			"sha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-foundational-thinking/SKILL.md",
+					"sha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-guard-the-context-window/SKILL.md",
+			"sha256": "d2cef147862576e3d709b7afc149d85196245e8338b9c7eef337c95fba412b3e",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-guard-the-context-window/SKILL.md",
+					"sha256": "d2cef147862576e3d709b7afc149d85196245e8338b9c7eef337c95fba412b3e",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-laziness-protocol/SKILL.md",
+			"sha256": "9006579e9e3f33955d17569733db688ae65f22577dc3b21803d219a5a8445aff",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-laziness-protocol/SKILL.md",
+					"sha256": "9006579e9e3f33955d17569733db688ae65f22577dc3b21803d219a5a8445aff",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-make-operations-idempotent/SKILL.md",
+			"sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-make-operations-idempotent/SKILL.md",
+					"sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+			"sha256": "09978915a4a11990cf0a9a02d9c08cc59e0b7a04c5c24b83aa560fbe4146f75b",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+					"sha256": "09978915a4a11990cf0a9a02d9c08cc59e0b7a04c5c24b83aa560fbe4146f75b",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-model-the-domain/SKILL.md",
+			"sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-model-the-domain/SKILL.md",
+					"sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-never-block-on-the-human/SKILL.md",
+			"sha256": "f2764bb9338cbfc788c903cf4b9cd0a5f4042d3a04dd6d59cbd525d9beaadd0a",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-never-block-on-the-human/SKILL.md",
+					"sha256": "f2764bb9338cbfc788c903cf4b9cd0a5f4042d3a04dd6d59cbd525d9beaadd0a",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-outcome-oriented-execution/SKILL.md",
+			"sha256": "10eb91633aa570355ba4bb37088fcade2b22e498df7a58edc749e65bc5a78e2d",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-outcome-oriented-execution/SKILL.md",
+					"sha256": "10eb91633aa570355ba4bb37088fcade2b22e498df7a58edc749e65bc5a78e2d",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-redesign-from-first-principles/SKILL.md",
+			"sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-redesign-from-first-principles/SKILL.md",
+					"sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-separate-before-serializing-shared-state/SKILL.md",
+			"sha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-separate-before-serializing-shared-state/SKILL.md",
+					"sha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-subtract-before-you-add/SKILL.md",
+			"sha256": "a983a50e732c1ed315eba7aaf47a61329e31c4794eb1ab9d25d9945265b31e03",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-subtract-before-you-add/SKILL.md",
+					"sha256": "a983a50e732c1ed315eba7aaf47a61329e31c4794eb1ab9d25d9945265b31e03",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/principle-test-behavior-not-implementation/SKILL.md",
+			"sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "principle-test-behavior-not-implementation/SKILL.md",
+					"sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/tdd/SKILL.md",
+			"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "tdd/SKILL.md",
+					"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }
