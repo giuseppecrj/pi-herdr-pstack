@@ -29,6 +29,76 @@
 			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
 		},
 		{
+			"path": "skills/interrogate/references/code-quality-review.md",
+			"sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "interrogate/references/code-quality-review.md",
+					"sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/interrogate/references/lead-judgment.md",
+			"sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "interrogate/references/lead-judgment.md",
+					"sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/interrogate/references/reviewer-prompt.md",
+			"sha256": "e0598e254792b56de39bb16b1e6db559b03a522fdc54b98f942d254090920ae6",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "interrogate/references/reviewer-prompt.md",
+					"sha256": "e0598e254792b56de39bb16b1e6db559b03a522fdc54b98f942d254090920ae6",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/interrogate/references/rubric.md",
+			"sha256": "a85aa801abbaf14434f00579440abc0d8e2723227ba8bf57de7cca8d6e7d2f25",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "interrogate/references/rubric.md",
+					"sha256": "a85aa801abbaf14434f00579440abc0d8e2723227ba8bf57de7cca8d6e7d2f25",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/interrogate/SKILL.md",
+			"sha256": "e58d484c2fd3786305f210d554ae7cb3ac914032dcb0d881963250c0379f7cac",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "interrogate/SKILL.md",
+					"sha256": "a7f4bc0c55236e5fa9e8d8b0657e705066aa8982ae40b5d03b3adb06af84bf51",
+					"use": "primary"
+				}
+			],
+			"explanation": "The configured interrogate-reviewers models, the inherit-parent default-model table, agent: poteto-agent and the one parallel subagent call became one bare subagent call per reviewer in one turn citing ../poteto-mode/references/fan-out.md, each reviewer a diversity seat on an exact provider/model-id of a distinct family, with references/reviewer-prompt.md verbatim as systemPrompt (fork: false) and its placeholder values in task, and one json subagent example; the rejected-model fallback no longer opens a separate PR to update the default table or treats inherit-parent and auto aliases specially (edit classes 2-3)."
+		},
+		{
 			"path": "skills/swarm/SKILL.md",
 			"sha256": "dd8be91babd5c2a642f289cd4feb1e196bd071c847ca4f968d3d97f59926c0fb",
 			"status": "adapted",
