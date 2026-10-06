@@ -72,3 +72,5 @@ Reconcile fix round at `07ef8fd` (watcher exemptions in cancel rules, wall-clock
 
 Release CI scaffolding (user request): `release/ci` branches in pi-herdr-roles (`0365c4b`) and pi-herdr-pstack (`4e2067f`) mirror the host's publish workflow with one policy deviation (private or prerelease yields no release, not a failure; first stable may share the prerelease core; removing private at a stable version releases once). Cross-family review found one medium item, malformed previous prerelease identifiers accepted, fixed by the parent with regression cases in both repos. Checks: roles 46/46; pstack 125/125 with inputs, 80/4 skipped without. Both branches pushed and opened as PRs for the user's review; not merged. Publishing stays inert until the Wave 5 release commit (drop `private`, set a stable version).
 
+Wave 4 accepted by the user (2026-10-06): `wave4/integration` pushed, pstack PR #5 opened and merged (`e75395c`, 51 skills on main); worktree removed, branch retained. CI PRs (roles #2, pstack #4) remain open for the user; pstack #4 rebased onto the new main. Next: Wave 5 release decisions.
+
