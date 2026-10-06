@@ -316,7 +316,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/references/delegation.md",
-			"sha256": "440e0118ff1023de229f7b90d34ce2853262f63fd20d071e6ab53598d1fdf2a4",
+			"sha256": "1b9355c26f81b7429c120b3eba03dabd19c2de55dc4a21e64f97e3bc2915ec5c",
 			"status": "new",
 			"sources": [
 				{
@@ -332,7 +332,39 @@
 					"use": "derived"
 				}
 			],
-			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare. Parent edit after the Wave 3 real-child gate: step 7 notes that a bare systemPrompt is delivered to standalone children only, as a role block in the first message, and dropped for forks."
+			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare. Parent edit after the Wave 3 real-child gate: step 7 notes that a bare systemPrompt is delivered to standalone children only, as a role block in the first message, and dropped for forks. W4 C0: adds one pointer sentence to references/fan-out.md for multi-child steps and external waits."
+		},
+		{
+			"path": "skills/poteto-mode/references/fan-out.md",
+			"sha256": "e469b37621c787660300d7bfc478bceafcce3e34bdc59c0f1c951e0733c012e8",
+			"status": "new",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "2d7ebdbbb50dee9f73e8daad29325ea94c3b42a42c089b6416ab9bb5efa3b2ee",
+					"use": "derived"
+				},
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/orchestrate.md",
+					"sha256": "82286fede5100d9e7f46a9b06f732399fcbde339fd3098247c56d423c082c2f1",
+					"use": "derived"
+				},
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/babysit.md",
+					"sha256": "b62ac5cbab0f8a8623ee053f874017d9edfe6322d5c33015e40c4e13e51f4179",
+					"use": "derived"
+				},
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/autopilot-full.md",
+					"sha256": "1386de1f809ddd3e57684070fef9e6350ce61e6ed1f8f34b08ef365de4de13b2",
+					"use": "derived"
+				}
+			],
+			"explanation": "New W4 C0 methodology file (docs/plans/14-wave4-contract.md, 'What an honest Pi port means', items 1-7). Freezes the shared fan-out protocol that the W4 skills and playbooks cite instead of restating: parent-only fan-out with a visible checklist and synthesis after every terminal result; fixed prompts in systemPrompt and filled templates in task with the delegation.md prompts, always fork:false; task-category models for ordinary seats and exact distinct-family picks for diversity seats with a disclosed same-family fallback; one subagent_cancel then one fresh replacement for stalls, never polling; worktrees from committed HEAD for writers; the one-shot watcher child as the only wait primitive; caller_ping at authorization boundaries and cancel-all on stop or hold. Derived from the upstream hub's Subagents rules and the orchestrate, babysit and autopilot-full playbooks' fan-out, wait and stop behavior, rewritten for the public pi-herdr-agents surface; no upstream text is copied."
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",

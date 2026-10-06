@@ -1,6 +1,6 @@
 # Delegation
 
-How poteto-mode delegates through pi-herdr-agents' `subagent` tool. You, the parent, own the plan, every child's brief, the synthesis, integration and cleanup. Paths here are relative to the poteto-mode skill directory.
+How poteto-mode delegates through pi-herdr-agents' `subagent` tool. You, the parent, own the plan, every child's brief, the synthesis, integration and cleanup. Paths here are relative to the poteto-mode skill directory. When one step launches several children at once, or must wait on something outside the session, also follow `references/fan-out.md`.
 
 ## Who to launch
 

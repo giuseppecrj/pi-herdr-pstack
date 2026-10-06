@@ -1,0 +1,5 @@
+{
+	"schemaVersion": 1,
+	"description": "Exact forward references from the W4-B skills: show-me-your-work, recall, automate-me, create-verification-skill, maintain-verification-skill and make-bot-ui to rows or playbooks not shipped yet. Sources must be files under skills/<W4-B row>/. Owned by the W4-B writer; retired in the W4 reconcile commit, except W5 deferrals. See test/skill-content.test.ts for the rules.",
+	"exceptions": []
+}

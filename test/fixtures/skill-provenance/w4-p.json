@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"description": "Per-file content provenance for the 11 W4 poteto-mode playbooks (skills/poteto-mode/playbooks/<name>.md) and skills/poteto-mode/scripts/check-plan.mjs. Owned by the W4-P writer; the rest of poteto-mode stays in w2.json; see test/skill-content.test.ts for the rules.",
+	"sources": {
+		"mimir": {
+			"repository": "https://github.com/casualjim/pi-mimir",
+			"commit": "f07dd981f62c9c994a5d043ede67d6c63c721454",
+			"root": "packages/pi-pstack/skills"
+		},
+		"cursor": {
+			"repository": "https://github.com/cursor/plugins",
+			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"root": "pstack/skills"
+		}
+	},
+	"files": [],
+	"planned": [],
+	"excluded": []
+}

@@ -1,0 +1,5 @@
+{
+	"schemaVersion": 1,
+	"description": "Exact forward references from the 11 W4 poteto-mode playbooks (skills/poteto-mode/playbooks/<name>.md) and skills/poteto-mode/scripts/check-plan.mjs to rows or playbooks not shipped yet. Sources must be the 11 W4 playbooks and scripts/check-plan.mjs. Owned by the W4-P writer; retired in the W4 reconcile commit, except W5 deferrals. See test/skill-content.test.ts for the rules.",
+	"exceptions": []
+}
