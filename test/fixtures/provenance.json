@@ -7,8 +7,10 @@
 			"source": "agents/poteto.md",
 			"sourceSha256": "2a54298ef804777e5538d2aa7b9ee0b14186656186a1a936b6a4104068020629",
 			"sha256": "2a54298ef804777e5538d2aa7b9ee0b14186656186a1a936b6a4104068020629",
-			"status": "unchanged",
-			"replacements": []
+			"status": "removed",
+			"replacements": [],
+			"removedIn": "W2",
+			"reason": "The user removed the named poteto role from the Wave 2 target (docs/plans/09-wave2-no-poteto-role.md). poteto-mode remains; delegates are deliberately bare. The W1 move and its hashes stay recorded."
 		},
 		{
 			"path": "LICENSE",

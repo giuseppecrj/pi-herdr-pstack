@@ -3,6 +3,7 @@ import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
+	readFileSync,
 	rmSync,
 	writeFileSync,
 } from "node:fs";
@@ -15,8 +16,13 @@ export const PACK_ROOT = resolve(
 	"..",
 	"..",
 );
-const FAUX_EXTENSION = join(PACK_ROOT, "test", "fixtures", "faux-provider.ts");
-const LOCAL_PI_CLI = join(
+export const FAUX_EXTENSION = join(
+	PACK_ROOT,
+	"test",
+	"fixtures",
+	"faux-provider.ts",
+);
+export const LOCAL_PI_CLI = join(
 	PACK_ROOT,
 	"node_modules",
 	"@earendil-works",
@@ -25,7 +31,7 @@ const LOCAL_PI_CLI = join(
 	"bundle",
 	"cli.js",
 );
-const BUILTIN_EXTENSIONS = [
+export const BUILTIN_EXTENSIONS = [
 	"-builtin:mcp",
 	"-builtin:llama.cpp",
 	"-builtin:codemode",
@@ -50,9 +56,25 @@ export function piCommand(): string[] {
 	return [process.execPath, LOCAL_PI_CLI];
 }
 
+export type PackageSource =
+	| string
+	| { source: string; [filter: string]: unknown };
+
 export type IsolatedPiOptions = {
-	packages: string[];
+	packages: PackageSource[];
 	herdrAgentsConfig?: string;
+	/** Reuse another instance's test-owned root, e.g. to resume its sessions. */
+	root?: string;
+	/** Persist sessions under the agent directory instead of `--no-session`. */
+	persist?: boolean;
+	/** Open or create this session file (implies persistence). */
+	sessionFile?: string;
+	/** Extra Pi settings merged over the isolated defaults. */
+	settings?: Record<string, unknown>;
+	/** Extra environment, e.g. PI_SUBAGENT_ID. */
+	env?: Record<string, string>;
+	/** Extra CLI arguments. */
+	args?: string[];
 };
 
 /**
@@ -62,24 +84,37 @@ export type IsolatedPiOptions = {
 export class IsolatedPi {
 	readonly root: string;
 	readonly agentDir: string;
+	readonly sessionDir: string;
+	/** JSON lines written by the faux provider fixture for each model request. */
+	readonly requestLog: string;
 	readonly records: RpcRecord[] = [];
 	stderr = "";
 	private readonly child: ChildProcessWithoutNullStreams;
 	private nextId = 0;
 	private buffer = "";
 	private waiters: Array<() => void> = [];
+	private readonly ownsRoot: boolean;
 
 	constructor(options: IsolatedPiOptions) {
-		this.root = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-test-"));
+		this.ownsRoot = options.root === undefined;
+		this.root =
+			options.root ?? mkdtempSync(join(tmpdir(), "pi-herdr-pstack-test-"));
 		this.agentDir = join(this.root, "agent");
+		this.sessionDir = join(this.agentDir, "sessions");
 		const home = join(this.root, "home");
 		const work = join(this.root, "work");
-		for (const dir of [this.agentDir, home, work]) mkdirSync(dir);
+		for (const dir of [this.agentDir, home, work])
+			mkdirSync(dir, { recursive: true });
+		this.requestLog = join(
+			this.root,
+			`requests-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`,
+		);
 		writeFileSync(
 			join(this.agentDir, "settings.json"),
 			JSON.stringify({
 				packages: options.packages,
 				extensions: BUILTIN_EXTENSIONS,
+				...options.settings,
 			}),
 		);
 		if (options.herdrAgentsConfig !== undefined) {
@@ -100,10 +135,17 @@ export class IsolatedPi {
 			PI_OFFLINE: "1",
 			PI_SKIP_VERSION_CHECK: "1",
 			PI_TELEMETRY: "0",
+			PSTACK_TEST_LOG: this.requestLog,
 		};
 		for (const key of Object.keys(env))
 			if (INHERITED_ENV.test(key) && key !== "PI_CODING_AGENT_DIR")
 				delete env[key];
+		Object.assign(env, options.env);
+		const sessionArgs = options.sessionFile
+			? ["--session-dir", this.sessionDir, "--session", options.sessionFile]
+			: options.persist
+				? ["--session-dir", this.sessionDir]
+				: ["--no-session"];
 		const [command, ...prefix] = piCommand();
 		this.child = spawn(
 			command,
@@ -111,7 +153,7 @@ export class IsolatedPi {
 				...prefix,
 				"--mode",
 				"rpc",
-				"--no-session",
+				...sessionArgs,
 				"--offline",
 				"-e",
 				FAUX_EXTENSION,
@@ -122,6 +164,7 @@ export class IsolatedPi {
 				"faux",
 				"--model",
 				"faux-1",
+				...(options.args ?? []),
 			],
 			{ cwd: work, env, stdio: ["pipe", "pipe", "pipe"] },
 		);
@@ -181,7 +224,52 @@ export class IsolatedPi {
 		);
 	}
 
-	async close() {
+	/** Sends a command without waiting for its response; an explicit id is kept. */
+	send(command: RpcRecord): string {
+		const id =
+			typeof command.id === "string" ? command.id : `test-${this.nextId++}`;
+		this.child.stdin.write(`${JSON.stringify({ ...command, id })}\n`);
+		return id;
+	}
+
+	/** Model requests the faux provider has seen so far. */
+	requests(): Array<{ systemPrompt: string; user: string }> {
+		return readRequestLog(this.requestLog);
+	}
+
+	/** Prompts and waits until the run it starts (if any) settles. */
+	async prompt(message: string): Promise<RpcRecord[]> {
+		const from = this.records.length;
+		const response = await this.request({ type: "prompt", message });
+		if (response.success !== true)
+			throw new Error(`prompt failed: ${JSON.stringify(response)}`);
+		await this.settled(from);
+		return this.records.slice(from);
+	}
+
+	/** Waits briefly for a run to start after `from`, then for it to settle. */
+	async settled(from: number): Promise<void> {
+		const started = await this.waitFor(
+			(record) => record.type === "agent_start",
+			from,
+			750,
+		).catch(() => undefined);
+		if (started)
+			await this.waitFor((record) => record.type === "agent_settled", from);
+	}
+
+	/** Notification texts emitted after `from`. */
+	notifications(from = 0): string[] {
+		return this.records
+			.slice(from)
+			.filter(
+				(record) =>
+					record.type === "extension_ui_request" && record.method === "notify",
+			)
+			.map((record) => String(record.message));
+	}
+
+	async close(options: { keepRoot?: boolean } = {}) {
 		this.child.stdin.end();
 		if (this.child.exitCode === null)
 			await new Promise<void>((done) => {
@@ -193,8 +281,25 @@ export class IsolatedPi {
 					done();
 				});
 			});
-		rmSync(this.root, { recursive: true, force: true });
+		if (this.ownsRoot && !options.keepRoot)
+			rmSync(this.root, { recursive: true, force: true });
 	}
+
+	/** Removes a root kept by `close({ keepRoot: true })`. */
+	static removeRoot(root: string) {
+		rmSync(root, { recursive: true, force: true });
+	}
+}
+
+export type RequestLogEntry = { systemPrompt: string; user: string };
+
+/** Entries the faux provider fixture appended to its PSTACK_TEST_LOG file. */
+export function readRequestLog(path: string): RequestLogEntry[] {
+	if (!existsSync(path)) return [];
+	return readFileSync(path, "utf8")
+		.split("\n")
+		.filter(Boolean)
+		.map((line) => JSON.parse(line));
 }
 
 /** Optional real host package root for combined-host checks. */

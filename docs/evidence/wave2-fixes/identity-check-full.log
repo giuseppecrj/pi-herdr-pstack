@@ -1,0 +1,189 @@
+
+> pi-herdr-pstack@0.1.0-experimental.0 check
+> npm run typecheck && npm run lint && npm run format:check && npm test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 lint
+> oxlint pi-extension test
+
+
+> pi-herdr-pstack@0.1.0-experimental.0 format:check
+> biome format pi-extension test
+
+Checked 19 files in 11ms. No fixes applied.
+
+> pi-herdr-pstack@0.1.0-experimental.0 test
+> node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts
+
+▶ Wave 1 moved files
+  ✔ keeps unchanged files byte for byte and records the poteto role as removed in W2 (1.0626ms)
+  ✔ reproduces each recorded source hash from the source commit (6.516371ms)
+✔ Wave 1 moved files (8.295025ms)
+▶ Wave 2 runtime scope
+  ✔ ships the mode and setup modules only, with no role registration (0.337615ms)
+  ✔ imports nothing private from pi-herdr-agents and writes no files itself (0.566674ms)
+✔ Wave 2 runtime scope (1.105754ms)
+▶ package manifest
+  ✔ is a private experimental Pi package with host peers (0.286777ms)
+  ✔ packs the extension, skills and notices without roles, plans or development files (184.564489ms)
+✔ package manifest (185.06453ms)
+▶ extension in a real SDK session
+  ✔ registers its two commands and contributes no role directory, across reloads (156.997949ms)
+✔ extension in a real SDK session (157.635972ms)
+▶ mode record and reducer
+  ✔ accepts only the exact version 1 shape (1.023579ms)
+  ✔ follows the latest valid record on the branch and fails closed on invalid ones (0.213192ms)
+  ✔ keeps a user fork's copied records but ignores them in a subagent (0.137581ms)
+  ✔ parses the documented command forms (0.13628ms)
+✔ mode record and reducer (2.346193ms)
+▶ /poteto-mode in the real Pi CLI
+  ✔ registers both commands and skills from this package (191.621215ms)
+  ✔ enables idempotently, adds a short section with the hub path, and turns off for the next prompt (3956.503947ms)
+  ✔ treats /skill:poteto-mode as a one-time load, never sticky (187.31128ms)
+  ✔ sends the task form as one literal full-skill prompt ({}) (182.60514ms)
+  ✔ sends the task form as one literal full-skill prompt ({"enableSkillCommands":false}) (184.084413ms)
+  ✔ reports memory-only persistence without a session file (1674.611106ms)
+  ✔ refuses the task form while busy and changes only the next prompt mid-turn (3203.775811ms)
+  ✔ diagnoses a filtered or shadowed skill instead of enabling (3351.079419ms)
+✔ /poteto-mode in the real Pi CLI (12932.314187ms)
+▶ mode across Pi session transitions
+  ✔ follows tree navigation, compaction, clone, fork, new session and resume (7752.098084ms)
+  ✔ ignores a parent's copied record in a subagent, keeps the child's own across resume (4459.448167ms)
+✔ mode across Pi session transitions (12211.788071ms)
+▶ installed pack without pi-herdr-agents
+  ✔ registers only its two commands and two skills, without host diagnostics (181.631091ms)
+✔ installed pack without pi-herdr-agents (182.216656ms)
+▶ installed pack with a real role-free pi-herdr-agents host
+  ✔ lists no roles, since pstack contributes none, with no collisions or retired commands (203.979359ms)
+  ✔ applies /setup-pstack only after the RPC dialog is accepted (960.337859ms)
+  ✔ applies /setup-pstack only after the RPC dialog is declined (956.581625ms)
+  ✔ coexists with pi-herdr-roles without role or command collisions (204.119094ms)
+✔ installed pack with a real role-free pi-herdr-agents host (2325.364045ms)
+﹣ legacy bundled host characterization (0.042595ms) # set PI_HERDR_AGENTS_LEGACY_HOST=<pre-extraction host root> to characterize legacy hosts
+▶ writer contract detection from the public schema
+  ✔ recognizes the conditional writer and treats anything else as report-only (1.610091ms)
+✔ writer contract detection from the public schema (2.114203ms)
+▶ one-shot approval matching
+  ✔ requires the exact direct parent, exact payload, unchanged file and an unused approval (0.735209ms)
+✔ one-shot approval matching (0.817842ms)
+▶ config snapshot
+  ✔ revisions exact bytes, so whitespace and unrelated edits are changes (0.188588ms)
+  ✔ rejects every models shape pi-herdr-agents rejects (0.660349ms)
+  ✔ names only fixed fields and allowlisted categories, never keys from the file (0.188664ms)
+  ✔ fails closed on a relative agent directory (0.094173ms)
+  ✔ compares preserved settings without task fields, key order or an absent models object (0.124898ms)
+  ✔ deep-freezes nested arrays (0.25848ms)
+✔ config snapshot (1.748323ms)
+▶ proposal checks and approval text
+  ✔ names why a reference cannot be written (0.113542ms)
+  ✔ shows the before/after table, metadata, shared effect and exact JSON (0.214804ms)
+✔ proposal checks and approval text (0.401245ms)
+▶ setup run identity in the session branch
+  ✔ reads only pstack's own entries, and only the latest opened run (0.219935ms)
+  ✔ blocks raw writes in a running turn the branch records as an unsettled setup run (0.417329ms)
+  ✔ settles a started run on settlement, idle start, tree navigation and the next new run (0.287231ms)
+  ✔ leaves an opened run for the next new run, which it protects without apply authority (0.193732ms)
+  ✔ remembers apply calls this instance saw, without the branch lookup (0.084028ms)
+✔ setup run identity in the session branch (1.324992ms)
+▶ setup report (no write path)
+  ✔ reports a missing host and stays report-only, even for a change request (56.7052ms)
+  ✔ keeps an older unconditional writer report-only (29.495872ms)
+  ✔ distinguishes unusable config files and never shows their contents (97.574883ms)
+  ✔ shows only the task, metadata and default fields of the config, never agent overrides (14.201854ms)
+  ✔ never echoes keys or malformed values from the config, even multiline ones (115.764902ms)
+  ✔ is report-only in a subagent and without dialog support (33.831446ms)
+  ✔ refuses the apply tool outside a flow, even if it is made visible (27.428551ms)
+✔ setup report (no write path) (375.972887ms)
+▶ setup writes through the real conditional host writer
+  ✔ shows the complete payload, writes only after approval, verifies the saved file (44.192607ms)
+  ✔ discloses default seeding and creates a missing file only after approval (26.984452ms)
+  ✔ writes nothing when the dialog is declined or times out, and closes the flow (29.510844ms)
+  ✔ writes nothing when the turn is aborted during the dialog (29.185505ms)
+  ✔ refuses when the config, flow or session changes while the dialog is open (60.273417ms)
+  ✔ lets the real conditional writer refuse a config change made by a later hook (29.502532ms)
+  ✔ blocks argument mutation by earlier hooks and freezes input against later ones (81.759631ms)
+  ✔ blocks raw and relayed writer calls during setup, but not outside it (38.202052ms)
+  ✔ rejects unauthenticated, alias, duplicate, padded and unknown references before any dialog (38.858323ms)
+  ✔ does not silently drop or rewrite a retained category it cannot write (27.165478ms)
+  ✔ reports no change without a dialog (28.134471ms)
+  ✔ reports a busy writer as a failure without retrying (25.014556ms)
+  ✔ does not trust a success claim that the saved file contradicts (29.483822ms)
+  ✔ stays report-only when the writer is inactive (26.987113ms)
+✔ setup writes through the real conditional host writer (516.132125ms)
+▶ setup run protection lasts until the run settles
+  ✔ blocks raw and relayed writes after the apply call is declined (58.328197ms)
+  ✔ blocks raw and relayed writes after the apply call is approved and saved (36.665692ms)
+  ✔ blocks raw and relayed writes after the apply call is approved but the writer failed (35.020007ms)
+  ✔ blocks raw and relayed writes after the apply call is cancelled by a report command during the dialog (34.456388ms)
+  ✔ blocks a nested write whose flow is revoked between approval and tool_call (30.728177ms)
+  ✔ blocks a nested write when Pi reloads between approval and tool_call (49.064723ms)
+  ✔ keeps raw and relayed writes blocked in the same run after a reload during the approved nested dispatch (45.246899ms)
+  ✔ keeps raw and relayed writes blocked in the same run after a reload after a declined apply (44.57321ms)
+  ✔ keeps raw and relayed writes blocked in the same run after a reload after a successful apply (49.177531ms)
+  ✔ writes nothing when the session is replaced while approval is pending (62.422572ms)
+  ✔ blocks the nested write when the session is replaced between approval and tool_call (45.186761ms)
+  ✔ writes nothing when Pi shuts down while approval is pending (47.889885ms)
+✔ setup run protection lasts until the run settles (539.485787ms)
+▶ setup reports the saved file after a dispatched write
+  ✔ does not claim nothing was written when a later tool_result hook marks the completed write as an error (28.44399ms)
+  ✔ does not claim nothing was written when Pi fails to process the writer's result (29.981236ms)
+  ✔ does not claim nothing was written when reading the result throws (27.516371ms)
+  ✔ does not claim nothing was written when executeTool rejects after the write (23.692673ms)
+  ✔ reports uncertainty when the file changed but does not match the approval (26.618355ms)
+✔ setup reports the saved file after a dispatched write (136.568006ms)
+▶ setup run identity does not depend on prompt text
+  ✔ keeps a whitespace-normalized setup run protected and able to apply (44.63749ms)
+  ✔ fails closed for a setup run whose run id an input handler removed (28.2109ms)
+  ✔ settles a run left open by tree navigation, so an unrelated run can write (27.973602ms)
+✔ setup run identity does not depend on prompt text (101.036955ms)
+▶ an unstarted setup reservation
+  ✔ fails closed for the next new run once when an input handler consumed the setup message (29.182527ms)
+  ✔ does not block a later run triggered by a custom message (26.381356ms)
+  ✔ protects a setup prompt that starts after another run claimed its reservation (30.835251ms)
+  ✔ still protects a setup prompt that an input handler transformed (28.937074ms)
+✔ an unstarted setup reservation (115.611634ms)
+▶ W2 methodology skill tree
+  ✔ ships exactly the frozen entry contract: two skills, three references, twelve base playbooks (1.002107ms)
+  ✔ loads through the tested Pi skill loader as exactly two skills (4.652833ms)
+  ✔ matches the canonical inventory's W2 rows and partition (0.154001ms)
+  ✔ has substantive content, not placeholders (0.51223ms)
+✔ W2 methodology skill tree (6.951986ms)
+▶ references and forward exceptions
+  ✔ enumerates every unresolved reference as an exact owned-wave tuple (0.551861ms)
+  ✔ marks each forward reference as planned on the line that makes it (0.196766ms)
+  ✔ names principle skills by their full inventory names (4.002256ms)
+  ✔ keeps all 24 principle summaries in the hub, each marked planned W3 (0.523747ms)
+  ✔ routes every upstream playbook from the hub, W4 rows visibly planned (0.389508ms)
+✔ references and forward exceptions (5.908791ms)
+▶ delegation contract
+  ✔ gives runnable examples only the public single-call parameters (0.326185ms)
+  ✔ names no pstack role: the retired poteto role is neither provided nor required (0.472986ms)
+  ✔ names no other role, obsolete runner API, alias or platform tool (1.213232ms)
+  ✔ pins the subagent schema and task categories of the tested host (7.467237ms)
+✔ delegation contract (9.627731ms)
+▶ authorization boundaries
+  ✔ never lets activation, autonomy or a playbook step grant permission (0.153653ms)
+  ✔ leaves configuration writes to the setup extension's approved flow (0.171996ms)
+✔ authorization boundaries (0.403732ms)
+▶ model precedence
+  ✔ says an explicit model argument, including task:<category>, wins over defaults (0.381497ms)
+✔ model precedence (0.425426ms)
+▶ methodology provenance
+  ✔ records the inventory's pinned sources (0.082578ms)
+  ✔ hashes every shipped methodology file (0.599768ms)
+  ✔ accounts for each upstream source file of both W2 rows exactly once (0.282453ms)
+  ✔ reproduces every recorded source hash from the pinned commits (169.144198ms)
+  ✔ preserves both upstream MIT notices and documents the W2 adaptation (0.261545ms)
+✔ methodology provenance (170.555008ms)
+ℹ tests 107
+ℹ suites 27
+ℹ pass 107
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31364.79203

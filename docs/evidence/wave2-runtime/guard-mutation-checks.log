@@ -1,0 +1,39 @@
+== M1 no input/event freeze
+  ✖ blocks argument mutation by earlier hooks and freezes input against later ones (51.31692ms)
+ℹ pass 28
+ℹ fail 1
+== M2 no payload comparison
+  ✖ requires the exact direct parent, exact payload, unchanged file and an unused approval (0.822053ms)
+  ✖ blocks argument mutation by earlier hooks and freezes input against later ones (26.879768ms)
+ℹ pass 27
+ℹ fail 2
+== M3 prefix parent matching
+  ✖ requires the exact direct parent, exact payload, unchanged file and an unused approval (0.774322ms)
+ℹ pass 28
+ℹ fail 1
+== M4 unconditional payload
+  ✖ shows the complete payload, writes only after approval, verifies the saved file (45.457491ms)
+  ✖ discloses default seeding and creates a missing file only after approval (23.687857ms)
+  ✖ refuses when the config, flow or session changes while the dialog is open (55.934418ms)
+  ✖ lets the real conditional writer refuse a config change made by a later hook (37.521817ms)
+  ✖ blocks argument mutation by earlier hooks and freezes input against later ones (33.881248ms)
+  ✖ reports a busy writer as a failure without retrying (19.469889ms)
+  ✖ does not trust a success claim that the saved file contradicts (27.090675ms)
+ℹ pass 22
+ℹ fail 7
+== M5 raw writer allowed during flow
+  ✖ blocks raw and relayed writer calls during setup, but not outside it (25.536714ms)
+ℹ pass 28
+ℹ fail 1
+== M6 no saved-file verification
+  ✖ does not trust a success claim that the saved file contradicts (24.910779ms)
+ℹ pass 28
+ℹ fail 1
+== M7 no post-dialog revision recheck
+  ✖ refuses when the config, flow or session changes while the dialog is open (28.613816ms)
+ℹ pass 28
+ℹ fail 1
+== M8 reusable approval
+  ✖ requires the exact direct parent, exact payload, unchanged file and an unused approval (0.78323ms)
+ℹ pass 28
+ℹ fail 1

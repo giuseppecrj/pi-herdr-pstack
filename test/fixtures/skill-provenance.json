@@ -1,0 +1,573 @@
+{
+	"schemaVersion": 1,
+	"description": "Per-file content provenance for the W2 methodology skills, separate from the W1 moved-role fixture test/fixtures/provenance.json. Source hashes are SHA-256 of the blob at the pinned commit under the inventory source root.",
+	"sources": {
+		"mimir": {
+			"repository": "https://github.com/casualjim/pi-mimir",
+			"commit": "f07dd981f62c9c994a5d043ede67d6c63c721454",
+			"root": "packages/pi-pstack/skills"
+		},
+		"cursor": {
+			"repository": "https://github.com/cursor/plugins",
+			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"root": "pstack/skills"
+		}
+	},
+	"files": [
+		{
+			"path": "skills/poteto-mode/SKILL.md",
+			"sha256": "db68a4a9ca578f285991bbb65a415915a91b26482b7b142a52797f0f6fbd76cb",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "2d7ebdbbb50dee9f73e8daad29325ea94c3b42a42c089b6416ab9bb5efa3b2ee",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"use": "context"
+				}
+			],
+			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries (each marked planned W3), Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/autonomous-run.md",
+			"sha256": "212e8bd1910e9482e692d38f6041fd788d68eded338efb2b4ce46dac9bcfa780",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/autonomous-run.md",
+					"sha256": "0996720bacb659a7156f12547ad4b2ada7cfc56a762f6b08f00c0da3c42e5826",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/autonomous-run.md",
+					"sha256": "15e54ad3ac92565613980772d8708de6e19cc4690bfd4bb3fb8836522407377b",
+					"use": "context"
+				}
+			],
+			"explanation": "Replaces /loop with automatic subagent delivery and a bounded bare watcher child; states that autonomy is not external-action authority; show-me-your-work planned W4 with a local decision-log fallback."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/bug-fix.md",
+			"sha256": "7a941e6f1debb81786c63f8269a926996cde225e525dc2a4524abb32b2982c49",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/bug-fix.md",
+					"sha256": "c93b9ee75ef4dd319628d8409ad012e2ae17d3b49345030b68c79198bdd855de",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/bug-fix.md",
+					"sha256": "018bbc146ae19145caa6c7e70591fee081b64447dda1c1c4b681c9974d928b13",
+					"use": "context"
+				}
+			],
+			"explanation": "Replaces control-skill, /loop and model-default wording with project tooling, an explicit stop-condition loop and bare implementer task:coding delegation; marks how/why/architect/tdd planned with manual equivalents; commits and PR gated by task authorization. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/feature.md",
+			"sha256": "2e7654bebd069f0ad8f125259a7c4496625d332688246f884a02da4e88d18579",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/feature.md",
+					"sha256": "ebae493c805cc6ef37ea0fead8e13947f3d1b196ac35af37d3a8c2f07588accd",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/feature.md",
+					"sha256": "3a62cc4a8cbcf144bb9dd05f05420a15be0d38b784d3b141bb730a5852f50a62",
+					"use": "context"
+				}
+			],
+			"explanation": "Keeps the throughput checkpoint and mandatory delegation; delegates to a bare implementer with task categories; marks how/architect/arena/interrogate planned with safe manual equivalents; leaf delegates own the diff when further delegation is not authorized; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/investigation.md",
+			"sha256": "b01269764cf6968d8b9818a57a95a963bd48cd5ca56fba17a476952963898ee8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/investigation.md",
+					"sha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/investigation.md",
+					"sha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46",
+					"use": "context"
+				}
+			],
+			"explanation": "Routes how/why to planned W4 with a direct read-only investigation fallback; unslop marked planned W3 with the hub reply rules as fallback."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/opening-a-pr.md",
+			"sha256": "002e3a8840bf86d0b62da01416957cc489b7d766372b795fa92f90bbb244304b",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/opening-a-pr.md",
+					"sha256": "56ebf8901b5d3271b901ce9d7428227ba30419f582010eaf665a4a0d361bcef7",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/opening-a-pr.md",
+					"sha256": "ab40de7163c1c6e274f46ee559b2e53ef45673703f601f13f4931c199e6fb90f",
+					"use": "context"
+				}
+			],
+			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/pause-safely.md",
+			"sha256": "30a84b3f6a90f9d90daaa64a72e9709829ef739228a5144d2407948e3b1368eb",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/pause-safely.md",
+					"sha256": "77968cfe5f4a71a8cd33e0ae8ffcdbd88dd693a212c240457773e6c40c96c21d",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/pause-safely.md",
+					"sha256": "77968cfe5f4a71a8cd33e0ae8ffcdbd88dd693a212c240457773e6c40c96c21d",
+					"use": "context"
+				}
+			],
+			"explanation": "Stops launched children with recorded state and retained worktrees; wip commit only when the commit policy allows; no push or PR to pause unless already authorized."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/perf-issue.md",
+			"sha256": "66720959ec6a4deb26d9ff5a0f8c31db10768e64c9f550b9a74a1ad5dcf85b37",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/perf-issue.md",
+					"sha256": "ac82cb3043677729d62f4f2110546e893353bab9fc5f729fdf9891945795f8d9",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/perf-issue.md",
+					"sha256": "2b88ad0f880e4d4d755ac19fe52414d6631d6baa816d060f53cf0a7429d7e14a",
+					"use": "context"
+				}
+			],
+			"explanation": "Keeps the mantras and measurement story; benchmark-checklist planned W3 with an Explain the Number fallback; hillclimb playbook planned W4; bare implementer task:coding delegation; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/prototype.md",
+			"sha256": "a70340530e6db71065ce8724ecb38850e76c85e9553187b275c21b5125a80d97",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/prototype.md",
+					"sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/prototype.md",
+					"sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+					"use": "context"
+				}
+			],
+			"explanation": "Keeps the throwaway decision method; uses session-provided search and screenshot tooling with an explicit unverified label when absent; keeps scratch work out of commits and project dependencies."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/refactoring.md",
+			"sha256": "ab22749718e58f212ee495c91fac2163597cb4dc984d65ed952f30c3384ff32d",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/refactoring.md",
+					"sha256": "07aa5495b00c1711318557929bba360cad7b77b1e4f56e52d21d51936e3b1f6f",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/refactoring.md",
+					"sha256": "50f4f7d3d301551f8b8a57c3303c99958c5ca630ae0d0051823b6987c0eb5b96",
+					"use": "context"
+				}
+			],
+			"explanation": "Keeps the pinned-contract method; normalizes principle references to full skill names marked planned W3; replaces control-skill smoke runs with project tooling; delegates to a bare implementer; PR only when authorized. W2 no-role amendment: implementation goes to a bare implementer instead of the retired poteto role."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/runtime-forensics.md",
+			"sha256": "e0267fb6c3a6c27e1a83d89d4ac8bbc258bcd23bef84ac36bf7857ffa6a0c23c",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/runtime-forensics.md",
+					"sha256": "594f02c40c243a346e1f57b688ecf2ed5e882f21b3d24ed2204d1ac6f1c24a8a",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/runtime-forensics.md",
+					"sha256": "594f02c40c243a346e1f57b688ecf2ed5e882f21b3d24ed2204d1ac6f1c24a8a",
+					"use": "context"
+				}
+			],
+			"explanation": "Replaces the control skill with session/project profiling tooling and limits live instrumentation to local processes the agent owns; principle reference marked planned W3."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/session-pickup.md",
+			"sha256": "8aa2af8f4903c1ffbdecade6ce6eeed66a1db6336e7dc1c00787f1b2a7708f44",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/session-pickup.md",
+					"sha256": "53a030b3bbd217b5ce1b1a7d0cfc32369d8d0935c58ae26fa2a6f2753d20067f",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/session-pickup.md",
+					"sha256": "1604fb463f7c7410d43fa024ca76c1c1824c166a01fd69d61f073d06fdca2a47",
+					"use": "context"
+				}
+			],
+			"explanation": "Uses Pi session files ($PI_SESSION_FILE and the per-directory session store) instead of Cursor transcripts; recall planned W4; prior authority does not carry over."
+		},
+		{
+			"path": "skills/poteto-mode/playbooks/trace-forensics.md",
+			"sha256": "0bb481e5de78a056f2bc14264282d1f78849617fad616277c8c4e053234a8c7a",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/trace-forensics.md",
+					"sha256": "137ce3984fb96e45971fdff4d3c79fa4ccc647c5b30ae4945783b9fb23f8cec7",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/trace-forensics.md",
+					"sha256": "137ce3984fb96e45971fdff4d3c79fa4ccc647c5b30ae4945783b9fb23f8cec7",
+					"use": "context"
+				}
+			],
+			"explanation": "Unchanged method; principle reference normalized to its full skill name and marked planned W3."
+		},
+		{
+			"path": "skills/poteto-mode/references/authorization.md",
+			"sha256": "6eabaf02cf6cea6ed76aaeba540095004b490ae6250d922a20043a66573d596a",
+			"status": "new",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "2d7ebdbbb50dee9f73e8daad29325ea94c3b42a42c089b6416ab9bb5efa3b2ee",
+					"use": "derived"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"use": "derived"
+				}
+			],
+			"explanation": "New W2 shared reference expanding the upstream Autonomy section: sources of authority, commit policy, the explicit-authorization list, autonomy grants, delegate authority and the not-a-sandbox rule."
+		},
+		{
+			"path": "skills/poteto-mode/references/bugbot-triage.md",
+			"sha256": "10e4e781ac998ffbf60436bad7656f443dbdeae1d06116746ec1121b9f76ad7a",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/references/bugbot-triage.md",
+					"sha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/references/bugbot-triage.md",
+					"sha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+					"use": "context"
+				}
+			],
+			"explanation": "Rubric and learned patterns unchanged. Thread replies and resolution now require authorization; Babysit route marked planned W4; new patterns are proposed to the source repository instead of edited into an installed copy."
+		},
+		{
+			"path": "skills/poteto-mode/references/delegation.md",
+			"sha256": "3602dc09bdb175b7613f06306b46a2d8f40a4386ad3b4ea96d91c0752e492145",
+			"status": "new",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "2d7ebdbbb50dee9f73e8daad29325ea94c3b42a42c089b6416ab9bb5efa3b2ee",
+					"use": "derived"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/SKILL.md",
+					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"use": "derived"
+				}
+			],
+			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare."
+		},
+		{
+			"path": "skills/setup-pstack/SKILL.md",
+			"sha256": "01fa7b702e104052ee3dd971af0e3f9eae5ab8183f0369021de8f60fb5789ed5",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "setup-pstack/SKILL.md",
+					"sha256": "125dd0c8f588782cfb271efae8f97a0719e43e79f56b3495c095f460bcee6389",
+					"use": "primary"
+				}
+			],
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement."
+		}
+	],
+	"planned": [
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/authoring-a-skill.md",
+			"sha256": "2fe4f481c694afdfebedd5d7dcff7c1be7c14efdff4206ad40c9855f13c6e9fa",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/autopilot-full.md",
+			"sha256": "1386de1f809ddd3e57684070fef9e6350ce61e6ed1f8f34b08ef365de4de13b2",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/autopilot-stack.md",
+			"sha256": "3e04fa773905c7d514498785d37c3ae9b8c983fe0d435216552d36fdb1f05938",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/babysit.md",
+			"sha256": "b62ac5cbab0f8a8623ee053f874017d9edfe6322d5c33015e40c4e13e51f4179",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/eval.md",
+			"sha256": "8ad12ccd9ae87fa4764fd4942a3becde10f36e89f2fcc246ede4875f8c65984e",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/hillclimb.md",
+			"sha256": "2809ba9582831ce505bd2ae717882125ba5261c01d63aee612d01629cc7508bc",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/multi-phase-plan.md",
+			"sha256": "1f7e0abcc11699434516a95de4d5e2be7a8382e567f5a4c14d56ecedec0509d5",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/orchestrate.md",
+			"sha256": "82286fede5100d9e7f46a9b06f732399fcbde339fd3098247c56d423c082c2f1",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/shipping.md",
+			"sha256": "549655ce169b7ff72a0467fb490dc3f3b1589af96bb23bb22e9559003d4f09fa",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/visual-parity.md",
+			"sha256": "909aee90fe24247ec3e837afb22a39428ab73334014357fec284bd6b6cf7044d",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/playbooks/worktree-cleanup.md",
+			"sha256": "f88b7d01921a7ef9e5043e3b21fa84d0175e4e9b6a0f1ebb34943abf0e1354d2",
+			"owningWave": "W4",
+			"explanation": "Real W4 methodology adaptation, not shipped as an empty file. W2 files reference it only through exact forward-reference tuples marked planned W4."
+		}
+	],
+	"excluded": [
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/bootstrap.ts",
+			"sha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361",
+			"disposition": "Excluded permanently: first-run dependency bootstrapping that installs packages at runtime (pstack plan P3.7).",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/bun.lock",
+			"sha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46",
+			"disposition": "Excluded with the helper scripts whose dependencies it pins; W2 ships no runtime script dependencies.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/check-plan.mjs",
+			"sha256": "4f9432d9989880b6afc2bdda503d5b12a9d07d357ecf31936b7ab5e83bc80523",
+			"disposition": "Not shipped in W2. Used only by the planned W4 multi-phase-plan playbook; W4 decides a portable adaptation or replacement.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/orch/orch.test.ts",
+			"sha256": "174b86d21ff51ccd28d1a8c938cb2e0c6fa287b209d4ca6c03932fcb1b53372e",
+			"disposition": "Excluded: the Orchestrate playbook's own scheduler and task-ledger store. W4 Orchestrate must use pi-herdr-agents supervision, not a duplicate engine.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/orch/orch.ts",
+			"sha256": "f091687df627a0b75fabd54af58945a9cd6c7039ef0622012ac9ed60cd8ec434",
+			"disposition": "Excluded: the Orchestrate playbook's own scheduler and task-ledger store. W4 Orchestrate must use pi-herdr-agents supervision, not a duplicate engine.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/orch/store.ts",
+			"sha256": "0eae7cf69282e827b1227166f2e32cee3560f2f3e65b3f1f2faf6fb83d3b4c5b",
+			"disposition": "Excluded: the Orchestrate playbook's own scheduler and task-ledger store. W4 Orchestrate must use pi-herdr-agents supervision, not a duplicate engine.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/package.json",
+			"sha256": "cee873fc8a420cbe321f1388164e9043a79d05fd8c3c7321268a998d99e34b6e",
+			"disposition": "Excluded with the helper scripts whose dependencies it pins; W2 ships no runtime script dependencies.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/cli.test.ts",
+			"sha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/cli.ts",
+			"sha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/fakes.test-helper.ts",
+			"sha256": "e53e31b7f03068063f53a99a3591b052aaed66e4e2b196b3a364980f60324ab1",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/github.test.ts",
+			"sha256": "c54bdf56b0e3665971c50fd28249e2cca538698e885e3cf2cd253a4bd6acfcd7",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/github.ts",
+			"sha256": "4de2bfe56222c1fdaec225306ae4ac00117d7bab0b9faea0bff043c54db4e976",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/policy.test.ts",
+			"sha256": "a9fedb25feefd1f57ef6a662f80c99018690170a3a8070773a08eaf694d1d3d9",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/policy.ts",
+			"sha256": "68d240505852cf23c9b2dea463342e9e61243f486b3cc86c735d140f9ee7be49",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/render.ts",
+			"sha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/tsconfig.json",
+			"sha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/types.compile.ts",
+			"sha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/types.ts",
+			"sha256": "64ba6221e3bfe61bbb292337d199cdec6309455477280efb060203dba34e0e91",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/watch-pr/watch-pr",
+			"sha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4",
+			"disposition": "Not shipped in W2. PR watcher used by the planned W4 Babysit and Shipping playbooks; W4 replaces it with an authorization-aware watcher on supported tools, not a second scheduler.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "mimir",
+			"path": "poteto-mode/scripts/worktree-audit.sh",
+			"sha256": "266d157fb5230bbd6618c752f99dc8fdfa44c842cb8acc250ea7c4ee2d0fdb1f",
+			"disposition": "Excluded: direct worktree pruning that can bypass pi-herdr-agents managed-worktree ownership. W4 worktree-cleanup uses the host worktree_list and worktree_remove tools under explicit authorization.",
+			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		}
+	]
+}

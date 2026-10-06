@@ -1,6 +1,8 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { registerRolePack } from "./roles.ts";
+import { registerPotetoMode } from "./mode.ts";
+import { registerSetup } from "./setup.ts";
 
 export default function piHerdrPstack(pi: ExtensionAPI) {
-	registerRolePack(pi);
+	registerPotetoMode(pi);
+	registerSetup(pi);
 }
