@@ -316,7 +316,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/references/delegation.md",
-			"sha256": "3602dc09bdb175b7613f06306b46a2d8f40a4386ad3b4ea96d91c0752e492145",
+			"sha256": "440e0118ff1023de229f7b90d34ce2853262f63fd20d071e6ab53598d1fdf2a4",
 			"status": "new",
 			"sources": [
 				{
@@ -332,7 +332,7 @@
 					"use": "derived"
 				}
 			],
-			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare."
+			"explanation": "New W2 shared reference replacing the upstream Subagents defaults: deliberate bare delegates with reference prompts, the child brief, task-category and exact-model independence rules, and schema-valid single-call examples for pi-herdr-agents e262c584. W2 no-role amendment: adds the bounded Implementer prompt (written for this reference, not copied from the retired poteto role) and makes every example bare. Parent edit after the Wave 3 real-child gate: step 7 notes that a bare systemPrompt is delivered to standalone children only, as a role block in the first message, and dropped for forks."
 		},
 		{
 			"path": "skills/setup-pstack/SKILL.md",

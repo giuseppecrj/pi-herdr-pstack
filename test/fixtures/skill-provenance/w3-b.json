@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/no-comments/SKILL.md",
-			"sha256": "e7e1c05fca12a5cbb2a332710ad102406326fc899387ba878f354798c6121f6c",
+			"sha256": "908bb8c8c7b87c799a8cb3eb2851323c2db872df70d23bee601216c28fb53aab",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,7 +52,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 keeps the upstream principle sentence; its cross-batch planned W3 marker was retired at the W3 reconcile. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used."
+			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 keeps the upstream principle sentence; its cross-batch planned W3 marker was retired at the W3 reconcile. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used. Parent edit after the real-child gate: states that fork: false is required because the host delivers a bare systemPrompt only to standalone children, as a role block in the first message."
 		},
 		{
 			"path": "skills/no-comments/references/comment-sicko.md",

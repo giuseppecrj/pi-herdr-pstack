@@ -35,7 +35,7 @@ Comment Sicko is a deliberate bare delegate, not a named role. Pstack registers 
 - Read `references/comment-sicko.md` and pass its full contents as `systemPrompt`. Do not paraphrase, shorten or add to it.
 - If that file is missing, unreadable or filtered out of this package, stop and report it. Never launch Comment Sicko, or any bare child in its place, without that prompt.
 - Choose `model` at launch. Use `task:review`, or an exact authenticated `<provider>/<model-id>` from the live catalog when the review must come from a different model family than the author. Use `medium` thinking, or `high` for a large diff.
-- `fork: false` gives it a fresh perspective. Give it no `worktree`. It edits the checkout you are in, so no other writer touches the scoped files while it runs.
+- `fork: false` is required, not a preference: pi-herdr-agents delivers a bare child's `systemPrompt` only to a standalone child, as a role block at the top of its first message, and drops it for a forked child. Give it no `worktree`. It edits the checkout you are in, so no other writer touches the scoped files while it runs.
 - Bash is not sandboxed. The `tools` list narrows what it is offered, not what it can do. Step 2 is where you enforce its limits.
 
 ## Steps
