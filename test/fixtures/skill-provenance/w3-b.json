@@ -13,7 +13,170 @@
 			"root": "pstack/skills"
 		}
 	},
-	"files": [],
+	"files": [
+		{
+			"path": "skills/bro/SKILL.md",
+			"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "bro/SKILL.md",
+					"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "bro/SKILL.md",
+					"sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Seven lines by design; it needs no adaptation."
+		},
+		{
+			"path": "skills/no-comments/SKILL.md",
+			"sha256": "76442947360dc42b3191a0ef4e9a356ef1d2eb6f1e697d77438071554d06790c",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "no-comments/SKILL.md",
+					"sha256": "8b3939909ba3bbe6ef7a4ed6df981d4b136bbfb32cec3db40798467d166bcc58",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "no-comments/SKILL.md",
+					"sha256": "5c5b0882297d704c3a9720c52b7a793c68b013eaf717989f0945624efdfe2b05",
+					"use": "context"
+				}
+			],
+			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 marks the two principle skills planned W3 for the cross-batch W3-A dependency. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used."
+		},
+		{
+			"path": "skills/no-comments/references/comment-sicko.md",
+			"sha256": "ea8fea87c827276c3b7686f0f5264870ae17b2fea24eb87c175ae33ca65f5a49",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "../agents/comment-sicko.md",
+					"sha256": "a07ca4d15f79a69a0c65cc5dcafc4bb735846981584ddc6d36876a949780fb93",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "../agents/comment-sicko.md",
+					"sha256": "c0fd0383008da45fc78cfac17b9007d62c42f87ad1c8d5c2fb658b1fd01f7c82",
+					"use": "context"
+				}
+			],
+			"explanation": "Body of the pinned pi-mimir comment-sicko role file, shipped as the bare-delegate prompt that no-comments passes as systemPrompt (user decision D2). The frontmatter is dropped because this is a prompt, not a role. Its read-only reviewer description, which contradicted a body that deletes comments, is reworded as an opening paragraph: it deletes comments and suppressions, edits comments only and never application code, and reports touched files and deletion counts (D1). The persona line is kept verbatim. The /skill:how and /skill:why line is marked planned W4 with the interim rule (read the symbol, callers and history itself and report the skills unavailable). The dropped spawning: false and the tools change become one paragraph: bash is for reading and history, deletions go through the edit tool, and it does not commit, push or launch subagents. 'Report only.' becomes 'My last message is the report and nothing else.' so it no longer reads as read-only."
+		},
+		{
+			"path": "skills/poteto-help/SKILL.md",
+			"sha256": "cdfe47257268ec6a2bbcdae35b7167c125e94be056a0ac186082fd52bd23aa58",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/SKILL.md",
+					"sha256": "5fc65e4c30c52edcde690d18904e3a8cf6ba6c2424c672d1a5cb6d29ab28645c",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows (and cross-batch W3-A rows) marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row."
+		},
+		{
+			"path": "skills/poteto-help/references/prompting.md",
+			"sha256": "218288cb4e2e5db152a9f594766f1b004c3dd3e4e912f48a96a59d8195ee1f94",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/references/prompting.md",
+					"sha256": "463f450c44a60afd001a2f69fdf8a5dea174351f339369b12ec3c41515e564d3",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pinned Cursor file kept almost verbatim. /recall, /how, /why and /teach become /skill: invocations; recall, how and why lines are marked planned W4 with interim routes (point at the earlier Pi session file or branch per Session pickup; run the Investigation playbook). The 'give /loop that predicate' bullet, which relies on a Cursor feature, becomes 'write done as checks the agent can run after every step' (D5). 'chat' becomes 'session' and the new-task line names sticky /poteto-mode."
+		},
+		{
+			"path": "skills/poteto-help/references/recipes.md",
+			"sha256": "a8f4c879c983b0ecae1855bf5bea0301f48ad9a96938c7f413055bcf3e4cefd0",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "poteto-help/references/recipes.md",
+					"sha256": "1872323419a3e5c7783b1933f7a180ca26c25a6e1f4ec83bd65e091ebbfb812b",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention."
+		},
+		{
+			"path": "skills/teach/SKILL.md",
+			"sha256": "d5f7ae491968bede303f626eab46bada5cafa0f5d42b15fe1550051a06de8dd8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"use": "context"
+				}
+			],
+			"explanation": "Method, steps and voice rules kept from the pinned pi-mimir file (identical to Cursor). The how and why skills it runs are W4-A, so every line naming them carries a planned W4 marker, and a new paragraph plus step 2 give the interim rule: until they ship, orient and trace the code and its history yourself, say the skills were unavailable, never claim they ran, and keep why's confidence-language rule for your own reasons. The description gains the same marker. Step 5's image-generation tool, which is not a Pi or pi-herdr-agents tool, becomes conditional on the session exposing one, with a mermaid or ASCII fallback that is announced; no tool name is invented. The reply line keeps the threads to chase with how or why and says what to do until they ship."
+		},
+		{
+			"path": "skills/technical-writing/SKILL.md",
+			"sha256": "d3b9323c7654ba43c267b346fb196ce7e5e0915e668bdb8d3610927e281a6431",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "technical-writing/SKILL.md",
+					"sha256": "d3b9323c7654ba43c267b346fb196ce7e5e0915e668bdb8d3610927e281a6431",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "technical-writing/SKILL.md",
+					"sha256": "f5c512ffeec70bc4e0dee50f7bb4c26742e1be77967a6e8b15d1921e1c209ceb",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file. Mimir is primary because it adds the review checklist that Cursor lacks and already uses Pi's /skill:technical-writing syntax."
+		},
+		{
+			"path": "skills/unslop/SKILL.md",
+			"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "unslop/SKILL.md",
+					"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "unslop/SKILL.md",
+					"sha256": "195411d320b5b328f9f642baf59757ed19aaf0931c0838740e0aca273d538dc1",
+					"use": "context"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Stable rule numbers with gaps are upstream ids that other skills cite, so they stay as written."
+		}
+	],
 	"planned": [],
 	"excluded": []
 }

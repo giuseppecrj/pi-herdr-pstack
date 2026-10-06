@@ -1,5 +1,276 @@
 {
 	"schemaVersion": 1,
 	"description": "Exact unresolved references from shipped W3-B files to inventory rows or playbooks that are not shipped yet. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
-	"exceptions": []
+	"exceptions": [
+		{
+			"sourcePath": "skills/no-comments/SKILL.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/SKILL.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/SKILL.md",
+			"targetPath": "skills/architect/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/SKILL.md",
+			"targetPath": "skills/principle-fix-root-causes/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/SKILL.md",
+			"targetPath": "skills/principle-redesign-from-first-principles/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/references/comment-sicko.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/no-comments/references/comment-sicko.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/create-verification-skill/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/recall/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/blast-radius/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/architect/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/arena/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/swarm/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/interrogate/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/tdd/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/typescript-best-practices/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/maintain-verification-skill/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/benchmark-checklist/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/figure-it-out/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/show-me-your-work/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/automate-me/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/reflect/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/correct/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/make-bot-ui/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/orchestrate.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/babysit.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/shipping.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/autopilot-full.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/autopilot-stack.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/eval.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/prompting.md",
+			"targetPath": "skills/recall/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/prompting.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/prompting.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/recall/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/tdd/SKILL.md",
+			"owningWave": "W3-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/architect/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/arena/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/interrogate/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/swarm/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/poteto-mode/playbooks/babysit.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/poteto-mode/playbooks/shipping.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/show-me-your-work/SKILL.md",
+			"owningWave": "W4-B"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/poteto-mode/playbooks/autopilot-full.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/poteto-mode/playbooks/autopilot-stack.md",
+			"owningWave": "W4"
+		},
+		{
+			"sourcePath": "skills/poteto-help/references/recipes.md",
+			"targetPath": "skills/reflect/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/teach/SKILL.md",
+			"targetPath": "skills/how/SKILL.md",
+			"owningWave": "W4-A"
+		},
+		{
+			"sourcePath": "skills/teach/SKILL.md",
+			"targetPath": "skills/why/SKILL.md",
+			"owningWave": "W4-A"
+		}
+	]
 }
