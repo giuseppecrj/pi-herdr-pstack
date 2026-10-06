@@ -32,3 +32,14 @@ Open PRs #66, #67 and #68 remain untouched. #67 overlaps the fallback path; the 
 `wave2/skills-only-fixes` now at `9839e7d` (checkpoint `6f36a1b` copies planning `96dbd16`, code `9bef548`). Role removed; mode and setup implemented; the setup writer guard is now the unconditional gate the user chose in [plan 10](../plans/10-wave2-unconditional-writer-gate.md): every host writer call blocks while pstack is loaded except the one exact approved nested call, with the approval held only in memory for that dispatch. All run-identity code is deleted (setup.ts: 50 insertions, 253 deletions). Parent check 111/111 with every input set. Earlier history: four cross-family reviews of the run-tracking design each found a new approval bypass (`b5d8e99`, `61048b0`, `b10a40c`), which is why the design was replaced rather than patched a fifth time. Combined real-Herdr run at `b10a40c` passed 72/72 (`docs/evidence/wave2-combined/`); the extension load path did not change in `9839e7d`. Cross-family review of the gate: no blockers (eight independent scenarios against the real host writer). Pstack stack opened: PR #1 `wave1/pstack-foundation` -> `main`, PR #2 `wave2/skills-only-fixes` -> `wave1/pstack-foundation`. Handoff brief: `docs/plans/11-wave2-handoff.md`.
 
 Evidence directories: `/tmp/agentcancel-skill-parent`, `/tmp/agentcancel-parent-v19xdY`, `/tmp/pstack-w2fix-parent-XgmgSx`, `/tmp/pi-skill-load-probe`.
+
+## Closed out (2026-10-06)
+
+User decisions: Wave 2 accepted; merge all PRs; delete retained worktrees; make the roles and pstack repositories public.
+
+- pi-herdr-agents: #70, #71, #72, #73 merged bottom-up with merge commits; `main` at `7d35371`. Older PRs #66, #67, #68 untouched.
+- pi-herdr-pstack: #1 merged (`78f6529`); #2 needed `origin/main` merged into the branch first because the Wave 2 branch carried checkpointed planning docs (`docs/plans/07-wave2-entry-contract.md`, `docs/plans/README.md` conflicted; main's versions taken; product files did not conflict); check 111/111 after the merge; #2 merged, `main` at `0eedac1`.
+- pi-herdr-roles: no PR existed, so `wave1/role-pack` was opened as #1 and merged; `main` at `3b75aa4`.
+- Visibility: pi-herdr-roles and pi-herdr-pstack set to public after a secret scan over all branches found nothing and no credential files are tracked. pi-herdr-agents was already public.
+- Cleanup: all eight managed worktrees removed, branches and commits retained on GitHub; finished worker workspaces closed.
+- Not done: the installed pi-herdr-agents package is still the older published build; installing the merged `main` is a normal Pi configuration change and was not requested. Until then the global skill copy at `~/.pi/agent/skills/pi-herdr-agents/SKILL.md` stands in for the packaged one, and `subagent_cancel` is not available in this session.
