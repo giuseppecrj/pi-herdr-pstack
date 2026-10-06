@@ -43,3 +43,8 @@ User decisions: Wave 2 accepted; merge all PRs; delete retained worktrees; make 
 - Visibility: pi-herdr-roles and pi-herdr-pstack set to public after a secret scan over all branches found nothing and no credential files are tracked. pi-herdr-agents was already public.
 - Cleanup: all eight managed worktrees removed, branches and commits retained on GitHub; finished worker workspaces closed.
 - Not done: the installed pi-herdr-agents package is still the older published build; installing the merged `main` is a normal Pi configuration change and was not requested. Until then the global skill copy at `~/.pi/agent/skills/pi-herdr-agents/SKILL.md` stands in for the packaged one, and `subagent_cancel` is not available in this session.
+
+## Wave 3 in progress (2026-10-06)
+
+Approved contract `docs/plans/12-wave3-contract.md` at `e2cf538`. C0 checkpoint `wave3/integration` at `0c4187c`: content tests generalized and driven by inventory status, fixtures split per owner (`test/fixtures/{forward-references,skill-provenance}/`), W2 rows flipped to shipped, host repinned to `7d35371`, skills byte-identical; parent rerun 118 passed, 1 skipped (the comment-sicko launch-shape test, awaiting `no-comments`). Batches launched from C0: `wave3/technical` (W3-A, 29 skills, 30 files) and `wave3/communication` (W3-B, 6 skills plus the comment-sicko delegate prompt, 9 files). Each gets a fresh cross-family review on its exact SHA before integration; reconcile and the real-Herdr gates follow.
+
