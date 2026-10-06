@@ -19,8 +19,8 @@ A prompt states the intent and the check for done. The playbook supplies the ste
 ## Load the context first
 
 - For a noisy report, ask the agent to restate the underlying issue in its own words and in plain English before it does anything else. A misreading shows up before any code exists.
-- In a fresh session, `/skill:recall` earlier work on the topic (planned W4). Old sessions hold context that the new agent lacks. Until it ships, point the agent at the earlier Pi session file or branch, as the Session pickup playbook does.
-- Before a change to unfamiliar code, ask `/skill:how` for the mechanics and `/skill:why` for the reasons (planned W4). An agent with no traced model fixes the symptom at the first plausible spot. Until they ship, ask poteto-mode to run the Investigation playbook first.
+- In a fresh session, `/skill:recall` earlier work on the topic. Old sessions hold context that the new agent lacks.
+- Before a change to unfamiliar code, ask `/skill:how` for the mechanics and `/skill:why` for the reasons. An agent with no traced model fixes the symptom at the first plausible spot.
 - Ask `/skill:teach` to make the case for a choice, as in "convince me it fixes the cause and not the symptom". A case is easier to check than a summary.
 
 ## Design before the plan

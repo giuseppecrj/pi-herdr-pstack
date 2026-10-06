@@ -9,6 +9,7 @@ import {
 	formatSkillsForPrompt,
 	loadSkillsFromDir,
 } from "@earendil-works/pi-coding-agent";
+import { lexer, type Tokens, walkTokens } from "marked";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
@@ -37,9 +38,26 @@ const inventory = readJson<{
 const rowOf = new Map(inventory.skills.map((row) => [row.name, row]));
 const waveOf = new Map(inventory.skills.map((row) => [row.name, row.wave]));
 
-/** Each fixture owner and the inventory wave whose skill directories it owns. */
-const FORWARD_OWNERS = { hub: "W2", "w3-a": "W3-A", "w3-b": "W3-B" };
-const PROVENANCE_OWNERS = { w2: "W2", "w3-a": "W3-A", "w3-b": "W3-B" };
+/**
+ * Each fixture owner and the wave whose files it owns: an inventory wave owns
+ * its rows' skill directories, and W4-P owns the W4 poteto-mode playbooks and
+ * check-plan.mjs inside the W2 hub row (see `ownerWaveOf`).
+ */
+const W4_OWNERS = { "w4-a": "W4-A", "w4-b": "W4-B", "w4-p": "W4-P" };
+const FORWARD_OWNERS = {
+	hub: "W2",
+	"w3-a": "W3-A",
+	"w3-b": "W3-B",
+	...W4_OWNERS,
+};
+const PROVENANCE_OWNERS = {
+	w2: "W2",
+	"w3-a": "W3-A",
+	"w3-b": "W3-B",
+	...W4_OWNERS,
+};
+/** A deferred target's tuples may name this wave instead of the target's own. */
+const DEFERRED_WAVE = "W5";
 
 type ForwardReference = {
 	sourcePath: string;
@@ -96,6 +114,22 @@ const provenanceFixtures = Object.entries(PROVENANCE_OWNERS).map(
 	}),
 );
 const provenanceFiles = provenanceFixtures.flatMap(({ files }) => files);
+const provenanceOf = (owner: string) => {
+	const fixture = provenanceFixtures.find((entry) => entry.owner === owner);
+	assert.ok(fixture, owner);
+	return fixture;
+};
+/**
+ * W4 playbooks still planned, by target path, with their owning wave. A
+ * playbook ships when the reconcile commit takes it off w2.json's `planned`
+ * list; until then it may exist on a batch branch but is still planned.
+ */
+const plannedPlaybooks = new Map(
+	provenanceOf("w2").planned.map(({ path, owningWave }) => [
+		`skills/${path}`,
+		owningWave,
+	]),
+);
 
 const BASE_PLAYBOOKS = [
 	"autonomous-run",
@@ -124,6 +158,19 @@ const W4_PLAYBOOKS = [
 	"visual-parity",
 	"worktree-cleanup",
 ];
+const W4P_FILES = [
+	...W4_PLAYBOOKS.map((name) => `skills/poteto-mode/playbooks/${name}.md`),
+	"skills/poteto-mode/scripts/check-plan.mjs",
+];
+/** The fixture wave that owns a shipped or referencing file. */
+const ownerWaveOf = (path: string) =>
+	W4P_FILES.includes(path) ? "W4-P" : waveOf.get(path.split("/")[1]);
+const FAN_OUT = "skills/poteto-mode/references/fan-out.md";
+/** Every script that may ship, with its upstream git mode. */
+const SCRIPT_MODES: Record<string, string> = {
+	"skills/poteto-mode/scripts/check-plan.mjs": "100644",
+	"skills/show-me-your-work/scripts/log.sh": "100755",
+};
 const W2_FILES = [
 	"skills/poteto-mode/SKILL.md",
 	"skills/poteto-mode/references/authorization.md",
@@ -145,21 +192,26 @@ const COMMENT_SICKO_DESCRIBERS = [
 // against that commit when a host checkout is available. The schema body and
 // task categories are byte-identical to the W2 pin e262c584.
 const HOST_HERDR_COMMIT = "7d35371f5d7d0df3edd208a1d5c9a187767d563b";
-const HOST_SUBAGENT_PARAMS = [
-	"agent",
-	"cwd",
-	"fork",
-	"interactive",
-	"model",
-	"name",
-	"persistent",
-	"skills",
-	"systemPrompt",
-	"task",
-	"thinking",
-	"tools",
-	"worktree",
-];
+type ParamKind = "string" | "boolean" | "thinking" | "worktree";
+const HOST_SUBAGENT_SCHEMA: Record<
+	string,
+	{ kind: ParamKind; required: boolean }
+> = {
+	agent: { kind: "string", required: false },
+	cwd: { kind: "string", required: false },
+	fork: { kind: "boolean", required: false },
+	interactive: { kind: "boolean", required: false },
+	model: { kind: "string", required: false },
+	name: { kind: "string", required: true },
+	persistent: { kind: "boolean", required: false },
+	skills: { kind: "string", required: false },
+	systemPrompt: { kind: "string", required: false },
+	task: { kind: "string", required: true },
+	thinking: { kind: "thinking", required: false },
+	tools: { kind: "string", required: false },
+	worktree: { kind: "worktree", required: false },
+};
+const HOST_SUBAGENT_PARAMS = Object.keys(HOST_SUBAGENT_SCHEMA);
 const HOST_TASK_CATEGORIES = [
 	"coding",
 	"review",
@@ -183,6 +235,76 @@ const EXAMPLE_PARAMS = new Set([
 ]);
 const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
+/** A concrete model name; methodology names families and task categories. */
+const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
+const DELEGATION = "skills/poteto-mode/references/delegation.md";
+
+/** Problems with one call against the pinned host schema; empty when valid. */
+function schemaProblems(call: Record<string, unknown>): string[] {
+	const problems = Object.entries(HOST_SUBAGENT_SCHEMA)
+		.filter(([key, { required }]) => required && !(key in call))
+		.map(([key]) => `missing ${key}`);
+	for (const [key, value] of Object.entries(call)) {
+		const kind = HOST_SUBAGENT_SCHEMA[key]?.kind;
+		const valid =
+			kind === "string"
+				? typeof value === "string"
+				: kind === "boolean"
+					? typeof value === "boolean"
+					: kind === "thinking"
+						? THINKING.includes(String(value))
+						: kind === "worktree" && validWorktree(value);
+		if (!valid) problems.push(`${key}: ${JSON.stringify(value)}`);
+	}
+	return problems;
+}
+
+/** `null`, or `{ branch, base? }` with a non-empty branch. */
+function validWorktree(value: unknown): boolean {
+	if (value === null) return true;
+	if (typeof value !== "object") return false;
+	const { branch, base, ...rest } = value as Record<string, unknown>;
+	return (
+		typeof branch === "string" &&
+		branch.length > 0 &&
+		(base === undefined || typeof base === "string") &&
+		Object.keys(rest).length === 0
+	);
+}
+
+/**
+ * The prompt file a `systemPrompt` placeholder names, resolved from the
+ * example's skill directory, or undefined when the placeholder is malformed.
+ * See references/fan-out.md, section 2.
+ */
+function promptTarget(path: string, systemPrompt: unknown): string | undefined {
+	const text = String(systemPrompt);
+	const skillDir = path.split("/").slice(0, 2).join("/");
+	if (
+		path === DELEGATION &&
+		/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/.test(
+			text,
+		)
+	)
+		return DELEGATION;
+	const named =
+		/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt in (\S+), verbatim>$/.exec(
+			text,
+		);
+	if (named) {
+		const target = posix.normalize(posix.join(skillDir, named[1]));
+		return target === DELEGATION ? target : undefined;
+	}
+	const fixed = /^<the full text of (\S+\.md), verbatim>$/.exec(text);
+	if (fixed) {
+		const target = posix.normalize(posix.join(skillDir, fixed[1]));
+		return /^skills\/[a-z0-9-]+\/references\//.test(target) &&
+			target !== DELEGATION
+			? target
+			: undefined;
+	}
+	return undefined;
+}
 
 function walk(dir: string): string[] {
 	const entries = readdirSync(join(PACK_ROOT, dir));
@@ -204,19 +326,97 @@ const shippedRows = inventory.skills.filter(
 );
 const MARKDOWN_FILES = SHIPPED_FILES.filter((path) => path.endsWith(".md"));
 
+type Fence = { info: string; open: string; content: string[] };
+
+/**
+ * Each line's fenced block, or undefined for prose, following the CommonMark
+ * fence rules (backtick or tilde runs of three or more, closed by a run of the
+ * same character at least as long with nothing after it). The delegation
+ * contract checks these blocks against the `marked` lexer.
+ */
+function fences(path: string): Array<Fence | undefined> {
+	return fencesOf(read(path));
+}
+
+function fencesOf(markdown: string): Array<Fence | undefined> {
+	let open: Fence | undefined;
+	return markdown.split("\n").map((text) => {
+		if (open) {
+			const fence = open;
+			const run = new RegExp(
+				`^\\s*\\${fence.open[0]}{${fence.open.length},}\\s*$`,
+			);
+			if (run.test(text)) open = undefined;
+			else fence.content.push(text);
+			return fence;
+		}
+		const start = /^\s*(`{3,}(?=[^`]*$)|~{3,})(.*)$/.exec(text);
+		if (!start) return undefined;
+		open = { open: start[1], info: start[2].trim(), content: [] };
+		return open;
+	});
+}
+
 /** Lines outside fenced code blocks, numbered from 1. */
 function proseLines(path: string): Array<{ line: number; text: string }> {
-	let fenced = false;
+	const fenced = fences(path);
 	return read(path)
 		.split("\n")
-		.flatMap((text, index) => {
-			if (text.startsWith("```")) {
-				fenced = !fenced;
-				return [];
-			}
-			return fenced ? [] : [{ line: index + 1, text }];
-		});
+		.flatMap((text, index) =>
+			fenced[index] ? [] : [{ line: index + 1, text }],
+		);
 }
+
+/** Prose with inline code spans removed. */
+const withoutCodeSpans = (text: string) => text.replace(/(`+)[^`]*?\1/g, "");
+
+/** An exact upstream quotation an adapted file may keep despite a ban. */
+type Quotation = { path: string; snippet: string };
+
+/** Placeholder markers that adapted files quote from upstream prompts. */
+const QUOTED_MARKERS: Quotation[] = [
+	{
+		path: "skills/architect/references/runner-prompt.md",
+		snippet: "`// TODO` pseudocode for tricky logic",
+	},
+];
+
+/** Model names that adapted files quote from upstream examples. */
+const QUOTED_MODELS: Quotation[] = [];
+
+/**
+ * The text a ban applies to. A byte-identical upstream copy is scanned as
+ * prose only, without fenced blocks or inline code, because its code quotes
+ * upstream. An adapted or new file is scanned in full, less the exact
+ * quotations allowlisted for its path; each allowlisted snippet must still
+ * occur, so a stale entry fails.
+ */
+function bannable(
+	path: string,
+	text: string,
+	status: ProvenanceFile["status"] | undefined,
+	quotations: Quotation[],
+): string {
+	if (!path.endsWith(".md")) return text;
+	if (status === "copied") {
+		const fenced = fencesOf(text);
+		return text
+			.split("\n")
+			.filter((_, index) => !fenced[index])
+			.map(withoutCodeSpans)
+			.join("\n");
+	}
+	return quotations
+		.filter((quotation) => quotation.path === path)
+		.reduce((rest, { snippet }) => {
+			assert.ok(rest.includes(snippet), `${path} no longer quotes ${snippet}`);
+			return rest.split(snippet).join("");
+		}, text);
+}
+
+const statusOf = (path: string) =>
+	provenanceFiles.find((file) => file.path === path)?.status;
+const PLACEHOLDER = /\b(?:TODO|TBD|FIXME)\b/;
 
 type Reference = { sourcePath: string; targetPath: string; text: string };
 
@@ -260,7 +460,10 @@ function expectedWave(targetPath: string): string | undefined {
 	const playbook = /^skills\/poteto-mode\/playbooks\/([a-z-]+)\.md$/.exec(
 		targetPath,
 	);
-	if (playbook) return W4_PLAYBOOKS.includes(playbook[1]) ? "W4" : undefined;
+	if (playbook)
+		return W4_PLAYBOOKS.includes(playbook[1])
+			? (plannedPlaybooks.get(targetPath) ?? "W4")
+			: undefined;
 	const skill = /^skills\/([a-z0-9-]+)\/SKILL\.md$/.exec(targetPath);
 	return skill ? waveOf.get(skill[1]) : undefined;
 }
@@ -269,9 +472,16 @@ function expectedWave(targetPath: string): string | undefined {
 function targetPlanned(targetPath: string): boolean {
 	const skill = /^skills\/([a-z0-9-]+)\//.exec(targetPath);
 	if (targetPath.startsWith("skills/poteto-mode/playbooks/"))
-		return expectedWave(targetPath) === "W4";
+		return plannedPlaybooks.has(targetPath);
 	return skill ? rowOf.get(skill[1])?.status === "planned" : false;
 }
+
+const listedWave = new Map(
+	exceptions.map((exception) => [tupleKey(exception), exception.owningWave]),
+);
+/** The wave a reference waits for: its tuple's, else its target's. */
+const waveFor = (reference: Reference) =>
+	listedWave.get(tupleKey(reference)) ?? expectedWave(reference.targetPath);
 
 const frontmatter = (path: string) =>
 	/^---\n([\s\S]*?)\n---\n/.exec(read(path))?.[1];
@@ -304,12 +514,33 @@ describe("shipped skill tree", () => {
 			assert.equal(rowOf.get(name)?.status, "shipped", name);
 	});
 
-	it("has every shipped row present, and only shipped or in-progress W3 rows", () => {
+	it("re-authors make-bot-ui from its Cursor source under a valid Pi name (D4)", () => {
+		const row = rowOf.get("make-bot-ui");
+		assert.equal(row?.wave, "W4-B");
+		assert.equal(row?.primarySource, "cursor");
+		assert.deepEqual(row?.sourceFiles, { cursor: ["make-bot-ui/SKILL.md"] });
+	});
+
+	it("loads make-bot-ui with zero diagnostics", {
+		skip: !exists("skills/make-bot-ui") && "make-bot-ui ships with W4-B",
+	}, () => {
+		const { skills, diagnostics } = loadSkillsFromDir({
+			dir: join(PACK_ROOT, "skills/make-bot-ui"),
+			source: "pi-herdr-pstack",
+		});
+		assert.deepEqual(diagnostics, []);
+		assert.deepEqual(
+			skills.map(({ name }) => name),
+			["make-bot-ui"],
+		);
+	});
+
+	it("has every shipped row present, and only shipped or in-progress W3 and W4 rows", () => {
 		for (const { name } of shippedRows)
 			assert.ok(exists(`skills/${name}/SKILL.md`), `${name} is shipped`);
 		for (const { name, status, wave } of presentRows)
 			assert.ok(
-				status === "shipped" || wave.startsWith("W3-"),
+				status === "shipped" || /^W[34]-/.test(wave),
 				`${name} (${wave}) is present but ${status}`,
 			);
 		assert.deepEqual(
@@ -317,9 +548,16 @@ describe("shipped skill tree", () => {
 			presentRows.map(({ name }) => name).toSorted(),
 			"every skill directory is an inventory row",
 		);
-		for (const name of W4_PLAYBOOKS)
-			assert.equal(exists(`skills/poteto-mode/playbooks/${name}.md`), false);
-		assert.equal(exists("skills/poteto-mode/scripts"), false);
+		for (const path of W4P_FILES.filter((file) => file.endsWith(".md")))
+			assert.ok(
+				plannedPlaybooks.has(path) || exists(path),
+				`${path} left w2.json planned but is absent`,
+			);
+		if (exists("skills/poteto-mode/scripts"))
+			assert.deepEqual(
+				readdirSync(join(PACK_ROOT, "skills/poteto-mode/scripts")),
+				["check-plan.mjs"],
+			);
 		assert.equal(exists("skills/orchestrate"), false);
 		assert.equal(exists("agents"), false);
 		for (const path of SHIPPED_FILES.filter(
@@ -369,13 +607,20 @@ describe("shipped skill tree", () => {
 			);
 	});
 
-	it("keeps the W2 files at their frozen entry-contract paths", () => {
+	it("keeps the W2 files at their frozen entry-contract paths, plus the W4 fan-out protocol", () => {
 		for (const path of W2_FILES) assert.ok(SHIPPED_FILES.includes(path), path);
 		assert.deepEqual(
-			SHIPPED_FILES.filter((path) =>
-				["poteto-mode", "setup-pstack"].includes(rowNameOf(path)),
+			SHIPPED_FILES.filter(
+				(path) =>
+					["poteto-mode", "setup-pstack"].includes(rowNameOf(path)) &&
+					!W4P_FILES.includes(path),
 			),
-			W2_FILES,
+			[...W2_FILES, FAN_OUT].toSorted(),
+		);
+		assert.match(
+			read(DELEGATION),
+			/also follow `references\/fan-out\.md`/,
+			"delegation.md points at the fan-out protocol",
 		);
 	});
 
@@ -383,7 +628,12 @@ describe("shipped skill tree", () => {
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			assert.ok(body(path).trim().length > 0, `${path} has an empty body`);
-			assert.doesNotMatch(text, /\b(?:TODO|TBD|FIXME)\b/, path);
+			// Only copies and allowlisted quotations may quote a marker.
+			assert.doesNotMatch(
+				bannable(path, text, statusOf(path), QUOTED_MARKERS),
+				PLACEHOLDER,
+				path,
+			);
 			assert.doesNotMatch(
 				text,
 				/coming soon|lorem ipsum|placeholder skill/i,
@@ -393,6 +643,57 @@ describe("shipped skill tree", () => {
 		// Length against the primary source is checked with the source hashes.
 		for (const file of provenanceFiles.filter(({ status }) => status === "new"))
 			assert.ok(read(file.path).length > 1000, `${file.path} is too thin`);
+	});
+});
+
+describe("quotation exemptions", () => {
+	const ADAPTED = "skills/poteto-mode/playbooks/hillclimb.md";
+	const RUNNER = "skills/architect/references/runner-prompt.md";
+
+	it("fails an adapted file that quotes a placeholder outside the allowlist", () => {
+		const text = "# Step\n\n- `TODO`: define later\n";
+		assert.match(
+			bannable(ADAPTED, text, "adapted", QUOTED_MARKERS),
+			PLACEHOLDER,
+		);
+	});
+
+	it("fails an adapted file whose fenced block names an unverified model", () => {
+		const text = "# Run\n\n```bash\npi --model claude-unverified\n```\n";
+		assert.match(bannable(ADAPTED, text, "adapted", QUOTED_MODELS), MODEL_SLUG);
+	});
+
+	it("passes the allowlisted runner-prompt quotation and nothing beside it", () => {
+		const text = read(RUNNER);
+		assert.equal(statusOf(RUNNER), "adapted");
+		assert.doesNotMatch(
+			bannable(RUNNER, text, "adapted", QUOTED_MARKERS),
+			PLACEHOLDER,
+		);
+		assert.match(
+			bannable(
+				RUNNER,
+				`${text}\n\`// TODO\` elsewhere\n`,
+				"adapted",
+				QUOTED_MARKERS,
+			),
+			PLACEHOLDER,
+		);
+	});
+
+	it("passes quotations in byte-identical copies", () => {
+		for (const [path, pattern] of [
+			["skills/why/references/sources/code-archaeology.md", PLACEHOLDER],
+			["skills/reflect/references/synthesizer.md", MODEL_SLUG],
+		] as const) {
+			assert.equal(statusOf(path), "copied", path);
+			assert.match(read(path), pattern, path);
+			assert.doesNotMatch(
+				bannable(path, read(path), "copied", []),
+				pattern,
+				path,
+			);
+		}
 	});
 });
 
@@ -410,7 +711,7 @@ describe("references and forward exceptions", () => {
 			assert.equal(schemaVersion, 1, owner);
 			for (const exception of exceptions)
 				assert.equal(
-					waveOf.get(rowNameOf(exception.sourcePath)),
+					ownerWaveOf(exception.sourcePath),
 					wave,
 					`${owner}: ${tupleKey(exception)}`,
 				);
@@ -431,12 +732,26 @@ describe("references and forward exceptions", () => {
 				targetPlanned(exception.targetPath),
 				`${key} targets a shipped or unowned path; retire it`,
 			);
-			assert.equal(
-				exception.owningWave,
-				expectedWave(exception.targetPath),
-				key,
+			assert.ok(
+				[expectedWave(exception.targetPath), DEFERRED_WAVE].includes(
+					exception.owningWave,
+				),
+				`${key}: owningWave ${exception.owningWave}`,
 			);
 		}
+		const deferred = new Set(
+			exceptions
+				.filter(({ owningWave }) => owningWave === DEFERRED_WAVE)
+				.map(({ targetPath }) => targetPath),
+		);
+		for (const exception of exceptions.filter(({ targetPath }) =>
+			deferred.has(targetPath),
+		))
+			assert.equal(
+				exception.owningWave,
+				DEFERRED_WAVE,
+				`${tupleKey(exception)}: a deferred target is deferred in every tuple`,
+			);
 	});
 
 	it("marks each forward reference as planned on the line that makes it", () => {
@@ -444,7 +759,7 @@ describe("references and forward exceptions", () => {
 		for (const reference of allReferences) {
 			const { sourcePath, targetPath, text } = reference;
 			if (exists(targetPath) && !listed.has(tupleKey(reference))) continue;
-			const wave = expectedWave(targetPath);
+			const wave = waveFor(reference);
 			assert.ok(wave, `${sourcePath} -> ${targetPath} has no owning wave`);
 			assert.ok(
 				text.includes(`planned ${wave.slice(0, 2)}`),
@@ -459,17 +774,17 @@ describe("references and forward exceptions", () => {
 				const lineReferences = references(path).filter(
 					(reference) => reference.text === text,
 				);
-				for (const major of ["W3", "W4"]) {
+				for (const major of ["W3", "W4", DEFERRED_WAVE]) {
 					if (!text.includes(`planned ${major}`)) continue;
 					const shipped = lineReferences.filter(
-						({ targetPath }) =>
-							expectedWave(targetPath)?.startsWith(major) &&
-							!targetPlanned(targetPath),
+						(reference) =>
+							waveFor(reference)?.startsWith(major) &&
+							!targetPlanned(reference.targetPath),
 					);
 					const pending = lineReferences.filter(
-						({ targetPath }) =>
-							expectedWave(targetPath)?.startsWith(major) &&
-							targetPlanned(targetPath),
+						(reference) =>
+							waveFor(reference)?.startsWith(major) &&
+							targetPlanned(reference.targetPath),
 					);
 					assert.ok(
 						shipped.length === 0 || pending.length > 0,
@@ -525,7 +840,7 @@ describe("references and forward exceptions", () => {
 		}
 	});
 
-	it("routes every upstream playbook from the hub, W4 rows visibly planned", () => {
+	it("routes every upstream playbook from the hub, unshipped ones visibly planned", () => {
 		const hub = proseLines("skills/poteto-mode/SKILL.md");
 		for (const name of [...BASE_PLAYBOOKS, ...W4_PLAYBOOKS]) {
 			const routes = hub.filter(
@@ -533,45 +848,100 @@ describe("references and forward exceptions", () => {
 					text.startsWith("- **") && text.includes(`\`playbooks/${name}.md\``),
 			);
 			assert.equal(routes.length, 1, name);
-			assert.equal(
-				routes[0].text.includes("(planned W4)"),
-				W4_PLAYBOOKS.includes(name),
-				name,
+			const wave = plannedPlaybooks.get(
+				`skills/poteto-mode/playbooks/${name}.md`,
 			);
+			if (wave) assert.ok(routes[0].text.includes(`(planned ${wave})`), name);
+			else assert.doesNotMatch(routes[0].text, /\(planned W\d\)/, name);
 		}
 	});
 });
 
 describe("delegation contract", () => {
+	/** Fenced code blocks as the Markdown lexer sees them, nested ones included. */
+	const lexedFences = (path: string) => {
+		const blocks: Tokens.Code[] = [];
+		walkTokens(lexer(read(path)), (token) => {
+			if (token.type === "code" && token.codeBlockStyle !== "indented")
+				blocks.push(token as Tokens.Code);
+		});
+		return blocks;
+	};
+	/** Parseable examples; the fence check below reports any that do not parse. */
 	const examples = MARKDOWN_FILES.flatMap((path) =>
-		[...read(path).matchAll(/```json subagent\n([\s\S]*?)\n```/g)].map(
-			([, body]) => ({
-				path,
-				call: JSON.parse(body) as Record<string, unknown>,
+		lexedFences(path)
+			.filter(({ lang }) => lang === "json subagent")
+			.flatMap(({ text }) => {
+				try {
+					return [{ path, call: JSON.parse(text) as Record<string, unknown> }];
+				} catch {
+					return [];
+				}
 			}),
-		),
 	);
+
+	it("closes every fenced block, with nothing after a closing fence, and parses every subagent example", () => {
+		for (const path of MARKDOWN_FILES) {
+			const lexed = lexedFences(path);
+			const scanned = [...new Set(fences(path))].filter(
+				(fence) => fence !== undefined,
+			);
+			assert.deepEqual(
+				lexed.map(({ lang }) => lang ?? ""),
+				scanned.map(({ info }) => info),
+				`${path}: the fence scanner and the Markdown lexer disagree`,
+			);
+			for (const block of lexed) {
+				const lines = block.raw.replace(/\n+$/, "").split("\n");
+				const run = /^\s*(`{3,}|~{3,})/.exec(lines[0])?.[1] ?? "```";
+				const fence = `^\\s*\\${run[0]}{${run.length},}`;
+				assert.match(
+					lines.length > 1 ? (lines.at(-1) ?? "") : "",
+					new RegExp(`${fence}\\s*$`),
+					`${path}: the fence opened by ${JSON.stringify(lines[0])} never closes`,
+				);
+				for (const line of lines.slice(1, -1))
+					assert.doesNotMatch(
+						line,
+						new RegExp(`${fence}\\s*\\S`),
+						`${path}: text follows a closing fence: ${line}`,
+					);
+				if (block.lang === "json subagent")
+					assert.doesNotThrow(() => JSON.parse(block.text), path);
+			}
+		}
+	});
 
 	it("gives runnable examples only the public single-call parameters", () => {
 		assert.ok(examples.length >= 4);
 		for (const { path, call } of examples) {
+			assert.deepEqual(
+				schemaProblems(call),
+				[],
+				`${path}: ${String(call.name)} is invalid at host ${HOST_HERDR_COMMIT}`,
+			);
 			for (const key of Object.keys(call))
 				assert.ok(EXAMPLE_PARAMS.has(key), `${path}: ${key}`);
-			assert.equal(typeof call.name, "string", path);
-			assert.equal(typeof call.task, "string", path);
 			assert.equal(
 				"agent" in call,
 				false,
 				`${path}: pstack delegates are bare`,
 			);
+			assert.equal("persistent" in call, false, `${path}: no persistent`);
+			if ("systemPrompt" in call)
+				assert.equal(
+					call.fork,
+					false,
+					`${path}: a systemPrompt needs fork: false`,
+				);
 			if (rowNameOf(path) === "no-comments")
 				assert.equal(call.systemPrompt, COMMENT_SICKO_SYSTEM_PROMPT, path);
-			else
-				assert.match(
-					String(call.systemPrompt),
-					/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/,
-					`${path}: bare delegates carry their reference prompt`,
-				);
+			const target = promptTarget(path, call.systemPrompt);
+			assert.ok(
+				target,
+				`${path}: bare delegates carry their reference prompt: ${String(call.systemPrompt)}`,
+			);
+			assert.ok(exists(target), `${path}: ${target} does not exist`);
 			assert.ok(
 				call.model === MODEL_PLACEHOLDER ||
 					HOST_TASK_CATEGORIES.some(
@@ -617,6 +987,21 @@ describe("delegation contract", () => {
 				delegation,
 				new RegExp(`### ${prompt}\\n\\n\`\`\`text\\nYou are `),
 			);
+	});
+
+	it("launches why investigators without a tools list, so MCP servers stay visible", {
+		skip: !exists("skills/why") && "why ships with W4-A",
+	}, () => {
+		const investigators = examples.filter(
+			({ path, call }) =>
+				rowNameOf(path) === "why" &&
+				/investigator/i.test(
+					`${String(call.name)} ${String(call.systemPrompt)}`,
+				),
+		);
+		assert.ok(investigators.length > 0, "why shows an investigator launch");
+		for (const { path, call } of investigators)
+			assert.equal("tools" in call, false, `${path}: ${String(call.name)}`);
 	});
 
 	it("launches comment-sicko as a bare comment editor from its reference prompt", {
@@ -675,14 +1060,44 @@ describe("delegation contract", () => {
 			/\/deslop\b/,
 			/\/loop\b/,
 			/\bomp\b/,
-			/\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/,
 			/\/(?:iterate|btw)\b/,
 			// Cursor-style slash commands; Pi invokes skills as /skill:how.
 			/(?<![\w:/.-])\/(?:how|why)\b/,
+			// W4: runner leftovers, removed loops and engines, missing tools and
+			// paths, false host claims and Cursor-only surfaces
+			// (docs/plans/14-wave4-contract.md).
+			/\btasks\s*:\s*\[/,
+			/parallel `tasks`|`tasks` array|`role` (?:parameter|field|key)/,
+			/cloud_base_branch/,
+			/\bcloud workers?\b|\b(?:runs?|restacks?) in (?:the )?cloud\b/i,
+			/\brun_watch\b/,
+			/\bpr:\/\//,
+			/\borch\b/,
+			/`gt\s+[a-z-]+[^`]*`|(?:^|\$ )gt\s+[a-z-]+/m,
+			/\bwatch-pr\b/,
+			/worktree-audit\.sh/,
+			/\brecall`? tool\b/i,
+			/the agent's store/i,
+			/(?<![\w.-])pstack\/skills\//,
+			/packages\/pi-pstack\//,
+			/\btodolist\b/i,
+			/Pi Agent Skills standard/i,
+			/nesting works to depth/i,
+			/cannot be resumed/i,
+			/Cmd\+Shift\+I/i,
+			/\bupdate_state\b/,
+			/\bSendToUser\b/,
+			/api2\.cursor\.sh/,
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+			// Only copies and allowlisted quotations may quote a model name.
+			assert.doesNotMatch(
+				bannable(path, text, statusOf(path), QUOTED_MODELS),
+				MODEL_SLUG,
+				path,
+			);
 		}
 	});
 
@@ -730,6 +1145,46 @@ describe("delegation contract", () => {
 		assert.deepEqual(
 			[...params[1].matchAll(/^\t(\w+): /gm)].map(([, key]) => key).toSorted(),
 			HOST_SUBAGENT_PARAMS,
+		);
+		const segments = params[1].split(/^\t(?=\w+: )/m).filter(Boolean);
+		for (const segment of segments) {
+			const [, key, definition] = /^(\w+): ([\s\S]*)$/.exec(segment) ?? [];
+			const required = !definition.startsWith("Type.Optional(");
+			const type = /ThinkingLevelSchema|Type\.(String|Boolean|Union)/.exec(
+				definition.replace(/^Type\.Optional\(\s*/, ""),
+			);
+			const kind =
+				type?.[1] === "String"
+					? "string"
+					: type?.[1] === "Boolean"
+						? "boolean"
+						: type?.[1] === "Union"
+							? "worktree"
+							: type
+								? "thinking"
+								: undefined;
+			assert.deepEqual({ kind, required }, HOST_SUBAGENT_SCHEMA[key], key);
+		}
+		const worktree = segments.find((segment) =>
+			segment.startsWith("worktree:"),
+		);
+		for (const shape of [
+			/branch: Type\.String\(\{\s*minLength: 1,/,
+			/base: Type\.Optional\(\s*Type\.String\(/,
+			/Type\.Null\(\)/,
+		])
+			assert.match(worktree ?? "", shape);
+		assert.match(
+			index,
+			/const ThinkingLevelSchema = Type\.Union\(\n\tTHINKING_LEVELS\.map\(\(level\) => Type\.Literal\(level\)\),/,
+		);
+		const levels = /export const THINKING_LEVELS = \[([\s\S]*?)\]/.exec(
+			show("maestro/core/routing.ts"),
+		);
+		assert.ok(levels);
+		assert.deepEqual(
+			[...levels[1].matchAll(/"(\w+)"/g)].map(([, level]) => level),
+			THINKING,
 		);
 		const categories = /TASK_CATEGORIES = \[([\s\S]*?)\]/.exec(
 			show("maestro/core/config/task-model-types.ts"),
@@ -806,8 +1261,27 @@ describe("model precedence", () => {
 describe("methodology provenance", () => {
 	const sourceRows = (wave: string) =>
 		inventory.skills.filter((row) => row.wave === wave);
+	/** W4-P cites only the hub row's playbooks and scripts. */
 	const listedSource = (wave: string, source: SourceKey, path: string) =>
-		sourceRows(wave).some((row) => row.sourceFiles[source]?.includes(path));
+		wave === "W4-P"
+			? /^poteto-mode\/(?:playbooks|scripts)\//.test(path) &&
+				(rowOf.get("poteto-mode")?.sourceFiles[source]?.includes(path) ?? false)
+			: sourceRows(wave).some((row) => row.sourceFiles[source]?.includes(path));
+	const sourceKey = ({ source, path }: { source: SourceKey; path: string }) =>
+		`${source}:${path}`;
+	/** Primary sources the W4-P batch has shipped. */
+	const w4pPrimaries = new Set(
+		provenanceOf("w4-p")
+			.files.flatMap(({ sources }) => sources)
+			.filter(({ use }) => use === "primary")
+			.map(sourceKey),
+	);
+	/**
+	 * A w2.json planned or excluded entry that a W4-P file has shipped. The
+	 * reconcile commit removes these; until then they are not double counts.
+	 */
+	const superseded = (owner: string, entry: UnshippedSource) =>
+		owner === "w2" && w4pPrimaries.has(sourceKey(entry));
 
 	it("splits provenance by owner and records the inventory's pinned sources", () => {
 		assert.deepEqual(
@@ -834,7 +1308,7 @@ describe("methodology provenance", () => {
 			excluded,
 		} of provenanceFixtures) {
 			for (const { path, sources } of files) {
-				assert.equal(waveOf.get(rowNameOf(path)), wave, `${owner}: ${path}`);
+				assert.equal(ownerWaveOf(path), wave, `${owner}: ${path}`);
 				for (const use of sources)
 					assert.ok(
 						listedSource(wave, use.source, use.path),
@@ -876,15 +1350,16 @@ describe("methodology provenance", () => {
 
 	it("accounts for each primary source file of every present row exactly once", () => {
 		const accounted = provenanceFixtures.flatMap(
-			({ files, planned, excluded }) => [
+			({ owner, files, planned, excluded }) => [
 				...files.flatMap(({ sources }) =>
 					sources.filter((use) => use.use === "primary"),
 				),
-				...planned,
-				...excluded,
+				...[...planned, ...excluded].filter(
+					(entry) => !superseded(owner, entry),
+				),
 			],
 		);
-		const keys = accounted.map(({ source, path }) => `${source}:${path}`);
+		const keys = accounted.map(sourceKey);
 		assert.equal(new Set(keys).size, keys.length, "source accounted twice");
 		for (const row of presentRows) {
 			const source = row.primarySource;
@@ -902,20 +1377,28 @@ describe("methodology provenance", () => {
 		}
 		for (const { owner, planned, excluded } of provenanceFixtures) {
 			for (const { path, owningWave, explanation } of planned) {
-				assert.match(owningWave, /^W4/, `${owner}: ${path}`);
+				assert.match(owningWave, /^W[45]/, `${owner}: ${path}`);
 				assert.ok(explanation.length > 20, `${owner}: ${path}`);
 			}
 			for (const { path, disposition } of excluded)
 				assert.ok(disposition.length > 20, `${owner}: ${path}`);
 		}
-		const w2 = provenanceFixtures.find(({ owner }) => owner === "w2");
-		assert.deepEqual(
-			w2?.planned
-				.map(({ path, owningWave }) => `${owningWave} ${path}`)
-				.toSorted(),
-			W4_PLAYBOOKS.map((name) => `W4 poteto-mode/playbooks/${name}.md`),
-		);
-		for (const { path } of w2?.excluded ?? [])
+		const w2 = provenanceOf("w2");
+		const playbookSource = (name: string) => `poteto-mode/playbooks/${name}.md`;
+		for (const { path, owningWave } of w2.planned) {
+			assert.ok(
+				W4_PLAYBOOKS.some((name) => path === playbookSource(name)),
+				path,
+			);
+			assert.ok(["W4", DEFERRED_WAVE].includes(owningWave), path);
+		}
+		for (const name of W4_PLAYBOOKS)
+			assert.ok(
+				w2.planned.some(({ path }) => path === playbookSource(name)) ||
+					w4pPrimaries.has(`mimir:${playbookSource(name)}`),
+				`${name} is neither planned in w2.json nor shipped by w4-p.json`,
+			);
+		for (const { path } of w2.excluded)
 			assert.match(path, /^poteto-mode\/scripts\//);
 	});
 
@@ -976,6 +1459,58 @@ describe("methodology provenance", () => {
 					blob(primary.source, primary.path).length,
 				`${file.path} is under half its primary source; add lengthExplanation`,
 			);
+		}
+	});
+
+	const shippedScripts = SHIPPED_FILES.filter((path) =>
+		path.includes("/scripts/"),
+	);
+	const gitMode = (path: string) =>
+		execFileSync("git", ["-C", PACK_ROOT, "ls-files", "-s", "--", path])
+			.toString("utf8")
+			.split(" ")[0];
+	it("ships only the recorded scripts, each with a shebang and its recorded mode", () => {
+		assert.deepEqual(
+			shippedScripts.filter((path) => !(path in SCRIPT_MODES)),
+			[],
+			"every shipped script has a recorded mode",
+		);
+		for (const path of shippedScripts) {
+			assert.match(read(path), /^#!\/\S+/, `${path} has no shebang`);
+			const executable = (statSync(join(PACK_ROOT, path)).mode & 0o111) !== 0;
+			assert.equal(
+				executable,
+				SCRIPT_MODES[path] === "100755",
+				`${path} working-tree mode`,
+			);
+			const indexed = gitMode(path);
+			if (indexed)
+				assert.equal(indexed, SCRIPT_MODES[path], `${path} git mode`);
+		}
+	});
+
+	it("records each shipped script's mode as its primary source's mode", {
+		skip:
+			(!(checkouts.mimir && checkouts.cursor) &&
+				"set PSTACK_MIMIR_SOURCE and PSTACK_CURSOR_SOURCE to checkouts containing the pinned commits") ||
+			(shippedScripts.length === 0 &&
+				"no scripts ship yet: log.sh with W4-B, check-plan.mjs with W4-P"),
+	}, () => {
+		for (const path of shippedScripts) {
+			const primary = provenanceFiles
+				.find((file) => file.path === path)
+				?.sources.find(({ use }) => use === "primary");
+			assert.ok(primary, path);
+			const { commit, root } = inventory.sources[primary.source];
+			const tree = execFileSync("git", [
+				"-C",
+				checkouts[primary.source] ?? "",
+				"ls-tree",
+				commit,
+				"--",
+				posix.join(root, primary.path),
+			]).toString("utf8");
+			assert.equal(tree.split(" ")[0], SCRIPT_MODES[path], path);
 		}
 	});
 

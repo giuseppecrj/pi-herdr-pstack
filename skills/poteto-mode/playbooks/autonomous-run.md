@@ -9,7 +9,7 @@ An autonomous run is permission to keep working, not permission to act externall
 3. Each iteration makes the smallest change the evidence justifies, verifies it against the predicate, commits if it advanced and the commit policy allows, and discards changes that didn't help. Belt-and-suspenders that "might help" gets reverted, not left to ride.
    Sequence the work via **principle-sequence-verifiable-units**, verifying each unit before the next instead of batching checks at the end.
 4. Mid-run discoveries are yours. Address broken skills, related bugs, flaky verifiers, review noise, tooling failures, orphaned follow-ups, and fixable drift yourself via poteto-mode. Put out-of-band fixes in their own commit, or their own PR when PRs are authorized. Do not park reversible work for the human or use a user question tool for it. Surface only actions that need authorization, genuine product or preference calls no experiment can settle, or a real dead end. Keep the predicate as the main drive, and return to it after each side fix.
-5. Checkpoint every iteration via the **show-me-your-work** skill (planned W4), a row for what changed and whether the predicate moved. Until it ships, append that row to a local Markdown decision log and give its path in the reply.
+5. Checkpoint every iteration via the **show-me-your-work** skill, a row for what changed and whether the predicate moved. Give the trail's path in the reply.
 6. Stop when the predicate is met. A plateau is not a stop, so keep going and pivot your approach to push past it. Surface a genuine dead end rather than spinning, and never relax the predicate to declare victory.
 
 **Reply:** the exit condition, iterations run, what landed, what was discarded, final predicate state.
