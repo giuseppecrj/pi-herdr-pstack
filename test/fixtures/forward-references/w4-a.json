@@ -1,5 +1,11 @@
 {
 	"schemaVersion": 1,
 	"description": "Exact forward references from the W4-A skills: how, why, architect, arena, swarm, interrogate, reflect and figure-it-out to rows or playbooks not shipped yet. Sources must be files under skills/<W4-A row>/. Owned by the W4-A writer; retired in the W4 reconcile commit, except W5 deferrals. See test/skill-content.test.ts for the rules.",
-	"exceptions": []
+	"exceptions": [
+		{
+			"sourcePath": "skills/reflect/SKILL.md",
+			"targetPath": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+			"owningWave": "W4"
+		}
+	]
 }

@@ -197,6 +197,76 @@
 			"explanation": "The configured interrogate-reviewers models, the inherit-parent default-model table, agent: poteto-agent and the one parallel subagent call became one bare subagent call per reviewer in one turn citing ../poteto-mode/references/fan-out.md, each reviewer a diversity seat on an exact provider/model-id of a distinct family, with references/reviewer-prompt.md verbatim as systemPrompt (fork: false) and its placeholder values in task, and one json subagent example; the rejected-model fallback no longer opens a separate PR to update the default table or treats inherit-parent and auto aliases specially (edit classes 2-3)."
 		},
 		{
+			"path": "skills/reflect/references/divergent-reviewer.md",
+			"sha256": "23392f2d6d8f42001d236f64ce6b0a55b9e3564f65d96575be9d6488fa919cd6",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "reflect/references/divergent-reviewer.md",
+					"sha256": "23392f2d6d8f42001d236f64ce6b0a55b9e3564f65d96575be9d6488fa919cd6",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/reflect/references/judgment-reviewer.md",
+			"sha256": "ea368cce7d4b5677f7fe4c4fb03e40a032ae12044cedf1f1d65c9b2490c52025",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "reflect/references/judgment-reviewer.md",
+					"sha256": "ea368cce7d4b5677f7fe4c4fb03e40a032ae12044cedf1f1d65c9b2490c52025",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/reflect/references/synthesizer.md",
+			"sha256": "61d83d41946bec7a22039e6bffb86acdeb7e9be896a2b93e4eee5499d108f8fe",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "reflect/references/synthesizer.md",
+					"sha256": "01858c53bb55b7269d88bf480f9a84bc842dd8b7c10c8321d11e16bc51fed407",
+					"use": "primary"
+				}
+			],
+			"explanation": "The drop-list example renaming gpt-4 to gpt-4o trips the shipped-file ban on model-name-prefix slugs; it became the neutral model-v4 to model-v4o rename, keeping the example of a drifting implementation detail. Not one of the listed edit classes; flagged for the reviewer."
+		},
+		{
+			"path": "skills/reflect/references/tooling-reviewer.md",
+			"sha256": "175d5558839e0f148cb45d6627ef8a91ea79a21cd3f79025bd4a3b420f590c60",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "reflect/references/tooling-reviewer.md",
+					"sha256": "175d5558839e0f148cb45d6627ef8a91ea79a21cd3f79025bd4a3b420f590c60",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/reflect/SKILL.md",
+			"sha256": "be7e456720134fb689de9af0cf0018796418ba14a368b8a4e734e75748535d22",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "reflect/SKILL.md",
+					"sha256": "a0e0d22c5b88c6145c8387f501655eedf38e296235982c5543f20d81943d987d",
+					"use": "primary"
+				}
+			],
+			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4)."
+		},
+		{
 			"path": "skills/swarm/SKILL.md",
 			"sha256": "dd8be91babd5c2a642f289cd4feb1e196bd071c847ca4f968d3d97f59926c0fb",
 			"status": "adapted",
