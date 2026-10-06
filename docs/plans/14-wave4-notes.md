@@ -122,3 +122,9 @@ D1 (autopilots scoped down or deferred), D2 (orchestrate scoped down or deferred
 - Cursor's extra swarm sentence (contradiction 13) stays out; Mimir wording is primary.
 - Upstream slash wording such as `/arena` inside prose stays as written.
 
+## Reconcile additions from the W4-A review (2026-10-06)
+
+- Content test gap: the `json subagent` example check is regex-based and missed a malformed closing fence in `reflect/SKILL.md` that swallowed the rest of the skill into the code block. Reconcile adds a fence-state scan (or a Markdown parser) over every shipped skill: every fence opens and closes, every ```json subagent block parses as JSON, and no prose follows a closing fence on the same line.
+- Reconcile also exempts fenced code blocks from the TODO/FIXME placeholder ban and the model-slug ban, then reverts the three test-forced edits in W4-A to byte-identical copies.
+- Reviewer's input caveat: planning main was read before the parent's W4-A decisions landed (`2f99982`); findings were judged against the contract and fan-out protocol, which agree with those decisions.
+
