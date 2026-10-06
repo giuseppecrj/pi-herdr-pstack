@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "expectedSkillCount": 51,
   "sources": {
     "mimir": {
@@ -224,10 +224,12 @@
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
-          "no-comments/SKILL.md"
+          "no-comments/SKILL.md",
+          "../agents/comment-sicko.md"
         ],
         "cursor": [
-          "no-comments/SKILL.md"
+          "no-comments/SKILL.md",
+          "../agents/comment-sicko.md"
         ]
       }
     },
@@ -247,7 +249,7 @@
     {
       "name": "poteto-mode",
       "wave": "W2",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "mimir",
       "sourceFiles": {
         "mimir": [
@@ -721,7 +723,7 @@
     {
       "name": "setup-pstack",
       "wave": "W2",
-      "status": "planned",
+      "status": "shipped",
       "primarySource": "cursor",
       "sourceFiles": {
         "cursor": [

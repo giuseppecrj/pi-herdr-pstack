@@ -15,6 +15,7 @@ import {
 	type IsolatedPiOptions,
 	PACK_ROOT,
 	type RpcRecord,
+	SKILL_NAMES,
 } from "./helpers/rpc.ts";
 
 const HUB = join(PACK_ROOT, "skills", "poteto-mode", "SKILL.md");
@@ -144,12 +145,18 @@ describe("/poteto-mode in the real Pi CLI", () => {
 					source,
 					sourceInfo.path.slice(PACK_ROOT.length + 1),
 				]);
-			assert.deepEqual(listed.toSorted(), [
-				["poteto-mode", "extension", "pi-extension/pstack/index.ts"],
-				["setup-pstack", "extension", "pi-extension/pstack/index.ts"],
-				["skill:poteto-mode", "skill", "skills/poteto-mode/SKILL.md"],
-				["skill:setup-pstack", "skill", "skills/setup-pstack/SKILL.md"],
-			]);
+			assert.deepEqual(
+				listed.toSorted(),
+				[
+					["poteto-mode", "extension", "pi-extension/pstack/index.ts"],
+					["setup-pstack", "extension", "pi-extension/pstack/index.ts"],
+					...SKILL_NAMES.map((name) => [
+						`skill:${name}`,
+						"skill",
+						`skills/${name}/SKILL.md`,
+					]),
+				].toSorted(),
+			);
 		} finally {
 			await pi.close();
 		}

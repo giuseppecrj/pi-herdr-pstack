@@ -53,7 +53,7 @@ adapted from pstack, from two pinned sources:
   Lauren Tan's MIT notice.
 
 See [docs/provenance.md](docs/provenance.md) and
-`test/fixtures/skill-provenance.json` for each file's sources and hashes.
+`test/fixtures/skill-provenance/` for each file's sources and hashes.
 
 ```text
 MIT License

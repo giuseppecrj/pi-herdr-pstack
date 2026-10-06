@@ -35,7 +35,7 @@ added and the role body was not copied elsewhere.
 
 The `skills/poteto-mode/` and `skills/setup-pstack/` files are adaptations of
 upstream pstack, recorded separately from the Wave 1 role fixture in
-`test/fixtures/skill-provenance.json`. Sources:
+`test/fixtures/skill-provenance/w2.json`. Sources:
 
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
@@ -70,7 +70,7 @@ themes:
 - Skills from later waves keep their names. Every reference to one is marked
   planned W3 or planned W4 on the line that makes it, with a safe manual
   equivalent or a reported skip. The 96 exact references are listed in
-  `test/fixtures/wave2-forward-references.json`.
+  `test/fixtures/forward-references/hub.json`.
 
 Of the 45 mimir `poteto-mode` source files, 14 are adapted here. The other 11
 playbooks are planned W4 methodology work and are not shipped as empty files.
@@ -80,3 +80,23 @@ W4 replacements (the PR watcher and plan checker). `npm test` checks
 destination hashes and source accounting. It reproduces the source hashes when
 `PSTACK_MIMIR_SOURCE` and `PSTACK_CURSOR_SOURCE` point to checkouts that
 contain the pinned commits.
+
+## Wave 3 fixture layout
+
+From Wave 3 the fixtures are split by owner so parallel writers never share a
+file. `test/fixtures/skill-provenance/` holds `w2.json` (the Wave 2 fixture,
+moved verbatim), `w3-a.json` and `w3-b.json`. `test/fixtures/forward-references/`
+holds `hub.json` (the Wave 2 tuples, moved verbatim), `w3-a.json` and
+`w3-b.json`. The test unions each directory and requires every entry to lie in
+its owner's skill directories. A file's status is `copied` (destination bytes
+equal the primary source), `adapted` (one primary source, changes explained) or
+`new` (derived only).
+
+`docs/skill-inventory.json` is at schema version 2: rows carry a `status` of
+`planned` or `shipped` that drives the content checks, and the `no-comments`
+row lists `../agents/comment-sicko.md` (relative to each source's skills root)
+as the source of its bare delegate prompt
+`skills/no-comments/references/comment-sicko.md`. The delegation schema pin is
+pi-herdr-agents `7d35371f5d7d0df3edd208a1d5c9a187767d563b`; its
+`SubagentParams` and task categories are byte-identical to the Wave 2 pin
+`e262c584`.

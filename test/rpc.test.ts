@@ -3,7 +3,12 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, it } from "node:test";
-import { configuredHostRoot, IsolatedPi, PACK_ROOT } from "./helpers/rpc.ts";
+import {
+	configuredHostRoot,
+	IsolatedPi,
+	PACK_ROOT,
+	SKILL_NAMES,
+} from "./helpers/rpc.ts";
 
 const GENERIC_ROLES = [
 	"adversarial-reviewer",
@@ -60,7 +65,7 @@ function roleLines(listing: string): string[] {
 const OWN_COMMANDS = ["poteto-mode", "setup-pstack"];
 
 describe("installed pack without pi-herdr-agents", () => {
-	it("registers only its two commands and two skills, without host diagnostics", async () => {
+	it("registers only its two commands and its skills, without host diagnostics", async () => {
 		const pi = new IsolatedPi({ packages: [PACK_ROOT] });
 		try {
 			const owned = (await commands(pi)).filter(
@@ -70,8 +75,7 @@ describe("installed pack without pi-herdr-agents", () => {
 			);
 			assert.deepEqual(owned.map(({ name }) => name).toSorted(), [
 				...OWN_COMMANDS,
-				"skill:poteto-mode",
-				"skill:setup-pstack",
+				...SKILL_NAMES.map((name) => `skill:${name}`),
 			]);
 			assert.equal(pi.stderr, "");
 		} finally {

@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"description": "Per-file content provenance for the W3-B skills: unslop, bro, technical-writing, teach, no-comments (including references/comment-sicko.md) and poteto-help. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
+	"sources": {
+		"mimir": {
+			"repository": "https://github.com/casualjim/pi-mimir",
+			"commit": "f07dd981f62c9c994a5d043ede67d6c63c721454",
+			"root": "packages/pi-pstack/skills"
+		},
+		"cursor": {
+			"repository": "https://github.com/cursor/plugins",
+			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"root": "pstack/skills"
+		}
+	},
+	"files": [],
+	"planned": [],
+	"excluded": []
+}
