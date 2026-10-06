@@ -116,7 +116,7 @@ Not in pstack:
 Playbooks are step lists inside poteto-mode, not skills, so they have no `/skill:` command. Inside the mode, describing the task picks one, and these phrases name one directly:
 
 - "babysit this pr" or "check on pr 123" runs Babysit (`../poteto-mode/playbooks/babysit.md`). It drives the PR to merge-ready and stops there. It doesn't merge unless the user asks to merge, land, or ship. It uses `gh` only, a watcher child does the waiting, and every push, reply, re-run or merge needs authorization.
-- "land the stack" runs Shipping (`../poteto-mode/playbooks/shipping.md`). It lands the verified run only on that explicit request, and pushes, retargets and arming need their own grants.
+- "land the stack" runs Shipping (`../poteto-mode/playbooks/shipping.md`). It lands the verified run only on that explicit request, and pushes, retargets and arming need their own grants. It uses `gh` only, waits through one-shot watcher children, and on a merge-queue base it reports and stops without merging.
 - "take over this branch" runs Session pickup.
 - "pause safely" runs Pause safely.
 - "full autopilot on this queue" runs Autopilot-full (`../poteto-mode/playbooks/autopilot-full.md`). "stack them, don't ship" runs Autopilot-stack (`../poteto-mode/playbooks/autopilot-stack.md`). Both are root-run, with fresh owner rounds continuing in the retained owner checkout and audits on wake, never a timer. Autopilot-full merges only under a grant that names merging, and Autopilot-stack never merges.

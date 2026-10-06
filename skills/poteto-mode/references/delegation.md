@@ -26,7 +26,7 @@ Every child gets a self-contained brief. A standalone child cannot see your conv
 5. **Verification.** The exact command or observation that proves the result, which the child runs before it reports.
 6. **Commit policy.** Commit or leave uncommitted, and on which branch. No push, merge, PR operation, or branch or worktree deletion unless the brief names that specific action. See `references/authorization.md`.
 7. **Session and worktree mode.** `fork: false` gives a fresh standalone child and is the usual choice. It is also required whenever you pass a `systemPrompt`: the host delivers a bare child's `systemPrompt` as a role block at the top of its first message for standalone children only, and drops it for forked children. Use `fork: true` only when the child truly needs the conversation and needs no reference prompt. Each parallel writer gets its own `worktree` branch, based on committed state. Uncommitted parent changes are not copied into a worktree. Read-only children run in an ordinary pane.
-8. **Delegation.** Children are leaves. Say so, or name exactly what further delegation is allowed.
+8. **Delegation.** Children are leaves. Say so. No brief grants further delegation: a child that needs more children reports that need in its result or through `caller_ping`, and you launch the next child (`references/fan-out.md`).
 9. **Methodology.** The reference prompt is the child's role. Name the playbook step the task comes from so the child knows its purpose, but do not paste this skill into the brief.
 
 ## Model and thinking

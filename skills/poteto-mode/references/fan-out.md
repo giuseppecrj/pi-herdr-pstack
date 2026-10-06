@@ -19,7 +19,7 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 - Launch the N children as N independent `subagent` calls in one turn, then end the turn. The host wakes you with each result.
 - Before the calls, write a visible checklist of the expected child names. Pi has no todo tool; the checklist in your reply is the record.
 - Tick a name off only when it has a terminal result: delivered, failed, or cancelled and recorded as a dropout. Synthesize only after every name on the checklist is terminal.
-- A child that receives a fan-out skill runs that skill's single-pass path itself and launches nothing. This covers the comment delegate that no-comments launches and the delegates of the hillclimb and autopilot playbooks. A child spawns only when its brief names that exact delegation.
+- A child that receives a fan-out skill runs that skill's single-pass path itself and launches nothing. This covers the comment delegate that no-comments launches and the delegates of the hillclimb and autopilot playbooks. No brief can grant a child further delegation. A child that needs more children hands that need back to the root in its result, or through `caller_ping`, and the root launches the next child.
 
 ## 2. Prompts
 
@@ -50,7 +50,7 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 
 When a step must wait for something outside the session, such as CI checks or a workflow run, launch one watcher child. It is a bare child with `tools: "read, bash"` that runs one bounded, blocking command, then reports what it saw. Its delivery is the wake.
 
-- Examples: `gh pr checks <pr> --watch` and `gh run watch <run-id> --exit-status`. State the condition that ends the wait and bound each watch arm, with `timeout`, `--interval` or a step cap, so the wait stays visibly finite.
+- Examples: `gh pr checks <pr> --watch` and `gh run watch <run-id> --exit-status`. State the condition that ends the wait and bound each watch arm with a wall-clock timeout, such as `timeout <seconds> gh pr checks <pr> --watch`, or an enforced finite step cap, so the wait stays visibly finite. `gh pr checks --interval` sets only the refresh cadence and bounds nothing, because checks can stay pending indefinitely. The declared bound is the watcher's wait bound.
 - While the watcher blocks, expect one informational no-progress advisory for each idle minute. It is not a stall. Do not cancel the watcher for it. Cancel only when the stated bound has passed.
 - The watcher reads; it does not reply, push, merge or re-run anything.
 - After each wave of work, re-arm the wait explicitly by launching a fresh watcher. It is one-shot: never a sleep loop, never a timer, and nothing in pstack schedules it.

@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-full.md",
-			"sha256": "5ce3483fb953a1e559c61c17962143c74d80066c55b397a671937c2ab7a8777f",
+			"sha256": "d67ca56711aaef6a68c8635904e1faf401d1a94a0232fb430df10e6cf1a3cc8b",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,11 +52,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the swarm lanes per references/fan-out.md."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the swarm lanes per references/fan-out.md. Wave 4 fix round: the stuck test exempts a watcher child inside its declared wait bound."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-stack.md",
-			"sha256": "68f224b1447a89534073452317060d9c4ee8ab30005b3804712c5a617538e23a",
+			"sha256": "f040a0b95a532ab9d421e8d530e768a41da791e9c071a554968ccdc4615d8869",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,7 +72,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1), with the same Scope limits as autopilot-full: root-run program, fresh owner rounds, audits on delivery, advisory or request with no timer, and pushes and PR creation or retargeting only under grants naming them; this playbook never merges. The hourly loop tick and git show origin/main package path become 'audit at every wake' re-reading the installed playbook; Origin and Graphite commands become gh only; stop cancels every child with subagent_cancel; link verdicts go in PR bodies or comments only when authorized and in the reply always. The ../references path is fixed and Autopilot-full gets its playbook path. Review fix: owner rounds share one retained owner worktree and one canonical PR branch per Autopilot-full step 2, and push only that branch, never a sibling."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1), with the same Scope limits as autopilot-full: root-run program, fresh owner rounds, audits on delivery, advisory or request with no timer, and pushes and PR creation or retargeting only under grants naming them; this playbook never merges. The hourly loop tick and git show origin/main package path become 'audit at every wake' re-reading the installed playbook; Origin and Graphite commands become gh only; stop cancels every child with subagent_cancel; link verdicts go in PR bodies or comments only when authorized and in the reply always. The ../references path is fixed and Autopilot-full gets its playbook path. Review fix: owner rounds share one retained owner worktree and one canonical PR branch per Autopilot-full step 2, and push only that branch, never a sibling. Wave 4 fix round: the stuck test exempts a watcher child inside its declared wait bound."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/babysit.md",
@@ -156,7 +156,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/orchestrate.md",
-			"sha256": "4eb7e24a2e3afb68a8ceef8a78b7d8c20685f8aa092a3e68b93bb24566b49a5e",
+			"sha256": "e43aee9195956335f19223b4ae551d8fd107fba19b5809048f8e2c8decae8956",
 			"status": "adapted",
 			"sources": [
 				{
@@ -172,7 +172,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D2). A Scope paragraph tells the operator it is a depth-1, single-session coordinator and not an unattended runner: no sub-coordinators or nesting, woken only by deliveries, advisories or the operator, a hand-kept file store under show-me-your-work's append-only rules, the frontier from gh PR bases with Graphite never required and no remote workers, a session end as a pause resumed through session-pickup, and grants for every external action. Removed: the orch CLI and its lock, the agent's store, sub-coordinator roles and briefs, the depth-3 nesting claim, the cannot-be-resumed claim, the restart-kills-local-agents claim, cloud restacks, gt frontier and stacker commands, the loop-skill heartbeat and the recall tool. The store becomes .orchestrate/<slug>/ under .git/info/exclude with append-only units.tsv, frontier.tsv, ledger.tsv and inbox.tsv plus log.sh for the trail; stacker, babysitter and retro are roles run as fresh children; liveness uses side effects, worktree_list and one subagent_cancel plus one replacement. figure-it-out and arena are marked planned W4 with an interim rule for arena. W4 reconcile: the figure-it-out and arena planned W4 markers and the arena interim rule are retired."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D2). A Scope paragraph tells the operator it is a depth-1, single-session coordinator and not an unattended runner: no sub-coordinators or nesting, woken only by deliveries, advisories or the operator, a hand-kept file store under show-me-your-work's append-only rules, the frontier from gh PR bases with Graphite never required and no remote workers, a session end as a pause resumed through session-pickup, and grants for every external action. Removed: the orch CLI and its lock, the agent's store, sub-coordinator roles and briefs, the depth-3 nesting claim, the cannot-be-resumed claim, the restart-kills-local-agents claim, cloud restacks, gt frontier and stacker commands, the loop-skill heartbeat and the recall tool. The store becomes .orchestrate/<slug>/ under .git/info/exclude with append-only units.tsv, frontier.tsv, ledger.tsv and inbox.tsv plus log.sh for the trail; stacker, babysitter and retro are roles run as fresh children; liveness uses side effects, worktree_list and one subagent_cancel plus one replacement. figure-it-out and arena are marked planned W4 with an interim rule for arena. W4 reconcile: the figure-it-out and arena planned W4 markers and the arena interim rule are retired. Wave 4 fix round: the advisory cancellation rule exempts a watcher child inside its declared wait bound."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/shipping.md",

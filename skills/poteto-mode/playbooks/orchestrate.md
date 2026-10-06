@@ -101,7 +101,7 @@ A unit is not done until its output is externalized the moment it lands, never b
 #### Liveness and failure
 
 - Never resume or message a child to check on it. Judge it read-only by side effects: the ledger, `units.tsv`, `gh`, pushed branches, `worktree_list`. Transcript mtime is not liveness.
-- A stall or no-progress advisory gets one `subagent_cancel` and, if the work is still needed, one fresh replacement with consolidated scope, per `references/fan-out.md` section 4.
+- A stall or no-progress advisory gets one `subagent_cancel` and, if the work is still needed, one fresh replacement with consolidated scope, per `references/fan-out.md` section 4. The exception is a watcher child still inside its declared wait bound: its per-minute advisory is informational, so cancel it only once that bound has passed (section 6).
 - A failed or empty result gets a synthetic postmortem row in the inbox (unit, failure mode, last evidence, options). Replan on evidence as it arrives. Never wait for full quiescence.
 - Retry by mode: cap-hit or oom, launch fresh with smaller scope. Network-drop, retry as-is. Tool-error, retry on a different model. Unknown, retry once. Two retries, then abandon the unit and replan around it.
 - A result that arrives after you replaced its child reconciles against the current frontier and ledger before anything is accepted. Salvage unique findings through a fresh unit, never a blind merge.

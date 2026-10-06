@@ -335,24 +335,26 @@ type Fence = { info: string; open: string; content: string[] };
  * contract checks these blocks against the `marked` lexer.
  */
 function fences(path: string): Array<Fence | undefined> {
+	return fencesOf(read(path));
+}
+
+function fencesOf(markdown: string): Array<Fence | undefined> {
 	let open: Fence | undefined;
-	return read(path)
-		.split("\n")
-		.map((text) => {
-			if (open) {
-				const fence = open;
-				const run = new RegExp(
-					`^\\s*\\${fence.open[0]}{${fence.open.length},}\\s*$`,
-				);
-				if (run.test(text)) open = undefined;
-				else fence.content.push(text);
-				return fence;
-			}
-			const start = /^\s*(`{3,}(?=[^`]*$)|~{3,})(.*)$/.exec(text);
-			if (!start) return undefined;
-			open = { open: start[1], info: start[2].trim(), content: [] };
-			return open;
-		});
+	return markdown.split("\n").map((text) => {
+		if (open) {
+			const fence = open;
+			const run = new RegExp(
+				`^\\s*\\${fence.open[0]}{${fence.open.length},}\\s*$`,
+			);
+			if (run.test(text)) open = undefined;
+			else fence.content.push(text);
+			return fence;
+		}
+		const start = /^\s*(`{3,}(?=[^`]*$)|~{3,})(.*)$/.exec(text);
+		if (!start) return undefined;
+		open = { open: start[1], info: start[2].trim(), content: [] };
+		return open;
+	});
 }
 
 /** Lines outside fenced code blocks, numbered from 1. */
@@ -368,17 +370,53 @@ function proseLines(path: string): Array<{ line: number; text: string }> {
 /** Prose with inline code spans removed. */
 const withoutCodeSpans = (text: string) => text.replace(/(`+)[^`]*?\1/g, "");
 
+/** An exact upstream quotation an adapted file may keep despite a ban. */
+type Quotation = { path: string; snippet: string };
+
+/** Placeholder markers that adapted files quote from upstream prompts. */
+const QUOTED_MARKERS: Quotation[] = [
+	{
+		path: "skills/architect/references/runner-prompt.md",
+		snippet: "`// TODO` pseudocode for tricky logic",
+	},
+];
+
+/** Model names that adapted files quote from upstream examples. */
+const QUOTED_MODELS: Quotation[] = [];
+
 /**
- * The text a ban applies to: a Markdown file's prose, without inline code when
- * `inlineCode` is false; any other file in full. Code quotes, so a placeholder
- * marker or model name inside it is upstream content, not a claim.
+ * The text a ban applies to. A byte-identical upstream copy is scanned as
+ * prose only, without fenced blocks or inline code, because its code quotes
+ * upstream. An adapted or new file is scanned in full, less the exact
+ * quotations allowlisted for its path; each allowlisted snippet must still
+ * occur, so a stale entry fails.
  */
-function bannable(path: string, inlineCode = false): string {
-	if (!path.endsWith(".md")) return read(path);
-	return proseLines(path)
-		.map(({ text }) => (inlineCode ? text : withoutCodeSpans(text)))
-		.join("\n");
+function bannable(
+	path: string,
+	text: string,
+	status: ProvenanceFile["status"] | undefined,
+	quotations: Quotation[],
+): string {
+	if (!path.endsWith(".md")) return text;
+	if (status === "copied") {
+		const fenced = fencesOf(text);
+		return text
+			.split("\n")
+			.filter((_, index) => !fenced[index])
+			.map(withoutCodeSpans)
+			.join("\n");
+	}
+	return quotations
+		.filter((quotation) => quotation.path === path)
+		.reduce((rest, { snippet }) => {
+			assert.ok(rest.includes(snippet), `${path} no longer quotes ${snippet}`);
+			return rest.split(snippet).join("");
+		}, text);
 }
+
+const statusOf = (path: string) =>
+	provenanceFiles.find((file) => file.path === path)?.status;
+const PLACEHOLDER = /\b(?:TODO|TBD|FIXME)\b/;
 
 type Reference = { sourcePath: string; targetPath: string; text: string };
 
@@ -590,8 +628,12 @@ describe("shipped skill tree", () => {
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			assert.ok(body(path).trim().length > 0, `${path} has an empty body`);
-			// Fenced blocks and inline code may quote markers, as in an rg pattern.
-			assert.doesNotMatch(bannable(path), /\b(?:TODO|TBD|FIXME)\b/, path);
+			// Only copies and allowlisted quotations may quote a marker.
+			assert.doesNotMatch(
+				bannable(path, text, statusOf(path), QUOTED_MARKERS),
+				PLACEHOLDER,
+				path,
+			);
 			assert.doesNotMatch(
 				text,
 				/coming soon|lorem ipsum|placeholder skill/i,
@@ -601,6 +643,57 @@ describe("shipped skill tree", () => {
 		// Length against the primary source is checked with the source hashes.
 		for (const file of provenanceFiles.filter(({ status }) => status === "new"))
 			assert.ok(read(file.path).length > 1000, `${file.path} is too thin`);
+	});
+});
+
+describe("quotation exemptions", () => {
+	const ADAPTED = "skills/poteto-mode/playbooks/hillclimb.md";
+	const RUNNER = "skills/architect/references/runner-prompt.md";
+
+	it("fails an adapted file that quotes a placeholder outside the allowlist", () => {
+		const text = "# Step\n\n- `TODO`: define later\n";
+		assert.match(
+			bannable(ADAPTED, text, "adapted", QUOTED_MARKERS),
+			PLACEHOLDER,
+		);
+	});
+
+	it("fails an adapted file whose fenced block names an unverified model", () => {
+		const text = "# Run\n\n```bash\npi --model claude-unverified\n```\n";
+		assert.match(bannable(ADAPTED, text, "adapted", QUOTED_MODELS), MODEL_SLUG);
+	});
+
+	it("passes the allowlisted runner-prompt quotation and nothing beside it", () => {
+		const text = read(RUNNER);
+		assert.equal(statusOf(RUNNER), "adapted");
+		assert.doesNotMatch(
+			bannable(RUNNER, text, "adapted", QUOTED_MARKERS),
+			PLACEHOLDER,
+		);
+		assert.match(
+			bannable(
+				RUNNER,
+				`${text}\n\`// TODO\` elsewhere\n`,
+				"adapted",
+				QUOTED_MARKERS,
+			),
+			PLACEHOLDER,
+		);
+	});
+
+	it("passes quotations in byte-identical copies", () => {
+		for (const [path, pattern] of [
+			["skills/why/references/sources/code-archaeology.md", PLACEHOLDER],
+			["skills/reflect/references/synthesizer.md", MODEL_SLUG],
+		] as const) {
+			assert.equal(statusOf(path), "copied", path);
+			assert.match(read(path), pattern, path);
+			assert.doesNotMatch(
+				bannable(path, read(path), "copied", []),
+				pattern,
+				path,
+			);
+		}
 	});
 });
 
@@ -999,11 +1092,12 @@ describe("delegation contract", () => {
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
-			// Fenced blocks may quote a model name; so may inline code in a
-			// byte-identical upstream copy, as in reflect's drift example.
-			const copied =
-				provenanceFiles.find((file) => file.path === path)?.status === "copied";
-			assert.doesNotMatch(bannable(path, !copied), MODEL_SLUG, path);
+			// Only copies and allowlisted quotations may quote a model name.
+			assert.doesNotMatch(
+				bannable(path, text, statusOf(path), QUOTED_MODELS),
+				MODEL_SLUG,
+				path,
+			);
 		}
 	});
 
