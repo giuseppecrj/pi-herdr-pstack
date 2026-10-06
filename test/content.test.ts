@@ -170,7 +170,19 @@ describe("package manifest", () => {
 		})
 			.split("\n")
 			.filter(Boolean);
-		assert.equal(skills.length, 17);
+		// The per-owner provenance fixtures record every shipped skill file.
+		const recorded = readdirSync(
+			join(PACK_ROOT, "test/fixtures/skill-provenance"),
+		).flatMap((name) =>
+			// SAFETY: test-owned fixtures checked by test/skill-content.test.ts.
+			(
+				JSON.parse(read(`test/fixtures/skill-provenance/${name}`)) as {
+					files: Array<{ path: string }>;
+				}
+			).files.map(({ path }) => path),
+		);
+		assert.deepEqual(skills.toSorted(), recorded.toSorted());
+		assert.ok(skills.length >= 17);
 		assert.deepEqual(
 			pack.files.map(({ path }) => path).toSorted(),
 			[

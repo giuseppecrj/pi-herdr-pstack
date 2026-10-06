@@ -1,10 +1,10 @@
 # pi-herdr-pstack
 
-> **Experimental, private, unpublished — Wave 2 candidate.** This package
-> contributes the `poteto-mode` and `setup-pstack` skills and their
-> `/poteto-mode` and `/setup-pstack` commands. It ships no named roles. The
-> other 49 skills of the full pstack inventory are planned for later waves and
-> are **not** shipped. Nothing is published or released.
+> **Experimental, private, unpublished — Wave 3 candidate.** This package
+> contributes 37 skills of the full pstack inventory (the two Wave 2 skills and
+> the 35 Wave 3 skills), the `/poteto-mode` and `/setup-pstack` commands and one
+> bare delegate prompt. It ships no named roles. The other 14 skills are
+> planned for Wave 4 and are **not** shipped. Nothing is published or released.
 
 A Pi methodology pack for [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents).
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs
@@ -16,11 +16,23 @@ store, installer or shell-permission engine.
 | Resource | Kind | Notes |
 | `poteto-mode` | skill | The single source of poteto's methodology: hub, three references, twelve base playbooks. Explicit-only (`disable-model-invocation: true`). |
 | `setup-pstack` | skill | Explains the setup report and drives one approved change inside a `/setup-pstack` change flow. |
+| 24 `principle-*` skills | skills | One rule each: `principle-attack-the-premise`, `principle-boundary-discipline`, `principle-build-the-lever`, `principle-encode-lessons-in-structure`, `principle-exhaust-the-design-space`, `principle-experience-first`, `principle-explain-the-number`, `principle-fix-root-causes`, `principle-foundational-thinking`, `principle-guard-the-context-window`, `principle-laziness-protocol`, `principle-make-operations-idempotent`, `principle-migrate-callers-then-delete-legacy-apis`, `principle-minimize-reader-load`, `principle-model-the-domain`, `principle-never-block-on-the-human`, `principle-outcome-oriented-execution`, `principle-prove-it-works`, `principle-redesign-from-first-principles`, `principle-separate-before-serializing-shared-state`, `principle-sequence-verifiable-units`, `principle-subtract-before-you-add`, `principle-test-behavior-not-implementation`, `principle-type-system-discipline`. poteto-mode cites them; the hub keeps a summary of each. |
+| `tdd`, `correct`, `benchmark-checklist`, `blast-radius`, `typescript-best-practices` | skills | Engineering technique: test-first fixes, repo lessons, vetting measured numbers, breakage outside a diff, TypeScript rules (load explicitly before `.ts`/`.tsx` edits). |
+| `unslop`, `technical-writing`, `no-comments`, `teach`, `bro` | skills | Prose and communication: AI-tell cleanup, documentation standards, comment removal through a bare delegate, plain explanations, plain-words recap. |
+| `poteto-help` | skill | Pi guide to installing pstack, the commands and which skill, playbook or principle fits a task. |
 | `/poteto-mode` | command | Sticky methodology mode for the current session branch. |
 | `/setup-pstack` | command | Report-first setup; shared task-model changes only with explicit approval. |
 
+All skills except `setup-pstack` are explicit-only: they load through
+`/skill:<name>` or when poteto-mode reads them for a step. Skills from Wave 4
+are named with a `planned W4` marker and an interim route wherever a shipped
+file refers to them.
+
 Pstack registers no role directory and depends on neither pi-herdr-roles nor
-another pack. `poteto-mode` delegates are deliberately **bare**: each call omits
+another pack. comment-sicko is a bare delegate prompt under
+`skills/no-comments/references/`, not a role: `/skill:no-comments` passes it as
+`systemPrompt` with `tools: "read, bash, edit"`, and pstack still ships no named
+roles. `poteto-mode` delegates are deliberately **bare**: each call omits
 `agent` and passes a bounded reference prompt (implementer, investigator,
 reviewer or verifier) as `systemPrompt`, with explicit `model`, `thinking`,
 `fork` and, for parallel writers, `worktree`. The `poteto` role that Wave 1

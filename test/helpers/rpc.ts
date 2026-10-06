@@ -3,6 +3,7 @@ import {
 	existsSync,
 	mkdirSync,
 	mkdtempSync,
+	readdirSync,
 	readFileSync,
 	rmSync,
 	writeFileSync,
@@ -16,6 +17,13 @@ export const PACK_ROOT = resolve(
 	"..",
 	"..",
 );
+/**
+ * Skill names in this tree's `skills/` directory. test/skill-content.test.ts
+ * checks this set against the inventory, so command tests can follow it.
+ */
+export const SKILL_NAMES = readdirSync(join(PACK_ROOT, "skills"))
+	.filter((name) => existsSync(join(PACK_ROOT, "skills", name, "SKILL.md")))
+	.toSorted();
 export const FAUX_EXTENSION = join(
 	PACK_ROOT,
 	"test",

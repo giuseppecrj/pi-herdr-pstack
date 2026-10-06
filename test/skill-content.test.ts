@@ -15,24 +15,31 @@ const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
 const exists = (path: string) => existsSync(join(PACK_ROOT, path));
 const sha256 = (value: string | Buffer) =>
 	createHash("sha256").update(value).digest("hex");
+const readJson = <T>(path: string): T => JSON.parse(read(path)) as T;
 
 type SourceKey = "mimir" | "cursor";
 type InventoryRow = {
 	name: string;
 	wave: string;
-	status: string;
+	status: "planned" | "shipped";
 	primarySource: SourceKey;
+	/** Paths relative to the source root; `../agents/` reaches a sibling role file. */
 	sourceFiles: Partial<Record<SourceKey, string[]>>;
 };
 type Source = { repository: string; commit: string; root: string };
 // SAFETY: parent-owned canonical inventory, schemaVersion checked below.
-const inventory = JSON.parse(read("docs/skill-inventory.json")) as {
+const inventory = readJson<{
 	schemaVersion: number;
 	expectedSkillCount: number;
 	sources: Record<SourceKey, Source>;
 	skills: InventoryRow[];
-};
+}>("docs/skill-inventory.json");
+const rowOf = new Map(inventory.skills.map((row) => [row.name, row]));
 const waveOf = new Map(inventory.skills.map((row) => [row.name, row.wave]));
+
+/** Each fixture owner and the inventory wave whose skill directories it owns. */
+const FORWARD_OWNERS = { hub: "W2", "w3-a": "W3-A", "w3-b": "W3-B" };
+const PROVENANCE_OWNERS = { w2: "W2", "w3-a": "W3-A", "w3-b": "W3-B" };
 
 type ForwardReference = {
 	sourcePath: string;
@@ -40,10 +47,15 @@ type ForwardReference = {
 	owningWave: string;
 	reason?: string;
 };
-// SAFETY: methodology-owned fixture; every field is asserted below.
-const forward = JSON.parse(
-	read("test/fixtures/wave2-forward-references.json"),
-) as { schemaVersion: number; exceptions: ForwardReference[] };
+// SAFETY: owner-split fixtures; every field is asserted below.
+const forwardFixtures = Object.entries(FORWARD_OWNERS).map(([owner, wave]) => ({
+	owner,
+	wave,
+	...readJson<{ schemaVersion: number; exceptions: ForwardReference[] }>(
+		`test/fixtures/forward-references/${owner}.json`,
+	),
+}));
+const exceptions = forwardFixtures.flatMap(({ exceptions }) => exceptions);
 
 type SourceUse = {
 	source: SourceKey;
@@ -54,9 +66,11 @@ type SourceUse = {
 type ProvenanceFile = {
 	path: string;
 	sha256: string;
-	status: "adapted" | "new";
+	status: "copied" | "adapted" | "new";
 	sources: SourceUse[];
 	explanation: string;
+	/** Required when an adapted file is under half its primary source's length. */
+	lengthExplanation?: string;
 };
 type UnshippedSource = {
 	source: SourceKey;
@@ -64,14 +78,24 @@ type UnshippedSource = {
 	sha256: string;
 	explanation: string;
 };
-// SAFETY: methodology-owned fixture; every field is asserted below.
-const provenance = JSON.parse(read("test/fixtures/skill-provenance.json")) as {
+type ProvenanceFixture = {
 	schemaVersion: number;
 	sources: Record<SourceKey, Source>;
 	files: ProvenanceFile[];
 	planned: Array<UnshippedSource & { owningWave: string }>;
 	excluded: Array<UnshippedSource & { disposition: string }>;
 };
+// SAFETY: owner-split fixtures; every field is asserted below.
+const provenanceFixtures = Object.entries(PROVENANCE_OWNERS).map(
+	([owner, wave]) => ({
+		owner,
+		wave,
+		...readJson<ProvenanceFixture>(
+			`test/fixtures/skill-provenance/${owner}.json`,
+		),
+	}),
+);
+const provenanceFiles = provenanceFixtures.flatMap(({ files }) => files);
 
 const BASE_PLAYBOOKS = [
 	"autonomous-run",
@@ -100,7 +124,7 @@ const W4_PLAYBOOKS = [
 	"visual-parity",
 	"worktree-cleanup",
 ];
-const OWNED_FILES = [
+const W2_FILES = [
 	"skills/poteto-mode/SKILL.md",
 	"skills/poteto-mode/references/authorization.md",
 	"skills/poteto-mode/references/bugbot-triage.md",
@@ -108,10 +132,19 @@ const OWNED_FILES = [
 	...BASE_PLAYBOOKS.map((name) => `skills/poteto-mode/playbooks/${name}.md`),
 	"skills/setup-pstack/SKILL.md",
 ].toSorted();
+const COMMENT_SICKO_PROMPT = "skills/no-comments/references/comment-sicko.md";
+const COMMENT_SICKO_SYSTEM_PROMPT =
+	"<the full text of references/comment-sicko.md, verbatim>";
+/** Files outside `skills/no-comments/` that may name the delegate, on lines that also name `no-comments`. */
+const COMMENT_SICKO_DESCRIBERS = [
+	"skills/poteto-mode/SKILL.md",
+	"skills/poteto-mode/references/delegation.md",
+];
 
-// Pinned from pi-herdr-agents e262c584 `SubagentParams`; parity is checked
-// against that commit when a host checkout is available.
-const HOST_HERDR_COMMIT = "e262c584f54a7c8d60eb1fa5510f47c1299e3801";
+// Pinned from pi-herdr-agents 7d35371 `SubagentParams`; parity is checked
+// against that commit when a host checkout is available. The schema body and
+// task categories are byte-identical to the W2 pin e262c584.
+const HOST_HERDR_COMMIT = "7d35371f5d7d0df3edd208a1d5c9a187767d563b";
 const HOST_SUBAGENT_PARAMS = [
 	"agent",
 	"cwd",
@@ -152,11 +185,24 @@ const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
 
 function walk(dir: string): string[] {
-	return readdirSync(join(PACK_ROOT, dir)).flatMap((entry) => {
+	const entries = readdirSync(join(PACK_ROOT, dir));
+	assert.ok(entries.length > 0, `${dir} is an empty directory`);
+	return entries.flatMap((entry) => {
 		const path = posix.join(dir, entry);
 		return statSync(join(PACK_ROOT, path)).isDirectory() ? walk(path) : [path];
 	});
 }
+
+const SHIPPED_FILES = walk("skills").toSorted();
+const rowNameOf = (path: string) => path.split("/")[1];
+/** Inventory rows whose skill directory exists in this tree. */
+const presentRows = inventory.skills.filter(({ name }) =>
+	exists(`skills/${name}`),
+);
+const shippedRows = inventory.skills.filter(
+	({ status }) => status === "shipped",
+);
+const MARKDOWN_FILES = SHIPPED_FILES.filter((path) => path.endsWith(".md"));
 
 /** Lines outside fenced code blocks, numbered from 1. */
 function proseLines(path: string): Array<{ line: number; text: string }> {
@@ -177,13 +223,7 @@ type Reference = { sourcePath: string; targetPath: string; text: string };
 /** Skill and resource references, resolved to package-relative targets. */
 function references(sourcePath: string): Reference[] {
 	const skillDir = sourcePath.split("/").slice(0, 2).join("/");
-	return proseLines(sourcePath).flatMap(({ line, text }) => {
-		for (const [, link] of text.matchAll(/\]\(([^)]+)\)/g))
-			assert.match(
-				link,
-				/^https:\/\//,
-				`${sourcePath}:${line} uses a relative Markdown link; use a backticked skill-relative path`,
-			);
+	return proseLines(sourcePath).flatMap(({ text }) => {
 		const skills = [
 			...text.matchAll(
 				/\*\*([a-z0-9-]+)\*\*|`([a-z0-9-]+)`|\/skill:([a-z0-9-]+)/g,
@@ -208,13 +248,14 @@ function references(sourcePath: string): Reference[] {
 	});
 }
 
-const allReferences = OWNED_FILES.flatMap(references);
+const allReferences = MARKDOWN_FILES.flatMap(references);
 const missingReferences = allReferences.filter(
 	({ targetPath }) => !exists(targetPath),
 );
 const tupleKey = ({ sourcePath, targetPath }: ForwardReference | Reference) =>
 	`${sourcePath} -> ${targetPath}`;
 
+/** The wave that owns a reference target, or undefined for unowned paths. */
 function expectedWave(targetPath: string): string | undefined {
 	const playbook = /^skills\/poteto-mode\/playbooks\/([a-z-]+)\.md$/.exec(
 		targetPath,
@@ -224,20 +265,74 @@ function expectedWave(targetPath: string): string | undefined {
 	return skill ? waveOf.get(skill[1]) : undefined;
 }
 
-describe("W2 methodology skill tree", () => {
-	it("ships exactly the frozen entry contract: two skills, three references, twelve base playbooks", () => {
-		assert.deepEqual(walk("skills").toSorted(), OWNED_FILES);
+/** Whether a reference target belongs to a row (or W4 playbook) not yet shipped. */
+function targetPlanned(targetPath: string): boolean {
+	const skill = /^skills\/([a-z0-9-]+)\//.exec(targetPath);
+	if (targetPath.startsWith("skills/poteto-mode/playbooks/"))
+		return expectedWave(targetPath) === "W4";
+	return skill ? rowOf.get(skill[1])?.status === "planned" : false;
+}
+
+const frontmatter = (path: string) =>
+	/^---\n([\s\S]*?)\n---\n/.exec(read(path))?.[1];
+const body = (path: string) => read(path).replace(/^---\n[\s\S]*?\n---\n/, "");
+
+describe("shipped skill tree", () => {
+	it("matches the canonical inventory partition and statuses", () => {
+		assert.equal(inventory.schemaVersion, 2);
+		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
+		assert.equal(inventory.skills.length, 51);
+		const count = (prefix: string) =>
+			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
+		assert.deepEqual(
+			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
+			[2, 29, 6, 8, 6],
+		);
+		for (const row of inventory.skills) {
+			assert.ok(["planned", "shipped"].includes(row.status), row.name);
+			assert.ok(row.sourceFiles[row.primarySource]?.length, row.name);
+			for (const paths of Object.values(row.sourceFiles))
+				for (const path of paths ?? [])
+					assert.ok(
+						path.startsWith(`${row.name}/`) ||
+							(row.name === "no-comments" &&
+								path === "../agents/comment-sicko.md"),
+						`${row.name}: ${path}`,
+					);
+		}
+		for (const name of ["poteto-mode", "setup-pstack"])
+			assert.equal(rowOf.get(name)?.status, "shipped", name);
+	});
+
+	it("has every shipped row present, and only shipped or in-progress W3 rows", () => {
+		for (const { name } of shippedRows)
+			assert.ok(exists(`skills/${name}/SKILL.md`), `${name} is shipped`);
+		for (const { name, status, wave } of presentRows)
+			assert.ok(
+				status === "shipped" || wave.startsWith("W3-"),
+				`${name} (${wave}) is present but ${status}`,
+			);
+		assert.deepEqual(
+			readdirSync(join(PACK_ROOT, "skills")).toSorted(),
+			presentRows.map(({ name }) => name).toSorted(),
+			"every skill directory is an inventory row",
+		);
 		for (const name of W4_PLAYBOOKS)
 			assert.equal(exists(`skills/poteto-mode/playbooks/${name}.md`), false);
 		assert.equal(exists("skills/poteto-mode/scripts"), false);
 		assert.equal(exists("skills/orchestrate"), false);
+		assert.equal(exists("agents"), false);
+		for (const path of SHIPPED_FILES.filter(
+			(file) => rowNameOf(file) !== "no-comments",
+		))
+			assert.equal(path.endsWith("comment-sicko.md"), false, path);
 	});
 
-	it("loads through the tested Pi skill loader as exactly two skills", () => {
+	it("loads through the tested Pi skill loader as exactly the present rows", () => {
 		// SAFETY: installed devDependency manifest.
-		const sdk = JSON.parse(
-			read("node_modules/@earendil-works/pi-coding-agent/package.json"),
-		) as { version: string };
+		const sdk = readJson<{ version: string }>(
+			"node_modules/@earendil-works/pi-coding-agent/package.json",
+		);
 		assert.equal(sdk.version, "1.0.3");
 
 		const { skills, diagnostics } = loadSkillsFromDir({
@@ -253,47 +348,41 @@ describe("W2 methodology skill tree", () => {
 					disableModelInvocation,
 				}))
 				.toSorted((a, b) => a.name.localeCompare(b.name)),
-			[
-				{
-					name: "poteto-mode",
-					filePath: join(PACK_ROOT, "skills/poteto-mode/SKILL.md"),
-					disableModelInvocation: true,
-				},
-				{
-					name: "setup-pstack",
-					filePath: join(PACK_ROOT, "skills/setup-pstack/SKILL.md"),
-					disableModelInvocation: false,
-				},
-			],
+			presentRows
+				.map(({ name }) => ({
+					name,
+					filePath: join(PACK_ROOT, `skills/${name}/SKILL.md`),
+					disableModelInvocation: name !== "setup-pstack",
+				}))
+				.toSorted((a, b) => a.name.localeCompare(b.name)),
 		);
 		const prompt = formatSkillsForPrompt(skills);
-		assert.match(prompt, /<name>setup-pstack<\/name>/);
-		assert.doesNotMatch(prompt, /poteto-mode/);
+		assert.deepEqual(
+			[...prompt.matchAll(/<name>([^<]+)<\/name>/g)].map(([, name]) => name),
+			["setup-pstack"],
+		);
+		for (const { name } of presentRows)
+			assert.doesNotMatch(
+				frontmatter(`skills/${name}/SKILL.md`) ?? "",
+				/^paths\s*:/m,
+				`${name}: Pi ignores paths; drop it`,
+			);
 	});
 
-	it("matches the canonical inventory's W2 rows and partition", () => {
-		assert.equal(inventory.schemaVersion, 1);
-		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 51);
-		const count = (prefix: string) =>
-			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
+	it("keeps the W2 files at their frozen entry-contract paths", () => {
+		for (const path of W2_FILES) assert.ok(SHIPPED_FILES.includes(path), path);
 		assert.deepEqual(
-			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 29, 6, 8, 6],
-		);
-		assert.deepEqual(
-			inventory.skills
-				.filter(({ wave }) => wave === "W2")
-				.map(({ name }) => name)
-				.toSorted(),
-			["poteto-mode", "setup-pstack"],
+			SHIPPED_FILES.filter((path) =>
+				["poteto-mode", "setup-pstack"].includes(rowNameOf(path)),
+			),
+			W2_FILES,
 		);
 	});
 
 	it("has substantive content, not placeholders", () => {
-		for (const path of OWNED_FILES) {
+		for (const path of SHIPPED_FILES) {
 			const text = read(path);
-			assert.ok(text.length > 1000, `${path} is too thin`);
+			assert.ok(body(path).trim().length > 0, `${path} has an empty body`);
 			assert.doesNotMatch(text, /\b(?:TODO|TBD|FIXME)\b/, path);
 			assert.doesNotMatch(
 				text,
@@ -301,36 +390,60 @@ describe("W2 methodology skill tree", () => {
 				path,
 			);
 		}
+		// Length against the primary source is checked with the source hashes.
+		for (const file of provenanceFiles.filter(({ status }) => status === "new"))
+			assert.ok(read(file.path).length > 1000, `${file.path} is too thin`);
 	});
 });
 
 describe("references and forward exceptions", () => {
+	it("splits exceptions by owner, each source inside its owner's skill directories", () => {
+		assert.deepEqual(
+			readdirSync(
+				join(PACK_ROOT, "test/fixtures/forward-references"),
+			).toSorted(),
+			Object.keys(FORWARD_OWNERS)
+				.map((owner) => `${owner}.json`)
+				.toSorted(),
+		);
+		for (const { owner, wave, schemaVersion, exceptions } of forwardFixtures) {
+			assert.equal(schemaVersion, 1, owner);
+			for (const exception of exceptions)
+				assert.equal(
+					waveOf.get(rowNameOf(exception.sourcePath)),
+					wave,
+					`${owner}: ${tupleKey(exception)}`,
+				);
+		}
+	});
+
 	it("enumerates every unresolved reference as an exact owned-wave tuple", () => {
-		assert.equal(forward.schemaVersion, 1);
-		const actual = [...new Set(missingReferences.map(tupleKey))].toSorted();
-		const listed = forward.exceptions.map(tupleKey);
+		const listed = exceptions.map(tupleKey);
 		assert.equal(new Set(listed).size, listed.length, "duplicate exception");
-		assert.deepEqual(listed.toSorted(), actual);
-		for (const exception of forward.exceptions) {
+		const actual = new Set(allReferences.map(tupleKey));
+		for (const key of new Set(missingReferences.map(tupleKey)))
+			assert.ok(listed.includes(key), `${key} is unresolved and unlisted`);
+		for (const exception of exceptions) {
+			const key = tupleKey(exception);
+			assert.ok(SHIPPED_FILES.includes(exception.sourcePath), key);
+			assert.ok(actual.has(key), `${key} no longer occurs; retire it`);
 			assert.ok(
-				OWNED_FILES.includes(exception.sourcePath),
-				tupleKey(exception),
-			);
-			assert.equal(
-				exists(exception.targetPath),
-				false,
-				`${tupleKey(exception)} now resolves; retire the exception`,
+				targetPlanned(exception.targetPath),
+				`${key} targets a shipped or unowned path; retire it`,
 			);
 			assert.equal(
 				exception.owningWave,
 				expectedWave(exception.targetPath),
-				tupleKey(exception),
+				key,
 			);
 		}
 	});
 
 	it("marks each forward reference as planned on the line that makes it", () => {
-		for (const { sourcePath, targetPath, text } of missingReferences) {
+		const listed = new Set(exceptions.map(tupleKey));
+		for (const reference of allReferences) {
+			const { sourcePath, targetPath, text } = reference;
+			if (exists(targetPath) && !listed.has(tupleKey(reference))) continue;
 			const wave = expectedWave(targetPath);
 			assert.ok(wave, `${sourcePath} -> ${targetPath} has no owning wave`);
 			assert.ok(
@@ -340,11 +453,48 @@ describe("references and forward exceptions", () => {
 		}
 	});
 
+	it("drops the planned marker from lines whose references have all shipped", () => {
+		for (const path of MARKDOWN_FILES)
+			for (const { text } of proseLines(path)) {
+				const lineReferences = references(path).filter(
+					(reference) => reference.text === text,
+				);
+				for (const major of ["W3", "W4"]) {
+					if (!text.includes(`planned ${major}`)) continue;
+					const shipped = lineReferences.filter(
+						({ targetPath }) =>
+							expectedWave(targetPath)?.startsWith(major) &&
+							!targetPlanned(targetPath),
+					);
+					const pending = lineReferences.filter(
+						({ targetPath }) =>
+							expectedWave(targetPath)?.startsWith(major) &&
+							targetPlanned(targetPath),
+					);
+					assert.ok(
+						shipped.length === 0 || pending.length > 0,
+						`${path}: "planned ${major}" remains after ${shipped.map(({ targetPath }) => targetPath).join(", ")} shipped: ${text}`,
+					);
+				}
+			}
+	});
+
+	it("rejects relative Markdown links; skill-relative paths are backticked", () => {
+		for (const path of MARKDOWN_FILES)
+			for (const { line, text } of proseLines(path))
+				for (const [, link] of text.matchAll(/\]\(([^)]+)\)/g))
+					assert.match(
+						link,
+						/^https:\/\//,
+						`${path}:${line} uses a relative Markdown link; use a backticked skill-relative path`,
+					);
+	});
+
 	it("names principle skills by their full inventory names", () => {
 		const principles = inventory.skills
 			.map(({ name }) => name)
 			.filter((name) => name.startsWith("principle-"));
-		for (const path of OWNED_FILES)
+		for (const path of SHIPPED_FILES)
 			for (const name of principles) {
 				const short = name.slice("principle-".length);
 				assert.doesNotMatch(
@@ -355,20 +505,22 @@ describe("references and forward exceptions", () => {
 			}
 	});
 
-	it("keeps all 24 principle summaries in the hub, each marked planned W3", () => {
+	it("keeps all 24 principle summaries in the hub, planned ones marked planned W3", () => {
 		const hub = read("skills/poteto-mode/SKILL.md").split("\n");
 		const principles = inventory.skills.filter(({ name }) =>
 			name.startsWith("principle-"),
 		);
 		assert.equal(principles.length, 24);
-		for (const { name } of principles) {
-			const entries = hub.filter((line) =>
-				line.includes(`(**${name}**, planned W3)`),
-			);
+		for (const { name, status } of principles) {
+			const planned = status === "planned";
+			const marker = planned ? `(**${name}**, planned W3)` : `(**${name}**)`;
+			const entries = hub.filter((line) => line.includes(marker));
 			assert.equal(entries.length, 1, name);
 			assert.match(
 				entries[0],
-				/^- \*\*[^*]+\*\* \(\*\*[a-z-]+\*\*, planned W3\)\. \S/,
+				planned
+					? /^- \*\*[^*]+\*\* \(\*\*[a-z-]+\*\*, planned W3\)\. \S/
+					: /^- \*\*[^*]+\*\* \(\*\*[a-z-]+\*\*\)\. \S/,
 			);
 		}
 	});
@@ -391,7 +543,7 @@ describe("references and forward exceptions", () => {
 });
 
 describe("delegation contract", () => {
-	const examples = OWNED_FILES.flatMap((path) =>
+	const examples = MARKDOWN_FILES.flatMap((path) =>
 		[...read(path).matchAll(/```json subagent\n([\s\S]*?)\n```/g)].map(
 			([, body]) => ({
 				path,
@@ -412,11 +564,14 @@ describe("delegation contract", () => {
 				false,
 				`${path}: pstack delegates are bare`,
 			);
-			assert.match(
-				String(call.systemPrompt),
-				/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/,
-				`${path}: bare delegates carry their reference prompt`,
-			);
+			if (rowNameOf(path) === "no-comments")
+				assert.equal(call.systemPrompt, COMMENT_SICKO_SYSTEM_PROMPT, path);
+			else
+				assert.match(
+					String(call.systemPrompt),
+					/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/,
+					`${path}: bare delegates carry their reference prompt`,
+				);
 			assert.ok(
 				call.model === MODEL_PLACEHOLDER ||
 					HOST_TASK_CATEGORIES.some(
@@ -464,8 +619,31 @@ describe("delegation contract", () => {
 			);
 	});
 
+	it("launches comment-sicko as a bare comment editor from its reference prompt", {
+		skip: !exists("skills/no-comments") && "no-comments is not present yet",
+	}, () => {
+		assert.ok(exists(COMMENT_SICKO_PROMPT));
+		assert.equal(
+			frontmatter(COMMENT_SICKO_PROMPT),
+			undefined,
+			"a delegate prompt, not a role file",
+		);
+		const calls = examples.filter(
+			({ path }) => rowNameOf(path) === "no-comments",
+		);
+		assert.equal(calls.length, 1);
+		const [{ call }] = calls;
+		assert.equal(call.tools, "read, bash, edit");
+		assert.equal(call.fork, false);
+		assert.equal("worktree" in call, false, "edits the caller's checkout");
+		assert.ok(
+			call.model === MODEL_PLACEHOLDER || call.model === "task:review",
+			String(call.model),
+		);
+	});
+
 	it("names no pstack role: the retired poteto role is neither provided nor required", () => {
-		for (const path of OWNED_FILES) {
+		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			assert.doesNotMatch(text, /\bagent"?\s*:/, path);
 			assert.doesNotMatch(
@@ -487,19 +665,37 @@ describe("delegation contract", () => {
 			/"tasks"\s*:\s*\[/,
 			/"chain"\s*:/,
 			/AskQuestion/,
+			/\bTask tool\b|`Task`|\bTask\(/,
+			/\bCustom Modes?\b/i,
+			/~\/\.cursor/,
+			/\.mdc\b/,
+			/\/add-plugin\b/,
+			/\bcloud agents?\b/i,
 			/cursor-team-kit/,
 			/\/deslop\b/,
 			/\/loop\b/,
 			/\bomp\b/,
-			/~\/\.cursor/,
-			/\.mdc\b/,
-			/\b(?:grok|claude|gpt|gemini)-[\w.-]+/,
+			/\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/,
 			/\/(?:iterate|btw)\b/,
-			/\bcomment-sicko\b/,
+			// Cursor-style slash commands; Pi invokes skills as /skill:how.
+			/(?<![\w:/.-])\/(?:how|why)\b/,
 		];
-		for (const path of OWNED_FILES) {
+		for (const path of SHIPPED_FILES) {
 			const text = read(path);
 			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+		}
+	});
+
+	it("names comment-sicko only in no-comments and in hub sentences describing that delegate", () => {
+		for (const path of SHIPPED_FILES) {
+			if (rowNameOf(path) === "no-comments") continue;
+			for (const line of read(path).split("\n"))
+				if (/\bcomment-sicko\b/.test(line))
+					assert.ok(
+						COMMENT_SICKO_DESCRIBERS.includes(path) &&
+							line.includes("no-comments"),
+						`${path}: ${line}`,
+					);
 		}
 	});
 
@@ -598,7 +794,7 @@ describe("model precedence", () => {
 			setup,
 			/Only a call without `model` falls back to role, per-agent and default models/,
 		);
-		for (const path of OWNED_FILES)
+		for (const path of SHIPPED_FILES)
 			assert.doesNotMatch(
 				read(path),
 				/takes? precedence over the (?:task )?categories|override that takes precedence/i,
@@ -608,69 +804,119 @@ describe("model precedence", () => {
 });
 
 describe("methodology provenance", () => {
-	it("records the inventory's pinned sources", () => {
-		assert.equal(provenance.schemaVersion, 1);
-		assert.deepEqual(provenance.sources, inventory.sources);
+	const sourceRows = (wave: string) =>
+		inventory.skills.filter((row) => row.wave === wave);
+	const listedSource = (wave: string, source: SourceKey, path: string) =>
+		sourceRows(wave).some((row) => row.sourceFiles[source]?.includes(path));
+
+	it("splits provenance by owner and records the inventory's pinned sources", () => {
+		assert.deepEqual(
+			readdirSync(join(PACK_ROOT, "test/fixtures/skill-provenance")).toSorted(),
+			Object.keys(PROVENANCE_OWNERS)
+				.map((owner) => `${owner}.json`)
+				.toSorted(),
+		);
+		for (const { owner, schemaVersion, sources } of provenanceFixtures) {
+			assert.equal(schemaVersion, 1, owner);
+			assert.deepEqual(sources, inventory.sources, owner);
+		}
 	});
 
-	it("hashes every shipped methodology file", () => {
-		assert.deepEqual(
-			provenance.files.map(({ path }) => path).toSorted(),
-			OWNED_FILES,
-		);
-		for (const file of provenance.files) {
+	it("records exactly the shipped tree, each file inside its owner's skill directories", () => {
+		const paths = provenanceFiles.map(({ path }) => path);
+		assert.equal(new Set(paths).size, paths.length, "duplicate file entry");
+		assert.deepEqual(paths.toSorted(), SHIPPED_FILES);
+		for (const {
+			owner,
+			wave,
+			files,
+			planned,
+			excluded,
+		} of provenanceFixtures) {
+			for (const { path, sources } of files) {
+				assert.equal(waveOf.get(rowNameOf(path)), wave, `${owner}: ${path}`);
+				for (const use of sources)
+					assert.ok(
+						listedSource(wave, use.source, use.path),
+						`${owner}: ${path} cites ${use.source}:${use.path} outside its rows`,
+					);
+			}
+			for (const { source, path } of [...planned, ...excluded])
+				assert.ok(listedSource(wave, source, path), `${owner}: ${path}`);
+		}
+	});
+
+	it("hashes every shipped file and classifies it as copied, adapted or new", () => {
+		for (const file of provenanceFiles) {
 			assert.equal(
 				sha256(readFileSync(join(PACK_ROOT, file.path))),
 				file.sha256,
 				`${file.path} changed without updating its reviewed provenance`,
 			);
 			assert.ok(file.explanation.length > 20, file.path);
-			assert.equal(
-				file.sources.filter(({ use }) => use === "primary").length,
-				file.status === "adapted" ? 1 : 0,
-				file.path,
-			);
 			assert.ok(file.sources.length > 0, file.path);
+			const primary = file.sources.filter(({ use }) => use === "primary");
+			assert.equal(primary.length, file.status === "new" ? 0 : 1, file.path);
+			if (file.status === "copied")
+				assert.equal(
+					file.sha256,
+					primary[0].sha256,
+					`${file.path} is not a copy`,
+				);
+			else if (file.status === "new")
+				assert.ok(
+					file.sources.every(({ use }) => use === "derived"),
+					file.path,
+				);
+			else assert.equal(file.status, "adapted", file.path);
+			if (file.lengthExplanation !== undefined)
+				assert.ok(file.lengthExplanation.length > 20, file.path);
 		}
 	});
 
-	it("accounts for each upstream source file of both W2 rows exactly once", () => {
-		for (const row of inventory.skills.filter(({ wave }) => wave === "W2")) {
-			const source = row.primarySource;
-			const expected = (row.sourceFiles[source] ?? []).toSorted();
-			const accounted = [
-				...provenance.files.flatMap(({ sources }) =>
+	it("accounts for each primary source file of every present row exactly once", () => {
+		const accounted = provenanceFixtures.flatMap(
+			({ files, planned, excluded }) => [
+				...files.flatMap(({ sources }) =>
 					sources.filter((use) => use.use === "primary"),
 				),
-				...provenance.planned,
-				...provenance.excluded,
-			]
-				.filter(
-					(entry) =>
-						entry.source === source && entry.path.startsWith(`${row.name}/`),
-				)
-				.map(({ path }) => path)
-				.toSorted();
-			assert.deepEqual(accounted, expected, row.name);
+				...planned,
+				...excluded,
+			],
+		);
+		const keys = accounted.map(({ source, path }) => `${source}:${path}`);
+		assert.equal(new Set(keys).size, keys.length, "source accounted twice");
+		for (const row of presentRows) {
+			const source = row.primarySource;
+			const expected = row.sourceFiles[source] ?? [];
+			assert.deepEqual(
+				accounted
+					.filter(
+						(entry) => entry.source === source && expected.includes(entry.path),
+					)
+					.map(({ path }) => path)
+					.toSorted(),
+				expected.toSorted(),
+				row.name,
+			);
 		}
+		for (const { owner, planned, excluded } of provenanceFixtures) {
+			for (const { path, owningWave, explanation } of planned) {
+				assert.match(owningWave, /^W4/, `${owner}: ${path}`);
+				assert.ok(explanation.length > 20, `${owner}: ${path}`);
+			}
+			for (const { path, disposition } of excluded)
+				assert.ok(disposition.length > 20, `${owner}: ${path}`);
+		}
+		const w2 = provenanceFixtures.find(({ owner }) => owner === "w2");
 		assert.deepEqual(
-			provenance.planned
+			w2?.planned
 				.map(({ path, owningWave }) => `${owningWave} ${path}`)
 				.toSorted(),
 			W4_PLAYBOOKS.map((name) => `W4 poteto-mode/playbooks/${name}.md`),
 		);
-		for (const { path, disposition } of provenance.excluded) {
+		for (const { path } of w2?.excluded ?? [])
 			assert.match(path, /^poteto-mode\/scripts\//);
-			assert.ok(disposition.length > 20, path);
-		}
-		const context = provenance.files.flatMap(({ sources }) =>
-			sources.filter(({ source }) => source === "cursor"),
-		);
-		for (const { path } of context)
-			assert.ok(
-				inventory.skills.some((row) => row.sourceFiles.cursor?.includes(path)),
-				path,
-			);
 	});
 
 	const checkout = (key: SourceKey) => {
@@ -690,29 +936,50 @@ describe("methodology provenance", () => {
 			: undefined;
 	};
 	const checkouts = { mimir: checkout("mimir"), cursor: checkout("cursor") };
+	const blob = (source: SourceKey, path: string) => {
+		const { commit, root } = inventory.sources[source];
+		return execFileSync("git", [
+			"-C",
+			checkouts[source] ?? "",
+			"show",
+			`${commit}:${posix.join(root, path)}`,
+		]);
+	};
 	it("reproduces every recorded source hash from the pinned commits", {
 		skip:
 			!(checkouts.mimir && checkouts.cursor) &&
 			"set PSTACK_MIMIR_SOURCE and PSTACK_CURSOR_SOURCE to checkouts containing the pinned commits",
 	}, () => {
-		const sources = [
-			...provenance.files.flatMap(({ sources }) => sources),
-			...provenance.planned,
-			...provenance.excluded,
-		];
-		for (const { source, path, sha256: recorded } of sources) {
-			const { commit, root } = inventory.sources[source];
-			const blob = execFileSync("git", [
-				"-C",
-				checkouts[source] ?? "",
-				"show",
-				`${commit}:${root}/${path}`,
-			]);
-			assert.equal(sha256(blob), recorded, `${source}:${path}`);
+		const sources = provenanceFixtures.flatMap(
+			({ files, planned, excluded }) => [
+				...files.flatMap(({ sources }) => sources),
+				...planned,
+				...excluded,
+			],
+		);
+		for (const { source, path, sha256: recorded } of sources)
+			assert.equal(sha256(blob(source, path)), recorded, `${source}:${path}`);
+	});
+
+	it("keeps each adapted file at least half its primary source, unless explained", {
+		skip:
+			!(checkouts.mimir && checkouts.cursor) &&
+			"set PSTACK_MIMIR_SOURCE and PSTACK_CURSOR_SOURCE to checkouts containing the pinned commits",
+	}, () => {
+		for (const file of provenanceFiles.filter(
+			({ status, lengthExplanation }) =>
+				status === "adapted" && lengthExplanation === undefined,
+		)) {
+			const [primary] = file.sources.filter(({ use }) => use === "primary");
+			assert.ok(
+				readFileSync(join(PACK_ROOT, file.path)).length * 2 >=
+					blob(primary.source, primary.path).length,
+				`${file.path} is under half its primary source; add lengthExplanation`,
+			);
 		}
 	});
 
-	it("preserves both upstream MIT notices and documents the W2 adaptation", () => {
+	it("preserves the upstream MIT notices and documents the adaptation", () => {
 		const notices = read("THIRD_PARTY_NOTICES.md");
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);
 		assert.match(notices, /Copyright \(c\) 2026 Ivan Porto Carrero/);
@@ -721,10 +988,7 @@ describe("methodology provenance", () => {
 			assert.ok(notices.includes(commit));
 			assert.ok(read("docs/provenance.md").includes(commit));
 		}
-		assert.ok(
-			read("docs/provenance.md").includes(
-				"test/fixtures/skill-provenance.json",
-			),
-		);
+		for (const dir of ["skill-provenance", "forward-references"])
+			assert.ok(read("docs/provenance.md").includes(`test/fixtures/${dir}/`));
 	});
 });

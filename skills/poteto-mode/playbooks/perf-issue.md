@@ -2,7 +2,7 @@
 
 **You own the measurement story. Plan, review, verify the numbers.** Tie every fix to a measurement, don't read source instead of measuring.
 
-1. Capture a baseline trace on the matching surface with the project's profiler or the tooling the session provides. Vet the baseline, and each later number, with the **benchmark-checklist** skill (planned W3). Until it ships, apply the hub summary of Explain the Number: record the method, warm-up, sample count and variance, find what limits the number, and rule out that it measured something other than the work.
+1. Capture a baseline trace on the matching surface with the project's profiler or the tooling the session provides. Vet the baseline, and each later number, with the **benchmark-checklist** skill.
 2. Run the **how** skill (planned W4) to ground hypotheses, or investigate directly per `playbooks/investigation.md` until it ships. Don't claim a perf ceiling without running it first.
    Try the performance mantras in order, cheapest first:
    1. Don't do it. Stop work whose result nothing uses rather than cheapening it.
@@ -15,7 +15,7 @@
 
    When an earlier mantra meets the target, stop.
 3. Plan the fix from the trace. If it crosses a function boundary, run the **architect** skill (planned W4) first, or compare fix shapes yourself and record `architect skipped: planned W4`. Delegate implementation to a bare implementer subagent per `references/delegation.md` with `model: "task:coding"`. Review the diff. Capture a post-fix trace.
-   Apply **principle-sequence-verifiable-units** (planned W3), verifying each attempt before trying the next.
+   Apply **principle-sequence-verifiable-units**, verifying each attempt before trying the next.
 4. Parse and compare the artifacts (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass. Flag it.
 5. Cite the measurement in the PR or, without one, in the final report.
 6. Run **Opening a PR** (`playbooks/opening-a-pr.md`) only when the task authorizes a pull request.
