@@ -150,7 +150,7 @@
 		},
 		{
 			"path": "skills/recall/SKILL.md",
-			"sha256": "6b0428bf6324312e8e363e9ad5f31ae28ec8b4aaf575ba26656a9287363dc643",
+			"sha256": "50d70ad4681218b598362afe1a04531fb0e04d9031bd696099ac9d770bac6ea8",
 			"status": "adapted",
 			"sources": [
 				{
@@ -166,7 +166,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used."
+			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used. W4 reconcile: the why planned W4 markers and the until-why-ships launch rule are retired; the sweep launches investigators as why does, without a tools key so MCP stays visible (gate G5), with the source-control-only report kept for operator-restricted tools."
 		},
 		{
 			"path": "skills/show-me-your-work/SKILL.md",

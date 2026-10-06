@@ -1,36 +1,5 @@
 {
 	"schemaVersion": 1,
-	"description": "Exact forward references from the 11 W4 poteto-mode playbooks (skills/poteto-mode/playbooks/<name>.md) and skills/poteto-mode/scripts/check-plan.mjs to rows or playbooks not shipped yet. Sources must be the 11 W4 playbooks and scripts/check-plan.mjs. Owned by the W4-P writer; retired in the W4 reconcile commit, except W5 deferrals. See test/skill-content.test.ts for the rules.",
-	"exceptions": [
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/autopilot-full.md",
-			"targetPath": "skills/swarm/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/eval.md",
-			"targetPath": "skills/arena/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/hillclimb.md",
-			"targetPath": "skills/how/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/multi-phase-plan.md",
-			"targetPath": "skills/swarm/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/orchestrate.md",
-			"targetPath": "skills/arena/SKILL.md",
-			"owningWave": "W4-A"
-		},
-		{
-			"sourcePath": "skills/poteto-mode/playbooks/orchestrate.md",
-			"targetPath": "skills/figure-it-out/SKILL.md",
-			"owningWave": "W4-A"
-		}
-	]
+	"description": "Exact forward references from the 11 W4 poteto-mode playbooks (skills/poteto-mode/playbooks/<name>.md) and skills/poteto-mode/scripts/check-plan.mjs to rows or playbooks not shipped yet. Sources must be the 11 W4 playbooks and scripts/check-plan.mjs. Owned by the W4-P writer; retired in the W4 reconcile commit, except W5 deferrals. See test/skill-content.test.ts for the rules. All tuples retired at the W4 reconcile, when every inventory row and playbook shipped; the W4 gate chose no W5 deferrals, so this list is empty.",
+	"exceptions": []
 }

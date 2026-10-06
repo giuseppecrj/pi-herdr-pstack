@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/no-comments/SKILL.md",
-			"sha256": "908bb8c8c7b87c799a8cb3eb2851323c2db872df70d23bee601216c28fb53aab",
+			"sha256": "94c6b5ff2afffe2586612c5c3c2361ae18a02710022d06953f598c2443ffb130",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,11 +52,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 keeps the upstream principle sentence; its cross-batch planned W3 marker was retired at the W3 reconcile. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used. Parent edit after the real-child gate: states that fork: false is required because the host delivers a bare systemPrompt only to standalone children, as a role block in the first message."
+			"explanation": "Adapted from the pinned pi-mimir file. Mimir step 1 called a named comment-sicko role through agent; pstack registers no roles (plan 09 and user decision D2), so a new Comment Sicko section launches it as a deliberate bare delegate with one schema-valid subagent example: name, task scope, systemPrompt holding the full text of references/comment-sicko.md read verbatim, tools read, bash, edit (D1: it edits comments only), model task:review or an exact provider/model-id, thinking, fork false and no worktree. If the prompt file is missing or filtered the skill stops and never launches a bare child without it. Step 1 points at that call. Step 2 marks /skill:how and /skill:why planned W4 with the interim rule (trace it yourself, say the skills were unavailable; ambiguous keeps follow the skill's own delete rule). Step 3 marks /skill:architect planned W4 and says to sketch two or three shapes yourself and record architect skipped: planned W4. Step 4 keeps the upstream principle sentence; its cross-batch planned W3 marker was retired at the W3 reconcile. Step 6 also reports that the delegate was bare. Cursor's Task/subagent_type wording is not used. Parent edit after the real-child gate: states that fork: false is required because the host delivers a bare systemPrompt only to standalone children, as a role block in the first message. W4 reconcile: the how/why and architect planned W4 markers and their interim fallbacks are retired now that those skills ship, restoring the upstream step 2 and 3 wording."
 		},
 		{
 			"path": "skills/no-comments/references/comment-sicko.md",
-			"sha256": "ea8fea87c827276c3b7686f0f5264870ae17b2fea24eb87c175ae33ca65f5a49",
+			"sha256": "13f91bd5215f7a17c60bd4a70d3d67a523855ffcb142dbb024bbb1d2e759cf30",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,11 +72,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Body of the pinned pi-mimir comment-sicko role file, shipped as the bare-delegate prompt that no-comments passes as systemPrompt (user decision D2). The frontmatter is dropped because this is a prompt, not a role. Its read-only reviewer description, which contradicted a body that deletes comments, is reworded as an opening paragraph: it deletes comments and suppressions, edits comments only and never application code, and reports touched files and deletion counts (D1). The persona line is kept verbatim. The /skill:how and /skill:why line is marked planned W4 with the interim rule (read the symbol, callers and history itself and report the skills unavailable). The dropped spawning: false and the tools change become one paragraph: bash is for reading and history, deletions go through the edit tool, and it does not commit, push or launch subagents. 'Report only.' becomes 'My last message is the report and nothing else.' so it no longer reads as read-only."
+			"explanation": "Body of the pinned pi-mimir comment-sicko role file, shipped as the bare-delegate prompt that no-comments passes as systemPrompt (user decision D2). The frontmatter is dropped because this is a prompt, not a role. Its read-only reviewer description, which contradicted a body that deletes comments, is reworded as an opening paragraph: it deletes comments and suppressions, edits comments only and never application code, and reports touched files and deletion counts (D1). The persona line is kept verbatim. The /skill:how and /skill:why line is marked planned W4 with the interim rule (read the symbol, callers and history itself and report the skills unavailable). The dropped spawning: false and the tools change become one paragraph: bash is for reading and history, deletions go through the edit tool, and it does not commit, push or launch subagents. 'Report only.' becomes 'My last message is the report and nothing else.' so it no longer reads as read-only. W4 reconcile: the how/why planned W4 marker and interim fallback are retired; the line now says the delegate is a leaf and takes their single-pass path, tracing the symbol itself and launching nothing (fan-out section 1, gate G7)."
 		},
 		{
 			"path": "skills/poteto-help/SKILL.md",
-			"sha256": "4f939c70b377f46284b78856aa479f426106d55ff29a0e15825fe17d8e4acf4a",
+			"sha256": "f22f0c95cdd62cdb18e19a0c5d4d646eed48ac8cd03e4eef06c6e32be00474b8",
 			"status": "adapted",
 			"sources": [
 				{
@@ -86,11 +86,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row. W3 reconcile: retires the cross-batch planned W3 markers on the five W3-A rows; the availability paragraph names the 35 W3 skills; adds a 24-row principle sub-table routing to the shipped ../principle-*/SKILL.md leaves so every inventory row is routed; the setup-report claims now name the two skills the report actually resolves (poteto-mode and setup-pstack)."
+			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row. W3 reconcile: retires the cross-batch planned W3 markers on the five W3-A rows; the availability paragraph names the 35 W3 skills; adds a 24-row principle sub-table routing to the shipped ../principle-*/SKILL.md leaves so every inventory row is routed; the setup-report claims now name the two skills the report actually resolves (poteto-mode and setup-pstack). W4 reconcile: every planned W4 marker and interim route is retired; the release paragraph names all 51 skills and 23 playbooks; the make-bot-ui row describes the Pi re-authoring (loopback, per-request pi -p, authorization for exposure or installs); scoped-down workflows (babysit, shipping, autopilots, orchestrate, worktree cleanup, reflect, recall, arena, swarm, interrogate, why) carry one-line limits; a symptom row covers idle coordinators and watcher advisories."
 		},
 		{
 			"path": "skills/poteto-help/references/prompting.md",
-			"sha256": "218288cb4e2e5db152a9f594766f1b004c3dd3e4e912f48a96a59d8195ee1f94",
+			"sha256": "f17d09bdc7459a7540fa969bf5ac262ab476b0da479fcc9fec20c1bdacf076f0",
 			"status": "adapted",
 			"sources": [
 				{
@@ -100,11 +100,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Pinned Cursor file kept almost verbatim. /recall, /how, /why and /teach become /skill: invocations; recall, how and why lines are marked planned W4 with interim routes (point at the earlier Pi session file or branch per Session pickup; run the Investigation playbook). The 'give /loop that predicate' bullet, which relies on a Cursor feature, becomes 'write done as checks the agent can run after every step' (D5). 'chat' becomes 'session' and the new-task line names sticky /poteto-mode."
+			"explanation": "Pinned Cursor file kept almost verbatim. /recall, /how, /why and /teach become /skill: invocations; recall, how and why lines are marked planned W4 with interim routes (point at the earlier Pi session file or branch per Session pickup; run the Investigation playbook). The 'give /loop that predicate' bullet, which relies on a Cursor feature, becomes 'write done as checks the agent can run after every step' (D5). 'chat' becomes 'session' and the new-task line names sticky /poteto-mode. W4 reconcile: the recall and how/why planned W4 markers and their interim steers are retired now that those skills ship."
 		},
 		{
 			"path": "skills/poteto-help/references/recipes.md",
-			"sha256": "a9e8cad3c2891c12c21dadf2d037ecff883761ac5971692a4650f73a37af0476",
+			"sha256": "ea7047a6e25e53b807ac1aa170f95bb207e9239e0598a8b6a8024c1fc9221447",
 			"status": "adapted",
 			"sources": [
 				{
@@ -114,11 +114,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired."
+			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired. W4 reconcile: every planned W4 marker is retired; the intro's planned-recipe rule becomes a reminder that recipes which push, open PRs or merge need the grants their playbooks name, and the autopilot recipe asks the user to name them."
 		},
 		{
 			"path": "skills/teach/SKILL.md",
-			"sha256": "d5f7ae491968bede303f626eab46bada5cafa0f5d42b15fe1550051a06de8dd8",
+			"sha256": "13477e9d7facc9cb54ce3589a4082a8fba69c7f02bef87b04ac90957837bb4b1",
 			"status": "adapted",
 			"sources": [
 				{
@@ -134,7 +134,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Method, steps and voice rules kept from the pinned pi-mimir file (identical to Cursor). The how and why skills it runs are W4-A, so every line naming them carries a planned W4 marker, and a new paragraph plus step 2 give the interim rule: until they ship, orient and trace the code and its history yourself, say the skills were unavailable, never claim they ran, and keep why's confidence-language rule for your own reasons. The description gains the same marker. Step 5's image-generation tool, which is not a Pi or pi-herdr-agents tool, becomes conditional on the session exposing one, with a mermaid or ASCII fallback that is announced; no tool name is invented. The reply line keeps the threads to chase with how or why and says what to do until they ship."
+			"explanation": "Method, steps and voice rules kept from the pinned pi-mimir file (identical to Cursor). The how and why skills it runs are W4-A, so every line naming them carries a planned W4 marker, and a new paragraph plus step 2 give the interim rule: until they ship, orient and trace the code and its history yourself, say the skills were unavailable, never claim they ran, and keep why's confidence-language rule for your own reasons. The description gains the same marker. Step 5's image-generation tool, which is not a Pi or pi-herdr-agents tool, becomes conditional on the session exposing one, with a mermaid or ASCII fallback that is announced; no tool name is invented. The reply line keeps the threads to chase with how or why and says what to do until they ship. W4 reconcile: the how/why planned W4 markers, the interim paragraph and the interim step and reply clauses are retired now that both skills ship."
 		},
 		{
 			"path": "skills/technical-writing/SKILL.md",

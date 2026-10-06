@@ -36,7 +36,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-full.md",
-			"sha256": "27fd436c01c1397c8dac7e5fe83eb61a98eb92fd8c4d2c63ef31a3efccb20438",
+			"sha256": "5ce3483fb953a1e559c61c17962143c74d80066c55b397a671937c2ab7a8777f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,7 +52,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the swarm lanes per references/fan-out.md."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autopilot-stack.md",
@@ -96,7 +96,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/eval.md",
-			"sha256": "d8286e2a74b68884441987276f38ea7696a4ff62b5f832fb4b7a8976094856ce",
+			"sha256": "dbbfad173cb81ea72f12f2042a5aae1622011c480e35a6849d18d6382603229a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -112,11 +112,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). The blinded word list is quoted instead of backticked so the bare word arena is not read as a skill reference, and child names and worktree branches join the sanitized names. Steps 4 and 5 mark the arena skill's phases planned W4 with interim rules: candidates as diversity-seat bare children per references/fan-out.md with sanitized cwd, the Implementer prompt and fork false; one blinded Reviewer judge on a family no candidate used, reporting the gate incomplete when families run short. Step 6 reads each candidate's delivered Session: path, $PI_SESSION_FILE and the per-cwd rule in playbooks/session-pickup.md instead of the recall tool."
+			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). The blinded word list is quoted instead of backticked so the bare word arena is not read as a skill reference, and child names and worktree branches join the sanitized names. Steps 4 and 5 mark the arena skill's phases planned W4 with interim rules: candidates as diversity-seat bare children per references/fan-out.md with sanitized cwd, the Implementer prompt and fork false; one blinded Reviewer judge on a family no candidate used, reporting the gate incomplete when families run short. Step 6 reads each candidate's delivered Session: path, $PI_SESSION_FILE and the per-cwd rule in playbooks/session-pickup.md instead of the recall tool. W4 reconcile: the arena planned W4 markers and interim clauses are retired; the candidate and judge launches follow the arena phases per references/fan-out.md."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/hillclimb.md",
-			"sha256": "1dc0c1b1612e1a7f60a698316b6bb4fdffc5714d868e2b8f561e960d34406434",
+			"sha256": "be9aab1aecbaf621b27bf1ea3dae0f3758b0940a647ff4fd4d15dea3043a63d4",
 			"status": "adapted",
 			"sources": [
 				{
@@ -132,11 +132,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). Short principle names become full principle-* names. Step 1 marks the how skill planned W4 with the interim rule to investigate per playbooks/investigation.md. Step 5's 'configured hillclimb model (default inherit-parent)' becomes a bare implementer child per references/delegation.md on task:coding, stated as a leaf; parallel hypotheses launch in one turn per references/fan-out.md with their own worktrees; a child's delivered result is the wake, so no timer is needed. Commits follow the commit policy, and step 8 opens a PR only when the task authorizes it."
+			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). Short principle names become full principle-* names. Step 1 marks the how skill planned W4 with the interim rule to investigate per playbooks/investigation.md. Step 5's 'configured hillclimb model (default inherit-parent)' becomes a bare implementer child per references/delegation.md on task:coding, stated as a leaf; parallel hypotheses launch in one turn per references/fan-out.md with their own worktrees; a child's delivered result is the wake, so no timer is needed. Commits follow the commit policy, and step 8 opens a PR only when the task authorizes it. W4 reconcile: the how planned W4 marker and its direct-investigation fallback are retired."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/multi-phase-plan.md",
-			"sha256": "c8632f591476152bf8b242e96993560ba2ab8374022a4b92ea82a3404d6994d0",
+			"sha256": "702f8d119e3890c2ba4a0f495d261196ef277c6a67cadf744909ec0f6fc3168d",
 			"status": "adapted",
 			"sources": [
 				{
@@ -152,11 +152,11 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir playbook (authoring the plan only) together with scripts/check-plan.mjs, so the shipped skeleton passes the shipped checker. Step 3's agent poteto-agent becomes bare task:recon investigators per references/fan-out.md; step 4 writes to docs/plans/<program-slug>.md under the commit policy instead of the agent store; step 5 uses /skill: commands; step 6 runs scripts/check-plan.mjs from the skill directory instead of a repo-root pstack path; step 7 says execution's pushes, PRs and merges need the execution playbook's grants. The Verification paragraph and skeleton replace inherit-parent lanes with task:qa and mark swarm planned W4. In the skeleton, the git show origin/main reads become installed-skill reads, the hourly loop tick becomes an audit at every child delivery, advisory or operator request with a verbatim audit prompt, stand-down uses subagent_cancel, Spawn owners becomes Launch owner rounds, Origin, built-in PR tools and gt become gh with Graphite never required, PR creation and pushes cite grants, and Appendix D names skills instead of repo-root paths. Short principle names are fixed. Review fixes: the skeleton cites bugbot triage as the poteto-mode reference references/bugbot-triage.md, the review video is recorded in a live lane's verification environment instead of a lane VM, and the skeleton names swarm, how, interrogate and show-me-your-work as <installed ... skill path> placeholders that step 4 tells the author to resolve against installed skills, recording any missing one in Appendix C."
+			"explanation": "Adapted from the pinned pi-mimir playbook (authoring the plan only) together with scripts/check-plan.mjs, so the shipped skeleton passes the shipped checker. Step 3's agent poteto-agent becomes bare task:recon investigators per references/fan-out.md; step 4 writes to docs/plans/<program-slug>.md under the commit policy instead of the agent store; step 5 uses /skill: commands; step 6 runs scripts/check-plan.mjs from the skill directory instead of a repo-root pstack path; step 7 says execution's pushes, PRs and merges need the execution playbook's grants. The Verification paragraph and skeleton replace inherit-parent lanes with task:qa and mark swarm planned W4. In the skeleton, the git show origin/main reads become installed-skill reads, the hourly loop tick becomes an audit at every child delivery, advisory or operator request with a verbatim audit prompt, stand-down uses subagent_cancel, Spawn owners becomes Launch owner rounds, Origin, built-in PR tools and gt become gh with Graphite never required, PR creation and pushes cite grants, and Appendix D names skills instead of repo-root paths. Short principle names are fixed. Review fixes: the skeleton cites bugbot triage as the poteto-mode reference references/bugbot-triage.md, the review video is recorded in a live lane's verification environment instead of a lane VM, and the skeleton names swarm, how, interrogate and show-me-your-work as <installed ... skill path> placeholders that step 4 tells the author to resolve against installed skills, recording any missing one in Appendix C. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the verifier lanes per references/fan-out.md."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/orchestrate.md",
-			"sha256": "eaaaa12d41a4992754900e8cebe0cf2f2060a073da1b0bf8a2beee39676d9bfd",
+			"sha256": "4eb7e24a2e3afb68a8ceef8a78b7d8c20685f8aa092a3e68b93bb24566b49a5e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -172,7 +172,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D2). A Scope paragraph tells the operator it is a depth-1, single-session coordinator and not an unattended runner: no sub-coordinators or nesting, woken only by deliveries, advisories or the operator, a hand-kept file store under show-me-your-work's append-only rules, the frontier from gh PR bases with Graphite never required and no remote workers, a session end as a pause resumed through session-pickup, and grants for every external action. Removed: the orch CLI and its lock, the agent's store, sub-coordinator roles and briefs, the depth-3 nesting claim, the cannot-be-resumed claim, the restart-kills-local-agents claim, cloud restacks, gt frontier and stacker commands, the loop-skill heartbeat and the recall tool. The store becomes .orchestrate/<slug>/ under .git/info/exclude with append-only units.tsv, frontier.tsv, ledger.tsv and inbox.tsv plus log.sh for the trail; stacker, babysitter and retro are roles run as fresh children; liveness uses side effects, worktree_list and one subagent_cancel plus one replacement. figure-it-out and arena are marked planned W4 with an interim rule for arena."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D2). A Scope paragraph tells the operator it is a depth-1, single-session coordinator and not an unattended runner: no sub-coordinators or nesting, woken only by deliveries, advisories or the operator, a hand-kept file store under show-me-your-work's append-only rules, the frontier from gh PR bases with Graphite never required and no remote workers, a session end as a pause resumed through session-pickup, and grants for every external action. Removed: the orch CLI and its lock, the agent's store, sub-coordinator roles and briefs, the depth-3 nesting claim, the cannot-be-resumed claim, the restart-kills-local-agents claim, cloud restacks, gt frontier and stacker commands, the loop-skill heartbeat and the recall tool. The store becomes .orchestrate/<slug>/ under .git/info/exclude with append-only units.tsv, frontier.tsv, ledger.tsv and inbox.tsv plus log.sh for the trail; stacker, babysitter and retro are roles run as fresh children; liveness uses side effects, worktree_list and one subagent_cancel plus one replacement. figure-it-out and arena are marked planned W4 with an interim rule for arena. W4 reconcile: the figure-it-out and arena planned W4 markers and the arena interim rule are retired."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/shipping.md",

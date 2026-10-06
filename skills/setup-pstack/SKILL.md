@@ -43,7 +43,7 @@ The report has these sections, in order: Session, Host, Pstack resources, Models
 
 ## Check for a project verification skill
 
-When explaining the report, check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. The **create-verification-skill** skill that generates one is planned W4 and not installed in this release. If none exists, mention the gap once and move on. Do not offer to generate one.
+When explaining the report, check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. If none exists, mention the gap once and name the **create-verification-skill** skill, which generates one when the user asks for it. Do not run it from setup.
 
 ## Your reply
 

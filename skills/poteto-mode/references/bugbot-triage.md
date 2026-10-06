@@ -1,6 +1,6 @@
 # Bugbot triage
 
-Use this reference whenever you triage Bugbot, agentic security review or other review-automation comments. The Babysit playbook (`playbooks/babysit.md`, planned W4) will route its review threads here. Until it ships, use this reference directly for any triage the user asks for. Paths here are relative to the poteto-mode skill directory. The goal is not to ignore Bugbot by default. The goal is to stop treating every comment as a required code change.
+Use this reference whenever you triage Bugbot, agentic security review or other review-automation comments. The Babysit playbook (`playbooks/babysit.md`) routes its review threads here, and any triage the user asks for uses it directly. Paths here are relative to the poteto-mode skill directory. The goal is not to ignore Bugbot by default. The goal is to stop treating every comment as a required code change.
 
 Classifying a comment is local work. Fixing code follows the task's commit policy. Replying to, resolving or reacting to a remote thread is an external action that needs explicit authorization under `references/authorization.md`. Without it, list each thread with its classification and the reply you would post, and leave the thread untouched.
 

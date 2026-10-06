@@ -73,9 +73,9 @@ Backlog items go to whatever devex / backlog tracker your team uses. Filing one 
 For each approved Accepted item, follow the Routing field exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.
-- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): draft, test and iterate it per the authoring playbook (`../poteto-mode/playbooks/authoring-a-skill.md`, planned W4) and Pi's skills documentation (`docs/skills.md` in the installed Pi package). Until that playbook ships, follow Pi's skills documentation alone and tell the user the authoring playbook was unavailable.
+- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): draft, test and iterate it per the authoring playbook (`../poteto-mode/playbooks/authoring-a-skill.md`) and Pi's skills documentation (`docs/skills.md` in the installed Pi package).
 - `tune description: <skill path>` (the skill exists but didn't trigger when it should have): rewrite the description per Pi's skills documentation, which says the description determines when the model considers loading the skill.
-- `new skill via Pi skill authoring: <kebab-name>`: create it per the authoring playbook (`../poteto-mode/playbooks/authoring-a-skill.md`, planned W4) and Pi's skills documentation. Until that playbook ships, follow Pi's skills documentation alone and tell the user the authoring playbook was unavailable. Do not invent the shape ad hoc.
+- `new skill via Pi skill authoring: <kebab-name>`: create it per the authoring playbook (`../poteto-mode/playbooks/authoring-a-skill.md`) and Pi's skills documentation. Do not invent the shape ad hoc.
 
 If your environment ships a SKILL.md validator, run it on every touched skill before declaring done. Skip this step if it doesn't.
 

@@ -86,7 +86,7 @@
 		},
 		{
 			"path": "skills/figure-it-out/SKILL.md",
-			"sha256": "20bfd1e649aa30777f0fb7b8d116e5cbea4a2927767f39501242d4646ea35bc4",
+			"sha256": "a96535792712525ccd0e95ba427323071c3148fe54f54361ba61b610b18db073",
 			"status": "adapted",
 			"sources": [
 				{
@@ -96,7 +96,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The todolist and its todos became a visible checklist and its items; seven short principle names became full names (edit classes 1 and 3); the cross-batch show-me-your-work reference (W4-B) is marked planned W4 on its line with an exact tuple in the w4-a forward-reference fixture (edit class 4). The planned line adds the interim rule: until show-me-your-work ships, keep the TSV by hand as a local append-only decision log and say show-me-your-work was unavailable."
+			"explanation": "The todolist and its todos became a visible checklist and its items; seven short principle names became full names (edit classes 1 and 3); the cross-batch show-me-your-work reference (W4-B) is marked planned W4 on its line with an exact tuple in the w4-a forward-reference fixture (edit class 4). The planned line adds the interim rule: until show-me-your-work ships, keep the TSV by hand as a local append-only decision log and say show-me-your-work was unavailable. W4 reconcile: the show-me-your-work planned W4 marker and its interim hand-kept TSV rule are retired now that the skill ships, restoring the upstream line."
 		},
 		{
 			"path": "skills/how/references/explainer-prompt.md",
@@ -268,7 +268,7 @@
 		},
 		{
 			"path": "skills/reflect/SKILL.md",
-			"sha256": "6d4ef9bab312e574e866cbc95648ce7148ce55791f2c5981b61ae6ad73cbb691",
+			"sha256": "35a58be3eb0125327578e8e3888d401727378d9ee63f35b6c9459f06976995ef",
 			"status": "adapted",
 			"sources": [
 				{
@@ -278,7 +278,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable."
+			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable. W4 reconcile: the authoring-playbook planned W4 markers and interim rule are retired now that the playbook ships."
 		},
 		{
 			"path": "skills/swarm/SKILL.md",
