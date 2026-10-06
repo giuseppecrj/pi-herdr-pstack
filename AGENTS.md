@@ -2,17 +2,17 @@
 
 This package supplies the full unprefixed pstack skill inventory and a small Pi extension using pi-herdr-agents' public APIs. It must not own another child runner, scheduler, model store, package installer or general shell-permission engine.
 
-## Current authorized scope
+## Current scope
 
-Read `docs/plans/README.md`, `01-host-pack-extraction.md`, `02-pstack-pack.md`, `03-release-waves.md`, `04-wave0-contract.md` and the current `06-wave2-contract.md`, `08-wave2-conditional-writer.md`, `09-wave2-no-poteto-role.md`, `10-wave2-unconditional-writer-gate.md` and the approved `12-wave3-contract.md` with `12-wave3-notes.md` before implementation. Wave 3 (35 skills, bare comment-sicko delegate) is accepted and merged (pstack PR #3, main `1cbf75f`, 37 of 51 skills shipped). Wave 4 is accepted and merged (pstack PR #5, main `e75395c`): all 51 skills and 23 playbooks ship; see `15-wave4-handoff.md`. Wave 5 released on 2026-10-06: pi-herdr-agents 3.0.0, pi-herdr-roles 0.1.0 and pi-herdr-pstack 0.1.0 are on npm via trusted publishing (pstack main `043c4d8`). Further releases follow RELEASING.md; version bumps on `main` publish. The latest amendment makes the host writer gate unconditional while pstack is loaded and supersedes the run-identity design; 09 removed the poteto role. Wave 2 contracts supersede historical authorization limits in earlier planning snapshots.
+All 51 skills and 23 playbooks ship, and pi-herdr-agents, pi-herdr-roles and pi-herdr-pstack are published on npm via trusted publishing. Releases follow `RELEASING.md`; version bumps on `main` publish. Historical wave plans were deleted; they remain readable at commit `96910f507046285071453b660099b0c3549e6161` under `docs/plans/`.
 
-The user accepted Wave 1 and explicitly authorized Wave 2: setup/mode runtime and the two methodology entry points. Local candidate branches/worktrees and commits remain allowed; stop at the Wave 2 review gate before bulk W3/W4 skill porting. The user separately authorized the completed private GitHub repository creation and initial W1 branch pushes. No new pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations are authorized by the W2 approval.
+Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. `poteto-mode` and `/setup-pstack` are retained; pstack contributes no named roles and delegates use deliberate bare prompts. The other roles belong to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are not part of this pack. The host writer gate is unconditional while pstack is loaded.
 
-Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. The target inventory is the full upstream inventory, not a curated first release. The user removed the named `poteto` role from the W2 target; retain `poteto-mode` and use deliberate bare delegates. The other six existing roles belong to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are removed, not migrated into this pack.
+No pushes, PR creation, merges, package publication, release-triggering version changes, normal Pi installation/configuration changes or paid live-model evaluations without explicit authorization.
 
 ## Implementation boundaries
 
-- Do not import pi-herdr-agents internals. W2 and W3 contribute no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/no-comments/references/`. If a later authorized wave supplies a role, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
+- Do not import pi-herdr-agents internals. Pstack contributes no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/no-comments/references/`. If a role is later authorized, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
 - Declare pi-herdr-agents as a peer and an explicit Pi installation prerequisite. A peer declaration is not extension activation.
 - Keep initial experimental packages private. A temporary peer range is not a published compatibility promise; record the exact candidate host SHA used in tests.
 - Preserve applicable upstream license notices and record file provenance.

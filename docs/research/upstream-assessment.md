@@ -65,4 +65,4 @@ The user chose the full upstream skill inventory, not the previously proposed cu
 
 Other confirmed decisions: keep unprefixed skill names; retain `/setup-pstack` and `/poteto-mode`; declare `pi-herdr-agents` as a peer dependency while requiring explicit Pi installation; move the `poteto` role into this pack. Remove all bundled roles from the host into independently installed packs, including migration of workflows that depend on those roles. Remove `/iterate` and `/btw` from pi-herdr-agents outright rather than relocating them. Use pi-herdr naming for the ecosystem and the full package name for the host, reserving Herdr for the terminal multiplexer.
 
-Recommended generic pack name/location: `pi-herdr-roles` at `../pi-herdr-roles`, pending confirmation. The current implementation plans are in `../plans/`.
+Recommended generic pack name/location: `pi-herdr-roles` at `../pi-herdr-roles`, pending confirmation. The historical implementation plans (since deleted) are at [`docs/plans/`](https://github.com/giuseppecrj/pi-herdr-pstack/blob/96910f507046285071453b660099b0c3549e6161/docs/plans/README.md) in commit 96910f5.

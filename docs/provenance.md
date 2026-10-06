@@ -21,7 +21,7 @@ documents.
 ## Wave 2: role removal
 
 The user removed the named `poteto` role from the Wave 2 target
-(`docs/plans/09-wave2-no-poteto-role.md`). `agents/poteto.md`, the `roles.ts`
+([historical plan 09](https://github.com/giuseppecrj/pi-herdr-pstack/blob/96910f507046285071453b660099b0c3549e6161/docs/plans/09-wave2-no-poteto-role.md)). `agents/poteto.md`, the `roles.ts`
 bridge and its registration were deleted; pstack contributes no named roles and
 registers no role directory. The provenance fixture keeps the role's W1 source
 and hashes with status `removed` and `removedIn: "W2"`. No replacement role was

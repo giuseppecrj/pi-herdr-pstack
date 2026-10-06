@@ -1,6 +1,6 @@
 # Wave 1 evidence
 
-See [the handoff](../../plans/05-wave1-handoff.md) for conclusions, exact candidate revisions, test counts, review and limitations. `manifest.json` pins the clean product vector, final upstream check and SHA-256 digests of recorded artifacts.
+See [the handoff](https://github.com/giuseppecrj/pi-herdr-pstack/blob/96910f507046285071453b660099b0c3549e6161/docs/plans/05-wave1-handoff.md) for conclusions, exact candidate revisions, test counts, review and limitations. `manifest.json` pins the clean product vector, final upstream check and SHA-256 digests of recorded artifacts.
 
 These are **local QA records, not production resources or a portable test runner**. Recorded fixture files contain absolute paths from this run. Reproduction requires the pinned candidate checkouts and scratch layout, dependencies, Pi 1.0.3, the local deterministic providers and a real Herdr instance. Run only one real integration suite at a time; never point the fixtures at normal user settings.
 
