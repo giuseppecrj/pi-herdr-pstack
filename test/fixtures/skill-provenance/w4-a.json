@@ -29,6 +29,48 @@
 			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3)."
 		},
 		{
+			"path": "skills/how/references/explainer-prompt.md",
+			"sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "how/references/explainer-prompt.md",
+					"sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/how/references/explorer-prompt.md",
+			"sha256": "a3b44a6e5bb16a6d4d1cac19db8ed5322ffd5f5f5d45baca4e73990ca096f8be",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "how/references/explorer-prompt.md",
+					"sha256": "a3b44a6e5bb16a6d4d1cac19db8ed5322ffd5f5f5d45baca4e73990ca096f8be",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+		},
+		{
+			"path": "skills/how/SKILL.md",
+			"sha256": "59661db70af58028b82c7588ba656ee1a8a370a2aad402d08f52ea77f12d03f8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mimir",
+					"path": "how/SKILL.md",
+					"sha256": "e168a7232b21a99dabaa3103e21b87734fd5fabf0dfbf7a381958d9cd5f0d608",
+					"use": "primary"
+				}
+			],
+			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3)."
+		},
+		{
 			"path": "skills/interrogate/references/code-quality-review.md",
 			"sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
 			"status": "copied",
