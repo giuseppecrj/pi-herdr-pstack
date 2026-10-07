@@ -247,3 +247,13 @@ the pinned `pstack/skills` root, only `poteto-help/SKILL.md` linked the guide,
 with seven `../../docs/guide/*` links (to seven of the ten chapters). The
 adaptation removed them (`test/fixtures/skill-provenance/w3-b.json`), and no
 shipped file links a guide page.
+
+## Q5: one forge
+
+Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
+operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
+sources still offer Origin; the cursor pin stays
+`2cbf58508f40de470d7490b55c51d71241928fa2`. The content test bans capitalized
+`Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
+and the lowercase forge CLI forms; the git remote named `origin` is
+unaffected.
