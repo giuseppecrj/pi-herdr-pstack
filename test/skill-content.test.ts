@@ -1948,24 +1948,29 @@ describe("methodology provenance", () => {
 			return line;
 		};
 		for (const phrase of [
-			"exact symptom that separates broken from correct, observed twice",
+			"make the real trigger fire",
+			"exact symptom that separates broken from correct, observed twice, reached through the reported path",
 			"state reset between attempts so the second is independent",
-			"writing the broken state directly is not a repro",
+			"Arranging a precondition is not producing the symptom.",
+			"writing the broken state directly is not a repro, and neither is calling hidden methods or patching code to emit it",
 			"No confirmed repro, no fix.",
 		])
 			assert.ok(step(1).includes(phrase), phrase);
-		assert.ok(
-			step(2).includes(
-				"Confirm the mechanism lives in code this repo or team owns",
-			),
-		);
-		assert.match(step(2), /stop and report the evidence and the likely owner/);
+		assert.doesNotMatch(step(1), /force it/);
 		for (const phrase of [
-			"check open PRs, branches and recent commits for one that already claims this fix",
+			"Confirm the mechanism lives in code this repo or team owns",
+			"stop and report the evidence instead of patching around it",
+			"Name the owner only when the evidence names one; otherwise say the owner is unclear.",
+		])
+			assert.ok(step(2).includes(phrase), phrase);
+		for (const phrase of [
+			"check the issue or thread (comments, assignee), open PRs, branches and recent commits for work that plausibly fixes this",
 			"verify it instead of writing a competing one",
 			"run the repro twice on its base and twice on its head",
 			"without editing it",
-			"report and stop rather than race them",
+			"when a person has claimed the fix, posted a concrete plan, or assigned it to another agent, report and stop rather than race them",
+			"A bot's diagnosis is evidence, not a claim.",
+			"If the base doesn't show the symptom twice, the result is inconclusive.",
 		])
 			assert.ok(step(3).includes(phrase), phrase);
 		assert.match(step(4), /The original repro now passes, twice\./);

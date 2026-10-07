@@ -266,7 +266,7 @@ by Slack posts: one triages a report and may file a tracker ticket, and the
 other reproduces the bug and may open a draft PR. Running it needs an
 external trigger or scheduler, which conflicts with this pack's no-scheduler
 rule, and it depends on Cursor Automations, Slack posting and tracker writes.
-Three of its methodology gates are adapted into
+Four of its methodology gates are adapted into
 `skills/poteto-mode/playbooks/bug-fix.md` (Q2): confirm the cause is in code
 this repo or team owns, verify an existing fix instead of writing a competing
 one, and reproduce twice before and after the fix. The sources are
