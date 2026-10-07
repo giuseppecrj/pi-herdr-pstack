@@ -1587,6 +1587,46 @@ describe("methodology provenance", () => {
 		);
 	});
 
+	it("gates bug-fix on ownership, an existing fix and a repro observed twice", () => {
+		const steps = read("skills/poteto-mode/playbooks/bug-fix.md").split("\n");
+		const step = (n: number) => {
+			const line = steps.find((text) => text.startsWith(`${n}. `));
+			assert.ok(line, `bug-fix step ${n}`);
+			return line;
+		};
+		for (const phrase of [
+			"exact symptom that separates broken from correct, observed twice",
+			"state reset between attempts so the second is independent",
+			"writing the broken state directly is not a repro",
+			"No confirmed repro, no fix.",
+		])
+			assert.ok(step(1).includes(phrase), phrase);
+		assert.ok(
+			step(2).includes(
+				"Confirm the mechanism lives in code this repo or team owns",
+			),
+		);
+		assert.match(step(2), /stop and report the evidence and the likely owner/);
+		for (const phrase of [
+			"check open PRs, branches and recent commits for one that already claims this fix",
+			"verify it instead of writing a competing one",
+			"run the repro twice on its base and twice on its head",
+			"without editing it",
+			"report and stop rather than race them",
+		])
+			assert.ok(step(3).includes(phrase), phrase);
+		assert.match(step(4), /The original repro now passes, twice\./);
+		const playbook = steps.join("\n");
+		assert.doesNotMatch(
+			playbook,
+			/Slack|tracker|[Aa]utomation|control adapter|feature map|benny/,
+		);
+		assert.match(
+			read("docs/provenance.md"),
+			/## Skipped: Benny[\s\S]*external trigger or scheduler/,
+		);
+	});
+
 	it("preserves the upstream MIT notices and documents the adaptation", () => {
 		const notices = read("THIRD_PARTY_NOTICES.md");
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);

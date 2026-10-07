@@ -221,3 +221,21 @@ seats. The tooling lens's family differs from the first model listed for
 architecture under those shortlists. If that launch falls back to a later
 candidate whose family matches the tooling lens, the lens is relabeled
 context-isolated.
+
+## Skipped: Benny
+
+cursor/plugins `pstack/automations/benny/**` is not ported. It lies outside
+the pinned `pstack/skills` root. Benny is two Cursor Automations triggered
+by Slack posts: one triages a report and may file a tracker ticket, and the
+other reproduces the bug and may open a draft PR. Running it needs an
+external trigger or scheduler, which conflicts with this pack's no-scheduler
+rule, and it depends on Cursor Automations, Slack posting and tracker writes.
+Three of its methodology gates are adapted into
+`skills/poteto-mode/playbooks/bug-fix.md` (Q2): confirm the cause is in code
+this repo or team owns, verify an existing fix instead of writing a competing
+one, and reproduce twice before and after the fix. The sources are
+`reproduce-and-fix-issues/SKILL.md`,
+`reproduce-and-fix-issues/references/verify-existing-fix.md` and
+`triage-issue-reports/SKILL.md`, read at
+`d0ef80d86795816da932a153458c5dbe192d294e` and byte-identical at the pin. The
+bug-fix entry in `w2.json` records which steps changed.
