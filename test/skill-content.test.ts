@@ -1581,10 +1581,15 @@ describe("methodology provenance", () => {
 			autopilot,
 			/A new head voids the verdict, except for lane results that stay valid under the patch-id rule in `playbooks\/shipping\.md`/,
 		);
-		assert.doesNotMatch(
-			autopilot,
-			/A new head voids the verdict unless the patch-id is unchanged/,
-		);
+		for (const path of [
+			"skills/poteto-mode/playbooks/autopilot-full.md",
+			"skills/poteto-mode/playbooks/multi-phase-plan.md",
+		])
+			assert.doesNotMatch(
+				read(path),
+				/patch[- ]id (?:is |remains |stays )?unchanged/i,
+				path,
+			);
 	});
 
 	it("preserves the upstream MIT notices and documents the adaptation", () => {

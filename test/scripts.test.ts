@@ -151,6 +151,21 @@ describe("poteto-mode check-plan.mjs", {
 		);
 	});
 
+	it("fails a plan that pastes autopilot-full's old unchanged-patch-id sentence", () => {
+		const result = check(
+			"unchanged-patch-near-miss.md",
+			skeleton().replace(
+				"<The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>",
+				"A new head voids the verdict unless the patch-id is unchanged.",
+			),
+		);
+		assert.equal(result.status, 1);
+		assert.match(
+			result.stderr,
+			/"patch-id is unchanged"; defer to the patch-id rule in playbooks\/shipping\.md/,
+		);
+	});
+
 	it("fails a skeleton that drops a verdict or rebase marker", () => {
 		const markers = [
 			"Keep that merge base in fix rounds",

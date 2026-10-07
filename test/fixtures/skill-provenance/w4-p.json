@@ -236,7 +236,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/scripts/check-plan.mjs",
-			"sha256": "ee2e92b3142518dcc964c5a472c7d1cec8119e43aac09da51c1f9af58ae5e529",
+			"sha256": "e9a82ce1a5fe6f758de1fde9cb18617e4f17666ae6772d577feba7fd4efff072",
 			"status": "adapted",
 			"sources": [
 				{
@@ -252,7 +252,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir script together with playbooks/multi-phase-plan.md (contract W4-P). Three lines change: the required Program checklist H3 'Spawn owners' becomes 'Launch owner rounds', the required program markers 'git show origin/main:' and the hourly loop marker become 'Re-read them at every audit' and 'at every child delivery' (status message stays), and the live-lanes error names a verifier model. Node with no dependencies, git mode 100644 kept; test/scripts.test.ts checks that the playbook skeleton passes and mutated skeletons fail. G2: PROGRAM_MARKERS also require the skeleton phrases for the fix-round merge base, git merge-tree, the code-ready head SHA, each later push that changes the patch, two or more audit lanes, the receipt audit, and a defect filed as a note is a finding. The check is still a substring of the Program checklist body, the same way the agnostic audit markers are checked. /loop and git show origin/main stay out. A separate scan rejects the phrase 'patch-id unchanged' anywhere in a plan and points at the patch-id rule in playbooks/shipping.md. PROGRAM_MARKERS stay a presence check."
+			"explanation": "Adapted from the pinned pi-mimir script together with playbooks/multi-phase-plan.md (contract W4-P). Three lines change: the required Program checklist H3 'Spawn owners' becomes 'Launch owner rounds', the required program markers 'git show origin/main:' and the hourly loop marker become 'Re-read them at every audit' and 'at every child delivery' (status message stays), and the live-lanes error names a verifier model. Node with no dependencies, git mode 100644 kept; test/scripts.test.ts checks that the playbook skeleton passes and mutated skeletons fail. G2: PROGRAM_MARKERS also require the skeleton phrases for the fix-round merge base, git merge-tree, the code-ready head SHA, each later push that changes the patch, two or more audit lanes, the receipt audit, and a defect filed as a note is a finding. The check is still a substring of the Program checklist body, the same way the agnostic audit markers are checked. /loop and git show origin/main stay out. A separate scan rejects the phrase 'patch-id unchanged' anywhere in a plan and points at the patch-id rule in playbooks/shipping.md. PROGRAM_MARKERS stay a presence check. Port-review follow-up: the scan is a case-insensitive pattern that also rejects near-misses ('patch id unchanged', 'patch-id is unchanged', 'remains' or 'stays unchanged'), the shape of autopilot-full's old step 5 sentence, and names the matched text in the error."
 		}
 	],
 	"planned": [],
