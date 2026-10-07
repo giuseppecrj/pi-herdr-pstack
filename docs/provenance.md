@@ -162,7 +162,10 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
   their claims first. A proved fail always means `ISSUES`. `PASS` needs at
   least one listed claim and a pass for each, and a claim with no result is
   inconclusive. Zero claims means `BLOCKED`. A `BLOCKED` coverage slice is
-  reported as unverified, never as covered.
+  reported as unverified, never as covered. A brief's claims together cover
+  the slice's share of the done predicate. Aggregation recomputes each status
+  from the claims in the brief and uses the result whenever it differs from
+  the reported status.
 - W4-B (`w4-b.json`): `show-me-your-work`, `recall`, `automate-me`,
   `create-verification-skill`, `maintain-verification-skill`, `make-bot-ui`.
   11 files, 4 copied and 7 adapted. `scripts/log.sh` is copied with its
