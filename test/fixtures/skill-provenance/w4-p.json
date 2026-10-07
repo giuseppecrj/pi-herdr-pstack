@@ -176,7 +176,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/shipping.md",
-			"sha256": "cca61a39af635232c68fc5e47d143aad20f444583800e243e59dbcbc0fbb8079",
+			"sha256": "c5117619f6f57ead0f16e3b1b6d77168ce37322325e09c1470dbd15049a13a2e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -192,7 +192,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph says shipping starts only on an explicit merge, land or ship request, which authorizes merging the verified run only, and that pushes, force-pushes, retargets, verdict comments and auto-merge arming each need their own authorization. Origin commands and the excluded watcher script are removed; gh is the only forge. Per-PR verifiers are bare Verifier children launched in one turn per references/fan-out.md, and the parent posts verdicts only with authorization. Step 8 waits through a watcher child running gh pr checks --watch, keeps the upstream gh field conditions, reports and stops when checks finish with auto-merge pending or the trunk has a merge_queue rule, and never re-reads in a loop. Review fix: merge-queue detection moves to step 1, before any merge or auto-merge command; a merge_queue rule or a failed rules call reports state and stops, step 5 re-reads the rules call right before each merge or arm command, and step 8 no longer carries the queue check."
+			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph says shipping starts only on an explicit merge, land or ship request, which authorizes merging the verified run only, and that pushes, force-pushes, retargets, verdict comments and auto-merge arming each need their own authorization. Origin commands and the excluded watcher script are removed; gh is the only forge. Per-PR verifiers are bare Verifier children launched in one turn per references/fan-out.md, and the parent posts verdicts only with authorization. Step 8 waits through a watcher child running gh pr checks --watch, keeps the upstream gh field conditions, reports and stops when checks finish with auto-merge pending or the trunk has a merge_queue rule, and never re-reads in a loop. Review fix: merge-queue detection moves to step 1, before any merge or auto-merge command; a merge_queue rule or a failed rules call reports state and stops, step 5 re-reads the rules call right before each merge or arm command, and step 8 no longer carries the queue check. G1: step 3 keeps the noise-build exception from the cursor context file (sha256 19f3f6803a7bbe9ff04f624b03e3b55f07ac0a05e991aa00d5fe51239b920b2a), which is byte-identical at cursor/plugins d0ef80d86795816da932a153458c5dbe192d294e and at the pinned cursor commit. The fixture schema records one cursor commit, so that pin and this source hash stay at 2cbf58508f40de470d7490b55c51d71241928fa2. When the recorded and current patches differ only in tests, docs, or lint config, a lane result stays valid if a double build at the verdict SHA and one build at the current head show only noise (a difference the two verdict-SHA builds also show, or an embedded commit SHA), judged per difference and reported with its files; checks and a review of the change run fresh. A lane result from a dev server or anything else with no build output is rerun. Cursor forge choice, cloud agents, control skills, watch-pr and /loop wording in the rest of that file stay out."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/visual-parity.md",
