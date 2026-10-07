@@ -129,10 +129,12 @@ is later than the pin. The fixture still records the Cursor blob at
 `docs/skill-inventory.json`. The nudge asks once, when the answer depends on
 the six task categories and a `/setup-pstack` report does not already show
 them set, whether to run `/setup-pstack` (report only) or leave the categories
-as they are. A category counts as unset when the Config line says the file
-does not exist, the preference is `(not set)`, or every reference has a
-Findings problem (`tasks.<category>: <ref> <problem>`). Any other Config line
-is an unknown file state. poteto-mode always passes `task:<category>`, so
+as they are. A category counts as unset when the Config line ends with the
+missing-file sentence, or when a present file's preference value is
+`(not set)`. Findings are not unset: the host trims a reference and both
+sides of `/` before it checks authentication, and the report cannot show
+that result. Any other Config-line ending is an unknown file state.
+poteto-mode always passes `task:<category>`, so
 those delegations fail until an approved `/setup-pstack <request>` write sets
 the category. poteto-help does not read or write task-model config.
 
