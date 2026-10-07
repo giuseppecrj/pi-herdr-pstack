@@ -20,7 +20,7 @@ The active transcript is `$PI_SESSION_FILE`, set in the bash tool. Use it direct
 
 ### 2. Spawn three reviewers in parallel
 
-Three independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, each with a prompt that forbids file writes as its `systemPrompt` (`fork: false`) and no `tools` list. Reviewers may use MCPs available to their Pi child process for context lookups (tickets, chat threads, observability traces referenced in the transcript). The parent applies edits.
+Before these launches, follow the architecture preflight in `../poteto-mode/references/delegation.md`. Judgment, divergent and the synthesizer need `task:architecture`. Three independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, each with a prompt that forbids file writes as its `systemPrompt` (`fork: false`) and no `tools` list. Reviewers may use MCPs available to their Pi child process for context lookups (tickets, chat threads, observability traces referenced in the transcript). The parent applies edits.
 
 | Lens | `model` | Prompt template |
 |---|---|---|
@@ -28,7 +28,7 @@ Three independent bare `subagent` calls in one turn, per `../poteto-mode/referen
 | Tooling | exact model from another family | `references/tooling-reviewer.md` |
 | Divergent | `task:architecture` | `references/divergent-reviewer.md` |
 
-Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high`, the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the model `task:architecture` will launch, its first authenticated candidate in the live catalog, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family.
+Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above, the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
 
 Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results.
 

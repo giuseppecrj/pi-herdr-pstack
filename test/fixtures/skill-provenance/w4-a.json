@@ -128,7 +128,7 @@
 		},
 		{
 			"path": "skills/how/SKILL.md",
-			"sha256": "50aafe211ca9f624e82d8148c7cb7819ec607835029a54e2bb145f161ed92a71",
+			"sha256": "23a257e81244636464d1dbf61f9bc67039a9ff9d05704fd76e17f308250faf3a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -138,7 +138,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3). G6: the explainer seats (direct explain and synthesize) use task:architecture with thinking high, while explorers stay on task:recon. Upstream how/SKILL.md (cursor/plugins d0ef80d) puts the explainer on the judgment/prose model and explorers on the code model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
+			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3). G6: the explainer seats (direct explain and synthesize) use task:architecture with thinking high or above, while explorers stay on task:recon. Before the complex explorers and the direct explainer, the parent follows the architecture shortlist preflight in delegation.md. Upstream how/SKILL.md (cursor/plugins d0ef80d) puts the explainer on the judgment/prose model and explorers on the code model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
 		},
 		{
 			"path": "skills/interrogate/references/code-quality-review.md",
@@ -268,7 +268,7 @@
 		},
 		{
 			"path": "skills/reflect/SKILL.md",
-			"sha256": "5fde0c5557b1ec1e689a232b7fc8ffaf4c9ca6bda6309716e84065f442b94f25",
+			"sha256": "9efe62aff00aa68b2b8ae6bec41456f49a360b1496b7fdc743d507c3d442e390",
 			"status": "adapted",
 			"sources": [
 				{
@@ -278,7 +278,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable. W4 reconcile: the authoring-playbook planned W4 markers and interim rule are retired now that the playbook ships. G6: judgment, divergent and the synthesizer use task:architecture with thinking high; the tooling lens is a diversity seat, an exact provider/model-id from a different family than task:architecture, with a labeled same-family fallback. Upstream reflect/SKILL.md (cursor/plugins d0ef80d) runs tooling on a different family from the judgment lenses; no model ids are copied."
+			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable. W4 reconcile: the authoring-playbook planned W4 markers and interim rule are retired now that the playbook ships. G6: judgment, divergent and the synthesizer use task:architecture with thinking high or above. The tooling lens is a diversity seat whose family differs from the first model listed for architecture under Task-category shortlists, with a labeled same-family fallback; a later architecture candidate that matches the tooling family is relabeled context-isolated. The parent follows the architecture shortlist preflight before the reviewers. Upstream reflect/SKILL.md (cursor/plugins d0ef80d) runs tooling on a different family from the judgment lenses; no model ids are copied."
 		},
 		{
 			"path": "skills/swarm/SKILL.md",
@@ -464,7 +464,7 @@
 		},
 		{
 			"path": "skills/why/SKILL.md",
-			"sha256": "050ce290441df3c222cd97741b319c292c69470daec721b4947fc72011e819e1",
+			"sha256": "fb2348548a356cb118bc73e69e68f9130cd1208b663fb4dc371e05d8d0c47ee5",
 			"status": "adapted",
 			"sources": [
 				{
@@ -474,7 +474,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "agent: poteto-agent and the configured why-investigators and why-synthesizer models with their inherit-parent defaults became bare subagent launches on task:recon with the delegation.md Investigator prompt as systemPrompt (fork: false) and the filled template as task; the single-message launch became independent calls in one turn citing ../poteto-mode/references/fan-out.md; restricted-tool mode became omitting the tools list so MCP stays visible, with the contract fallback to source control plus named gaps when a child cannot see its MCP; one json subagent example per seat type (edit classes 2-3). G6: the synthesizer uses task:architecture with thinking high; investigators stay on task:recon. Upstream why/SKILL.md (cursor/plugins d0ef80d) puts the synthesizer on the judgment model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
+			"explanation": "agent: poteto-agent and the configured why-investigators and why-synthesizer models with their inherit-parent defaults became bare subagent launches on task:recon with the delegation.md Investigator prompt as systemPrompt (fork: false) and the filled template as task; the single-message launch became independent calls in one turn citing ../poteto-mode/references/fan-out.md; restricted-tool mode became omitting the tools list so MCP stays visible, with the contract fallback to source control plus named gaps when a child cannot see its MCP; one json subagent example per seat type (edit classes 2-3). G6: the synthesizer uses task:architecture with thinking high or above; investigators stay on task:recon. Before the investigators, the parent follows the architecture shortlist preflight in delegation.md. Upstream why/SKILL.md (cursor/plugins d0ef80d) puts the synthesizer on the judgment model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
 		}
 	],
 	"planned": [],

@@ -28,7 +28,7 @@ The report has these sections, in order: Session, Host, Pstack resources, Models
 - **Pstack resources.** Each skill must resolve to this package's own file. A filtered or shadowed skill is reported, never replaced. Pstack ships no named roles, and the report says so. `/skill:no-comments` launches its comment editor as a bare delegate, not a role. Child visibility is reported as not verified unless a child actually loaded the package.
 - **Models.** The exact `provider/model-id` references with configured authentication. Never invent or remember model IDs.
 - **Shared preferences.** The config file is `$PI_CODING_AGENT_DIR/herdr-agents/config.json`, or `~/.pi/agent/herdr-agents/config.json`. The report shows only the six task categories (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`), their metadata and the default model, never per-agent overrides or other settings. Setup never changes those either. A configured reference that is not one printable token is withheld. Missing, unreadable, malformed, non-object, missing-status and invalid-models files are distinct states. Only a missing or valid file can be changed. A missing file would be created from pi-herdr-agents' packaged defaults plus the approved task preferences.
-- **Findings.** Unauthenticated, aliased (`task:`) or padded references, and unset categories that poteto-mode's examples use.
+- **Findings.** Unauthenticated, aliased (`task:`) or padded references, and unset categories the methodology launches (`coding`, `recon`, `review`, `architecture`). `qa` and `docs` are reported when configured, and an unset one is not a finding.
 
 ## In a change flow
 

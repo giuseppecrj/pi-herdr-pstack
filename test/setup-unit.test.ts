@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, it } from "node:test";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
+	ExtensionContext,
 	ToolDefinition,
 	ToolInfo,
 } from "@earendil-works/pi-coding-agent";
@@ -22,6 +23,7 @@ import {
 	APPLY_TOOL,
 	approvalMessage,
 	authorizationProblem,
+	buildReport,
 	refProblem,
 	registerSetup,
 	WRITER,
@@ -255,6 +257,76 @@ describe("config snapshot", () => {
 		assert.throws(() => {
 			value.tasks.review[0] = "x";
 		}, TypeError);
+	});
+});
+
+/** Enough of the extension API for `buildReport` to reach the findings section. */
+function reportPi(): ExtensionAPI {
+	return {
+		getAllTools: () => [],
+		getActiveTools: () => [],
+		getCommands: () => [],
+	} as unknown as ExtensionAPI;
+}
+
+function reportCtx(): ExtensionContext {
+	return {
+		mode: "print",
+		hasUI: false,
+		modelRegistry: {
+			getAll: () => [{ provider: "faux", id: "faux-1" }],
+			hasConfiguredAuth: () => true,
+		},
+	} as unknown as ExtensionContext;
+}
+
+describe("methodology category findings", () => {
+	it("reports an unset architecture category, and not qa", () => {
+		const previous = process.env.PI_CODING_AGENT_DIR;
+		const dir = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-report-"));
+		process.env.PI_CODING_AGENT_DIR = dir;
+		try {
+			mkdirSync(join(dir, "herdr-agents"));
+			const config = join(dir, "herdr-agents", "config.json");
+			const tasks = {
+				coding: ["faux/faux-1"],
+				recon: ["faux/faux-1"],
+				review: ["faux/faux-1"],
+			};
+			const models = {
+				tasks,
+				tasksMeta: {
+					generatedAt: "2026-01-01T00:00:00Z",
+					method: "research",
+				},
+			};
+			writeFileSync(
+				config,
+				JSON.stringify({ status: { enabled: true }, models }),
+			);
+			const unset = buildReport(reportPi(), reportCtx()).text;
+			assert.match(unset, /tasks\.architecture is not set/);
+			assert.doesNotMatch(unset, /tasks\.qa is not set/);
+			assert.doesNotMatch(unset, /tasks\.coding is not set/);
+			writeFileSync(
+				config,
+				JSON.stringify({
+					status: { enabled: true },
+					models: {
+						...models,
+						tasks: { ...tasks, architecture: ["faux/faux-1"] },
+					},
+				}),
+			);
+			assert.doesNotMatch(
+				buildReport(reportPi(), reportCtx()).text,
+				/tasks\.architecture is not set/,
+			);
+		} finally {
+			if (previous === undefined) delete process.env.PI_CODING_AGENT_DIR;
+			else process.env.PI_CODING_AGENT_DIR = previous;
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });
 

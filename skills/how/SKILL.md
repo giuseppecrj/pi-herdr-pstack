@@ -19,7 +19,7 @@ When in doubt, take the simple path.
 
 ## Step 2a. Explore (complex questions only)
 
-Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Launch all explorers as independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, then end the turn:
+Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Before that launch, follow the architecture preflight in `../poteto-mode/references/delegation.md`. The explainer needs `task:architecture`, and a missing category throws only after these explorers return. Launch all explorers as independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, then end the turn:
 
 - `model`: `task:recon`
 - do not grant write/edit tools
@@ -40,10 +40,10 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 
 ## Step 2b. Direct Explain (simple questions)
 
-Spawn one bare subagent that explores and explains in one pass. The explainer is judgment and prose synthesis, so it does not use the explorers' category:
+Spawn one bare subagent that explores and explains in one pass. The explainer is judgment and prose synthesis, so it does not use the explorers' category. Follow the architecture preflight in `../poteto-mode/references/delegation.md` before this launch:
 
 - `model`: `task:architecture`
-- `thinking`: `high`
+- `thinking`: `high` or above
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
@@ -53,7 +53,7 @@ Build its prompt from `references/explainer-prompt.md` without the explorer-find
 Once all explorers have returned, spawn one bare subagent to synthesize their findings into one explanation. This is the same judgment seat as Step 2b:
 
 - `model`: `task:architecture`
-- `thinking`: `high`
+- `thinking`: `high` or above
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
