@@ -178,7 +178,12 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 - W4-P (`w4-p.json`): `playbooks/{hillclimb,eval,visual-parity,authoring-a-skill,babysit,shipping,autopilot-full,autopilot-stack,multi-phase-plan,orchestrate,worktree-cleanup}.md`
   and `scripts/check-plan.mjs` (mode `100644`), all 12 adapted from mimir.
   `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
-  enforced `/loop` and repository-root markers.
+  enforced `/loop` and repository-root markers. Upstream cursor/plugins
+  `multi-phase-plan.md` still requires a rebased head with the "patch-id
+  unchanged"; this pack's rebase item in the skeleton's Merge block
+  (`multi-phase-plan.md:130`) defers to the patch-id rule in
+  `playbooks/shipping.md` instead, and `check-plan.mjs` rejects the old
+  wording. The divergence is deliberate, so a sync must not restore it.
 
 Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
 added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
@@ -224,11 +229,12 @@ exact catalog model with `thinking: xhigh`. The cursor pin stays
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
-the host prompt's Task-category shortlists before launching recon or review
-seats. The tooling lens's family differs from the first model listed for
-architecture under those shortlists. If that launch falls back to a later
-candidate whose family matches the tooling lens, the lens is relabeled
-context-isolated.
+for a `- architecture:` bullet under the host prompt's Task-category shortlists
+before launching recon or review seats; the bare word architecture elsewhere in
+the prompt does not count. The tooling lens's family differs from the first
+model listed for architecture under those shortlists. If that launch falls
+back to a later candidate whose family matches the tooling lens, the lens is
+relabeled context-isolated.
 
 ## Excluded: upstream user guide
 
@@ -260,3 +266,22 @@ sources still offer Origin; the cursor pin stays
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
+
+## Skipped: Benny
+
+cursor/plugins `pstack/automations/benny/**` is not ported. It lies outside
+the pinned `pstack/skills` root. Benny is two Cursor Automations triggered
+by Slack posts: one triages a report and may file a tracker ticket, and the
+other reproduces the bug and may open a draft PR. Running it needs an
+external trigger or scheduler, which conflicts with this pack's no-scheduler
+rule, and it depends on Cursor Automations, Slack posting and tracker writes.
+Four of its methodology gates are adapted into
+`skills/poteto-mode/playbooks/bug-fix.md` (Q2): confirm the cause is in code
+this repo or team owns, verify an existing fix instead of writing a competing
+one, stop rather than race another person's claim on the fix, and reproduce
+twice before and after the fix. The sources are
+`reproduce-and-fix-issues/SKILL.md`,
+`reproduce-and-fix-issues/references/verify-existing-fix.md` and
+`triage-issue-reports/SKILL.md`, read at
+`d0ef80d86795816da932a153458c5dbe192d294e` and byte-identical at the pin. The
+bug-fix entry in `w2.json` records which steps changed.

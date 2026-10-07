@@ -2022,24 +2022,122 @@ describe("methodology provenance", () => {
 			/For a docs-only package that build is the npm pack output/,
 		);
 		for (const phrase of [
-			"`skills/**`",
-			"`README.md`",
-			"`docs/compatibility.md`",
-			"`docs/provenance.md`",
-			"are not ignorable docs",
-			"Paths under `test/**` that enforce those product paths are not ignorable tests",
-			"Lint config here excludes config that selects which tests run or that changes emitted files",
-			"A patch that touches any of those is re-verified",
+			"write down this repo's allowlist: the only paths whose changes may keep a lane result",
+			"A path is on it only when it lies outside everything the package or build ships and it enforces no behavior, so no test, test fixture, CI config, or lint, typecheck or build config",
+			"Package manifests, license and notice files, the changelog, and release docs are never on it, even when the build does not ship them",
+			"Files that decide what ships (such as `package.json` `files`, `.npmignore` and `.gitignore`) are never on it either",
+			"Record the allowlist in the decision trail before the comparison",
+			"A patch that touches any path off the allowlist is re-verified",
+			"When every path where the two patches differ is on the allowlist, compare what each lane",
 		])
 			assert.ok(step.includes(phrase), phrase);
+		assert.doesNotMatch(step, /differ only in tests, docs, or lint config/);
+		assert.doesNotMatch(step, /are not ignorable/);
 		const autopilot = read("skills/poteto-mode/playbooks/autopilot-full.md");
 		assert.match(
 			autopilot,
 			/A new head voids the verdict, except for lane results that stay valid under the patch-id rule in `playbooks\/shipping\.md`/,
 		);
+		for (const path of [
+			"skills/poteto-mode/playbooks/autopilot-full.md",
+			"skills/poteto-mode/playbooks/multi-phase-plan.md",
+		])
+			assert.doesNotMatch(
+				read(path),
+				/patch[-_\u2010-\u2014 ]?ids?[`*]*\s*:?\s*(?:(?:is|was|remains|stays|stayed|still)\s+)*unchanged|unchanged\s+[`*]*patch[-_\u2010-\u2014 ]?id/i,
+				path,
+			);
+	});
+
+	it("requires the architecture shortlist bullet in the delegation preflight", () => {
+		const preflight = read("skills/poteto-mode/references/delegation.md")
+			.split("\n")
+			.find((line) =>
+				line.startsWith("- Before launching any recon or review seats"),
+			);
+		assert.ok(preflight, "architecture preflight");
+		assert.ok(
+			preflight.includes(
+				"a line starting `Task-category shortlists` with a `- architecture:` bullet among the bullets under it",
+			),
+		);
+		assert.doesNotMatch(preflight, /followed by a `- architecture:` bullet/);
+		const heading =
+			"Task-category shortlists (use task:<category> only as the entire model value):";
+		const tier =
+			"For orchestrated children, explicitly select an exact authenticated provider/model-id by task tier first (fast for bounded mechanical work and recon, mid for implementation and review, frontier for architecture, security, hard diagnosis, or adversarial review), then set supported thinking.";
+		const listsArchitecture = (prompt: string) => {
+			const lines = prompt.split("\n");
+			const start = lines.findIndex((line) =>
+				line.startsWith("Task-category shortlists"),
+			);
+			if (start < 0) return false;
+			for (const line of lines.slice(start + 1)) {
+				if (!line.startsWith("- ")) return false;
+				if (line.startsWith("- architecture:")) return true;
+			}
+			return false;
+		};
+		assert.ok(
+			listsArchitecture(`${heading}\n- architecture: a/b\n- coding: c/d`),
+		);
+		assert.ok(
+			listsArchitecture(
+				`${heading}\n- coding: c/d\n- recon: e/f\n- architecture: a/b\nFor ordinary review, prefer a different family.`,
+			),
+		);
+		assert.ok(!listsArchitecture(`${heading}\n- coding: c/d\n${tier}`));
+		assert.ok(!listsArchitecture(tier));
+		assert.ok(
+			preflight.includes(
+				"The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist",
+			),
+		);
+	});
+
+	it("gates bug-fix on ownership, an existing fix and a repro observed twice", () => {
+		const steps = read("skills/poteto-mode/playbooks/bug-fix.md").split("\n");
+		const step = (n: number) => {
+			const line = steps.find((text) => text.startsWith(`${n}. `));
+			assert.ok(line, `bug-fix step ${n}`);
+			return line;
+		};
+		for (const phrase of [
+			"make the real trigger fire",
+			"exact symptom that separates broken from correct, observed twice, reached through the reported path",
+			"state reset between attempts so the second is independent",
+			"Arranging a precondition is not producing the symptom.",
+			"writing the broken state directly is not a repro, and neither is calling hidden methods or patching code to emit it",
+			"No confirmed repro, no fix.",
+		])
+			assert.ok(step(1).includes(phrase), phrase);
+		assert.doesNotMatch(step(1), /force it/);
+		for (const phrase of [
+			"Confirm the mechanism lives in code this repo or team owns",
+			"stop and report the evidence instead of patching around it",
+			"Name the owner only when the evidence names one; otherwise say the owner is unclear.",
+		])
+			assert.ok(step(2).includes(phrase), phrase);
+		for (const phrase of [
+			"check the issue or thread (comments, assignee), open PRs, branches and recent commits for work that plausibly fixes this",
+			"verify it instead of writing a competing one",
+			"run the repro twice on its base and twice on its head",
+			"without editing it",
+			"when a person has claimed the fix, posted a concrete plan, or assigned it to another agent, report and stop rather than race them",
+			"The requester's own claim, plan, assignment, branch or PR, and any work the task names, are not competing work; the stop covers only other people's claims and PRs.",
+			"A bot's diagnosis is evidence, not a claim.",
+			"If the base doesn't show the symptom twice, the result is inconclusive.",
+		])
+			assert.ok(step(3).includes(phrase), phrase);
+		assert.match(step(4), /The original repro now passes, twice\./);
+		const playbook = steps.join("\n");
 		assert.doesNotMatch(
-			autopilot,
-			/A new head voids the verdict unless the patch-id is unchanged/,
+			playbook,
+			/Slack|tracker|[Aa]utomation|control adapter|feature map|benny/,
+		);
+		assert.match(
+			read("docs/provenance.md"),
+			/## Skipped: Benny[\s\S]*external trigger or scheduler/,
 		);
 	});
 
