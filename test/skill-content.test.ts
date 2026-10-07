@@ -1367,7 +1367,7 @@ const SWARM_PROSE_RULES: Array<[string, RegExp]> = [
 	],
 	[
 		"aggregate: recompute each status from its claims",
-		/Recompute each result's status from its per-claim results, in the worker order: any proved fail means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`\./,
+		/Recompute each result's status from its per-claim results, in the worker order: any proved fail, or any other defect the worker proves, means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`\./,
 	],
 	[
 		"aggregate: a differing recomputed status replaces any report",
@@ -1558,8 +1558,13 @@ describe("swarm status mapping and boundary parse", () => {
 			],
 			[
 				"drop the aggregate recompute rule",
-				"Recompute each result's status from its per-claim results, in the worker order: any proved fail means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`. ",
+				"Recompute each result's status from its per-claim results, in the worker order: any proved fail, or any other defect the worker proves, means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`. ",
 				"",
+			],
+			[
+				"recompute only from claims, dropping other proved defects",
+				"any proved fail, or any other defect the worker proves, means `ISSUES`;",
+				"any proved fail means `ISSUES`;",
 			],
 			[
 				"recompute against the result's claims, not the brief's",
