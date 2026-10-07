@@ -4,7 +4,7 @@ Code examples for each rule in `SKILL.md`. The underlying principles are languag
 
 ## Branded types
 
-Brand primitives so they can't be mixed up. Validate once at the boundary. Downstream code trusts the type.
+Brand primitives so they can't be mixed up. Parse once at the boundary. Downstream code trusts the type.
 
 ```ts
 type AgentId = string & { readonly __brand: "AgentId" };
@@ -183,7 +183,7 @@ const userSchema: z.ZodType<User> = z.object({ id: z.string(), name: z.string() 
 When refactoring an `as` out of existing code, identify why TypeScript can't infer:
 
 - Missing discriminant: add one, switch to a discriminated union.
-- Overly wide source type (e.g. `Record<string, unknown>`): narrow it.
+- Overly wide source type (e.g. `Record<string, unknown>`, however spelled): parse where data crosses in, into a named domain type. It stops at that parse.
 - Untyped boundary: parse with the schema that owns the shape. Add a schema only where none exists.
 - Genuinely inexpressible: use a branded type or `satisfies`.
 
@@ -269,7 +269,7 @@ const config = { theme: "dark", cols: 3 } satisfies Config;
 
 ## Boundary validation
 
-Validate once where data crosses in. Trust types inside. See the **principle-boundary-discipline** principle skill.
+Parse where data crosses in, into a named domain type. `Record<string, unknown>` (however spelled) stops at that parse. Trust types inside. See the **principle-boundary-discipline** principle skill.
 
 - **Wire formats** (proto, JSON-RPC): parse with `ignoreUnknownFields` so forward-compatible changes don't break old clients.
 - **Persisted JSON:** versioned blob with a try/catch around the parse.
