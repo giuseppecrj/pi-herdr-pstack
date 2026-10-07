@@ -23,7 +23,7 @@ Put each section under a `##` heading, not a bold lead-in, so the sections stand
 
 After these sections, attach videos or screenshots when they prove a claim. Do not paste full SHAs, fan-out lane recitals, lever-correction essays, file-by-file checklists, or "CLEAN" verdicts. Put these details in a linked artifact. A commit body does not restate its subject.
 
-**Forge.** Use the GitHub CLI (`gh`) for every PR operation: create, edit, view, watch, and merge. Confirm `gh auth status` once; if it fails, report the branch, title and description as in the no-authorization path. Do not require Graphite (`gt`).
+**Forge.** Use the GitHub CLI (`gh`) for every PR operation: create, edit, view, watch, and merge. Confirm `gh auth status` succeeds and `gh repo view` resolves the repository. If either fails and the run provides a built-in PR tool, use the tool and report each `gh` step you could not run. If either fails and the run has no such tool, report the branch, title and description as in the no-authorization path. Do not require Graphite (`gt`).
 
 **Built-in PR tool.** When the run provides a built-in PR tool, create, edit, retarget, and mark ready through it, never through `gh`. Its own instructions say how. A PR made with the CLI misses what the tool tracks, such as a description later runs can edit. Use `gh` for everything the tool does not cover, and for every PR operation when the run has no such tool.
 

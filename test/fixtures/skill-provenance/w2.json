@@ -116,7 +116,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/opening-a-pr.md",
-			"sha256": "011fa2790646d14625247127c96f698d4e19ca2d8a297f780ea1c5d12cc11d3b",
+			"sha256": "4870f96c0305025688099d1e04077ea2a1931009fd67df55115c4e9da1b54156",
 			"status": "adapted",
 			"sources": [
 				{
@@ -132,7 +132,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves. Q5: Origin is dropped, so gh is the only forge, matching babysit, shipping and the autopilots; the Forge paragraph no longer resolves between forges, and the stack and readiness rules give only the gh commands. The mimir and cursor sources still offer Origin, and the cursor pin is not moved. The Forge paragraph confirms gh auth status once and falls back to the no-authorization report when it fails, like the other gh playbooks."
+			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves. Q5: Origin is dropped, so gh is the only forge, matching babysit, shipping and the autopilots; the Forge paragraph no longer resolves between forges, and the stack and readiness rules give only the gh commands. The mimir and cursor sources still offer Origin, and the cursor pin is not moved. The Forge paragraph confirms gh auth status and gh repo view like the other gh playbooks. If either fails, a run with a built-in PR tool uses the tool and reports the gh steps it skipped; only a run with neither falls back to the no-authorization report."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/pause-safely.md",

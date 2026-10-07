@@ -237,24 +237,24 @@ const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
 /** A concrete model name; methodology names families and task categories. */
 const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
-// gh is the only forge. The git remote named origin and the HTTP Origin
-// header stay allowed. `E` admits markdown emphasis around a word, so word
+// gh is the only forge. Capitalized Origin is banned outright except as the
+// backticked HTTP header field make-bot-ui validates; the git remote named
+// origin stays allowed. `E` admits markdown emphasis around a word, so word
 // edges are `L` and `R` rather than \b, which `_` would defeat.
 const E = "[`*_]*";
 const L = "(?<![A-Za-z0-9])";
 const R = "(?![A-Za-z0-9])";
 const ORIGIN_FORGE = [
+	/(?<![A-Za-z0-9`])Origin(?![A-Za-z0-9])|`Origin(?!` header\b|` checks\b|: )/,
 	new RegExp(`${L}origin${E}\\s+${E}pr(?![A-Za-z0-9/-])`, "i"),
 	new RegExp(
 		`${L}(?:which|type|hash|command\\s+-[vV])${E}\\s+${E}origin${R}|${L}origin${E}\\s+--version|${L}npx\\s+origin${R}`,
 	),
 	/\bcursor[-_]origin\b|origin\.cursor\.com|\borigin[-_]cli\b/i,
+	new RegExp(`${L}origin${E}\\s+${E}(?:forge|CLI)${R}`, "i"),
 	new RegExp(
-		`${L}Cursor${E}\\s+${E}Origin${R}|${L}Origin${E}\\s+${E}(?:forge|CLI)${R}`,
+		`${L}origin${E}\\s+(?:when|if)\\s+(?:it\\s+is\\s+|its\\s+CLI\\s+is\\s+)?(?:available|present|installed)${R}`,
 		"i",
-	),
-	new RegExp(
-		`${L}(?:[Oo]n|[Ww]ith|[Vv]ia|[Tt]hrough|[Bb]y|or|[Pp]refer|[Ii]f)${E}\\s+${E}Origin${R}(?!${E}(?:\\s+header|:))|${L}Origin${E}\\s+${E}(?:can|reports|merge-when-ready|is\\s+absent|when\\s+its)${R}`,
 	),
 ];
 const DELEGATION = "skills/poteto-mode/references/delegation.md";
@@ -755,13 +755,24 @@ describe("Origin forge ban", () => {
 			"through\nOrigin",
 			"by Origin",
 			"Prefer Origin when present.",
+			"Origin does not wait for `READY`.",
+			"if the repo covers Origin or add an Origin implementation",
+			"Origin's `--auto` arms merge-when-ready.",
+			"Land through gh by default, or origin when available.",
+			"the `Origin` forge",
+			"Origin header",
 		]) {
 			assert.ok(banned(text), text);
 		}
 	});
 
 	it("allows the git remote named origin and the HTTP Origin header", () => {
+		const botUi = read("skills/make-bot-ui/SKILL.md")
+			.split("\n")
+			.filter((line) => line.includes("Origin"));
+		assert.equal(botUi.length, 4);
 		for (const text of [
+			...botUi,
 			"git push origin main",
 			"git push -u origin cursor/topic",
 			"git fetch origin <head-branch> && git checkout <head SHA>",
