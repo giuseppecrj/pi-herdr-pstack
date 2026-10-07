@@ -172,7 +172,8 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
   `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
   enforced `/loop` and repository-root markers. Upstream cursor/plugins
   `multi-phase-plan.md` still requires a rebased head with the "patch-id
-  unchanged"; this pack's merge box defers to the patch-id rule in
+  unchanged"; this pack's Merge-ready checklist item
+  (`multi-phase-plan.md:130`) defers to the patch-id rule in
   `playbooks/shipping.md` instead, and `check-plan.mjs` rejects the old
   wording. The divergence is deliberate, so a sync must not restore it.
 
@@ -222,7 +223,7 @@ frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
 for a `- architecture:` bullet under the host prompt's Task-category shortlists
 before launching recon or review seats; the bare word architecture elsewhere in
-the prompt does not count. The tooling lens's family differs from the first model listed for
-architecture under those shortlists. If that launch falls back to a later
-candidate whose family matches the tooling lens, the lens is relabeled
-context-isolated.
+the prompt does not count. The tooling lens's family differs from the first
+model listed for architecture under those shortlists. If that launch falls
+back to a later candidate whose family matches the tooling lens, the lens is
+relabeled context-isolated.

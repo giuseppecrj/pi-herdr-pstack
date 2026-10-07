@@ -1569,6 +1569,8 @@ describe("methodology provenance", () => {
 			"write down this repo's allowlist: the only paths whose changes may keep a lane result",
 			"A path is on it only when it lies outside everything the package or build ships and it enforces no behavior, so no test, test fixture, CI config, or lint, typecheck or build config",
 			"Package manifests, license and notice files, the changelog, and release docs are never on it, even when the build does not ship them",
+			"Files that decide what ships (such as `package.json` `files`, `.npmignore` and `.gitignore`) are never on it either",
+			"Record the allowlist in the decision trail before the comparison",
 			"A patch that touches any path off the allowlist is re-verified",
 			"When every path where the two patches differ is on the allowlist, compare what each lane",
 		])
@@ -1586,7 +1588,7 @@ describe("methodology provenance", () => {
 		])
 			assert.doesNotMatch(
 				read(path),
-				/patch[- ]id (?:is |remains |stays )?unchanged/i,
+				/patch[-_\u2010-\u2014 ]?ids?[`*]*\s*:?\s*(?:(?:is|was|remains|stays|stayed|still)\s+)*unchanged|unchanged\s+[`*]*patch[-_\u2010-\u2014 ]?id/i,
 				path,
 			);
 	});
@@ -1600,28 +1602,36 @@ describe("methodology provenance", () => {
 		assert.ok(preflight, "architecture preflight");
 		assert.ok(
 			preflight.includes(
-				"a line starting `Task-category shortlists` followed by a `- architecture:` bullet",
+				"a line starting `Task-category shortlists` with a `- architecture:` bullet among the bullets under it",
 			),
 		);
-		assert.ok(
-			preflight.includes(
-				"The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist",
-			),
-		);
-	});
-
-	it("requires the architecture shortlist bullet in the delegation preflight", () => {
-		const preflight = read("skills/poteto-mode/references/delegation.md")
-			.split("\n")
-			.find((line) =>
-				line.startsWith("- Before launching any recon or review seats"),
+		assert.doesNotMatch(preflight, /followed by a `- architecture:` bullet/);
+		const heading =
+			"Task-category shortlists (use task:<category> only as the entire model value):";
+		const tier =
+			"For orchestrated children, explicitly select an exact authenticated provider/model-id by task tier first (fast for bounded mechanical work and recon, mid for implementation and review, frontier for architecture, security, hard diagnosis, or adversarial review), then set supported thinking.";
+		const listsArchitecture = (prompt: string) => {
+			const lines = prompt.split("\n");
+			const start = lines.findIndex((line) =>
+				line.startsWith("Task-category shortlists"),
 			);
-		assert.ok(preflight, "architecture preflight");
+			if (start < 0) return false;
+			for (const line of lines.slice(start + 1)) {
+				if (!line.startsWith("- ")) return false;
+				if (line.startsWith("- architecture:")) return true;
+			}
+			return false;
+		};
 		assert.ok(
-			preflight.includes(
-				"a line starting `Task-category shortlists` followed by a `- architecture:` bullet",
+			listsArchitecture(`${heading}\n- architecture: a/b\n- coding: c/d`),
+		);
+		assert.ok(
+			listsArchitecture(
+				`${heading}\n- coding: c/d\n- recon: e/f\n- architecture: a/b\nFor ordinary review, prefer a different family.`,
 			),
 		);
+		assert.ok(!listsArchitecture(`${heading}\n- coding: c/d\n${tier}`));
+		assert.ok(!listsArchitecture(tier));
 		assert.ok(
 			preflight.includes(
 				"The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist",

@@ -176,7 +176,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/shipping.md",
-			"sha256": "eb69d321e30fbcb5d64cbadc28f792f05ea16ece6f2a045456a31cfa4a8674bf",
+			"sha256": "be7e627e21ff8307674dad1538ccd9b5ceb1318cba1b704d4d00496489ee0a7e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -236,7 +236,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/scripts/check-plan.mjs",
-			"sha256": "e9a82ce1a5fe6f758de1fde9cb18617e4f17666ae6772d577feba7fd4efff072",
+			"sha256": "1076125bd2910e8bd7db0288976c6413f356de3a378664337ef7caa0f979e1f8",
 			"status": "adapted",
 			"sources": [
 				{

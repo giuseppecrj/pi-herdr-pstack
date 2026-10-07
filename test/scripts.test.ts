@@ -166,6 +166,58 @@ describe("poteto-mode check-plan.mjs", {
 		);
 	});
 
+	const PLACEHOLDER =
+		"<The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>";
+	const DEFER = /; defer to the patch-id rule in playbooks\/shipping\.md/;
+
+	for (const probe of [
+		"Merge when the patch-id is still unchanged.",
+		"Merge when the patch-id was unchanged.",
+		"Merge when the patch-id stayed unchanged.",
+		"Merge on an unchanged patch-id.",
+		"Merge when the patch-ids unchanged.",
+		"Merge with patch-id: unchanged.",
+		"Merge with `patch-id` unchanged.",
+		"Merge with **patch-id** unchanged.",
+		"Merge with patch-id  unchanged.",
+		"Merge with the patch-id\n  unchanged.",
+		"Merge with patch_id unchanged.",
+		"Merge with patch\u2013id unchanged.",
+		"MERGE WITH PATCH-ID UNCHANGED.",
+	])
+		it(`fails a plan that says ${JSON.stringify(probe)}`, () => {
+			const result = check(
+				"unchanged-patch-probe.md",
+				skeleton().replace(PLACEHOLDER, probe),
+			);
+			assert.equal(result.status, 1);
+			assert.match(result.stderr, DEFER);
+		});
+
+	it("allows autopilot-stack's re-run-CI rule that says even when the patch-id is unchanged", () => {
+		const result = check(
+			"even-when.md",
+			skeleton().replace(
+				PLACEHOLDER,
+				"Re-run mergeability and CI after every rewritten push even when the patch-id is unchanged.",
+			),
+		);
+		assert.equal(result.status, 0, result.stderr);
+	});
+
+	it("still fails a banned form next to an allowed even-when form", () => {
+		const result = check(
+			"even-when-and-banned.md",
+			skeleton().replace(
+				PLACEHOLDER,
+				"Re-run CI even when the patch-id is unchanged. Merge when the patch-id is unchanged.",
+			),
+		);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, DEFER);
+		assert.equal(result.stderr.match(/defer to the patch-id rule/g)?.length, 1);
+	});
+
 	it("fails a skeleton that drops a verdict or rebase marker", () => {
 		const markers = [
 			"Keep that merge base in fix rounds",

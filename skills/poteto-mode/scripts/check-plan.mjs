@@ -49,10 +49,15 @@ const raw = fs.readFileSync(file, "utf8").split(/\r?\n/);
 const problems = [];
 const fail = (line, message) => problems.push(`${file}:${line}: ${message}`);
 
-const UNCHANGED_PATCH = /patch[- ]id (?:is |remains |stays )?unchanged/i;
-for (let i = 0; i < raw.length; i++) {
-	const match = UNCHANGED_PATCH.exec(raw[i]);
-	if (match) fail(i + 1, `"${match[0]}"; defer to the patch-id rule in playbooks/shipping.md`);
+const UNCHANGED_PATCH =
+	/patch[-_\u2010-\u2014 ]?ids?[`*]*\s*:?\s*(?:(?:is|was|remains|stays|stayed|still)\s+)*unchanged|unchanged\s+[`*]*patch[-_\u2010-\u2014 ]?id/gi;
+// "Re-run CI even when the patch-id is unchanged" (autopilot-stack step 7) is a valid rule, not a verdict shortcut.
+const EVEN_WHEN = /even\s+when\s+(?:the\s+|its\s+)?[`*]*$/i;
+const text = raw.join("\n");
+for (const match of text.matchAll(UNCHANGED_PATCH)) {
+	if (EVEN_WHEN.test(text.slice(Math.max(0, match.index - 40), match.index))) continue;
+	const line = text.slice(0, match.index).split("\n").length;
+	fail(line, `"${match[0].replace(/\s+/g, " ")}"; defer to the patch-id rule in playbooks/shipping.md`);
 }
 
 let start = 0;
