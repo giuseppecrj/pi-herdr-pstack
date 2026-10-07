@@ -1197,40 +1197,234 @@ describe("delegation contract", () => {
 	});
 });
 
+/** Rules the swarm status mapping must state, in the prose and in the worker task. */
+const SWARM_PROSE_RULES: Array<[string, RegExp]> = [
+	[
+		"prose: claims listed before results",
+		/the claims to verify listed one per item before any result/,
+	],
+	[
+		"prose: every provable issue",
+		/lists every issue it can prove, not only the first/,
+	],
+	[
+		"prose: a listed claim with no result is inconclusive",
+		/A listed claim with no result counts as inconclusive\./,
+	],
+	[
+		"prose: a proved fail wins",
+		/A proved fail always means `ISSUES`, even when other checks could not run, and inconclusive claims stay inconclusive\./,
+	],
+	[
+		"prose: PASS needs at least one claim, all passing",
+		/Otherwise `PASS` requires at least one listed claim and a pass for every listed claim\./,
+	],
+	[
+		"prose: zero claims is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\bzero listed claims\b/,
+	],
+	[
+		"prose: an inconclusive claim is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\ban inconclusive claim\b/,
+	],
+	[
+		"prose: no runnable check is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\bcannot run any check\b/,
+	],
+	[
+		"aggregate: a claimless or partial PASS is BLOCKED",
+		/Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`\./,
+	],
+	[
+		"aggregate: only PASS wins a first pass race",
+		/For a `first pass` race, only an overall `PASS` wins\. `ISSUES` and `BLOCKED` are not a pass\./,
+	],
+	[
+		"aggregate: a BLOCKED slice is never covered",
+		/A BLOCKED slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
+	],
+	[
+		"aggregate: ISSUES carries inconclusive claims to the gaps",
+		/An `ISSUES` slice carries its inconclusive claims into the gaps\./,
+	],
+];
+const SWARM_TASK_RULES: Array<[string, RegExp]> = [
+	[
+		"task: claims slot before results",
+		/Claims: <each claim to verify, one per item>\. Report every listed claim as pass, fail or inconclusive before the overall status\./,
+	],
+	[
+		"task: a listed claim with no result is inconclusive",
+		/A listed claim with no result counts as inconclusive\./,
+	],
+	[
+		"task: a proved fail wins",
+		/A proved fail always means ISSUES, even when other checks could not run/,
+	],
+	["task: every provable issue", /list every proved issue, not only the first/],
+	[
+		"task: inconclusive stays inconclusive",
+		/inconclusive claims stay inconclusive/,
+	],
+	[
+		"task: PASS needs at least one claim, all passing",
+		/Otherwise PASS only when at least one claim is listed and every listed claim passes\./,
+	],
+	[
+		"task: zero claims is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\bzero listed claims\b/,
+	],
+	[
+		"task: an inconclusive claim is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\ban inconclusive claim\b/,
+	],
+	[
+		"task: no runnable check is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\bno check could run\b/,
+	],
+];
+/** Sentences that would reopen a vacuous or partial PASS. */
+const SWARM_CONTRADICTIONS: Array<[string, RegExp]> = [
+	["vacuous all-claims-pass wording", /all claims pass (?:means|is) `?PASS/i],
+	[
+		"PASS with no or zero claims",
+		/`?PASS`?[^.]*\b(?:with|has|having|given) (?:no|zero) (?:listed )?claims?\b/i,
+	],
+	[
+		"no or zero claims reporting PASS",
+		/\b(?:no|zero) (?:listed )?claims?\b[^.]*\b(?:reports?|means|is|gives|counts as) `?PASS\b/i,
+	],
+	[
+		"PASS despite an unrun or missing result",
+		/`?PASS`?[^.]*\b(?:even|despite|although)\b[^.]*\b(?:unrun|no result|inconclusive|could not run)\b/i,
+	],
+	["old run-the-checks wording", /cannot run the checks/],
+];
+
+/** Every missing status rule or contradiction in a swarm skill text. */
+function swarmStatusProblems(swarm: string): string[] {
+	const task = /"task": "([^"]*)"/.exec(swarm)?.[1];
+	if (task === undefined) return ["no worker task template"];
+	const prose = swarm.replace(task, "");
+	return [
+		...SWARM_PROSE_RULES.filter(([, rule]) => !rule.test(prose)).map(
+			([name]) => `missing ${name}`,
+		),
+		...SWARM_TASK_RULES.filter(([, rule]) => !rule.test(task)).map(
+			([name]) => `missing ${name}`,
+		),
+		...SWARM_CONTRADICTIONS.filter(([, rule]) => rule.test(swarm)).map(
+			([name]) => `contradiction: ${name}`,
+		),
+		...(task.includes("`") ? ["task template has markdown backticks"] : []),
+	];
+}
+
 describe("swarm status mapping and boundary parse", () => {
+	const swarm = read("skills/swarm/SKILL.md");
+
 	it("maps each verifier claim onto one overall PASS, ISSUES or BLOCKED", () => {
-		const swarm = read("skills/swarm/SKILL.md");
-		const verifier = read("skills/poteto-mode/references/delegation.md");
-		assert.match(verifier, /Report pass, fail or inconclusive for each claim/);
 		assert.match(
-			swarm,
-			/any proved fail means `ISSUES`, and inconclusive claims stay inconclusive/,
+			read("skills/poteto-mode/references/delegation.md"),
+			/Report pass, fail or inconclusive for each claim/,
 		);
-		assert.match(swarm, /all claims pass means `PASS`/);
-		assert.match(
-			swarm,
-			/a worker that cannot run any check, or that ends with no proved defect and at least one inconclusive claim, means `BLOCKED`, with the reason stated/,
-		);
-		assert.match(
-			swarm,
-			/A proved fail always means `ISSUES`, even when other checks could not run/,
-		);
-		assert.match(
-			swarm,
-			/A BLOCKED slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
-		);
-		assert.doesNotMatch(swarm, /cannot run the checks/);
-		assert.match(
-			swarm,
-			/For a `first pass` race, only an overall `PASS` wins\. `ISSUES` and `BLOCKED` are not a pass/,
-		);
-		const task = /"task": "([^"]*)"/.exec(swarm)?.[1] ?? "";
-		assert.match(task, /any proved fail is ISSUES/);
-		assert.match(task, /all claims pass is PASS/);
-		assert.match(task, /a proved fail always means ISSUES/);
-		assert.match(task, /if you cannot run any check/);
-		assert.match(task, /BLOCKED and state why/);
-		assert.doesNotMatch(task, /`/);
+		assert.deepEqual(swarmStatusProblems(swarm), []);
+	});
+
+	it("fails the lock on every dropped rule or contradicting sentence", () => {
+		const mutations: Array<[string, string, string]> = [
+			[
+				"drop the claims slot",
+				"Claims: <each claim to verify, one per item>. ",
+				"",
+			],
+			[
+				"drop the template's inconclusive-means-BLOCKED clause",
+				", an inconclusive claim, or no check could run",
+				", or no check could run",
+			],
+			[
+				"drop the template's list-every-issue clause",
+				"list every proved issue, not only the first, and ",
+				"",
+			],
+			[
+				"drop the template's at-least-one-claim rule",
+				"Otherwise PASS only when at least one claim is listed and every listed claim passes.",
+				"Otherwise PASS when every listed claim passes.",
+			],
+			[
+				"drop the template's zero-claims-BLOCKED reason",
+				"state why: zero listed claims, an inconclusive claim",
+				"state why: an inconclusive claim",
+			],
+			[
+				"drop the template's no-result-is-inconclusive rule",
+				"before the overall status. A listed claim with no result counts as inconclusive. Then",
+				"before the overall status. Then",
+			],
+			[
+				"drop the prose at-least-one-claim rule",
+				"Otherwise `PASS` requires at least one listed claim and a pass for every listed claim.",
+				"Otherwise `PASS` requires a pass for every listed claim.",
+			],
+			[
+				"drop the prose zero-claims-BLOCKED reason",
+				"stated: zero listed claims, an inconclusive claim",
+				"stated: an inconclusive claim",
+			],
+			[
+				"drop the prose no-result-is-inconclusive rule",
+				"for each claim. A listed claim with no result counts as inconclusive. Map",
+				"for each claim. Map",
+			],
+			[
+				"drop the prose proved-fail-wins rule",
+				"A proved fail always means `ISSUES`, even when other checks could not run, and inconclusive claims stay inconclusive. ",
+				"",
+			],
+			[
+				"drop the aggregate claimless-PASS check",
+				"Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`. ",
+				"",
+			],
+			[
+				"drop the BLOCKED-never-covered sentence",
+				"A BLOCKED slice is unverified. Report it with its reason next to the gaps, never as covered. ",
+				"",
+			],
+			[
+				"drop the ISSUES-gaps sentence",
+				" An `ISSUES` slice carries its inconclusive claims into the gaps.",
+				"",
+			],
+			[
+				"add a PASS-with-no-claims sentence",
+				"If a worker drops out,",
+				"A slice may also be `PASS` with no claims.\n\nIf a worker drops out,",
+			],
+			[
+				"add a no-claims-reports-PASS sentence",
+				"If a worker drops out,",
+				"A worker with no listed claims reports `PASS`.\n\nIf a worker drops out,",
+			],
+			[
+				"add a PASS-despite-unrun sentence",
+				"If a worker drops out,",
+				"Report `PASS` even when some claims could not run.\n\nIf a worker drops out,",
+			],
+			[
+				"restore the vacuous all-claims wording",
+				"If a worker drops out,",
+				"All claims pass means `PASS`.\n\nIf a worker drops out,",
+			],
+		];
+		for (const [name, from, to] of mutations) {
+			assert.ok(swarm.includes(from), `${name}: mutation target is gone`);
+			const mutated = swarm.replace(from, to);
+			assert.notEqual(mutated, swarm, name);
+			assert.notDeepEqual(swarmStatusProblems(mutated), [], name);
+		}
 	});
 
 	it("aligns the patterns boundary lines with the skill row", () => {

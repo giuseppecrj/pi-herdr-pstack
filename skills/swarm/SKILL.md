@@ -36,7 +36,7 @@ When a writer must start from another committed revision, set `base` in its `wor
 ```json subagent
 {
   "name": "<slug>-worker-1",
-  "task": "<goal>. Slice: <exact slice or race arm>. Verify at <exact SHAs> with <method>. For each claim report pass, fail or inconclusive. Then one overall status: any proved fail is ISSUES, list every proved issue not only the first, and leave inconclusive claims inconclusive; a proved fail always means ISSUES; all claims pass is PASS; if you cannot run any check, or you end with no proved defect and at least one inconclusive claim, BLOCKED and state why. Record the SHAs and method. Read-only. You are a leaf: launch nothing.",
+  "task": "<goal>. Slice: <exact slice or race arm>. Verify at <exact SHAs> with <method>. Claims: <each claim to verify, one per item>. Report every listed claim as pass, fail or inconclusive before the overall status. A listed claim with no result counts as inconclusive. Then give one overall status, in this order. A proved fail always means ISSUES, even when other checks could not run: list every proved issue, not only the first, and inconclusive claims stay inconclusive. Otherwise PASS only when at least one claim is listed and every listed claim passes. Otherwise BLOCKED, and state why: zero listed claims, an inconclusive claim, or no check could run. Record the SHAs and method. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Verifier prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:qa",
   "thinking": "medium",
@@ -47,13 +47,13 @@ When a writer must start from another committed revision, set `base` in its `wor
 
 A writing worker takes the Implementer prompt, `task:coding` and a `worktree` instead. An exploring worker takes the Investigator prompt and `task:recon`.
 
-Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence. A worker that can prove a defect reports `ISSUES` and lists every issue it can prove, not only the first. The Verifier prompt in `../poteto-mode/references/delegation.md` reports pass, fail or inconclusive for each claim. Map those onto one overall status: any proved fail means `ISSUES`, and inconclusive claims stay inconclusive; all claims pass means `PASS`; a worker that cannot run any check, or that ends with no proved defect and at least one inconclusive claim, means `BLOCKED`, with the reason stated. A proved fail always means `ISSUES`, even when other checks could not run.
+Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, the claims to verify listed one per item before any result, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence. A worker that can prove a defect reports `ISSUES` and lists every issue it can prove, not only the first. The Verifier prompt in `../poteto-mode/references/delegation.md` reports pass, fail or inconclusive for each claim. A listed claim with no result counts as inconclusive. Map the claims onto one overall status, in this order. A proved fail always means `ISSUES`, even when other checks could not run, and inconclusive claims stay inconclusive. Otherwise `PASS` requires at least one listed claim and a pass for every listed claim. Otherwise the status is `BLOCKED`, with the reason stated: zero listed claims, an inconclusive claim, or a worker that cannot run any check.
 
 If a worker drops out, proceed with N-1 and note it.
 
 ## Phase C: Aggregate
 
-Read the terminal results. Drop a result that does not record the SHAs and method its brief names, and respawn that worker once. After a second miss, record a gap. A gap does not count as a pass. For a `first pass` race, only an overall `PASS` wins. `ISSUES` and `BLOCKED` are not a pass. For coverage, every required slice needs a result. A BLOCKED slice is unverified. Report it with its reason next to the gaps, never as covered. For a race, apply the selection rule declared up front. Use first pass, rank all, or best-of. Do not paste raw worker dumps.
+Read the terminal results. Drop a result that does not record the SHAs and method its brief names, and respawn that worker once. After a second miss, record a gap. A gap does not count as a pass. Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`. For a `first pass` race, only an overall `PASS` wins. `ISSUES` and `BLOCKED` are not a pass. For coverage, every required slice needs a result. A BLOCKED slice is unverified. Report it with its reason next to the gaps, never as covered. An `ISSUES` slice carries its inconclusive claims into the gaps. For a race, apply the selection rule declared up front. Use first pass, rank all, or best-of. Do not paste raw worker dumps.
 
 Keep a compact result table, one-line evidenced issues, and explicit gaps or dropouts.
 
