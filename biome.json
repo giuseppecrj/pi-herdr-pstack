@@ -1,6 +1,6 @@
 {
 	"files": {
-		"includes": ["pi-extension/**", "test/**", "!**/*.md"]
+		"includes": ["pi-extension/**", "scripts/**", "test/**", "!**/*.md"]
 	},
 	"formatter": {
 		"enabled": true
