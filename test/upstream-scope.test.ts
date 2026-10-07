@@ -27,7 +27,11 @@ const scope = readJson<{
 	root: string;
 	inScope: string[];
 	outOfScope: Array<{ path: string; reason: string }>;
-	unscoped: Array<{ path: string; note: string }>;
+	unscoped: Array<{
+		path: string;
+		note: string;
+		watch?: { sha256: string; reason: string };
+	}>;
 	files: ScopeFile[];
 }>("test/fixtures/upstream-scope.json");
 // SAFETY: shape asserted by skill-content.test.ts.
@@ -69,6 +73,15 @@ describe("upstream scope (Q6)", () => {
 		for (const { path, note } of scope.unscoped) {
 			assert.ok(![...IN_SCOPE, ...OUT_OF_SCOPE].includes(path), path);
 			assert.ok(note.length > 20, path);
+		}
+		const watched = scope.unscoped.filter(({ watch }) => watch);
+		assert.deepEqual(
+			watched.map(({ path }) => path),
+			["LICENSE"],
+		);
+		for (const { path, watch } of watched) {
+			assert.match(watch?.sha256 ?? "", /^[0-9a-f]{64}$/, path);
+			assert.ok((watch?.reason ?? "").includes("THIRD_PARTY_NOTICES.md"), path);
 		}
 	});
 
@@ -192,5 +205,21 @@ describe("upstream scope (Q6)", () => {
 				recorded,
 				path,
 			);
+	});
+
+	it("flags an upstream change to a watched unscoped file", {
+		skip:
+			!hasCommit &&
+			"set PSTACK_CURSOR_SOURCE to a cursor/plugins checkout containing the pinned commit",
+	}, () => {
+		for (const { path, watch } of scope.unscoped)
+			if (watch)
+				assert.equal(
+					sha256(
+						git("show", `${scope.commit}:${posix.join(scope.root, path)}`),
+					),
+					watch.sha256,
+					`upstream ${posix.join(scope.root, path)} at ${scope.commit} does not match the recorded hash: review THIRD_PARTY_NOTICES.md against it and call the change out in the sync PR body before moving the pin`,
+				);
 	});
 });

@@ -14,8 +14,12 @@ are out of scope:
   `package.json` plus `pi-extension/pstack/*.ts`.
 
 The top-level `pstack/README.md`, `LICENSE`, `.gitignore` and `assets/` are
-outside this decision. The upstream MIT notice is preserved in
-`THIRD_PARTY_NOTICES.md`.
+unscoped: none of them is ported. `pstack/LICENSE` is also watched, because
+`THIRD_PARTY_NOTICES.md` reproduces its MIT notice. The fixture records its
+SHA-256 at the pin, and the scope test fails when the upstream file at the
+recorded commit no longer matches. On every pin move, the sync PR body calls
+out any upstream `LICENSE` change, and `THIRD_PARTY_NOTICES.md` is re-checked
+against it before the recorded hash is updated.
 
 `pstack/skills` is accounted for by `docs/skill-inventory.json` and
 `test/fixtures/skill-provenance/`. Its `root` stays `pstack/skills`, so a

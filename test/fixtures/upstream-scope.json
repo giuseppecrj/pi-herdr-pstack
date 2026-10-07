@@ -22,7 +22,11 @@
 		},
 		{
 			"path": "LICENSE",
-			"note": "Outside the Q6 decision; its MIT notice is preserved in THIRD_PARTY_NOTICES.md."
+			"note": "Not ported; its MIT notice is preserved in THIRD_PARTY_NOTICES.md.",
+			"watch": {
+				"sha256": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+				"reason": "THIRD_PARTY_NOTICES.md reproduces this notice, so any upstream change is called out in the sync PR body and the notices are re-checked before the pin moves."
+			}
 		},
 		{
 			"path": "README.md",
