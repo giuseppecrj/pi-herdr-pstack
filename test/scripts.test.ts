@@ -129,4 +129,27 @@ describe("poteto-mode check-plan.mjs", {
 		assert.equal(result.status, 1);
 		assert.notEqual(result.stderr, "");
 	});
+
+	it("fails a skeleton that drops a verdict or rebase marker", () => {
+		const markers = [
+			"Keep that merge base in fix rounds",
+			"git merge-tree",
+			"code-ready head SHA",
+			"each later push that changes the patch",
+			"Two or more audit lanes",
+			"audits the receipts",
+			"filed as a note is a finding",
+		];
+		for (const marker of markers) {
+			const result = check(
+				"dropped-marker.md",
+				skeleton().replace(marker, "omitted"),
+			);
+			assert.equal(result.status, 1, marker);
+			assert.ok(
+				result.stderr.includes(`Program checklist lacks "${marker}"`),
+				`${marker}\n${result.stderr}`,
+			);
+		}
+	});
 });

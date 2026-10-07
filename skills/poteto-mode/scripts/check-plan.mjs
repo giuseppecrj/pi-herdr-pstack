@@ -17,7 +17,18 @@ const SUB_BLOCKS = [
 	"Merge.",
 ];
 const PROGRAM_H3 = ["Arm the program", "Launch owner rounds", "PR mechanics", "Verdict and merge", "Boot recipe"];
-const PROGRAM_MARKERS = ["Re-read them at every audit", "at every child delivery", "status message"];
+const PROGRAM_MARKERS = [
+	"Re-read them at every audit",
+	"at every child delivery",
+	"status message",
+	"Keep that merge base in fix rounds",
+	"git merge-tree",
+	"code-ready head SHA",
+	"each later push that changes the patch",
+	"Two or more audit lanes",
+	"audits the receipts",
+	"filed as a note is a finding",
+];
 const HOW_TO_READ_MARKERS = [
 	"One box is one unit of work",
 	"names the evidence",
