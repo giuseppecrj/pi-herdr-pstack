@@ -1566,16 +1566,15 @@ describe("methodology provenance", () => {
 			/For a docs-only package that build is the npm pack output/,
 		);
 		for (const phrase of [
-			"`skills/**`",
-			"`README.md`",
-			"`docs/compatibility.md`",
-			"`docs/provenance.md`",
-			"are not ignorable docs",
-			"Paths under `test/**` that enforce those product paths are not ignorable tests",
-			"Lint config here excludes config that selects which tests run or that changes emitted files",
-			"A patch that touches any of those is re-verified",
+			"write down this repo's allowlist: the only paths whose changes may keep a lane result",
+			"A path is on it only when it lies outside everything the package or build ships and it enforces no behavior, so no test, test fixture, CI config, or lint, typecheck or build config",
+			"Package manifests, license and notice files, the changelog, and release docs are never on it, even when the build does not ship them",
+			"A patch that touches any path off the allowlist is re-verified",
+			"When every path where the two patches differ is on the allowlist, compare what each lane",
 		])
 			assert.ok(step.includes(phrase), phrase);
+		assert.doesNotMatch(step, /differ only in tests, docs, or lint config/);
+		assert.doesNotMatch(step, /are not ignorable/);
 		const autopilot = read("skills/poteto-mode/playbooks/autopilot-full.md");
 		assert.match(
 			autopilot,
@@ -1590,6 +1589,25 @@ describe("methodology provenance", () => {
 				/patch[- ]id (?:is |remains |stays )?unchanged/i,
 				path,
 			);
+	});
+
+	it("requires the architecture shortlist bullet in the delegation preflight", () => {
+		const preflight = read("skills/poteto-mode/references/delegation.md")
+			.split("\n")
+			.find((line) =>
+				line.startsWith("- Before launching any recon or review seats"),
+			);
+		assert.ok(preflight, "architecture preflight");
+		assert.ok(
+			preflight.includes(
+				"a line starting `Task-category shortlists` followed by a `- architecture:` bullet",
+			),
+		);
+		assert.ok(
+			preflight.includes(
+				"The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist",
+			),
+		);
 	});
 
 	it("requires the architecture shortlist bullet in the delegation preflight", () => {
