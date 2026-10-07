@@ -36,7 +36,7 @@ When a writer must start from another committed revision, set `base` in its `wor
 ```json subagent
 {
   "name": "<slug>-worker-1",
-  "task": "<goal>. Slice: <exact slice or race arm>. Verify at <exact SHAs> with <method>. Report PASS, ISSUES or BLOCKED with evidence, and record the SHAs and method. Read-only. You are a leaf: launch nothing.",
+  "task": "<goal>. Slice: <exact slice or race arm>. Verify at <exact SHAs> with <method>. Report PASS, ISSUES or BLOCKED with evidence. A worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. Record the SHAs and method. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Verifier prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:qa",
   "thinking": "medium",
@@ -47,7 +47,7 @@ When a writer must start from another committed revision, set `base` in its `wor
 
 A writing worker takes the Implementer prompt, `task:coding` and a `worktree` instead. An exploring worker takes the Investigator prompt and `task:recon`.
 
-Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence.
+Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence. A worker that can prove a defect reports `ISSUES` and lists every issue it can prove, not only the first.
 
 If a worker drops out, proceed with N-1 and note it.
 
