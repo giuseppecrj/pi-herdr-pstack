@@ -30,8 +30,20 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset.
+- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset. When the setup question below applies, ask that once instead of a separate suggestion.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention the gap when the question is about proving a change works, and offer the **create-verification-skill** skill, which generates one.
+
+When the answer depends on the task categories pstack uses (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`) and you cannot see that they are set, ask once whether to run `/setup-pstack` now or keep host defaults for now. It depends when the user is new, the question is about setup or cost, or the answer would name which model a category resolves to. Ask at most once per chat. If the need is still unclear, fold this into that one multiple-choice question. Offer two choices:
+
+- Now: tell them to type `/setup-pstack`. That command only shows the report and changes nothing. Changing a category is a separate `/setup-pstack <request>` they type themselves, and the extension writes only after they approve the exact payload. Answer their question too. This skill writes nothing.
+- Later: answer their question, and add one line that host defaults stay for now. poteto-mode still sets `model` to `task:<category>`. On the tested host an unset category fails that spawn until `/setup-pstack` sets it. A call that omits `model` falls back to role, per-agent and default models, then the parent model.
+
+You cannot tell whether those categories are unset on your own. No host tool reads them. `subagents_list` lists roles. Leave `subagents_write_task_models` and `pstack_apply_task_models` unused. Leave `$PI_CODING_AGENT_DIR/herdr-agents/config.json` (default `~/.pi/agent/herdr-agents/config.json`) unread and unwritten: a relative `PI_CODING_AGENT_DIR`, a missing file, and an unreadable, malformed or invalid file are different states, and the file holds settings the report withholds. The subagent tool's routing text is not a check: it omits unauthenticated candidates, and empty preferences render as generic tier text. The only reliable signal is a `/setup-pstack` report already in this session. Read its Shared preferences lines. Findings name an unset category only for `coding`, `recon` and `review`.
+
+- Unset, so ask when the answer depends on the categories: the report says the config file does not exist and no task categories are configured, or a Shared preferences line for one of the six categories has the value `(not set)`.
+- Set, so skip the question: each of the six lines names a reference. A withheld token counts as set.
+- Unknown file state: the report says the file is unreadable, malformed or invalid. Repeat that state. Skip the unset question.
+- No report in the session: you have not checked. Ask when the answer depends on the categories, and say the check has not been run.
 
 ## Get set up
 

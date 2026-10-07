@@ -121,6 +121,16 @@ source and an explanation in its fixture.
 | `skills/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
 | `skills/poteto-help/**` (3 files) | Cursor `poteto-help/` at `2cbf58508f40de470d7490b55c51d71241928fa2` | adapted, re-authored for Pi from Cursor's structure |
 
+`skills/poteto-help/SKILL.md` also adapts the one-time setup nudge from
+cursor/plugins `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d` (PR #509). That commit
+is later than the pin. The fixture still records the Cursor blob at
+`2cbf58508f40de470d7490b55c51d71241928fa2`, because each provenance fixture's
+`sources.cursor.commit` must equal the single cursor commit in
+`docs/skill-inventory.json`. The nudge asks once, when the answer depends on
+the six task categories and a `/setup-pstack` report does not already show
+them set, whether to run `/setup-pstack` (report only) or keep host defaults.
+poteto-help does not read or write task-model config.
+
 comment-sicko is a bare delegate prompt under `skills/no-comments/references/`,
 not a role. `/skill:no-comments` reads it and passes it as `systemPrompt`;
 pstack still ships no named roles and has no `agents/` directory.

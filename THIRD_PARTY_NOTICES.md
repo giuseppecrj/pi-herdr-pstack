@@ -52,7 +52,10 @@ shipped the other 35 skills and the comment-sicko delegate prompt at
   carries Ivan Porto Carrero's MIT notice.
 - [cursor/plugins](https://github.com/cursor/plugins) at commit
   `2cbf58508f40de470d7490b55c51d71241928fa2`, path `pstack/skills`, under
-  Lauren Tan's MIT notice.
+  Lauren Tan's MIT notice. `skills/poteto-help/SKILL.md` also adapts the setup
+  nudge from the same repository at `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d`
+  (PR #509), under the same notice. The fixture hash for that file's Cursor
+  source stays the pin; see [docs/provenance.md](docs/provenance.md).
 
 See [docs/provenance.md](docs/provenance.md) and
 `test/fixtures/skill-provenance/` for each file's sources and hashes.
