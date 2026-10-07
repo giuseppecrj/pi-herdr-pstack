@@ -187,3 +187,20 @@ That let three W4-A edits made only to satisfy the old bans be reverted:
 `reflect/references/synthesizer.md` are byte-identical mimir copies again, and
 `architect/references/runner-prompt.md` keeps upstream's `// TODO` marker while
 staying adapted for its other edits.
+
+## G6: judgment category
+
+Judgment and prose synthesis (the how explainer, the why synthesizer, and
+reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
+with thinking at high or above. Reflect's tooling lens is a diversity seat.
+The hardest implementation changes go to that category or to the strongest
+exact catalog model with `thinking: xhigh`. The cursor pin stays
+`2cbf58508f40de470d7490b55c51d71241928fa2`. The host describes `architecture`
+as planning and diagnosis, and its tier guidance puts that work in the
+frontier tier. `/setup-pstack` reports an unset `architecture` category;
+`qa` stays off that list. A flow that will need an architecture seat checks
+the host prompt's Task-category shortlists before launching recon or review
+seats. The tooling lens's family differs from the first model listed for
+architecture under those shortlists. If that launch falls back to a later
+candidate whose family matches the tooling lens, the lens is relabeled
+context-isolated.

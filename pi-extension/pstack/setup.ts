@@ -33,11 +33,18 @@ export const CONFIRM_TIMEOUT_MS = 120_000;
 /** Why every writer call outside pstack's approved nested write is refused. */
 export const WRITER_POINTER = `While pi-herdr-pstack is loaded, shared task models change only through /setup-pstack <request>, which shows the exact ${WRITER} payload for your approval. Direct ${WRITER} calls, including /subagents-init, are refused.`;
 const EXTENSION_FILE = fileURLToPath(new URL("./index.ts", import.meta.url));
-/** Categories poteto-mode's delegation examples route through. */
+/**
+ * Categories the methodology launches, so an unset one is a finding.
+ * architecture is the judgment category: seven model assignments in how,
+ * why and reflect (the explainer's two steps and example, the why
+ * synthesizer's step and example, and reflect's judgment and synthesizer
+ * examples).
+ */
 const METHODOLOGY_CATEGORIES: readonly TaskCategory[] = [
 	"coding",
 	"recon",
 	"review",
+	"architecture",
 ];
 
 export type WriterPayload = {
@@ -195,7 +202,7 @@ function preferenceLines(
 	for (const category of METHODOLOGY_CATEGORIES)
 		if (!preferences.tasks[category])
 			findings.push(
-				`tasks.${category} is not set; poteto-mode delegation examples use task:${category}.`,
+				`tasks.${category} is not set; the methodology launches task:${category}.`,
 			);
 	return { lines, findings };
 }

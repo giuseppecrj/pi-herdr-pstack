@@ -75,7 +75,7 @@ Source control is always available through git and `gh`. For the other six, clas
 
 Aim for a complete **coverage map**, not a minimal one. Document the null, don't skip the search.
 
-Launch all matching investigators as independent bare `subagent` calls in one turn so they run concurrently, per `../poteto-mode/references/fan-out.md`, then end the turn. Don't ask one agent to cover multiple MCPs.
+Before that launch, follow the architecture preflight in `../poteto-mode/references/delegation.md`. The synthesizer needs `task:architecture`, and a missing category throws only after these investigators return. Launch all matching investigators as independent bare `subagent` calls in one turn so they run concurrently, per `../poteto-mode/references/fan-out.md`, then end the turn. Don't ask one agent to cover multiple MCPs.
 
 Subagent config (each):
 - bare, with the delegation Investigator prompt as `systemPrompt` and `fork: false`
@@ -131,10 +131,11 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 ## Step 4. Synthesize
 
-Spawn one synthesizer subagent:
+Spawn one synthesizer subagent. Investigators stay on `task:recon`. The synthesizer is judgment and prose synthesis, so it uses the judgment category in `../poteto-mode/references/delegation.md`:
 
 - bare, with the delegation Investigator prompt as `systemPrompt` and `fork: false`
-- `model`: `task:recon`
+- `model`: `task:architecture`
+- `thinking`: `high` or above
 - use a normal Pi child process with no `tools` list. The synthesizer's quality check spot-verifies citations, which can require MCP access. Tool availability varies by Pi configuration.
 
 ```json subagent
@@ -142,7 +143,7 @@ Spawn one synthesizer subagent:
   "name": "<slug>-why-synthesize",
   "task": "<references/synthesizer-prompt.md filled in with the investigator findings, skipped sources, code anchor and question; follow references/epistemics.md>. Read-only: do not write files, commit or modify external state. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
-  "model": "task:recon",
+  "model": "task:architecture",
   "thinking": "high",
   "fork": false
 }

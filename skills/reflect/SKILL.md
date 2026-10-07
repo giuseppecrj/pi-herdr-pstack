@@ -20,13 +20,15 @@ The active transcript is `$PI_SESSION_FILE`, set in the bash tool. Use it direct
 
 ### 2. Spawn three reviewers in parallel
 
-Three independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, each with a prompt that forbids file writes as its `systemPrompt` (`fork: false`) and no `tools` list. Reviewers may use MCPs available to their Pi child process for context lookups (tickets, chat threads, observability traces referenced in the transcript). The parent applies edits.
+Before these launches, follow the architecture preflight in `../poteto-mode/references/delegation.md`. Judgment, divergent and the synthesizer need `task:architecture`. Three independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, each with a prompt that forbids file writes as its `systemPrompt` (`fork: false`) and no `tools` list. Reviewers may use MCPs available to their Pi child process for context lookups (tickets, chat threads, observability traces referenced in the transcript). The parent applies edits.
 
 | Lens | `model` | Prompt template |
 |---|---|---|
-| Judgment | `task:review` | `references/judgment-reviewer.md` |
-| Tooling | `task:review` | `references/tooling-reviewer.md` |
-| Divergent | `task:review` | `references/divergent-reviewer.md` |
+| Judgment | `task:architecture` | `references/judgment-reviewer.md` |
+| Tooling | exact model from another family | `references/tooling-reviewer.md` |
+| Divergent | `task:architecture` | `references/divergent-reviewer.md` |
+
+Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above, the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
 
 Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results.
 
@@ -35,24 +37,35 @@ Pass each template verbatim as `systemPrompt`, and put the transcript path for `
   "name": "reflect-judgment",
   "task": "<ABSOLUTE_PATH> is <the transcript path>. <Or: no path; the digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/judgment-reviewer.md, verbatim>",
-  "model": "task:review",
+  "model": "task:architecture",
   "thinking": "high",
   "fork": false
 }
 ```
 
-The tooling and divergent reviewers differ only in `name` and prompt file.
+The divergent reviewer differs only in `name` and prompt file. The tooling reviewer uses the diversity-seat model:
+
+```json subagent
+{
+  "name": "reflect-tooling",
+  "task": "<ABSOLUTE_PATH> is <the transcript path>. <Or: no path; the digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
+  "systemPrompt": "<the full text of references/tooling-reviewer.md, verbatim>",
+  "model": "<provider>/<model-id>",
+  "thinking": "high",
+  "fork": false
+}
+```
 
 ### 3. Synthesize
 
-After all three reviewers have delivered, one bare `subagent` call on `task:review` with no `tools` list. The synthesizer may use MCPs available to its Pi child process to spot-check citations. Use `references/synthesizer.md` verbatim as `systemPrompt`, with each reviewer's full output in `task` under its marker.
+After all three reviewers have delivered, one bare `subagent` call on `task:architecture` with no `tools` list. The synthesizer may use MCPs available to its Pi child process to spot-check citations. Use `references/synthesizer.md` verbatim as `systemPrompt`, with each reviewer's full output in `task` under its marker.
 
 ```json subagent
 {
   "name": "reflect-synthesizer",
   "task": "<JUDGMENT_OUTPUT>: <the judgment reviewer's full output>. <TOOLING_OUTPUT>: <the tooling reviewer's full output>. <DIVERGENT_OUTPUT>: <the divergent reviewer's full output>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/synthesizer.md, verbatim>",
-  "model": "task:review",
+  "model": "task:architecture",
   "thinking": "high",
   "fork": false
 }
