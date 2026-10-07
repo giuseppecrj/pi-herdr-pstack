@@ -237,6 +237,26 @@ const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
 /** A concrete model name; methodology names families and task categories. */
 const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
+// gh is the only forge. The git remote named origin and the HTTP Origin
+// header stay allowed. `E` admits markdown emphasis around a word, so word
+// edges are `L` and `R` rather than \b, which `_` would defeat.
+const E = "[`*_]*";
+const L = "(?<![A-Za-z0-9])";
+const R = "(?![A-Za-z0-9])";
+const ORIGIN_FORGE = [
+	new RegExp(`${L}origin${E}\\s+${E}pr(?![A-Za-z0-9/-])`, "i"),
+	new RegExp(
+		`${L}(?:which|type|hash|command\\s+-[vV])${E}\\s+${E}origin${R}|${L}origin${E}\\s+--version|${L}npx\\s+origin${R}`,
+	),
+	/\bcursor[-_]origin\b|origin\.cursor\.com|\borigin[-_]cli\b/i,
+	new RegExp(
+		`${L}Cursor${E}\\s+${E}Origin${R}|${L}Origin${E}\\s+${E}(?:forge|CLI)${R}`,
+		"i",
+	),
+	new RegExp(
+		`${L}(?:[Oo]n|[Ww]ith|[Vv]ia|[Tt]hrough|[Bb]y|or|[Pp]refer|[Ii]f)${E}\\s+${E}Origin${R}(?!${E}(?:\\s+header|:))|${L}Origin${E}\\s+${E}(?:can|reports|merge-when-ready|is\\s+absent|when\\s+its)${R}`,
+	),
+];
 const DELEGATION = "skills/poteto-mode/references/delegation.md";
 
 /** Problems with one call against the pinned host schema; empty when valid. */
@@ -697,6 +717,72 @@ describe("quotation exemptions", () => {
 	});
 });
 
+describe("Origin forge ban", () => {
+	const banned = (text: string) =>
+		ORIGIN_FORGE.some((pattern) => pattern.test(text));
+
+	it("catches Origin forge wording, wrapped or emphasized", () => {
+		for (const text of [
+			"through `gh` by default or Origin when its CLI is available",
+			"On Origin, that is the merge-ready state.",
+			"after Origin reports the PR mergeable",
+			"It does not prove Origin merge-when-ready is armed",
+			"If Origin is absent or cannot resolve the repository, stay on `gh`.",
+			"If `command -v origin` succeeds and Origin can resolve the repository",
+			"With Origin, pass `--status open`.",
+			"prefer `origin pr ...`",
+			"`origin pr create --status open --base <parent-branch>`",
+			"run `origin pr ready <number>`",
+			"`Origin PR view 12`",
+			"run origin  pr view 12",
+			"run `origin`\npr view 12",
+			"**origin** pr merge 12 --squash",
+			"which origin",
+			"`type origin`",
+			"hash origin 2>/dev/null",
+			"command  -V origin",
+			"origin --version",
+			"npx origin pr list",
+			"install cursor-origin",
+			"see origin.cursor.com",
+			"the origin_cli wrapper",
+			"Cursor's\nOrigin forge",
+			"the *Origin* forge",
+			"the Origin  CLI",
+			"via **Origin**",
+			"Arm _Origin_ merge-when-ready.",
+			"run _origin pr_ view 3",
+			"through\nOrigin",
+			"by Origin",
+			"Prefer Origin when present.",
+		]) {
+			assert.ok(banned(text), text);
+		}
+	});
+
+	it("allows the git remote named origin and the HTTP Origin header", () => {
+		for (const text of [
+			"git push origin main",
+			"git push -u origin cursor/topic",
+			"git fetch origin <head-branch> && git checkout <head SHA>",
+			"git fetch origin pr/14/head",
+			"git push origin pr-123",
+			"git diff --name-only $(git merge-base HEAD origin/main) origin/main",
+			"git remote get-url origin",
+			"refs/remotes/origin/main",
+			"an `Origin` header is present and equals the server's own origin",
+			"with `Origin: https://example.com` returns `403`",
+			"unless any `Origin` header present equals the server's own origin",
+			"Add the exposed host name to the `Host` and `Origin` checks.",
+			"Find the origin of the bug.",
+			"an incident-driven origin plausible",
+			"## Original Question",
+		]) {
+			assert.ok(!banned(text), text);
+		}
+	});
+});
+
 describe("references and forward exceptions", () => {
 	it("splits exceptions by owner, each source inside its owner's skill directories", () => {
 		assert.deepEqual(
@@ -1088,10 +1174,7 @@ describe("delegation contract", () => {
 			/\bupdate_state\b/,
 			/\bSendToUser\b/,
 			/api2\.cursor\.sh/,
-			// gh is the only forge; the git remote named origin stays allowed.
-			/(?<![\w-])origin pr(?: [a-z]|`| \.\.\.)/,
-			/command -v origin\b/,
-			/\bCursor Origin\b|\bOrigin (?:forge|CLI)\b/i,
+			...ORIGIN_FORGE,
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
