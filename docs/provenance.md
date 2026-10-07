@@ -220,8 +220,9 @@ exact catalog model with `thinking: xhigh`. The cursor pin stays
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
-the host prompt's Task-category shortlists before launching recon or review
-seats. The tooling lens's family differs from the first model listed for
+for a `- architecture:` bullet under the host prompt's Task-category shortlists
+before launching recon or review seats; the bare word architecture elsewhere in
+the prompt does not count. The tooling lens's family differs from the first model listed for
 architecture under those shortlists. If that launch falls back to a later
 candidate whose family matches the tooling lens, the lens is relabeled
 context-isolated.

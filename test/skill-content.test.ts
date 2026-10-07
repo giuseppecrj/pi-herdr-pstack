@@ -1592,6 +1592,25 @@ describe("methodology provenance", () => {
 			);
 	});
 
+	it("requires the architecture shortlist bullet in the delegation preflight", () => {
+		const preflight = read("skills/poteto-mode/references/delegation.md")
+			.split("\n")
+			.find((line) =>
+				line.startsWith("- Before launching any recon or review seats"),
+			);
+		assert.ok(preflight, "architecture preflight");
+		assert.ok(
+			preflight.includes(
+				"a line starting `Task-category shortlists` followed by a `- architecture:` bullet",
+			),
+		);
+		assert.ok(
+			preflight.includes(
+				"The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist",
+			),
+		);
+	});
+
 	it("preserves the upstream MIT notices and documents the adaptation", () => {
 		const notices = read("THIRD_PARTY_NOTICES.md");
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);
