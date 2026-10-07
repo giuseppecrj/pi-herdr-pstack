@@ -49,6 +49,10 @@ const raw = fs.readFileSync(file, "utf8").split(/\r?\n/);
 const problems = [];
 const fail = (line, message) => problems.push(`${file}:${line}: ${message}`);
 
+for (let i = 0; i < raw.length; i++)
+	if (raw[i].includes("patch-id unchanged"))
+		fail(i + 1, '"patch-id unchanged"; defer to the patch-id rule in playbooks/shipping.md');
+
 let start = 0;
 if (raw[0] === "---") {
 	start = raw.indexOf("---", 1) + 1;

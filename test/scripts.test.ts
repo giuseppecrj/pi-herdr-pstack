@@ -136,6 +136,21 @@ describe("poteto-mode check-plan.mjs", {
 		assert.notEqual(result.stderr, "");
 	});
 
+	it("fails a plan that says patch-id unchanged", () => {
+		const result = check(
+			"unchanged-patch.md",
+			skeleton().replace(
+				"with the verdict still valid under the patch-id rule in `playbooks/shipping.md`",
+				"patch-id unchanged",
+			),
+		);
+		assert.equal(result.status, 1);
+		assert.match(
+			result.stderr,
+			/"patch-id unchanged"; defer to the patch-id rule in playbooks\/shipping\.md/,
+		);
+	});
+
 	it("fails a skeleton that drops a verdict or rebase marker", () => {
 		const markers = [
 			"Keep that merge base in fix rounds",
