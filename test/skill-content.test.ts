@@ -1414,7 +1414,7 @@ const SWARM_TASK_RULES: Array<[string, RegExp]> = [
 	],
 	[
 		"task: PASS needs at least one claim, all passing",
-		/Otherwise PASS only when at least one claim is listed and every listed claim passes\./,
+		/Otherwise PASS only when at least one claim is listed, every listed claim passes, and the worker proves no other defect\./,
 	],
 	[
 		"task: zero claims is BLOCKED",
@@ -1513,7 +1513,7 @@ describe("swarm status mapping and boundary parse", () => {
 			],
 			[
 				"drop the template's at-least-one-claim rule",
-				"Otherwise PASS only when at least one claim is listed and every listed claim passes.",
+				"Otherwise PASS only when at least one claim is listed, every listed claim passes, and the worker proves no other defect.",
 				"Otherwise PASS when every listed claim passes.",
 			],
 			[
