@@ -1969,6 +1969,7 @@ describe("methodology provenance", () => {
 			"run the repro twice on its base and twice on its head",
 			"without editing it",
 			"when a person has claimed the fix, posted a concrete plan, or assigned it to another agent, report and stop rather than race them",
+			"The requester's own claim, plan, assignment, branch or PR, and any work the task names, are not competing work; the stop covers only other people's claims and PRs.",
 			"A bot's diagnosis is evidence, not a claim.",
 			"If the base doesn't show the symptom twice, the result is inconclusive.",
 		])
