@@ -1514,6 +1514,47 @@ describe("methodology provenance", () => {
 		}
 	});
 
+	it("narrows the shipping noise-build exception against a stamped SHA or a pack substitute", () => {
+		const step = read("skills/poteto-mode/playbooks/shipping.md")
+			.split("\n")
+			.find((line) => line.startsWith("3. **Re-check"));
+		assert.ok(step, "shipping step 3");
+		assert.match(
+			step,
+			/An embedded commit SHA is not noise on that basis alone: it counts as noise only when the build stamps it and the source diff does not touch that line/,
+		);
+		assert.doesNotMatch(step, /or if it is an embedded commit SHA/);
+		assert.match(step, /A lane that ran tests compares that test output/);
+		assert.match(
+			step,
+			/Use `npm pack` as the comparison only for a lane with no build output of its own/,
+		);
+		assert.doesNotMatch(
+			step,
+			/For a docs-only package that build is the npm pack output/,
+		);
+		for (const phrase of [
+			"`skills/**`",
+			"`README.md`",
+			"`docs/compatibility.md`",
+			"`docs/provenance.md`",
+			"are not ignorable docs",
+			"Paths under `test/**` that enforce those product paths are not ignorable tests",
+			"Lint config here excludes config that selects which tests run or that changes emitted files",
+			"A patch that touches any of those is re-verified",
+		])
+			assert.ok(step.includes(phrase), phrase);
+		const autopilot = read("skills/poteto-mode/playbooks/autopilot-full.md");
+		assert.match(
+			autopilot,
+			/A new head voids the verdict, except for lane results that stay valid under the patch-id rule in `playbooks\/shipping\.md`/,
+		);
+		assert.doesNotMatch(
+			autopilot,
+			/A new head voids the verdict unless the patch-id is unchanged/,
+		);
+	});
+
 	it("preserves the upstream MIT notices and documents the adaptation", () => {
 		const notices = read("THIRD_PARTY_NOTICES.md");
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);
