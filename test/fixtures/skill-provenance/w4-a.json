@@ -282,7 +282,7 @@
 		},
 		{
 			"path": "skills/swarm/SKILL.md",
-			"sha256": "b8c65f0c8bdc625ce625862d1d7a50a0a3cce6cf4267aa4a432acfa9ccf73a51",
+			"sha256": "6fd9b0972ede66d8232d5a969635dd52f475f36530571c08721fb29e7c1db115",
 			"status": "adapted",
 			"sources": [
 				{
@@ -298,7 +298,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The task template keeps ISSUES in plain text. The Verifier prompt's per-claim pass, fail or inconclusive maps onto one overall status: any proved fail means ISSUES and inconclusive claims stay inconclusive; all claims pass means PASS; a worker that cannot run the checks, or that ends with no proved defect and at least one inconclusive claim, means BLOCKED with the reason stated. A first-pass race selects only an overall PASS. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted."
+			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The task template keeps ISSUES in plain text. The Verifier prompt's per-claim pass, fail or inconclusive maps onto one overall status: any proved fail means ISSUES and inconclusive claims stay inconclusive; all claims pass means PASS; a worker that cannot run any check, or that ends with no proved defect and at least one inconclusive claim, means BLOCKED with the reason stated; a proved fail always means ISSUES. A first-pass race selects only an overall PASS. In coverage mode a BLOCKED slice is unverified and is reported with its reason next to the gaps, never as covered. Rank-all and best-of ranking of ISSUES and BLOCKED is left unspecified, as upstream leaves it. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted."
 		},
 		{
 			"path": "skills/why/references/epistemics.md",

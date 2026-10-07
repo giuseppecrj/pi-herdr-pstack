@@ -4,7 +4,7 @@ Code examples for each rule in `SKILL.md`. The underlying principles are languag
 
 ## Branded types
 
-Brand primitives so they can't be mixed up. Validate once at the boundary. Downstream code trusts the type.
+Brand primitives so they can't be mixed up. Parse once at the boundary. Downstream code trusts the type.
 
 ```ts
 type AgentId = string & { readonly __brand: "AgentId" };

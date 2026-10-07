@@ -1209,8 +1209,17 @@ describe("swarm status mapping and boundary parse", () => {
 		assert.match(swarm, /all claims pass means `PASS`/);
 		assert.match(
 			swarm,
-			/a worker that cannot run the checks, or that ends with no proved defect and at least one inconclusive claim, means `BLOCKED`, with the reason stated/,
+			/a worker that cannot run any check, or that ends with no proved defect and at least one inconclusive claim, means `BLOCKED`, with the reason stated/,
 		);
+		assert.match(
+			swarm,
+			/A proved fail always means `ISSUES`, even when other checks could not run/,
+		);
+		assert.match(
+			swarm,
+			/A BLOCKED slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
+		);
+		assert.doesNotMatch(swarm, /cannot run the checks/);
 		assert.match(
 			swarm,
 			/For a `first pass` race, only an overall `PASS` wins\. `ISSUES` and `BLOCKED` are not a pass/,
@@ -1218,6 +1227,8 @@ describe("swarm status mapping and boundary parse", () => {
 		const task = /"task": "([^"]*)"/.exec(swarm)?.[1] ?? "";
 		assert.match(task, /any proved fail is ISSUES/);
 		assert.match(task, /all claims pass is PASS/);
+		assert.match(task, /a proved fail always means ISSUES/);
+		assert.match(task, /if you cannot run any check/);
 		assert.match(task, /BLOCKED and state why/);
 		assert.doesNotMatch(task, /`/);
 	});
@@ -1242,7 +1253,8 @@ describe("swarm status mapping and boundary parse", () => {
 			patterns,
 			/parse where data crosses in, into a named domain type\. It stops at that parse/,
 		);
-		assert.match(patterns, /Validate once at the boundary/);
+		assert.match(patterns, /Parse once at the boundary/);
+		assert.doesNotMatch(patterns, /Validate once/);
 	});
 });
 

@@ -408,7 +408,7 @@
 		},
 		{
 			"path": "skills/typescript-best-practices/references/patterns.md",
-			"sha256": "ed69f46c0832d9dc383fa637d9778f954430d8636f12f209608ede918609436b",
+			"sha256": "2b62dfec98a3de6d86718853f975a6d31ca9167f94c2c28804a9733f8318f440",
 			"status": "adapted",
 			"sources": [
 				{
@@ -424,7 +424,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Short principle names became full inventory names (edit class 2). The boundary section and the overly wide source bullet now follow the SKILL.md boundary row: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. principle-boundary-discipline stays the full name. Upstream patterns.md is byte-identical at the mimir pin, the Cursor pin 2cbf585 and d0ef80d86795816da932a153458c5dbe192d294e, and still says Validate once and narrow it, so this alignment is a deliberate adaptation."
+			"explanation": "Short principle names became full inventory names (edit class 2). The boundary section and the overly wide source bullet now follow the SKILL.md boundary row: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The branded-types line says Parse once at the boundary for consistency. principle-boundary-discipline stays the full name. Upstream patterns.md is byte-identical at the mimir pin, the Cursor pin 2cbf585 and d0ef80d86795816da932a153458c5dbe192d294e, and still says Validate once and narrow it, so this alignment is a deliberate adaptation."
 		},
 		{
 			"path": "skills/typescript-best-practices/SKILL.md",

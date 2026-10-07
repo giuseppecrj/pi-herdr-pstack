@@ -141,7 +141,9 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
   `interrogate`, `reflect`, `figure-it-out`. 33 files, 21 copied and 12 adapted,
   all from mimir. Swarm maps the Verifier prompt's per-claim pass, fail or
-  inconclusive onto one overall `PASS`, `ISSUES` or `BLOCKED`.
+  inconclusive onto one overall `PASS`, `ISSUES` or `BLOCKED`; a proved fail
+  always means `ISSUES`, and a `BLOCKED` coverage slice is reported as
+  unverified, never as covered.
 - W4-B (`w4-b.json`): `show-me-your-work`, `recall`, `automate-me`,
   `create-verification-skill`, `maintain-verification-skill`, `make-bot-ui`.
   11 files, 4 copied and 7 adapted. `scripts/log.sh` is copied with its
