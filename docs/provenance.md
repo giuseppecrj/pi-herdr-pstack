@@ -226,3 +226,24 @@ seats. The tooling lens's family differs from the first model listed for
 architecture under those shortlists. If that launch falls back to a later
 candidate whose family matches the tooling lens, the lens is relabeled
 context-isolated.
+
+## Excluded: upstream user guide
+
+cursor/plugins ships a user guide under `pstack/docs/guide/`: a `README.md`
+index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
+1,100 lines in all at `2cbf58508f40de470d7490b55c51d71241928fa2` and
+`d0ef80d86795816da932a153458c5dbe192d294e` (the parity-review checkout, later
+than the pin)) and six `images/*.jpg`. It walks a user from setup and prompting
+through design, verification, overnight runs and customization. It sits outside
+the pinned `pstack/skills` root and is deliberately not ported, adapted or
+packed.
+
+Its setup and overnight chapters are Cursor-specific; the rest walks through
+skills that ship here, so an adapted copy would be a large second surface to
+keep in sync. Users get the equivalent from the package `README.md` (install,
+setup, first task) and `/skill:poteto-help`, which routes a question to the
+installed skill, playbook or principle file and gives a prompt to send. Within
+the pinned `pstack/skills` root, only `poteto-help/SKILL.md` linked the guide,
+with seven `../../docs/guide/*` links (to seven of the ten chapters). The
+adaptation removed them (`test/fixtures/skill-provenance/w3-b.json`), and no
+shipped file links a guide page.
