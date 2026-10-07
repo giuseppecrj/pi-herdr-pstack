@@ -1088,6 +1088,10 @@ describe("delegation contract", () => {
 			/\bupdate_state\b/,
 			/\bSendToUser\b/,
 			/api2\.cursor\.sh/,
+			// gh is the only forge; the git remote named origin stays allowed.
+			/(?<![\w-])origin pr(?: [a-z]|`| \.\.\.)/,
+			/command -v origin\b/,
+			/\bCursor Origin\b|\bOrigin (?:forge|CLI)\b/i,
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);

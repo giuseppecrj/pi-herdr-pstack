@@ -221,3 +221,11 @@ seats. The tooling lens's family differs from the first model listed for
 architecture under those shortlists. If that launch falls back to a later
 candidate whose family matches the tooling lens, the lens is relabeled
 context-isolated.
+
+## Q5: one forge
+
+Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
+operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
+sources still offer Origin; the cursor pin stays
+`2cbf58508f40de470d7490b55c51d71241928fa2`. The content test bans the Origin
+forge CLI in shipped skills; the git remote named `origin` is unaffected.
