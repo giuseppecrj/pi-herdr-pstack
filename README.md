@@ -117,7 +117,7 @@ The following variables configure additional checks or override test defaults. C
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Pre-extraction host root for separate legacy bundled-role characterization. |
 | `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit. |
-| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. |
+| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. The cursor checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
 
 CI runs `npm run check` without these variables.
