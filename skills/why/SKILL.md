@@ -131,10 +131,11 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 ## Step 4. Synthesize
 
-Spawn one synthesizer subagent:
+Spawn one synthesizer subagent. Investigators stay on `task:recon`. The synthesizer is judgment and prose synthesis, so it uses the judgment category in `../poteto-mode/references/delegation.md`:
 
 - bare, with the delegation Investigator prompt as `systemPrompt` and `fork: false`
-- `model`: `task:recon`
+- `model`: `task:architecture`
+- `thinking`: `high`
 - use a normal Pi child process with no `tools` list. The synthesizer's quality check spot-verifies citations, which can require MCP access. Tool availability varies by Pi configuration.
 
 ```json subagent
@@ -142,7 +143,7 @@ Spawn one synthesizer subagent:
   "name": "<slug>-why-synthesize",
   "task": "<references/synthesizer-prompt.md filled in with the investigator findings, skipped sources, code anchor and question; follow references/epistemics.md>. Read-only: do not write files, commit or modify external state. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
-  "model": "task:recon",
+  "model": "task:architecture",
   "thinking": "high",
   "fork": false
 }

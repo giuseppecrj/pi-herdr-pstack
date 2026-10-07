@@ -40,18 +40,20 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 
 ## Step 2b. Direct Explain (simple questions)
 
-Spawn one bare subagent that explores and explains in one pass:
+Spawn one bare subagent that explores and explains in one pass. The explainer is judgment and prose synthesis, so it does not use the explorers' category:
 
-- `model`: `task:recon`
+- `model`: `task:architecture`
+- `thinking`: `high`
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
 
 ## Step 3. Synthesize (complex questions only)
 
-Once all explorers have returned, spawn one bare subagent to synthesize their findings into one explanation:
+Once all explorers have returned, spawn one bare subagent to synthesize their findings into one explanation. This is the same judgment seat as Step 2b:
 
-- `model`: `task:recon`
+- `model`: `task:architecture`
+- `thinking`: `high`
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
@@ -61,14 +63,14 @@ Build its prompt from `references/explainer-prompt.md` with every explorer's fin
   "name": "<slug>-explain",
   "task": "<references/explainer-prompt.md with the question and every explorer's findings filled in>. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
-  "model": "task:recon",
-  "thinking": "medium",
+  "model": "task:architecture",
+  "thinking": "high",
   "tools": "read, bash",
   "fork": false
 }
 ```
 
-The Step 2b explainer takes the same launch, with the explorer-findings section dropped from its `task`.
+The Step 2b explainer takes the same launch, with the explorer-findings section dropped from its `task`. See `../poteto-mode/references/delegation.md` for why synthesis uses `task:architecture`.
 
 ## Step 4. Present
 
