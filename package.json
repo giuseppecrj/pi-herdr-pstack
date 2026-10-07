@@ -37,6 +37,9 @@
     "changelog": "auto-changelog",
     "version": "auto-changelog --package && git add CHANGELOG.md"
   },
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "^1.0.3",
     "pi-herdr-agents": ">=3.0.0",

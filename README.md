@@ -13,7 +13,7 @@ pi install npm:pi-herdr-agents   # >=3.0.0
 pi install npm:pi-herdr-pstack
 ```
 
-Install the pack wherever pi-herdr-agents children load packages too (normally the same user settings). Requires Pi `^1.0.3` and a role-free host; see [compatibility](docs/compatibility.md) for the tested revisions.
+Install the pack wherever pi-herdr-agents children load packages too (normally the same user settings). Requires Node.js `>=22.19.0` (Pi `1.0.3`'s own floor), Pi `^1.0.3` and a role-free host; see [compatibility](docs/compatibility.md) for the tested revisions.
 
 ## Quick start
 
