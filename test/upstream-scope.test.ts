@@ -244,8 +244,13 @@ describe("upstream scope (Q6)", () => {
 			["-C", checkout, "cat-file", "-e", `${scope.commit}^{commit}`],
 			GIT_OPTIONS,
 		).status === 0;
-	const git = (...args: string[]) =>
-		execFileSync("git", ["-C", checkout ?? "", ...args], GIT_OPTIONS);
+	const git = (...args: string[]) => {
+		assert.ok(
+			hasCommit,
+			`PSTACK_CURSOR_SOURCE=${checkout} does not contain ${scope.commit}: fetch it (git -C <checkout> fetch origin ${scope.commit}) and use a full clone of ${scope.repository}`,
+		);
+		return execFileSync("git", ["-C", checkout ?? "", ...args], GIT_OPTIONS);
+	};
 	const tree = (...args: string[]) =>
 		git("ls-tree", ...args)
 			.toString("utf8")
@@ -255,7 +260,7 @@ describe("upstream scope (Q6)", () => {
 	const upstreamHash = (path: string) =>
 		sha256(git("show", `${scope.commit}:${posix.join(scope.root, path)}`));
 	const skip =
-		!hasCommit &&
+		checkout === undefined &&
 		"set PSTACK_CURSOR_SOURCE to a cursor/plugins checkout containing the pinned commit";
 
 	it("matches every upstream path and hash at the pinned commit", {
