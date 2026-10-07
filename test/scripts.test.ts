@@ -110,9 +110,15 @@ describe("poteto-mode check-plan.mjs", {
 	};
 
 	it("passes the playbook's own skeleton", () => {
-		const result = check("skeleton.md", skeleton());
+		const text = skeleton();
+		const result = check("skeleton.md", text);
 		assert.equal(result.status, 0, result.stderr);
 		assert.match(result.stdout, / 0 problems\n$/);
+		assert.match(
+			text,
+			/verdict still valid under the patch-id rule in `playbooks\/shipping\.md`/,
+		);
+		assert.doesNotMatch(text, /patch-id unchanged/);
 	});
 
 	it("fails a skeleton with its title removed", () => {

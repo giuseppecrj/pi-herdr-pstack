@@ -127,7 +127,7 @@ Each live lane runs at the PR head. Drive the surface with the project's availab
 
 - [ ] Root's clean verdict at the exact head SHA.
 - [ ] Bugbot triage done.
-- [ ] Rebased onto current trunk after the verdict, patch-id unchanged.
+- [ ] Rebased onto current trunk after the verdict, with the verdict still valid under the patch-id rule in `playbooks/shipping.md`.
 - [ ] <The owner's merge round squash-merges its PR under the operator's merge grant, or the root appends it to the base-branch stack and the operator lands it bottom-up.>
 
 ## Close the program
