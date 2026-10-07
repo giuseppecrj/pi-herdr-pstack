@@ -49,9 +49,16 @@ const raw = fs.readFileSync(file, "utf8").split(/\r?\n/);
 const problems = [];
 const fail = (line, message) => problems.push(`${file}:${line}: ${message}`);
 
-for (let i = 0; i < raw.length; i++)
-	if (raw[i].includes("patch-id unchanged"))
-		fail(i + 1, '"patch-id unchanged"; defer to the patch-id rule in playbooks/shipping.md');
+const UNCHANGED_PATCH =
+	/patch[-_\u2010-\u2014 ]?ids?[`*]*\s*:?\s*(?:(?:is|was|remains|stays|stayed|still)\s+)*unchanged|unchanged\s+[`*]*patch[-_\u2010-\u2014 ]?id/gi;
+// Autopilot-stack step 7's re-run-CI rule is the one valid use, not a verdict shortcut.
+const RERUN_CI = /Re-run mergeability and CI after every rewritten push even when the $/i;
+const text = raw.join("\n");
+for (const match of text.matchAll(UNCHANGED_PATCH)) {
+	if (RERUN_CI.test(text.slice(Math.max(0, match.index - 80), match.index))) continue;
+	const line = text.slice(0, match.index).split("\n").length;
+	fail(line, `"${match[0].replace(/\s+/g, " ")}"; defer to the patch-id rule in playbooks/shipping.md`);
+}
 
 let start = 0;
 if (raw[0] === "---") {
