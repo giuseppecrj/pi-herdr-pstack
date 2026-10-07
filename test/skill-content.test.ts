@@ -1195,6 +1195,38 @@ describe("delegation contract", () => {
 			HOST_TASK_CATEGORIES,
 		);
 	});
+
+	it("pins host trimming of model refs before the auth check", {
+		skip:
+			!hasHost &&
+			`set PI_HERDR_AGENTS_SOURCE to a pi-herdr-agents checkout containing ${HOST_HERDR_COMMIT}`,
+	}, () => {
+		const routing = execFileSync("git", [
+			"-C",
+			hostSource,
+			"show",
+			`${HOST_HERDR_COMMIT}:maestro/core/routing.ts`,
+		]).toString("utf8");
+		const parsed = /export function parseExactModelRef\([\s\S]*?\n\}/.exec(
+			routing,
+		);
+		assert.ok(parsed);
+		assert.match(parsed[0], /const trimmed = reference\.trim\(\);/);
+		assert.match(parsed[0], /const separator = trimmed\.indexOf\("\/"\);/);
+		assert.match(
+			parsed[0],
+			/const provider = trimmed\.slice\(0, separator\)\.trim\(\);/,
+		);
+		assert.match(
+			parsed[0],
+			/const modelId = trimmed\.slice\(separator \+ 1\)\.trim\(\);/,
+		);
+		assert.match(routing, /const parsed = parseExactModelRef\(candidate\);/);
+		assert.match(
+			routing,
+			/return !!model && registry\.hasConfiguredAuth\(model\);/,
+		);
+	});
 });
 
 describe("authorization boundaries", () => {

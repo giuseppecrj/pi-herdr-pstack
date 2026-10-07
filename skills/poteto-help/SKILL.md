@@ -30,8 +30,20 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset.
+- If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset. When the setup question below applies, ask that once instead of a separate suggestion.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention the gap when the question is about proving a change works, and offer the **create-verification-skill** skill, which generates one.
+
+When the answer depends on the task categories pstack uses (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`) and you cannot see that they are set, ask once whether to run `/setup-pstack` now or leave the categories as they are for now. It depends when the user is new, the question is about setup or cost, or the answer would name which model a category resolves to. Ask at most once per chat. If the need is still unclear, fold this into that one multiple-choice question. Offer two choices:
+
+- Now: tell them to type `/setup-pstack`. That command only shows the report and changes nothing. Changing a category is a separate `/setup-pstack <request>` they type themselves, and the extension writes only after they approve the exact payload. Answer their question too. This skill writes nothing.
+- Later: answer their question, and add one line: Until a category is set, poteto-mode delegations that use it fail. They don't fall back to host defaults, because poteto-mode always passes `task:<category>`. That stays true until an approved `/setup-pstack <request>` write sets it.
+
+You cannot tell whether those categories are unset on your own. No host tool reads them. `subagents_list` lists roles. Leave `subagents_write_task_models` and `pstack_apply_task_models` unused. Leave `$PI_CODING_AGENT_DIR/herdr-agents/config.json` (default `~/.pi/agent/herdr-agents/config.json`) unread and unwritten. The subagent tool's routing text is not a check. The only reliable signal is a `/setup-pstack` report already in this session. Classify its Config line by the ending only, so words inside the path do not count. The line is the missing file only when it ends with ` does not exist (revision "missing"). pi-herdr-agents uses its packaged defaults and no task categories are configured.` The line is a present file only when it ends with ` (revision sha256:` and 64 lowercase hex digits and `).` Any other ending is an unknown file state.
+
+- Unset, so ask when the answer depends on the categories: the Config line is the missing file above, or it is a present file and one of `coding`, `review`, `recon`, `qa`, `architecture`, `docs` has the preference value `(not set)`. On a present file, only that exact value is unset. A Finding does not make a category unset, and it is not a reason to tell the user to write config. The report cannot show whether a ref still resolves after the host trims it, splits on the first `/`, and trims both sides. Surrounding whitespace and spaces around `/` are findings here and can still launch. Compare the preference value whole to `(not set)`. A comma inside one model id cannot change that.
+- Not unset, so skip the question: the Config line is a present file and none of the six values is `(not set)`.
+- Unknown file state: the Config line ends with neither the missing-file sentence nor ` (revision sha256:` plus 64 lowercase hex digits plus `).` Repeat that line. Skip the unset question. Do not tell the user to write config.
+- No report in the session: you have not checked. Ask when the answer depends on the categories, and say the check has not been run.
 
 ## Get set up
 

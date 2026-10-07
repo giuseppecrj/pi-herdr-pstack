@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, it } from "node:test";
+import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
@@ -642,5 +649,156 @@ describe("unconditional writer gate", () => {
 		await setup.open();
 		await setup.apply();
 		assert.equal(setup.active().includes(APPLY_TOOL), false, "one dialog");
+	});
+});
+
+describe("config lines the poteto-help nudge matches", () => {
+	const MISSING_SUFFIX =
+		' does not exist (revision "missing"). pi-herdr-agents uses its packaged defaults and no task categories are configured.';
+	const PRESENT = / \(revision sha256:[0-9a-f]{64}\)\.$/;
+	const skill = readFileSync(
+		fileURLToPath(new URL("../skills/poteto-help/SKILL.md", import.meta.url)),
+		"utf8",
+	);
+	const previous = process.env.PI_CODING_AGENT_DIR;
+	const subagent = process.env.PI_SUBAGENT_ID;
+	const dirs: string[] = [];
+
+	function kind(line: string): "missing" | "present" | "unknown" {
+		if (line.endsWith(MISSING_SUFFIX)) return "missing";
+		if (PRESENT.test(line)) return "present";
+		return "unknown";
+	}
+
+	function report(): string {
+		delete process.env.PI_SUBAGENT_ID;
+		return buildReport(
+			{
+				getAllTools: () => [],
+				getActiveTools: () => [],
+				getCommands: () => [],
+			} as unknown as ExtensionAPI,
+			{
+				mode: "print",
+				hasUI: false,
+				modelRegistry: {
+					getAll: () => [{ provider: "provider", id: "model" }],
+					hasConfiguredAuth: () => true,
+				},
+			} as unknown as ExtensionContext,
+		).text;
+	}
+
+	function configLine(): string {
+		const line = report()
+			.split("\n")
+			.find((entry) => entry.trimStart().startsWith("Config:"));
+		assert.ok(line);
+		return line;
+	}
+
+	afterEach(() => {
+		if (previous === undefined) delete process.env.PI_CODING_AGENT_DIR;
+		else process.env.PI_CODING_AGENT_DIR = previous;
+		if (subagent === undefined) delete process.env.PI_SUBAGENT_ID;
+		else process.env.PI_SUBAGENT_ID = subagent;
+		for (const dir of dirs.splice(0))
+			rmSync(dir, { recursive: true, force: true });
+	});
+
+	it("classifies real report lines by their ending, not by words in the path", () => {
+		const root = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-config-line-"));
+		dirs.push(root);
+		const hex = "ab".repeat(32);
+		const missingDir = join(root, ` (revision sha256:${hex}).`);
+		mkdirSync(join(missingDir, "herdr-agents"), { recursive: true });
+		process.env.PI_CODING_AGENT_DIR = missingDir;
+		const missing = configLine();
+		assert.equal(kind(missing), "missing");
+		assert.match(missing, /revision sha256:/);
+		assert.equal(PRESENT.test(missing), false);
+
+		const presentDir = join(
+			root,
+			'does not exist (revision "missing"). pi-herdr-agents uses its packaged defaults and no task categories are configured.',
+		);
+		mkdirSync(join(presentDir, "herdr-agents"), { recursive: true });
+		writeFileSync(
+			join(presentDir, "herdr-agents", "config.json"),
+			JSON.stringify({
+				status: { enabled: true },
+				models: {
+					tasks: {
+						coding: [" provider/model "],
+						review: ["provider / model"],
+					},
+				},
+			}),
+		);
+		process.env.PI_CODING_AGENT_DIR = presentDir;
+		const text = report();
+		const present = text
+			.split("\n")
+			.find((entry) => entry.trimStart().startsWith("Config:"));
+		assert.ok(present);
+		assert.equal(kind(present), "present");
+		assert.match(present, /does not exist/);
+		assert.equal(present.endsWith(MISSING_SUFFIX), false);
+		assert.match(text, /coding: \(withheld: not a single printable token\)/);
+		assert.match(text, /review: \(withheld: not a single printable token\)/);
+		assert.doesNotMatch(text, /coding: \(not set\)/);
+		assert.doesNotMatch(text, /review: \(not set\)/);
+		assert.match(text, /recon: \(not set\)/);
+		assert.match(
+			text,
+			/tasks\.coding: \(withheld: not a single printable token\) has surrounding whitespace\./,
+		);
+		assert.match(
+			text,
+			/tasks\.review: \(withheld: not a single printable token\) is not an authenticated exact model in the current registry\./,
+		);
+
+		process.env.PI_CODING_AGENT_DIR = "relative/agent";
+		const invalidPath = configLine();
+		assert.equal(kind(invalidPath), "unknown");
+		assert.match(invalidPath, /cannot be used/);
+
+		const badDir = join(root, "bad");
+		mkdirSync(join(badDir, "herdr-agents"), { recursive: true });
+		const file = join(badDir, "herdr-agents", "config.json");
+		process.env.PI_CODING_AGENT_DIR = badDir;
+		const cases: Array<[string, RegExp]> = [
+			['{"status":', /is not valid JSON/],
+			['["x"]', /root is not an object/],
+			['{"models":{}}', /lacks the status object/],
+			[
+				'{"status":{"enabled":true},"models":{"tasks":{"coding":[]}}}',
+				/has an invalid models section/,
+			],
+		];
+		for (const [body, needle] of cases) {
+			writeFileSync(file, body);
+			const line = configLine();
+			assert.equal(kind(line), "unknown", body);
+			assert.match(line, needle, body);
+		}
+	});
+
+	it("pins those endings in poteto-help and does not treat findings as unset", () => {
+		assert.ok(skill.includes(MISSING_SUFFIX));
+		assert.match(
+			skill,
+			/ends with ` \(revision sha256:` and 64 lowercase hex digits and `\)\.`/,
+		);
+		assert.match(skill, /only that exact value is unset/);
+		assert.match(skill, /A Finding does not make a category unset/);
+		assert.match(skill, /not a reason to tell the user to write config/);
+		assert.match(skill, /A comma inside one model id cannot change that/);
+		assert.match(
+			skill,
+			/Surrounding whitespace and spaces around `\/` are findings here and can still launch/,
+		);
+		assert.doesNotMatch(skill, /every reference/);
+		assert.doesNotMatch(skill, /Read `does not exist` before/);
 	});
 });
