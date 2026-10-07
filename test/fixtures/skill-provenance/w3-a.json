@@ -422,7 +422,7 @@
 		},
 		{
 			"path": "skills/typescript-best-practices/SKILL.md",
-			"sha256": "66fc97bca797a2e039ac717c4c1d961b76414927d3be0f7acb86deb178d7321f",
+			"sha256": "cbec2cdca770fd385b3ccc1d1bf0542851eea9539ce781dcc7a4d52befecfcd3",
 			"status": "adapted",
 			"sources": [
 				{
@@ -430,9 +430,15 @@
 					"path": "typescript-best-practices/SKILL.md",
 					"sha256": "b1dd84d1f9855bce15d9c64a196bb102513574dcbfed40cd8468ff01d58eede5",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "typescript-best-practices/SKILL.md",
+					"sha256": "28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e",
+					"use": "context"
 				}
 			],
-			"explanation": "Dropped the Cursor-only paths frontmatter, which Pi 1.0.3 ignores, keeping disable-model-invocation true per D6 (edit class 4); short principle names became full inventory names (edit class 2). Keeps Mimir's boundary-validation row wording per D6."
+			"explanation": "Dropped the Cursor-only paths frontmatter, which Pi 1.0.3 ignores, keeping disable-model-invocation true per D6 (edit class 4); short principle names became full inventory names (edit class 2). The boundary-validation row now follows the Cursor file at the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The full principle name principle-boundary-discipline stays, and paths frontmatter stays dropped, so the file remains adapted."
 		}
 	],
 	"planned": [],
