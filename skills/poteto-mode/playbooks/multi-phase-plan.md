@@ -58,12 +58,12 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Run the repo's lint and typecheck once before the PR-facing push. Push with hooks on, only under the operator's grant that names pushing.
 - [ ] Run a manual diff cleanup pass before each commit and `/skill:no-comments` before review.
 - [ ] Triage every Bugbot and security-reviewer comment per the poteto-mode reference `references/bugbot-triage.md`.
-- [ ] Rebase onto current trunk before babysit and again before the merge-ready report.
+- [ ] Rebase onto current trunk before the code-ready report and babysit. Keep that merge base in fix rounds. Rebase again only at merge prep, on a `git merge-tree` conflict with trunk, or on a CI failure that comes from a change on trunk.
 
 ### Verdict and merge, for every PR
 
-- [ ] At the merge-ready head SHA, run the swarm per the swarm skill, `<installed swarm skill path>`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. One audit lane that reads the diff and the receipts and distrusts the PR body.
-- [ ] Clean only when every lane is `PASS`. Findings go back to the owner. A new head gets a fresh swarm and a fresh verdict.
+- [ ] At the code-ready head SHA and at each later push that changes the patch, run the swarm per the swarm skill, `<installed swarm skill path>`. The root launches the lanes per `references/fan-out.md`. One gates lane. The ten live lanes from the PR's **Verify, live** block are verifier lanes on `task:qa` with the Verifier prompt. The perf lane from its **Verify, perf** block. Two or more audit lanes, each with the full brief and one main focus, such as consumer parity with trunk, lifetimes and races, or data and config safety. Each audit lane reads the diff and the receipts and distrusts the PR body. It uses the Reviewer prompt on an exact model from a family other than the author's. The root audits the receipts in the merge-ready report before the verdict.
+- [ ] Clean only when every lane is `PASS`. Findings go back to the owner. A defect that a lane filed as a note is a finding. A new head gets a fresh swarm and a fresh verdict, except for lane results that stay valid under the patch-id rule in `playbooks/shipping.md`.
 - [ ] <The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
 
 ### Boot recipe, for every live lane
@@ -127,7 +127,7 @@ Each live lane runs at the PR head. Drive the surface with the project's availab
 
 - [ ] Root's clean verdict at the exact head SHA.
 - [ ] Bugbot triage done.
-- [ ] Rebased onto current trunk after the verdict, patch-id unchanged.
+- [ ] Rebased onto current trunk after the verdict, with the verdict still valid under the patch-id rule in `playbooks/shipping.md`.
 - [ ] <The owner's merge round squash-merges its PR under the operator's merge grant, or the root appends it to the base-branch stack and the operator lands it bottom-up.>
 
 ## Close the program
