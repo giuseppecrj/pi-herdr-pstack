@@ -115,7 +115,7 @@ source and an explanation in its fixture.
 
 | Destination | Primary source | Status |
 | `skills/principle-*/SKILL.md`, `tdd`, `correct` | mimir file of the same name | 19 copied; 7 principles adapted for skill-relative paths, full principle names or a planned W4 reference |
-| `skills/{benchmark-checklist,blast-radius}/SKILL.md`, `skills/typescript-best-practices/**` | mimir | adapted (paths, names, planned W4 interim rules; `paths:` frontmatter dropped) |
+| `skills/{benchmark-checklist,blast-radius}/SKILL.md`, `skills/typescript-best-practices/**` | mimir | adapted (paths, names, planned W4 interim rules; `paths:` frontmatter dropped; the boundary row follows the Cursor blob, and `references/patterns.md` is aligned to that row) |
 | `skills/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
 | `skills/{no-comments,teach}/SKILL.md` | mimir, Cursor as context | adapted |
 | `skills/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
@@ -140,7 +140,8 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
   `interrogate`, `reflect`, `figure-it-out`. 33 files, 21 copied and 12 adapted,
-  all from mimir.
+  all from mimir. Swarm maps the Verifier prompt's per-claim pass, fail or
+  inconclusive onto one overall `PASS`, `ISSUES` or `BLOCKED`.
 - W4-B (`w4-b.json`): `show-me-your-work`, `recall`, `automate-me`,
   `create-verification-skill`, `maintain-verification-skill`, `make-bot-ui`.
   11 files, 4 copied and 7 adapted. `scripts/log.sh` is copied with its

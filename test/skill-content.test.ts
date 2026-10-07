@@ -1197,6 +1197,55 @@ describe("delegation contract", () => {
 	});
 });
 
+describe("swarm status mapping and boundary parse", () => {
+	it("maps each verifier claim onto one overall PASS, ISSUES or BLOCKED", () => {
+		const swarm = read("skills/swarm/SKILL.md");
+		const verifier = read("skills/poteto-mode/references/delegation.md");
+		assert.match(verifier, /Report pass, fail or inconclusive for each claim/);
+		assert.match(
+			swarm,
+			/any proved fail means `ISSUES`, and inconclusive claims stay inconclusive/,
+		);
+		assert.match(swarm, /all claims pass means `PASS`/);
+		assert.match(
+			swarm,
+			/a worker that cannot run the checks, or that ends with no proved defect and at least one inconclusive claim, means `BLOCKED`, with the reason stated/,
+		);
+		assert.match(
+			swarm,
+			/For a `first pass` race, only an overall `PASS` wins\. `ISSUES` and `BLOCKED` are not a pass/,
+		);
+		const task = /"task": "([^"]*)"/.exec(swarm)?.[1] ?? "";
+		assert.match(task, /any proved fail is ISSUES/);
+		assert.match(task, /all claims pass is PASS/);
+		assert.match(task, /BLOCKED and state why/);
+		assert.doesNotMatch(task, /`/);
+	});
+
+	it("aligns the patterns boundary lines with the skill row", () => {
+		const patterns = read(
+			"skills/typescript-best-practices/references/patterns.md",
+		);
+		const skill = read("skills/typescript-best-practices/SKILL.md");
+		const row = /\| Boundary validation \| (.*) \|/.exec(skill)?.[1] ?? "";
+		assert.match(
+			row,
+			/Parse where data crosses in, into a named domain type\. `Record<string, unknown>` \(however spelled\) stops at that parse/,
+		);
+		assert.doesNotMatch(patterns, /Validate once where data crosses in/);
+		assert.doesNotMatch(patterns, /: narrow it/);
+		assert.match(
+			patterns,
+			/Parse where data crosses in, into a named domain type\. `Record<string, unknown>` \(however spelled\) stops at that parse\. Trust types inside\. See the \*\*principle-boundary-discipline\*\* principle skill\./,
+		);
+		assert.match(
+			patterns,
+			/parse where data crosses in, into a named domain type\. It stops at that parse/,
+		);
+		assert.match(patterns, /Validate once at the boundary/);
+	});
+});
+
 describe("authorization boundaries", () => {
 	it("never lets activation, autonomy or a playbook step grant permission", () => {
 		assert.match(
