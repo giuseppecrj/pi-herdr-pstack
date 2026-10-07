@@ -170,7 +170,11 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 - W4-P (`w4-p.json`): `playbooks/{hillclimb,eval,visual-parity,authoring-a-skill,babysit,shipping,autopilot-full,autopilot-stack,multi-phase-plan,orchestrate,worktree-cleanup}.md`
   and `scripts/check-plan.mjs` (mode `100644`), all 12 adapted from mimir.
   `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
-  enforced `/loop` and repository-root markers.
+  enforced `/loop` and repository-root markers. Upstream cursor/plugins
+  `multi-phase-plan.md` still requires a rebased head with the "patch-id
+  unchanged"; this pack's merge box defers to the patch-id rule in
+  `playbooks/shipping.md` instead, and `check-plan.mjs` rejects the old
+  wording. The divergence is deliberate, so a sync must not restore it.
 
 Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
 added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
