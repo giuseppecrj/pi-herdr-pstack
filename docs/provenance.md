@@ -1,5 +1,65 @@
 # Provenance
 
+## Upstream scope
+
+Parity reviews and the weekly upstream sync cover three cursor/plugins roots
+(decision Q6): `pstack/skills`, `pstack/agents` and `pstack/docs`. Two roots
+are out of scope:
+
+- `pstack/automations/**`: Cursor Automations with Slack event triggers (the
+  benny triage and reproduce-and-fix pack). They need a scheduler or event
+  trigger, and pstack has no scheduler, timer or ledger.
+- `pstack/.cursor-plugin/**`: the Cursor plugin manifest, which is
+  platform-specific. This package's manifest is the `pi` block in
+  `package.json` plus `pi-extension/pstack/*.ts`.
+
+The top-level `pstack/README.md`, `LICENSE`, `.gitignore` and `assets/` are
+unscoped: none of them is ported. `pstack/LICENSE` is also watched, because
+`THIRD_PARTY_NOTICES.md` reproduces its MIT notice. The fixture records its
+SHA-256 at the pin. With a checkout, the scope test fails when the upstream
+file at the recorded commit no longer matches that hash. Without one, it fails
+unless a `text` block in `THIRD_PARTY_NOTICES.md` hashes to the same value, so
+the hash cannot move until the notice reproduces the new `LICENSE` text byte
+for byte. The sync PR body should still call out any upstream `LICENSE`
+change.
+
+`pstack/skills` is accounted for by `docs/skill-inventory.json` and
+`test/fixtures/skill-provenance/`. Its `root` stays `pstack/skills`, so a
+sibling path such as `../agents/comment-sicko.md` is relative to it.
+`test/fixtures/upstream-scope.json` records the scope and the status and
+SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
+`2cbf58508f40de470d7490b55c51d71241928fa2`. With `PSTACK_CURSOR_SOURCE` set,
+`npm test` checks that the file list and every hash match the pin, that every
+top-level `pstack/` entry is classified, and that every file under
+`pstack/skills` at the pin is referenced by the inventory or a skill-provenance
+fixture. Without it, `npm test` still checks the fixture against the
+skill-provenance fixtures and against the table below: a path that a
+skill-provenance cursor source resolves to must be `carried`, and each row's
+status must match the fixture. The checkout must hold the commit's blobs (a
+full clone, or a partial clone that already fetched them): the tests and the
+script disable lazy fetching.
+
+On a pin move, `npm run fixtures:upstream-scope -- <checkout>` rewrites the
+fixture at its own `commit`. It re-hashes every file, keeps each existing
+status, adds new paths as `not-carried`, and prints what was added, removed or
+changed, any unclassified top-level entry and any watched file that changed.
+It never updates a watched hash, and it exits non-zero when a top-level entry
+or a watched file needs a person. A new `not-carried` path then fails the
+table check until it gets a row here.
+
+| Upstream path | Status at the pin |
+| --- | --- |
+| `pstack/agents/comment-sicko.md` | carried: context source for `skills/no-comments/references/comment-sicko.md` (adapted from mimir's copy; Wave 3) |
+| `pstack/agents/poteto-agent.md` | excluded: a named role; pstack ships no named roles (Wave 2: role removal) |
+| `pstack/docs/guide/**` (11 Markdown pages, 6 images) | excluded: under decision Q1 |
+
+No file under these roots is in the not-yet-carried state. At cursor/plugins
+`d0ef80d86795816da932a153458c5dbe192d294e` the file list is the same and
+`pstack/agents` is byte-identical. `df58112` (#511) changed
+`pstack/docs/guide/01-setup.md` and `04-design.md` (model and reasoning-budget
+wording), and both stay excluded under Q1. The pin does not move here; the
+fixture hashes move with the pin.
+
 ## Wave 1: moved role and package files
 
 | Destination | Source | Status |
