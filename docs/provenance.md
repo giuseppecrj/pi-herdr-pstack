@@ -177,7 +177,7 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
   `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
   enforced `/loop` and repository-root markers. Upstream cursor/plugins
   `multi-phase-plan.md` still requires a rebased head with the "patch-id
-  unchanged"; this pack's Merge-ready checklist item
+  unchanged"; this pack's rebase item in the skeleton's Merge block
   (`multi-phase-plan.md:130`) defers to the patch-id rule in
   `playbooks/shipping.md` instead, and `check-plan.mjs` rejects the old
   wording. The divergence is deliberate, so a sync must not restore it.

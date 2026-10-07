@@ -236,7 +236,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/scripts/check-plan.mjs",
-			"sha256": "1076125bd2910e8bd7db0288976c6413f356de3a378664337ef7caa0f979e1f8",
+			"sha256": "5dd6861560fa8f3502b52d56f3a54f6f82508578d1f1f4e7a1ba512821643284",
 			"status": "adapted",
 			"sources": [
 				{

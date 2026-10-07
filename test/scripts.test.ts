@@ -210,12 +210,24 @@ describe("poteto-mode check-plan.mjs", {
 			"even-when-and-banned.md",
 			skeleton().replace(
 				PLACEHOLDER,
-				"Re-run CI even when the patch-id is unchanged. Merge when the patch-id is unchanged.",
+				"Re-run mergeability and CI after every rewritten push even when the patch-id is unchanged. Merge when the patch-id is unchanged.",
 			),
 		);
 		assert.equal(result.status, 1);
 		assert.match(result.stderr, DEFER);
 		assert.equal(result.stderr.match(/defer to the patch-id rule/g)?.length, 1);
+	});
+
+	it("fails an even-when sentence that keeps the verdict instead of re-running CI", () => {
+		const result = check(
+			"even-when-merge.md",
+			skeleton().replace(
+				PLACEHOLDER,
+				"Keep the verdict and merge even when the patch-id is unchanged.",
+			),
+		);
+		assert.equal(result.status, 1);
+		assert.match(result.stderr, DEFER);
 	});
 
 	it("fails a skeleton that drops a verdict or rebase marker", () => {
