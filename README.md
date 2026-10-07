@@ -117,7 +117,7 @@ The following variables configure additional checks or override test defaults. C
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Pre-extraction host root for separate legacy bundled-role characterization. |
 | `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit. |
-| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction. |
+| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
 
 CI runs `npm run check` without these variables.
@@ -129,7 +129,7 @@ A GitHub Actions workflow publishes each stable version bump on `main` to npm wi
 ## Documentation
 
 - [Compatibility](docs/compatibility.md): tested host and Pi revisions, writer contract, host facts the workflows rely on.
-- [Provenance](docs/provenance.md): upstream sources and file provenance.
+- [Provenance](docs/provenance.md): upstream sources, upstream scope and file provenance.
 - [Third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## License

@@ -51,7 +51,7 @@ npm run check        # typecheck, lint, format:check, unit/contract tests
 npm pack --dry-run
 ```
 
-In GitHub Actions the optional checks skip because their variables are unset and no sibling pi-herdr-agents checkout exists: the real-writer, writer-gate, RPC setup and combined-host checks (`PI_HERDR_AGENTS_HOST`), roles coexistence (`PI_HERDR_ROLES_PACK`), legacy characterization (`PI_HERDR_AGENTS_LEGACY_HOST`), W1 file provenance and schema pins (`PI_HERDR_AGENTS_SOURCE`), and the upstream skill source-hash reproduction (`PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`). A green CI run therefore proves only the self-contained checks. Run the full set locally before a release (see [Development](README.md#development)).
+In GitHub Actions the optional checks skip because their variables are unset and no sibling pi-herdr-agents checkout exists: the real-writer, writer-gate, RPC setup and combined-host checks (`PI_HERDR_AGENTS_HOST`), roles coexistence (`PI_HERDR_ROLES_PACK`), legacy characterization (`PI_HERDR_AGENTS_LEGACY_HOST`), W1 file provenance and schema pins (`PI_HERDR_AGENTS_SOURCE`), and the upstream skill source-hash reproduction and scope inventory (`PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`). A green CI run therefore proves only the self-contained checks. Run the full set locally before a release (see [Development](README.md#development)).
 
 ## First real release (done in 0.1.0)
 

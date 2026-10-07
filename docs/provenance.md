@@ -1,5 +1,44 @@
 # Provenance
 
+## Upstream scope
+
+Parity reviews and the weekly upstream sync cover three cursor/plugins roots
+(decision Q6): `pstack/skills`, `pstack/agents` and `pstack/docs`. Two roots
+are out of scope:
+
+- `pstack/automations/**`: Cursor Automations with Slack event triggers (the
+  benny triage and reproduce-and-fix pack). They need a scheduler or event
+  trigger, and pstack has no scheduler, timer or ledger.
+- `pstack/.cursor-plugin/**`: the Cursor plugin manifest, which is
+  platform-specific. This package's manifest is the `pi` block in
+  `package.json` plus `pi-extension/pstack/*.ts`.
+
+The top-level `pstack/README.md`, `LICENSE`, `.gitignore` and `assets/` are
+outside this decision. The upstream MIT notice is preserved in
+`THIRD_PARTY_NOTICES.md`.
+
+`pstack/skills` is accounted for by `docs/skill-inventory.json` and
+`test/fixtures/skill-provenance/`. Its `root` stays `pstack/skills`, so a
+sibling path such as `../agents/comment-sicko.md` is relative to it.
+`test/fixtures/upstream-scope.json` records the scope and the status and
+SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
+`2cbf58508f40de470d7490b55c51d71241928fa2`. With `PSTACK_CURSOR_SOURCE` set,
+`npm test` checks that the file list and every hash match the pin, and that
+every top-level `pstack/` entry is classified.
+
+| Upstream path | Status at the pin |
+| --- | --- |
+| `pstack/agents/comment-sicko.md` | carried as `skills/no-comments/references/comment-sicko.md`, a bare delegate prompt (Wave 3) |
+| `pstack/agents/poteto-agent.md` | excluded: a named role; pstack ships no named roles (Wave 2: role removal) |
+| `pstack/docs/guide/**` (11 Markdown pages, 6 images) | excluded under decision Q1 |
+
+No file under these roots is in the not-yet-carried state. At cursor/plugins
+`d0ef80d86795816da932a153458c5dbe192d294e` the file list is the same and
+`pstack/agents` is byte-identical. `df58112` (#511) changed
+`pstack/docs/guide/01-setup.md` and `04-design.md` (model and reasoning-budget
+wording), and both stay excluded under Q1. The pin does not move here; the
+fixture hashes move with it.
+
 ## Wave 1: moved role and package files
 
 | Destination | Source | Status |
