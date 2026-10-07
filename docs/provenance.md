@@ -128,8 +128,13 @@ is later than the pin. The fixture still records the Cursor blob at
 `sources.cursor.commit` must equal the single cursor commit in
 `docs/skill-inventory.json`. The nudge asks once, when the answer depends on
 the six task categories and a `/setup-pstack` report does not already show
-them set, whether to run `/setup-pstack` (report only) or keep host defaults.
-poteto-help does not read or write task-model config.
+them set, whether to run `/setup-pstack` (report only) or leave the categories
+as they are. A category counts as unset when the Config line says the file
+does not exist, the preference is `(not set)`, or every reference has a
+Findings problem (`tasks.<category>: <ref> <problem>`). Any other Config line
+is an unknown file state. poteto-mode always passes `task:<category>`, so
+those delegations fail until an approved `/setup-pstack <request>` write sets
+the category. poteto-help does not read or write task-model config.
 
 comment-sicko is a bare delegate prompt under `skills/no-comments/references/`,
 not a role. `/skill:no-comments` reads it and passes it as `systemPrompt`;
