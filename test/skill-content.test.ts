@@ -1992,6 +1992,52 @@ describe("methodology provenance", () => {
 		);
 	});
 
+	it("gates bug-fix on ownership, an existing fix and a repro observed twice", () => {
+		const steps = read("skills/poteto-mode/playbooks/bug-fix.md").split("\n");
+		const step = (n: number) => {
+			const line = steps.find((text) => text.startsWith(`${n}. `));
+			assert.ok(line, `bug-fix step ${n}`);
+			return line;
+		};
+		for (const phrase of [
+			"make the real trigger fire",
+			"exact symptom that separates broken from correct, observed twice, reached through the reported path",
+			"state reset between attempts so the second is independent",
+			"Arranging a precondition is not producing the symptom.",
+			"writing the broken state directly is not a repro, and neither is calling hidden methods or patching code to emit it",
+			"No confirmed repro, no fix.",
+		])
+			assert.ok(step(1).includes(phrase), phrase);
+		assert.doesNotMatch(step(1), /force it/);
+		for (const phrase of [
+			"Confirm the mechanism lives in code this repo or team owns",
+			"stop and report the evidence instead of patching around it",
+			"Name the owner only when the evidence names one; otherwise say the owner is unclear.",
+		])
+			assert.ok(step(2).includes(phrase), phrase);
+		for (const phrase of [
+			"check the issue or thread (comments, assignee), open PRs, branches and recent commits for work that plausibly fixes this",
+			"verify it instead of writing a competing one",
+			"run the repro twice on its base and twice on its head",
+			"without editing it",
+			"when a person has claimed the fix, posted a concrete plan, or assigned it to another agent, report and stop rather than race them",
+			"The requester's own claim, plan, assignment, branch or PR, and any work the task names, are not competing work; the stop covers only other people's claims and PRs.",
+			"A bot's diagnosis is evidence, not a claim.",
+			"If the base doesn't show the symptom twice, the result is inconclusive.",
+		])
+			assert.ok(step(3).includes(phrase), phrase);
+		assert.match(step(4), /The original repro now passes, twice\./);
+		const playbook = steps.join("\n");
+		assert.doesNotMatch(
+			playbook,
+			/Slack|tracker|[Aa]utomation|control adapter|feature map|benny/,
+		);
+		assert.match(
+			read("docs/provenance.md"),
+			/## Skipped: Benny[\s\S]*external trigger or scheduler/,
+		);
+	});
+
 	it("preserves the upstream MIT notices and documents the adaptation", () => {
 		const notices = read("THIRD_PARTY_NOTICES.md");
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);
