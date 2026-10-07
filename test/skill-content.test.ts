@@ -1362,8 +1362,24 @@ const SWARM_PROSE_RULES: Array<[string, RegExp]> = [
 		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\bcannot run any check\b/,
 	],
 	[
+		"prose: claims cover the slice's share of the done predicate",
+		/The parent writes the claims, and together they cover the slice's share of the done predicate from Phase A step 1/,
+	],
+	[
+		"aggregate: recompute each status from its claims",
+		/Recompute each result's status from its per-claim results, in the worker order: any proved fail, or any other defect the worker proves, means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`\./,
+	],
+	[
+		"aggregate: a differing recomputed status replaces any report",
+		/Whenever the recomputed status differs from the reported one, use the recomputed status, whether the worker reported `PASS`, `ISSUES` or `BLOCKED`\./,
+	],
+	[
+		"aggregate: no status change on judgment",
+		/Never change a status on judgment alone\./,
+	],
+	[
 		"aggregate: a claimless or partial PASS is BLOCKED",
-		/Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`\./,
+		/Treat a `PASS` that lists no claims, or that gives no result for a claim listed in its brief, as `BLOCKED`\./,
 	],
 	[
 		"aggregate: only PASS wins a first pass race",
@@ -1371,7 +1387,7 @@ const SWARM_PROSE_RULES: Array<[string, RegExp]> = [
 	],
 	[
 		"aggregate: a BLOCKED slice is never covered",
-		/A BLOCKED slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
+		/A `BLOCKED` slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
 	],
 	[
 		"aggregate: ISSUES carries inconclusive claims to the gaps",
@@ -1398,7 +1414,7 @@ const SWARM_TASK_RULES: Array<[string, RegExp]> = [
 	],
 	[
 		"task: PASS needs at least one claim, all passing",
-		/Otherwise PASS only when at least one claim is listed and every listed claim passes\./,
+		/Otherwise PASS only when at least one claim is listed, every listed claim passes, and the worker proves no other defect\./,
 	],
 	[
 		"task: zero claims is BLOCKED",
@@ -1429,6 +1445,23 @@ const SWARM_CONTRADICTIONS: Array<[string, RegExp]> = [
 		/`?PASS`?[^.]*\b(?:even|despite|although)\b[^.]*\b(?:unrun|no result|inconclusive|could not run)\b/i,
 	],
 	["old run-the-checks wording", /cannot run the checks/],
+	[
+		"a PASS that stands over a failed or inconclusive claim",
+		/`?PASS`?[^.]*\b(?:stands?|is kept|still counts|counts as covered)\b[^.]*\b(?:fail(?:s|ed)?|inconclusive)\b/i,
+	],
+	[
+		"keeping a reported PASS over its claims",
+		/\b(?:keep|trust|accept)s? (?:a |the )?(?:reported |worker's )?`?PASS`?[^.]*\b(?:fail(?:s|ed)?|inconclusive)\b/i,
+	],
+	[
+		"the reported status wins over the claims",
+		/\b(?:reported|worker's own) status (?:stands|wins|is final|takes precedence)\b/i,
+	],
+	["a judgment upgrade to PASS", /\bupgrades?\b[^.]*\bto `?PASS\b/i],
+	[
+		"one claim covers a slice",
+		/\b(?:one|a single) claim (?:is enough|suffices|covers)\b/i,
+	],
 ];
 
 /** Every missing status rule or contradiction in a swarm skill text. */
@@ -1480,7 +1513,7 @@ describe("swarm status mapping and boundary parse", () => {
 			],
 			[
 				"drop the template's at-least-one-claim rule",
-				"Otherwise PASS only when at least one claim is listed and every listed claim passes.",
+				"Otherwise PASS only when at least one claim is listed, every listed claim passes, and the worker proves no other defect.",
 				"Otherwise PASS when every listed claim passes.",
 			],
 			[
@@ -1515,13 +1548,83 @@ describe("swarm status mapping and boundary parse", () => {
 			],
 			[
 				"drop the aggregate claimless-PASS check",
-				"Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`. ",
+				"Treat a `PASS` that lists no claims, or that gives no result for a claim listed in its brief, as `BLOCKED`. ",
+				"",
+			],
+			[
+				"read a partial result's own claim list as complete",
+				"no result for a claim listed in its brief, as `BLOCKED`.",
+				"no result for a listed claim, as `BLOCKED`.",
+			],
+			[
+				"drop the aggregate recompute rule",
+				"Recompute each result's status from its per-claim results, in the worker order: any proved fail, or any other defect the worker proves, means `ISSUES`; otherwise `PASS` only when at least one claim is listed in its brief and every such claim passes; otherwise `BLOCKED`. ",
+				"",
+			],
+			[
+				"recompute only from claims, dropping other proved defects",
+				"any proved fail, or any other defect the worker proves, means `ISSUES`;",
+				"any proved fail means `ISSUES`;",
+			],
+			[
+				"recompute against the result's claims, not the brief's",
+				"at least one claim is listed in its brief and every such claim passes",
+				"at least one claim is listed and every listed claim passes",
+			],
+			[
+				"drop the use-the-recomputed-status rule",
+				"Whenever the recomputed status differs from the reported one, use the recomputed status, whether the worker reported `PASS`, `ISSUES` or `BLOCKED`. ",
+				"",
+			],
+			[
+				"narrow the recompute to a reported PASS",
+				"whether the worker reported `PASS`, `ISSUES` or `BLOCKED`.",
+				"when the worker reported `PASS`.",
+			],
+			[
+				"drop the no-judgment rule",
+				"Never change a status on judgment alone. ",
+				"",
+			],
+			[
+				"drop the claims-cover-the-slice rule",
+				'The parent writes the claims, and together they cover the slice\'s share of the done predicate from Phase A step 1, so one trivial claim such as "the file exists" cannot stand for the slice. ',
 				"",
 			],
 			[
 				"drop the BLOCKED-never-covered sentence",
-				"A BLOCKED slice is unverified. Report it with its reason next to the gaps, never as covered. ",
+				"A `BLOCKED` slice is unverified. Report it with its reason next to the gaps, never as covered. ",
 				"",
+			],
+			[
+				"unquote BLOCKED in the never-covered sentence",
+				"A `BLOCKED` slice is unverified.",
+				"A BLOCKED slice is unverified.",
+			],
+			[
+				"add a self-contradicting-PASS-stands sentence",
+				"If a worker drops out,",
+				"A reported `PASS` stands even when one of its claims failed.\n\nIf a worker drops out,",
+			],
+			[
+				"add a keep-PASS-over-inconclusive sentence",
+				"If a worker drops out,",
+				"Keep a worker's `PASS` when a claim is inconclusive.\n\nIf a worker drops out,",
+			],
+			[
+				"add a reported-status-wins sentence",
+				"If a worker drops out,",
+				"The worker's reported status stands.\n\nIf a worker drops out,",
+			],
+			[
+				"add a judgment-upgrade sentence",
+				"If a worker drops out,",
+				"The parent may upgrade a `BLOCKED` slice to `PASS` when it judges the slice covered.\n\nIf a worker drops out,",
+			],
+			[
+				"add a one-claim-covers-a-slice sentence",
+				"If a worker drops out,",
+				"One claim is enough to cover a slice.\n\nIf a worker drops out,",
 			],
 			[
 				"drop the ISSUES-gaps sentence",
