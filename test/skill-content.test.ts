@@ -237,6 +237,26 @@ const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
 /** A concrete model name; methodology names families and task categories. */
 const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
+// gh is the only forge. Capitalized Origin is banned outright except as the
+// backticked HTTP header field make-bot-ui validates; the git remote named
+// origin stays allowed. `E` admits markdown emphasis around a word, so word
+// edges are `L` and `R` rather than \b, which `_` would defeat.
+const E = "[`*_]*";
+const L = "(?<![A-Za-z0-9])";
+const R = "(?![A-Za-z0-9])";
+const ORIGIN_FORGE = [
+	/(?<![A-Za-z0-9`])Origin(?![A-Za-z0-9])|`Origin(?!` header\b|` checks\b|: )/,
+	new RegExp(`${L}origin${E}\\s+${E}pr(?![A-Za-z0-9/-])`, "i"),
+	new RegExp(
+		`${L}(?:which|type|hash|command\\s+-[vV])${E}\\s+${E}origin${R}|${L}origin${E}\\s+--version|${L}npx\\s+origin${R}`,
+	),
+	/\bcursor[-_]origin\b|origin\.cursor\.com|\borigin[-_]cli\b/i,
+	new RegExp(`${L}origin${E}\\s+${E}(?:forge|CLI)${R}`, "i"),
+	new RegExp(
+		`${L}origin${E}\\s+(?:when|if)\\s+(?:it\\s+is\\s+|its\\s+CLI\\s+is\\s+)?(?:available|present|installed)${R}`,
+		"i",
+	),
+];
 const DELEGATION = "skills/poteto-mode/references/delegation.md";
 
 /** Problems with one call against the pinned host schema; empty when valid. */
@@ -697,6 +717,83 @@ describe("quotation exemptions", () => {
 	});
 });
 
+describe("Origin forge ban", () => {
+	const banned = (text: string) =>
+		ORIGIN_FORGE.some((pattern) => pattern.test(text));
+
+	it("catches Origin forge wording, wrapped or emphasized", () => {
+		for (const text of [
+			"through `gh` by default or Origin when its CLI is available",
+			"On Origin, that is the merge-ready state.",
+			"after Origin reports the PR mergeable",
+			"It does not prove Origin merge-when-ready is armed",
+			"If Origin is absent or cannot resolve the repository, stay on `gh`.",
+			"If `command -v origin` succeeds and Origin can resolve the repository",
+			"With Origin, pass `--status open`.",
+			"prefer `origin pr ...`",
+			"`origin pr create --status open --base <parent-branch>`",
+			"run `origin pr ready <number>`",
+			"`Origin PR view 12`",
+			"run origin  pr view 12",
+			"run `origin`\npr view 12",
+			"**origin** pr merge 12 --squash",
+			"which origin",
+			"`type origin`",
+			"hash origin 2>/dev/null",
+			"command  -V origin",
+			"origin --version",
+			"npx origin pr list",
+			"install cursor-origin",
+			"see origin.cursor.com",
+			"the origin_cli wrapper",
+			"Cursor's\nOrigin forge",
+			"the *Origin* forge",
+			"the Origin  CLI",
+			"via **Origin**",
+			"Arm _Origin_ merge-when-ready.",
+			"run _origin pr_ view 3",
+			"through\nOrigin",
+			"by Origin",
+			"Prefer Origin when present.",
+			"Origin does not wait for `READY`.",
+			"if the repo covers Origin or add an Origin implementation",
+			"Origin's `--auto` arms merge-when-ready.",
+			"Land through gh by default, or origin when available.",
+			"the `Origin` forge",
+			"Origin header",
+		]) {
+			assert.ok(banned(text), text);
+		}
+	});
+
+	it("allows the git remote named origin and the HTTP Origin header", () => {
+		const botUi = read("skills/make-bot-ui/SKILL.md")
+			.split("\n")
+			.filter((line) => line.includes("Origin"));
+		assert.equal(botUi.length, 4);
+		for (const text of [
+			...botUi,
+			"git push origin main",
+			"git push -u origin cursor/topic",
+			"git fetch origin <head-branch> && git checkout <head SHA>",
+			"git fetch origin pr/14/head",
+			"git push origin pr-123",
+			"git diff --name-only $(git merge-base HEAD origin/main) origin/main",
+			"git remote get-url origin",
+			"refs/remotes/origin/main",
+			"an `Origin` header is present and equals the server's own origin",
+			"with `Origin: https://example.com` returns `403`",
+			"unless any `Origin` header present equals the server's own origin",
+			"Add the exposed host name to the `Host` and `Origin` checks.",
+			"Find the origin of the bug.",
+			"an incident-driven origin plausible",
+			"## Original Question",
+		]) {
+			assert.ok(!banned(text), text);
+		}
+	});
+});
+
 describe("references and forward exceptions", () => {
 	it("splits exceptions by owner, each source inside its owner's skill directories", () => {
 		assert.deepEqual(
@@ -1088,6 +1185,7 @@ describe("delegation contract", () => {
 			/\bupdate_state\b/,
 			/\bSendToUser\b/,
 			/api2\.cursor\.sh/,
+			...ORIGIN_FORGE,
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
@@ -1226,6 +1324,261 @@ describe("delegation contract", () => {
 			routing,
 			/return !!model && registry\.hasConfiguredAuth\(model\);/,
 		);
+	});
+});
+
+/** Rules the swarm status mapping must state, in the prose and in the worker task. */
+const SWARM_PROSE_RULES: Array<[string, RegExp]> = [
+	[
+		"prose: claims listed before results",
+		/the claims to verify listed one per item before any result/,
+	],
+	[
+		"prose: every provable issue",
+		/lists every issue it can prove, not only the first/,
+	],
+	[
+		"prose: a listed claim with no result is inconclusive",
+		/A listed claim with no result counts as inconclusive\./,
+	],
+	[
+		"prose: a proved fail wins",
+		/A proved fail always means `ISSUES`, even when other checks could not run, and inconclusive claims stay inconclusive\./,
+	],
+	[
+		"prose: PASS needs at least one claim, all passing",
+		/Otherwise `PASS` requires at least one listed claim and a pass for every listed claim\./,
+	],
+	[
+		"prose: zero claims is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\bzero listed claims\b/,
+	],
+	[
+		"prose: an inconclusive claim is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\ban inconclusive claim\b/,
+	],
+	[
+		"prose: no runnable check is BLOCKED",
+		/Otherwise the status is `BLOCKED`, with the reason stated:[^.]*\bcannot run any check\b/,
+	],
+	[
+		"aggregate: a claimless or partial PASS is BLOCKED",
+		/Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`\./,
+	],
+	[
+		"aggregate: only PASS wins a first pass race",
+		/For a `first pass` race, only an overall `PASS` wins\. `ISSUES` and `BLOCKED` are not a pass\./,
+	],
+	[
+		"aggregate: a BLOCKED slice is never covered",
+		/A BLOCKED slice is unverified\. Report it with its reason next to the gaps, never as covered\./,
+	],
+	[
+		"aggregate: ISSUES carries inconclusive claims to the gaps",
+		/An `ISSUES` slice carries its inconclusive claims into the gaps\./,
+	],
+];
+const SWARM_TASK_RULES: Array<[string, RegExp]> = [
+	[
+		"task: claims slot before results",
+		/Claims: <each claim to verify, one per item>\. Report every listed claim as pass, fail or inconclusive before the overall status\./,
+	],
+	[
+		"task: a listed claim with no result is inconclusive",
+		/A listed claim with no result counts as inconclusive\./,
+	],
+	[
+		"task: a proved fail wins",
+		/A proved fail always means ISSUES, even when other checks could not run/,
+	],
+	["task: every provable issue", /list every proved issue, not only the first/],
+	[
+		"task: inconclusive stays inconclusive",
+		/inconclusive claims stay inconclusive/,
+	],
+	[
+		"task: PASS needs at least one claim, all passing",
+		/Otherwise PASS only when at least one claim is listed and every listed claim passes\./,
+	],
+	[
+		"task: zero claims is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\bzero listed claims\b/,
+	],
+	[
+		"task: an inconclusive claim is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\ban inconclusive claim\b/,
+	],
+	[
+		"task: no runnable check is BLOCKED",
+		/Otherwise BLOCKED, and state why:[^.]*\bno check could run\b/,
+	],
+];
+/** Sentences that would reopen a vacuous or partial PASS. */
+const SWARM_CONTRADICTIONS: Array<[string, RegExp]> = [
+	["vacuous all-claims-pass wording", /all claims pass (?:means|is) `?PASS/i],
+	[
+		"PASS with no or zero claims",
+		/`?PASS`?[^.]*\b(?:with|has|having|given) (?:no|zero) (?:listed )?claims?\b/i,
+	],
+	[
+		"no or zero claims reporting PASS",
+		/\b(?:no|zero) (?:listed )?claims?\b[^.]*\b(?:reports?|means|is|gives|counts as) `?PASS\b/i,
+	],
+	[
+		"PASS despite an unrun or missing result",
+		/`?PASS`?[^.]*\b(?:even|despite|although)\b[^.]*\b(?:unrun|no result|inconclusive|could not run)\b/i,
+	],
+	["old run-the-checks wording", /cannot run the checks/],
+];
+
+/** Every missing status rule or contradiction in a swarm skill text. */
+function swarmStatusProblems(swarm: string): string[] {
+	const task = /"task": "([^"]*)"/.exec(swarm)?.[1];
+	if (task === undefined) return ["no worker task template"];
+	const prose = swarm.replace(task, "");
+	return [
+		...SWARM_PROSE_RULES.filter(([, rule]) => !rule.test(prose)).map(
+			([name]) => `missing ${name}`,
+		),
+		...SWARM_TASK_RULES.filter(([, rule]) => !rule.test(task)).map(
+			([name]) => `missing ${name}`,
+		),
+		...SWARM_CONTRADICTIONS.filter(([, rule]) => rule.test(swarm)).map(
+			([name]) => `contradiction: ${name}`,
+		),
+		...(task.includes("`") ? ["task template has markdown backticks"] : []),
+	];
+}
+
+describe("swarm status mapping and boundary parse", () => {
+	const swarm = read("skills/swarm/SKILL.md");
+
+	it("maps each verifier claim onto one overall PASS, ISSUES or BLOCKED", () => {
+		assert.match(
+			read("skills/poteto-mode/references/delegation.md"),
+			/Report pass, fail or inconclusive for each claim/,
+		);
+		assert.deepEqual(swarmStatusProblems(swarm), []);
+	});
+
+	it("fails the lock on every dropped rule or contradicting sentence", () => {
+		const mutations: Array<[string, string, string]> = [
+			[
+				"drop the claims slot",
+				"Claims: <each claim to verify, one per item>. ",
+				"",
+			],
+			[
+				"drop the template's inconclusive-means-BLOCKED clause",
+				", an inconclusive claim, or no check could run",
+				", or no check could run",
+			],
+			[
+				"drop the template's list-every-issue clause",
+				"list every proved issue, not only the first, and ",
+				"",
+			],
+			[
+				"drop the template's at-least-one-claim rule",
+				"Otherwise PASS only when at least one claim is listed and every listed claim passes.",
+				"Otherwise PASS when every listed claim passes.",
+			],
+			[
+				"drop the template's zero-claims-BLOCKED reason",
+				"state why: zero listed claims, an inconclusive claim",
+				"state why: an inconclusive claim",
+			],
+			[
+				"drop the template's no-result-is-inconclusive rule",
+				"before the overall status. A listed claim with no result counts as inconclusive. Then",
+				"before the overall status. Then",
+			],
+			[
+				"drop the prose at-least-one-claim rule",
+				"Otherwise `PASS` requires at least one listed claim and a pass for every listed claim.",
+				"Otherwise `PASS` requires a pass for every listed claim.",
+			],
+			[
+				"drop the prose zero-claims-BLOCKED reason",
+				"stated: zero listed claims, an inconclusive claim",
+				"stated: an inconclusive claim",
+			],
+			[
+				"drop the prose no-result-is-inconclusive rule",
+				"for each claim. A listed claim with no result counts as inconclusive. Map",
+				"for each claim. Map",
+			],
+			[
+				"drop the prose proved-fail-wins rule",
+				"A proved fail always means `ISSUES`, even when other checks could not run, and inconclusive claims stay inconclusive. ",
+				"",
+			],
+			[
+				"drop the aggregate claimless-PASS check",
+				"Treat a `PASS` that lists no claims, or that gives no result for a listed claim, as `BLOCKED`. ",
+				"",
+			],
+			[
+				"drop the BLOCKED-never-covered sentence",
+				"A BLOCKED slice is unverified. Report it with its reason next to the gaps, never as covered. ",
+				"",
+			],
+			[
+				"drop the ISSUES-gaps sentence",
+				" An `ISSUES` slice carries its inconclusive claims into the gaps.",
+				"",
+			],
+			[
+				"add a PASS-with-no-claims sentence",
+				"If a worker drops out,",
+				"A slice may also be `PASS` with no claims.\n\nIf a worker drops out,",
+			],
+			[
+				"add a no-claims-reports-PASS sentence",
+				"If a worker drops out,",
+				"A worker with no listed claims reports `PASS`.\n\nIf a worker drops out,",
+			],
+			[
+				"add a PASS-despite-unrun sentence",
+				"If a worker drops out,",
+				"Report `PASS` even when some claims could not run.\n\nIf a worker drops out,",
+			],
+			[
+				"restore the vacuous all-claims wording",
+				"If a worker drops out,",
+				"All claims pass means `PASS`.\n\nIf a worker drops out,",
+			],
+		];
+		for (const [name, from, to] of mutations) {
+			assert.ok(swarm.includes(from), `${name}: mutation target is gone`);
+			const mutated = swarm.replace(from, to);
+			assert.notEqual(mutated, swarm, name);
+			assert.notDeepEqual(swarmStatusProblems(mutated), [], name);
+		}
+	});
+
+	it("aligns the patterns boundary lines with the skill row", () => {
+		const patterns = read(
+			"skills/typescript-best-practices/references/patterns.md",
+		);
+		const skill = read("skills/typescript-best-practices/SKILL.md");
+		const row = /\| Boundary validation \| (.*) \|/.exec(skill)?.[1] ?? "";
+		assert.match(
+			row,
+			/Parse where data crosses in, into a named domain type\. `Record<string, unknown>` \(however spelled\) stops at that parse/,
+		);
+		assert.doesNotMatch(patterns, /Validate once where data crosses in/);
+		assert.doesNotMatch(patterns, /: narrow it/);
+		assert.match(
+			patterns,
+			/Parse where data crosses in, into a named domain type\. `Record<string, unknown>` \(however spelled\) stops at that parse\. Trust types inside\. See the \*\*principle-boundary-discipline\*\* principle skill\./,
+		);
+		assert.match(
+			patterns,
+			/parse where data crosses in, into a named domain type\. It stops at that parse/,
+		);
+		assert.match(patterns, /Parse once at the boundary/);
+		assert.doesNotMatch(patterns, /Validate once/);
 	});
 });
 

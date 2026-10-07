@@ -282,7 +282,7 @@
 		},
 		{
 			"path": "skills/swarm/SKILL.md",
-			"sha256": "bec76d3a562285b7240e4c42f3b8dfcc7f956da5c741ee798e3f2915d65e1c36",
+			"sha256": "80028f7acceed948bfdc58c1befc4b30e96d2a455b6f95f4af20961653daab74",
 			"status": "adapted",
 			"sources": [
 				{
@@ -298,7 +298,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted."
+			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The task template keeps ISSUES in plain text. Each brief and the worker task template list the claims to verify (a Claims slot) before any result, and a listed claim with no result counts as inconclusive. The Verifier prompt's per-claim pass, fail or inconclusive maps onto one overall status, in the same order in the prose and the template: a proved fail always means ISSUES, even when other checks could not run, and inconclusive claims stay inconclusive; otherwise PASS requires at least one listed claim and a pass for every listed claim; otherwise BLOCKED with the reason stated (zero listed claims, an inconclusive claim, or no check could run). Aggregation treats a PASS with no listed claims, or with no result for a listed claim, as BLOCKED. A first-pass race selects only an overall PASS. In coverage mode a BLOCKED slice is unverified and is reported with its reason next to the gaps, never as covered, and an ISSUES slice carries its inconclusive claims into the gaps. Rank-all and best-of ranking of ISSUES and BLOCKED is left unspecified, as upstream leaves it. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted."
 		},
 		{
 			"path": "skills/why/references/epistemics.md",
