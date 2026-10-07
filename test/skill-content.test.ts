@@ -237,6 +237,26 @@ const THINKING = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 const MODEL_PLACEHOLDER = "<provider>/<model-id>";
 /** A concrete model name; methodology names families and task categories. */
 const MODEL_SLUG = /\b(?:grok|claude|gpt|gemini|composer)-[\w.-]+/;
+// gh is the only forge. Capitalized Origin is banned outright except as the
+// backticked HTTP header field make-bot-ui validates; the git remote named
+// origin stays allowed. `E` admits markdown emphasis around a word, so word
+// edges are `L` and `R` rather than \b, which `_` would defeat.
+const E = "[`*_]*";
+const L = "(?<![A-Za-z0-9])";
+const R = "(?![A-Za-z0-9])";
+const ORIGIN_FORGE = [
+	/(?<![A-Za-z0-9`])Origin(?![A-Za-z0-9])|`Origin(?!` header\b|` checks\b|: )/,
+	new RegExp(`${L}origin${E}\\s+${E}pr(?![A-Za-z0-9/-])`, "i"),
+	new RegExp(
+		`${L}(?:which|type|hash|command\\s+-[vV])${E}\\s+${E}origin${R}|${L}origin${E}\\s+--version|${L}npx\\s+origin${R}`,
+	),
+	/\bcursor[-_]origin\b|origin\.cursor\.com|\borigin[-_]cli\b/i,
+	new RegExp(`${L}origin${E}\\s+${E}(?:forge|CLI)${R}`, "i"),
+	new RegExp(
+		`${L}origin${E}\\s+(?:when|if)\\s+(?:it\\s+is\\s+|its\\s+CLI\\s+is\\s+)?(?:available|present|installed)${R}`,
+		"i",
+	),
+];
 const DELEGATION = "skills/poteto-mode/references/delegation.md";
 
 /** Problems with one call against the pinned host schema; empty when valid. */
@@ -697,6 +717,83 @@ describe("quotation exemptions", () => {
 	});
 });
 
+describe("Origin forge ban", () => {
+	const banned = (text: string) =>
+		ORIGIN_FORGE.some((pattern) => pattern.test(text));
+
+	it("catches Origin forge wording, wrapped or emphasized", () => {
+		for (const text of [
+			"through `gh` by default or Origin when its CLI is available",
+			"On Origin, that is the merge-ready state.",
+			"after Origin reports the PR mergeable",
+			"It does not prove Origin merge-when-ready is armed",
+			"If Origin is absent or cannot resolve the repository, stay on `gh`.",
+			"If `command -v origin` succeeds and Origin can resolve the repository",
+			"With Origin, pass `--status open`.",
+			"prefer `origin pr ...`",
+			"`origin pr create --status open --base <parent-branch>`",
+			"run `origin pr ready <number>`",
+			"`Origin PR view 12`",
+			"run origin  pr view 12",
+			"run `origin`\npr view 12",
+			"**origin** pr merge 12 --squash",
+			"which origin",
+			"`type origin`",
+			"hash origin 2>/dev/null",
+			"command  -V origin",
+			"origin --version",
+			"npx origin pr list",
+			"install cursor-origin",
+			"see origin.cursor.com",
+			"the origin_cli wrapper",
+			"Cursor's\nOrigin forge",
+			"the *Origin* forge",
+			"the Origin  CLI",
+			"via **Origin**",
+			"Arm _Origin_ merge-when-ready.",
+			"run _origin pr_ view 3",
+			"through\nOrigin",
+			"by Origin",
+			"Prefer Origin when present.",
+			"Origin does not wait for `READY`.",
+			"if the repo covers Origin or add an Origin implementation",
+			"Origin's `--auto` arms merge-when-ready.",
+			"Land through gh by default, or origin when available.",
+			"the `Origin` forge",
+			"Origin header",
+		]) {
+			assert.ok(banned(text), text);
+		}
+	});
+
+	it("allows the git remote named origin and the HTTP Origin header", () => {
+		const botUi = read("skills/make-bot-ui/SKILL.md")
+			.split("\n")
+			.filter((line) => line.includes("Origin"));
+		assert.equal(botUi.length, 4);
+		for (const text of [
+			...botUi,
+			"git push origin main",
+			"git push -u origin cursor/topic",
+			"git fetch origin <head-branch> && git checkout <head SHA>",
+			"git fetch origin pr/14/head",
+			"git push origin pr-123",
+			"git diff --name-only $(git merge-base HEAD origin/main) origin/main",
+			"git remote get-url origin",
+			"refs/remotes/origin/main",
+			"an `Origin` header is present and equals the server's own origin",
+			"with `Origin: https://example.com` returns `403`",
+			"unless any `Origin` header present equals the server's own origin",
+			"Add the exposed host name to the `Host` and `Origin` checks.",
+			"Find the origin of the bug.",
+			"an incident-driven origin plausible",
+			"## Original Question",
+		]) {
+			assert.ok(!banned(text), text);
+		}
+	});
+});
+
 describe("references and forward exceptions", () => {
 	it("splits exceptions by owner, each source inside its owner's skill directories", () => {
 		assert.deepEqual(
@@ -1088,6 +1185,7 @@ describe("delegation contract", () => {
 			/\bupdate_state\b/,
 			/\bSendToUser\b/,
 			/api2\.cursor\.sh/,
+			...ORIGIN_FORGE,
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);

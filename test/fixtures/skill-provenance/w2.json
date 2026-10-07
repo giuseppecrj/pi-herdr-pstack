@@ -116,7 +116,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/opening-a-pr.md",
-			"sha256": "c550b5e0346f87b88bae280cfdb5e64b7c39685817bcf35b302aa3fbb7d53ef9",
+			"sha256": "4870f96c0305025688099d1e04077ea2a1931009fd67df55115c4e9da1b54156",
 			"status": "adapted",
 			"sources": [
 				{
@@ -132,7 +132,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves."
+			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves. Q5: Origin is dropped, so gh is the only forge, matching babysit, shipping and the autopilots; the Forge paragraph no longer resolves between forges, and the stack and readiness rules give only the gh commands. The mimir and cursor sources still offer Origin, and the cursor pin is not moved. The Forge paragraph confirms gh auth status and gh repo view like the other gh playbooks. If either fails, a run with a built-in PR tool uses the tool and reports the gh steps it skipped; only a run with neither falls back to the no-authorization report."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/pause-safely.md",
@@ -296,7 +296,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/references/bugbot-triage.md",
-			"sha256": "6c4d03d57d3f45a642d10e854b1a8baa1e8a105d454433b7f2b9f5dfe6f370a7",
+			"sha256": "f51df148cfb246f5d188d465bdb5521efea2ca9e09f69b31e13548f8d1015e80",
 			"status": "adapted",
 			"sources": [
 				{
@@ -312,7 +312,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Rubric and learned patterns unchanged. Thread replies and resolution now require authorization; Babysit route marked planned W4; new patterns are proposed to the source repository instead of edited into an installed copy. W4 reconcile: the Babysit planned W4 marker and interim clause are retired; Babysit routes its review threads here and direct triage requests use it too."
+			"explanation": "Rubric and learned patterns unchanged. Thread replies and resolution now require authorization; Babysit route marked planned W4; new patterns are proposed to the source repository instead of edited into an installed copy. W4 reconcile: the Babysit planned W4 marker and interim clause are retired; Babysit routes its review threads here and direct triage requests use it too. Q5: the upstack-usage skip names the GitHub PR list and diffs through gh instead of the active forge."
 		},
 		{
 			"path": "skills/poteto-mode/references/delegation.md",
