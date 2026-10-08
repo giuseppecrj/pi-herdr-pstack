@@ -4,15 +4,18 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.1.0, first public release
+## Current state: 0.2.0
 
-The `release/0.1.0` commit removes `"private": true` and sets the stable version
-`0.1.0`. When it merges to `main`, the detect step sees the previous
-`0.1.0-experimental.0` private manifest and the current public `0.1.0`, sets
-`release=true`, and the workflow publishes `0.1.0`. The host,
-`pi-herdr-agents@3.0.0`, must be published first: it is the peer baseline.
+The `0.2.0` release commit sets the stable version `0.2.0`. When it merges to
+`main`, the detect step sees the previous public `0.1.0` manifest and the
+current `0.2.0`, sets `release=true`, and the workflow publishes `0.2.0`. The
+peer range stays `"pi-herdr-agents": ">=3.0.0"`, and the published
+`pi-herdr-agents@3.0.0` remains the peer baseline. The release was checked
+against host `80aa973`, the 3.0.3 release line, which should be published
+first so the published host matches the tested one (see
+[compatibility](docs/compatibility.md)).
 
-Before this release the package was private with a prerelease version. While a
+Before 0.1.0 the package was private with a prerelease version. While a
 package is private or its version is not a strict `major.minor.patch`, the
 workflow's detect step reports a notice and sets `release=false`. Now that the
 package is public with a stable version, the host workflow's rules apply: a

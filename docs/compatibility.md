@@ -1,7 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.1.0`, the first public release (full inventory, 51
-skills and 23 playbooks).
+Status: pi-herdr-pstack `0.2.0` (full inventory, 51 skills and 23 playbooks).
 
 ## Host baseline
 
@@ -15,11 +14,18 @@ used during the private wave experiments are gone.
 
 | Component | Tested revision |
 | --- | --- |
-| pi-herdr-agents | `7d35371f5d7d0df3edd208a1d5c9a187767d563b` (main at the 3.0.0 line, before its version commit) |
-| pi-herdr-roles (coexistence) | `2820591` |
+| pi-herdr-agents | `80aa97306ee74b03cedf92e413945a2985d5b44f` (main at the 3.0.3 release line, before its version commit; 3.0.3 is not yet published) |
+| pi-herdr-roles (coexistence) | `fc3383daaa839228cc9f703c2d99728684acfe07` |
 | Pi SDK and CLI | `1.0.3` |
 
-Host versions after 3.0.0 are allowed by the range but were not tested for this
+For 0.2.0, `npm run check` passed on Node 22.22.2 with that host as
+`PI_HERDR_AGENTS_HOST` (real-writer consent, writer-gate, RPC setup and
+combined-host checks), pi-herdr-roles as `PI_HERDR_ROLES_PACK` (coexistence),
+and the pinned upstream sources. The same checkout served as
+`PI_HERDR_AGENTS_SOURCE`, whose provenance and schema checks read the pinned
+commits in its history, not `80aa973`. The real-Herdr gates were not rerun for
+0.2.0; G1 to G7 last ran against host `7d35371` for 0.1.0 (below). Published
+hosts 3.0.0 to 3.0.2 are allowed by the range but were not tested for this
 release. Run the combined checks with:
 
 ```bash

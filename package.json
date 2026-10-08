@@ -1,6 +1,6 @@
 {
   "name": "pi-herdr-pstack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "pstack methodology pack for pi-herdr-agents: poteto-mode, setup-pstack and the pstack skills",
   "keywords": [
     "pi-package",
