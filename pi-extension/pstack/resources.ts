@@ -77,14 +77,29 @@ function stripFrontmatter(text: string): string {
 	return (match ? text.slice(match[0].length) : text).trim();
 }
 
+/** One read of this package's own skill file. */
+export type OwnedSkillText = {
+	/** The file without frontmatter, trimmed: the text every full load contains. */
+	body: string;
+	/** The literal full-skill block Pi itself builds for `/skill:<name>`. */
+	block: string;
+};
+
 /**
- * The literal full-skill block Pi itself builds for `/skill:<name> <request>`,
- * read from this package's own file so delivery does not depend on skill
- * command settings or on which same-named skill Pi resolves.
+ * Reads this package's own file so delivery does not depend on skill command
+ * settings or on which same-named skill Pi resolves.
  */
-export function skillWrapper(name: OwnedSkillName, request: string): string {
+export function readOwnedSkill(name: OwnedSkillName): OwnedSkillText {
 	const filePath = ownedSkillFile(name);
 	const body = stripFrontmatter(readFileSync(filePath, "utf8"));
-	const block = `<skill name="${name}" location="${filePath}">\nReferences are relative to ${dirname(filePath)}.\n\n${body}\n</skill>`;
+	return {
+		body,
+		block: `<skill name="${name}" location="${filePath}">\nReferences are relative to ${dirname(filePath)}.\n\n${body}\n</skill>`,
+	};
+}
+
+/** The full-skill block Pi builds for `/skill:<name> <request>`. */
+export function skillWrapper(name: OwnedSkillName, request: string): string {
+	const { block } = readOwnedSkill(name);
 	return request ? `${block}\n\n${request}` : block;
 }

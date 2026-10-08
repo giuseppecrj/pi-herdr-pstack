@@ -66,10 +66,10 @@ poteto-mode matches the task to a playbook, copies the playbook's steps into the
 Whether the mode stays on depends on how the user starts it:
 
 - `/skill:poteto-mode` loads the methodology for the current request only. It fades as the session moves on, and it never turns the mode on.
-- `/poteto-mode` or `/poteto-mode on` turns sticky mode on for the current session branch and starts no work. While it is on, each prompt carries a short reminder that points back to the hub.
-- `/poteto-mode <task>` turns the mode on and sends the full methodology with the task. It is refused while a turn is running, and nothing is queued.
+- `/poteto-mode` or `/poteto-mode on` turns sticky mode on for the current session branch and starts no work. Each prompt gets a short checklist. The extension supplies the full hub when it is missing from model context, including after compaction, without adding another copy while it is present.
+- `/poteto-mode <task>` turns the mode on and starts the task. It includes the full hub only if it is missing from context. It is refused while a turn is running, and nothing is queued.
 - `/poteto-mode status` says whether the mode is on and whether the `poteto-mode` skill resolves to this package.
-- `/poteto-mode off` stops future reminders. Earlier context and running subagents are unchanged.
+- `/poteto-mode off` stops future reminders and automatic hub loading. Earlier context and running subagents are unchanged.
 
 Mid-session, "new task" makes the mode match a fresh playbook. The mode never grants permission. Pushes, pull requests, merges, deletions, messages and configuration writes still need the user's request or the repository's instructions, per `../poteto-mode/references/authorization.md`. To launch a delegate of your own in poteto-mode's style, copy an example from `../poteto-mode/references/delegation.md`.
 
@@ -171,7 +171,7 @@ Principles are one-rule skills that poteto-mode reads and cites in its replies. 
 
 | Symptom | Fix |
 |---|---|
-| The mode stopped applying after a few turns | It was loaded with `/skill:poteto-mode`, which covers one request. Run `/poteto-mode on`, or start each task with `/poteto-mode <task>`. `/poteto-mode status` shows the state. |
+| The mode stopped applying after a few turns | Check `/poteto-mode status` first. `/skill:poteto-mode` does not enable sticky mode. If off, run `/poteto-mode on`. If on and the skill is available, guidance is supplied automatically, but the model can still skip instructions. Name the missed step rather than assuming the switch reset. |
 | `/poteto-mode` refused to turn on | The `poteto-mode` skill is filtered out or shadowed by another file. The message says which. `/setup-pstack` reports where the `poteto-mode` and `setup-pstack` skills resolve. |
 | `/poteto-mode <task>` did nothing | It is refused while a turn is running, and nothing is queued. Send it again when the session is idle. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. `/poteto-mode off` stops the reminders. |

@@ -1,6 +1,6 @@
 import { appendFileSync } from "node:fs";
 import {
-	type FauxResponseStep,
+	type AssistantMessage,
 	fauxAssistantMessage,
 	fauxProvider,
 	fauxToolCall,
@@ -10,24 +10,35 @@ import {
 } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-function lastUserText(context: TranscriptContext): string {
-	for (let i = context.messages.length - 1; i >= 0; i--) {
-		const message = context.messages[i];
-		if (message.role !== "user") continue;
-		return typeof message.content === "string"
-			? message.content
-			: message.content
-					.map((part) => (part.type === "text" ? part.text : ""))
-					.join("");
-	}
-	return "";
+type ContextMessage = TranscriptContext["messages"][number];
+
+function messageText(message: ContextMessage): string {
+	if (message.role === "assistant")
+		return message.content
+			.map((part) => (part.type === "text" ? part.text : ""))
+			.join("");
+	if (message.role === "system") return "";
+	return typeof message.content === "string"
+		? message.content
+		: message.content
+				.map((part) => (part.type === "text" ? part.text : ""))
+				.join("");
 }
+
+function lastUserText(context: TranscriptContext): string {
+	const last = context.messages.findLast((message) => message.role === "user");
+	return last ? messageText(last) : "";
+}
+
+/** Pi's compaction and branch summaries call the model with this prompt. */
+const SUMMARY_PROMPT = "You are a context summarization assistant.";
 
 /**
  * Test-only deterministic provider. It performs no network access and is not
  * evidence that a live model follows any role or skill prose. With
- * PSTACK_TEST_LOG set, each request's effective system prompt and latest user
- * text are appended there as JSON lines.
+ * PSTACK_TEST_LOG set, each request's effective system prompt, latest user
+ * text and every non-system message's role and text are appended there as
+ * JSON lines. Pi converts custom messages to user messages before a request.
  */
 export default function fauxTestProvider(pi: ExtensionAPI) {
 	const faux = fauxProvider({
@@ -49,34 +60,43 @@ export default function fauxTestProvider(pi: ExtensionAPI) {
 	});
 	const log = process.env.PSTACK_TEST_LOG;
 	let holdMs = 0;
-	const reply =
-		(text: string): FauxResponseStep =>
-		async (context) => {
-			if (log)
-				appendFileSync(
-					log,
-					`${JSON.stringify({
-						systemPrompt: getCurrentSystemPrompt(context.messages),
-						user: lastUserText(context),
-					})}\n`,
-				);
-			if (holdMs > 0) {
-				const ms = holdMs;
-				holdMs = 0;
-				await new Promise((resolve) => setTimeout(resolve, ms));
-			}
-			return fauxAssistantMessage(text);
-		};
-	const replies = () => Array.from({ length: 40 }, () => reply("ok"));
-	faux.setResponses(replies());
+	/** Scripted agent replies; summary requests never consume them. */
+	let armed: AssistantMessage[] = [];
+	const respond = async (context: TranscriptContext) => {
+		const systemPrompt = getCurrentSystemPrompt(context.messages);
+		if (log)
+			appendFileSync(
+				log,
+				`${JSON.stringify({
+					systemPrompt,
+					user: lastUserText(context),
+					messages: context.messages
+						.filter((message) => message.role !== "system")
+						.map((message) => ({
+							role: message.role,
+							text: messageText(message),
+						})),
+				})}\n`,
+			);
+		if (systemPrompt.startsWith(SUMMARY_PROMPT))
+			return fauxAssistantMessage("## Goal\nfaux summary");
+		if (holdMs > 0) {
+			const ms = holdMs;
+			holdMs = 0;
+			await new Promise((resolve) => setTimeout(resolve, ms));
+		}
+		return armed.shift() ?? fauxAssistantMessage("ok");
+	};
+	// Every step is the same dispatcher, enough for any one test process.
+	faux.setResponses(Array.from({ length: 1_000 }, () => respond));
 	pi.registerProvider(faux.provider);
 	pi.registerCommand("test-arm-subagents-list", {
 		description: "Test only: the next model turn calls subagents_list",
 		handler: async () => {
-			faux.setResponses([
+			armed = [
 				fauxAssistantMessage([fauxToolCall("subagents_list", {})]),
 				fauxAssistantMessage("done"),
-			]);
+			];
 		},
 	});
 	pi.registerCommand("test-arm-tool", {
@@ -86,11 +106,24 @@ export default function fauxTestProvider(pi: ExtensionAPI) {
 			const space = args.indexOf(" ");
 			// SAFETY: test-authored JSON object argument.
 			const input = JSON.parse(args.slice(space + 1)) as JsonObject;
-			faux.setResponses([
+			armed = [
 				fauxAssistantMessage([fauxToolCall(args.slice(0, space), input)]),
-				reply("done"),
-				...replies(),
-			]);
+				fauxAssistantMessage("done"),
+			];
+		},
+	});
+	pi.registerCommand("test-arm-tools", {
+		description:
+			"Test only: /test-arm-tools <json [[name, args], ...]>; the next turns call them in order",
+		handler: async (args) => {
+			// SAFETY: test-authored JSON array of [tool name, arguments] pairs.
+			const calls = JSON.parse(args) as Array<[string, JsonObject]>;
+			armed = [
+				...calls.map(([name, input]) =>
+					fauxAssistantMessage([fauxToolCall(name, input)]),
+				),
+				fauxAssistantMessage("done"),
+			];
 		},
 	});
 	pi.registerCommand("test-hold", {
@@ -103,6 +136,22 @@ export default function fauxTestProvider(pi: ExtensionAPI) {
 		description: "Test only: navigate the session tree to <entry id>",
 		handler: async (args, ctx) => {
 			await ctx.navigateTree(args.trim(), { summarize: false });
+		},
+	});
+	pi.registerCommand("test-reload", {
+		description: "Test only: reload the extension runtime",
+		handler: async (_args, ctx) => {
+			await ctx.reload();
+		},
+	});
+	pi.registerCommand("test-wake", {
+		description:
+			"Test only: deliver <text> as a custom message that starts a turn, like a subagent result",
+		handler: async (args) => {
+			pi.sendMessage(
+				{ customType: "test-wake", content: args, display: true },
+				{ triggerTurn: true, deliverAs: "steer" },
+			);
 		},
 	});
 }

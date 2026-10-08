@@ -6,14 +6,14 @@ disable-model-invocation: true
 
 # Poteto mode
 
-This skill is the single source of poteto's engineering methodology in pi-herdr-pstack. The `/poteto-mode` command points here and does not carry a second copy. Pstack ships no named roles. Delegates get bounded briefs, not this file.
+This skill is the single source of poteto's engineering methodology in pi-herdr-pstack. The `/poteto-mode` extension loads this file rather than maintaining a second copy. Pstack ships no named roles. Delegates get bounded briefs, not this file.
 
 Paths in this skill, its playbooks and its references are relative to this skill directory. A path that starts with `../` names a sibling skill in the same package.
 
 ## Activation and authority
 
 - `/skill:poteto-mode` loads this methodology for the current request only. It does not turn on sticky mode.
-- The `/poteto-mode` command manages sticky mode for the current session branch. While it is on, each turn carries a short reminder that points back to this file. `/poteto-mode off` stops future reminders. It does not erase earlier context or stop running subagents.
+- The `/poteto-mode` command manages sticky mode for the current session branch. While it is on, each prompt carries a short checklist for playbook selection, visible steps, verification, and skipped work. The extension supplies this file's full instructions when they are missing from model context, including after compaction. It does not add another copy while the full text is present. Load only the playbooks and references needed for the task. `/poteto-mode off` stops future reminders and automatic loading. It does not erase earlier context or stop running subagents.
 - Neither path grants permission. Commits, pushes, pull requests, review-thread replies, merges, deployments, deletions, messages and configuration writes stay governed by the user's request, the repository's instructions and `references/authorization.md`.
 
 ## Availability in this release

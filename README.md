@@ -27,16 +27,19 @@ All skills except `setup-pstack` are explicit-only: they load through `/skill:<n
 
 | Command | Effect |
 | --- | --- |
-| `/poteto-mode [on]` | Turns the sticky methodology mode on for this session branch. Starts no work. |
+| `/poteto-mode [on]` | Turns the sticky methodology mode on for this session branch. Supplies the hub on the next prompt if it is missing from context. Starts no work. |
 | `/poteto-mode status` | Reports on/off, whether it is persisted or memory-only, and whether the skill resolves to this package. |
-| `/poteto-mode off` | Stops future reminders. Earlier context and running subagents are unchanged. |
-| `/poteto-mode <task>` | Turns the mode on and sends the full `poteto-mode` skill followed by the task. Refused while a turn is running; nothing is queued. |
+| `/poteto-mode off` | Stops future reminders and automatic hub loading. Earlier context and running subagents are unchanged. |
+| `/poteto-mode <task>` | Turns the mode on and starts the task. Includes the full hub only if it is missing from context. Refused while a turn is running; nothing is queued. |
 | `/setup-pstack` or `/setup-pstack report` | Shows the setup report. Makes no change. |
 | `/setup-pstack <request>` | Opens a one-turn change flow for shared task-model preferences. Nothing is written without your approval. |
 
 ### `/poteto-mode`
 
-- While on, each prompt gets a short `pstack_poteto_mode` system-prompt section naming the hub file. Turning the mode on or off during a turn affects the next prompt, not the running turn.
+- While on, each prompt gets a short `pstack_poteto_mode` system-prompt checklist for playbook selection, visible steps, verification, and skipped work. Runs started by extension messages, such as subagent results, get a request-only reminder because Pi skips the prompt hook.
+- The extension supplies the full hub when it is missing from the model's context, including after compaction. It checks the retained text rather than a remembered "loaded" flag. Automatic loading does not add another copy while the full hub is present.
+- The hub still occupies context. Playbooks and references load only when the agent needs them. This avoids duplicate hub copies, not the cost of the instructions themselves.
+- Turning the mode on or off during a run affects the next run, not the one in progress.
 - State is a small versioned session entry that follows the branch through tree navigation, compaction, reload, resume, `/fork` and `/clone`. In a pi-herdr-agents child (`PI_SUBAGENT_ID` set, a hint rather than a security boundary), records copied from a parent session are ignored.
 - `/skill:poteto-mode` loads the methodology once and never turns the mode on.
 - If the effective `poteto-mode` skill is filtered out or shadowed by another file, the command refuses to enable and says why.

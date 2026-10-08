@@ -241,7 +241,7 @@ export class IsolatedPi {
 	}
 
 	/** Model requests the faux provider has seen so far. */
-	requests(): Array<{ systemPrompt: string; user: string }> {
+	requests(): RequestLogEntry[] {
 		return readRequestLog(this.requestLog);
 	}
 
@@ -299,7 +299,17 @@ export class IsolatedPi {
 	}
 }
 
-export type RequestLogEntry = { systemPrompt: string; user: string };
+/**
+ * One model request as the faux provider fixture saw it. `user` is the last
+ * user-role text; Pi sends custom messages as user messages, so it can be an
+ * extension message rather than the prompt. `messages` lists every
+ * non-system message in order.
+ */
+export type RequestLogEntry = {
+	systemPrompt: string;
+	user: string;
+	messages: Array<{ role: string; text: string }>;
+};
 
 /** Entries the faux provider fixture appended to its PSTACK_TEST_LOG file. */
 export function readRequestLog(path: string): RequestLogEntry[] {
