@@ -4,15 +4,15 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.2.0
+## Current state: 0.2.1
 
-The `0.2.0` release commit sets the stable version `0.2.0`. When it merges to
-`main`, the detect step sees the previous public `0.1.0` manifest and the
-current `0.2.0`, sets `release=true`, and the workflow publishes `0.2.0`. The
-peer range stays `"pi-herdr-agents": ">=3.0.0"`, and the published
-`pi-herdr-agents@3.0.0` remains the peer baseline. The release was checked
-against host `80aa973`, the 3.0.3 release line, which should be published
-first so the published host matches the tested one (see
+The `0.2.1` release fixes sticky `/poteto-mode` guidance delivery. When its
+version commit reaches `main`, the detect step sees the previous public
+`0.2.0` manifest and the current `0.2.1`, sets `release=true`, and the workflow
+publishes `0.2.1`. The peer range stays `"pi-herdr-agents": ">=3.0.0"`, and
+the published `pi-herdr-agents@3.0.0` remains the peer baseline. This release
+was checked against published host `3.0.3` at
+`f182ea592c666eaca358a4fe6a13b886af0b1c98` (see
 [compatibility](docs/compatibility.md)).
 
 Before 0.1.0 the package was private with a prerelease version. While a

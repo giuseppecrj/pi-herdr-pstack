@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.2.0` (full inventory, 51 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.2.1` (full inventory, 51 skills and 23 playbooks).
 
 ## Host baseline
 
@@ -14,12 +14,28 @@ used during the private wave experiments are gone.
 
 | Component | Tested revision |
 | --- | --- |
-| pi-herdr-agents | `80aa97306ee74b03cedf92e413945a2985d5b44f` (main at the 3.0.3 release line, before its version commit; 3.0.3 is not yet published) |
+| pi-herdr-agents | `f182ea592c666eaca358a4fe6a13b886af0b1c98` (published `3.0.3`) |
 | pi-herdr-roles (coexistence) | `fc3383daaa839228cc9f703c2d99728684acfe07` |
-| Pi SDK and CLI | `1.0.3` |
+| Pi SDK and CLI | `1.0.3` (full checks); `1.1.0` (mode CLI checks) |
 
-For 0.2.0, `npm run check` passed on Node 22.22.2 with that host as
-`PI_HERDR_AGENTS_HOST` (real-writer consent, writer-gate, RPC setup and
+For 0.2.1, `npm run check` passed all 189 tests with no skips on Node
+26.8.2, using the host and roles revisions above, the legacy host fixture,
+and all pinned upstream sources. The 20 mode tests also passed against
+installed Pi 1.1.0 with test-owned agent directories and a scripted provider.
+These checks cover hub deduplication, compaction recovery, extension-message
+wakes, failed prompt preparation, and session transitions; they prove
+instruction delivery, not live-model adherence.
+
+A separate parent-owned real-Herdr smoke gate also passed both the task-form
+and explicit-enable paths on Pi 1.1.0 with the host revision above and a
+local scripted provider. Each parent request, including the actual child
+completion wake, contained exactly one hub; each forked child inherited the
+parent's mode record but received no sticky reminder. These two focused
+checks are not a rerun of the historical G1 to G7 host/worktree suite.
+
+For 0.2.0, `npm run check` passed on Node 22.22.2 with host
+`80aa97306ee74b03cedf92e413945a2985d5b44f` as `PI_HERDR_AGENTS_HOST`
+(real-writer consent, writer-gate, RPC setup and
 combined-host checks), pi-herdr-roles as `PI_HERDR_ROLES_PACK` (coexistence),
 and the pinned upstream sources. The same checkout served as
 `PI_HERDR_AGENTS_SOURCE`, whose provenance and schema checks read the pinned
@@ -74,9 +90,10 @@ behavior. `skills/poteto-mode/references/fan-out.md` states them for agents.
 
 ## Pi runtime
 
-Developed and tested against Pi `1.0.3` (`@earendil-works/pi-coding-agent`
-`1.0.3` dev dependency and CLI). The peer range is `^1.0.3`; other Pi versions
-are untested.
+The full suite uses Pi `1.0.3` (`@earendil-works/pi-coding-agent` `1.0.3`
+dev dependency and CLI). The sticky-mode CLI suite additionally passes on Pi
+`1.1.0`; that is targeted coverage, not a full rerun of every package check
+on 1.1.0. The peer range remains `^1.0.3`; other Pi versions are untested.
 
 ## Observed behavior with a host that still bundles roles
 
@@ -151,9 +168,9 @@ can mark a completed write as an error.
 parent's sticky mode. The Wave 0 probe observed that pi-herdr-agents sets
 `PI_SUBAGENT_ID` for fresh and resumed children but not for a user-driven
 worktree handoff, and nested shells inherit it. It is a context hint, not a
-security boundary; the host owns documenting that signal. Tests emulate fork
-seeding by copying a parent session's entries under a new header; real Herdr
-fork launches are a parent-owned gate.
+security boundary; the host owns documenting that signal. Repository tests emulate fork
+seeding by copying a parent session's entries under a new header. The separate
+0.2.1 real-Herdr smoke gate also verified this with actual forked children.
 
 ## Historical: role skill startup
 
