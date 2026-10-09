@@ -1,6 +1,6 @@
 ---
 name: setup-pstack
-description: Report-first onboarding for pi-herdr-pstack. Explains the /setup-pstack report on the pi-herdr-agents host, pstack's own skills and commands, authenticated models and the shared pi-herdr-agents task-model preferences, and drives an explicitly approved change only inside a /setup-pstack change flow. Never installs packages. Use for /setup-pstack, "set up pstack", "check my pstack install" or "which models does pstack use".
+description: Report-first onboarding for pi-herdr-pstack. Explains the /setup-pstack report on the pi-herdr-agents host, pstack's own skills and commands, authenticated models and the shared pi-herdr-agents task-model preferences, and drives an explicitly approved change only inside a change flow opened by /setup-pstack <request>, /setup-pstack init or /subagents-init. Never installs packages. Use for /setup-pstack, "set up pstack", "check my pstack install" or "which models does pstack use".
 ---
 
 # Setup pstack
@@ -15,9 +15,10 @@ Paths here are relative to this skill directory.
 
 - `/setup-pstack` (or `/setup-pstack report`) shows a report the extension builds in code and makes no change. It ends with "No changes were made."
 - `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`, shows the same report to you and opens a **change flow** for this one turn. The flow's message starts with "/setup-pstack opened change flow". It closes when the turn settles.
+- `/subagents-init [preferences]` or `/setup-pstack init [preferences]` opens an **init flow**: the same change flow, started by pi-herdr-agents. Its message is the host's init prompt with the complete registry brief, and it tells you to propose through `pstack_apply_task_models`. It also closes when the turn settles.
 - Any other way of reaching this skill, including `/skill:setup-pstack` or your own choice to load it, is informational. It never authorizes a configuration write. Explain the report sections below and ask the user to run `/setup-pstack` for the live report.
 
-Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While pstack is installed, the extension refuses every writer call except the single call it makes itself after the user approves the exact payload. That includes the host's `/subagents-init` flow and direct writes in any session. `/setup-pstack <request>` is the replacement.
+Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While pstack is installed, the extension refuses every writer call except the single call it makes itself after the user approves the exact payload. That includes direct writes in any session and the writer call an older host's `/subagents-init` prompt asks for. `/setup-pstack <request>` and `/subagents-init` are the ways to change task models.
 
 ## Reading the report
 
@@ -33,9 +34,11 @@ The report has these sections, in order: Session, Host, Pstack resources, Models
 ## In a change flow
 
 1. Map the user's request onto categories. Use only exact references listed under Models. If the request is ambiguous, names a model that is not listed, or would remove a category, do not guess. Explain what is possible and stop; the user can run `/setup-pstack <request>` again.
-2. Call `pstack_apply_task_models` once, with `changes` holding only the categories to replace, each with its complete new list. Every other current category is kept as it is. W2 setup never deletes a category.
-3. The extension validates the proposal, builds the complete writer payload (all categories, metadata it generates, and the file revision the proposal was read from), and shows it in an approval dialog. Metadata is never yours to choose.
-4. Report the result as the tool states it:
+2. Call `pstack_apply_task_models` once, with `changes` holding only the categories to replace, each with its complete new list. Every other current category is kept as it is. W2 setup never deletes a category. In an init flow, draft every category from the brief's models as the init prompt asks; refs outside the brief are refused.
+3. Add `basis`. Use `{"kind":"registry-only"}` unless sources you consulted in this run informed the ranking. Then use `{"kind":"research","sources":[{"url":"https://...","influence":"..."}],"uncertainty":"..."}`, with one entry per http(s) source and how it changed or supported the ranking. Never list a source you did not read or that did not inform the ranking. A model name, search attempt or registry price is not research.
+4. The extension validates the proposal, builds the complete writer payload (all categories, metadata it generates from your basis, the basis itself when the writer takes it, and the file revision the proposal was read from), and shows it in an approval dialog. Metadata is never yours to choose. An init proposal is refused if the config file changed after the host read it; ask the user to run init again.
+5. Report the result as the tool states it:
+   - **No change.** The proposal equals the current tasks. Nothing was written and the metadata was not refreshed.
    - **Declined or timed out.** Nothing was written.
    - **Rejected or stale.** Nothing was written. Name the reason. Do not retry with the same proposal; a fresh `/setup-pstack <request>` re-reads the file and asks again.
    - **Failed, busy or uncertain.** The extension checked the saved file after the call. Repeat exactly what it says: unchanged and nothing written, holds the approved preferences despite the error, or uncertain and needs inspection. A failed call is not proof that nothing was written. Do not retry.

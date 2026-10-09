@@ -116,7 +116,14 @@ describe("Wave 2 runtime scope", () => {
 		// W2 contributes no named roles and must not register an empty directory.
 		assert.doesNotMatch(
 			source,
-			/roles:discover|registerRolePack|\.\.\/\.\.\/agents|pi\.events\.on/,
+			/roles:discover|registerRolePack|\.\.\/\.\.\/agents/,
+		);
+		// The one event subscription answers pi-herdr-agents' task-model init.
+		assert.deepEqual(
+			[...source.matchAll(/pi\.events\.on\(\s*([^,]+),/g)].map(
+				(match) => match[1],
+			),
+			["INIT_APPROVAL_EVENT"],
 		);
 	});
 

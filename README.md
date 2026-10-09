@@ -33,6 +33,7 @@ All skills except `setup-pstack` are explicit-only: they load through `/skill:<n
 | `/poteto-mode <task>` | Turns the mode on and starts the task. Includes the full hub only if it is missing from context. Refused while a turn is running; nothing is queued. |
 | `/setup-pstack` or `/setup-pstack report` | Shows the setup report. Makes no change. |
 | `/setup-pstack <request>` | Opens a one-turn change flow for shared task-model preferences. Nothing is written without your approval. |
+| `/setup-pstack init [preferences]` | Runs pi-herdr-agents' `/subagents-init` with these ranking preferences. Its draft goes through the same approval flow. |
 
 ### `/poteto-mode`
 
@@ -55,13 +56,17 @@ A change flow works like this:
 2. A dialog (two-minute timeout) shows the complete `subagents_write_task_models` payload, including `expectedConfigRevision`.
 3. Only after you approve, and after rechecking the file, session and authentication, pstack calls the host writer and verifies the saved file before reporting success.
 
+`/subagents-init [preferences]` from a pi-herdr-agents host that supports its task-model init events, or `/setup-pstack init [preferences]`, opens the same flow with the host's research guidance and its complete registry brief. Only the exact first word `init` starts init; `/setup-pstack initialize ...` is an ordinary request. In an init flow the proposal must use models from that brief that the active registry still lists as available, and is refused if the config file changed after the host read it. A flow opens only with a selected model. If Pi rejects the prompt before starting a run, the next unrelated input or run closes the window before it can use it. The [compatibility notes](docs/compatibility.md#task-model-init-with-pi-herdr-agents) describe the remaining extension-interference limits. Without a supporting host, `/setup-pstack init` says so and writes nothing.
+
+A proposal may carry a ranking `basis`. Without one it is `registry-only`. A `research` basis needs at least one http(s) source with a note on how it informed the ranking, plus the remaining uncertainty. The dialog shows the sources as submitted by the model, not verified. pstack sets `tasksMeta.method` from the basis. The writer receives the basis but does not save it, and an older writer without a `basis` field accepts only registry-only proposals. A proposal equal to the current task map writes nothing and leaves `tasksMeta` unchanged.
+
 Declined, rejected, stale or cancelled attempts stop before the writer runs. If the writer errors after being called, pstack rereads the file and reports it as unchanged, as holding the approved preferences, or as changed in a way it cannot attribute. Nothing is retried. Setup stays report-only in a subagent, without a dialog-capable UI, with an older or inactive writer, or with an unreadable or invalid config.
 
 Task categories are shared pi-herdr-agents preferences: a change affects every workflow and role pack that uses them. An explicit `model` argument, exact or `task:<category>`, takes precedence over role, per-agent and default models.
 
 ## Shared task-model writer restriction
 
-**While pstack is loaded, it refuses every `subagents_write_task_models` call except its own approved one.** That includes pi-herdr-agents' `/subagents-init`, which has the model call the writer directly, and any direct or relayed call in any run. The refusal names `/setup-pstack <request>` as the replacement. To use `/subagents-init`, uninstall or disable pstack.
+**While pstack is loaded, it refuses every `subagents_write_task_models` call except its own approved one.** That covers any direct or relayed call in any run. A host that supports the task-model init events sends `/subagents-init` drafts to pstack's flow instead of the writer. An older host's `/subagents-init` still has the model call the writer directly, and that call is refused. The refusal names `/setup-pstack <request>` and `/subagents-init` as the ways to change task models.
 
 The single exception is the nested call the apply tool makes after you approve the exact payload. It must come directly from that apply call, match the approved arguments including `expectedConfigRevision`, and find the file unchanged. The approval lives only in memory, is used once, and ends when the dispatch returns, the turn is aborted, or the session is replaced, reloaded or shut down; after `/reload`, every writer call is refused. The host's conditional writer still rejects a file that changed after approval. Children never see the writer, so this changes nothing there. Details are in [compatibility](docs/compatibility.md#setup-writer-contract-and-the-writer-gate).
 

@@ -16,8 +16,21 @@ export type TaskCategory = (typeof TASK_CATEGORIES)[number];
 export type TaskMap = Partial<Record<TaskCategory, string[]>>;
 export type TasksMeta = {
 	generatedAt: string;
-	method: "research" | "registry-only";
+	method: RankingBasis["kind"];
 };
+/**
+ * What a proposed ranking rests on, as the model submitted it. pi-herdr-agents'
+ * writer takes the same optional `basis` and saves only its kind as
+ * `tasksMeta.method`.
+ */
+export type RankingBasis =
+	| { kind: "registry-only" }
+	| {
+			kind: "research";
+			sources: [ResearchSource, ...ResearchSource[]];
+			uncertainty: string;
+	  };
+export type ResearchSource = { url: string; influence: string };
 
 /** The models fields setup reports. Nothing else from the file is retained. */
 export type SharedPreferences = {
@@ -93,15 +106,20 @@ export function parseModels(
 	if (models.default !== undefined && models.default !== null) {
 		if (typeof models.default !== "string" || models.default.trim() === "")
 			return "models.default must be a non-empty string";
+		if (models.default.trim().toLowerCase().startsWith("task:"))
+			return "models.default cannot use task: references";
 		preferences.defaultModel = models.default;
 	}
 	if (models.agents !== undefined && models.agents !== null) {
 		if (!isRecord(models.agents)) return "models.agents must be an object";
 		// Per-agent overrides are validated for the report but never shown:
 		// they are unrelated settings the writer preserves.
-		for (const model of Object.values(models.agents))
+		for (const model of Object.values(models.agents)) {
 			if (typeof model !== "string" || model.trim() === "")
 				return "models.agents has a value that is not a non-empty string";
+			if (model.trim().toLowerCase().startsWith("task:"))
+				return "models.agents cannot use task: references";
+		}
 	}
 	if (models.tasks !== undefined && models.tasks !== null) {
 		if (!isRecord(models.tasks)) return "models.tasks must be an object";

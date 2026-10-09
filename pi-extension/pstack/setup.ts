@@ -2,6 +2,7 @@ import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type {
 	ExtensionAPI,
+	ExtensionCommandContext,
 	ExtensionContext,
 	ExtensionToolContext,
 	ToolInfo,
@@ -11,7 +12,9 @@ import {
 	type ConfigSnapshot,
 	canonicalJson,
 	deepFreeze,
+	type RankingBasis,
 	readConfig,
+	type ResearchSource,
 	type SharedPreferences,
 	TASK_CATEGORIES,
 	type TaskCategory,
@@ -31,7 +34,16 @@ export const APPLY_TOOL = "pstack_apply_task_models";
 export const REPORT_MESSAGE_TYPE = "pi-herdr-pstack:setup-report";
 export const CONFIRM_TIMEOUT_MS = 120_000;
 /** Why every writer call outside pstack's approved nested write is refused. */
-export const WRITER_POINTER = `While pi-herdr-pstack is loaded, shared task models change only through /setup-pstack <request>, which shows the exact ${WRITER} payload for your approval. Direct ${WRITER} calls, including /subagents-init, are refused.`;
+export const WRITER_POINTER = `While pi-herdr-pstack is loaded, shared task models change only through /setup-pstack <request> or /subagents-init (also /setup-pstack init), which show the exact ${WRITER} payload for your approval. Direct ${WRITER} calls are refused.`;
+/**
+ * pi-herdr-agents' task-model init protocol, version 1. The host emits the
+ * approval request while init runs; pstack emits the start request for
+ * `/setup-pstack init`. Both carry the invoking command's live context.
+ */
+export const INIT_APPROVAL_EVENT =
+	"pi-herdr-subagents:task-models:init:approval:v1";
+export const INIT_START_EVENT = "pi-herdr-subagents:task-models:init:start:v1";
+const OWNER = "pi-herdr-pstack";
 const EXTENSION_FILE = fileURLToPath(new URL("./index.ts", import.meta.url));
 /**
  * Categories the methodology launches, so an unset one is a finding.
@@ -51,6 +63,8 @@ export type WriterPayload = {
 	tasks: TaskMap;
 	tasksMeta: TasksMeta;
 	expectedConfigRevision: string;
+	/** Present only when the loaded writer accepts it. */
+	basis?: RankingBasis;
 };
 
 type WriterStatus =
@@ -93,18 +107,100 @@ export function writerContract(
 		: "unrecognized";
 }
 
+/**
+ * Whether the writer's public schema takes the optional `basis` that carries
+ * research evidence with one write. An older writer gets no basis, and pstack
+ * then refuses research proposals instead of dropping their evidence.
+ */
+export function writerAcceptsBasis(tool: ToolInfo): boolean {
+	const schema: unknown = tool.parameters;
+	if (!isRecord(schema) || !isRecord(schema.properties)) return false;
+	const basis = schema.properties.basis;
+	const required = Array.isArray(schema.required) ? schema.required : [];
+	if (!isRecord(basis) || required.includes("basis")) return false;
+	const kinds = (Array.isArray(basis.anyOf) ? basis.anyOf : []).map((option) =>
+		isRecord(option) &&
+		isRecord(option.properties) &&
+		isRecord(option.properties.kind)
+			? option.properties.kind.const
+			: undefined,
+	);
+	return kinds.includes("registry-only") && kinds.includes("research");
+}
+
+function isUsableUrl(value: string): boolean {
+	const url = URL.parse(value);
+	return (
+		url !== null &&
+		(url.protocol === "https:" || url.protocol === "http:") &&
+		url.hostname !== ""
+	);
+}
+
+function isNonBlank(value: unknown): value is string {
+	return typeof value === "string" && value.trim() !== "";
+}
+
+/**
+ * The submitted ranking basis, or why it cannot be recorded. No basis means
+ * registry-only: a proposal never claims research it did not describe. Code
+ * checks shape only; it cannot prove the model read a source.
+ */
+export function parseBasis(raw: unknown): RankingBasis | string {
+	if (raw === undefined) return { kind: "registry-only" };
+	if (!isRecord(raw)) return "basis must be an object";
+	if (raw.kind === "registry-only")
+		return Object.keys(raw).length === 1
+			? { kind: "registry-only" }
+			: "a registry-only basis has no other fields";
+	if (raw.kind !== "research")
+		return 'basis.kind must be "registry-only" or "research"';
+	const { sources, uncertainty } = raw;
+	if (!Array.isArray(sources))
+		return "research needs at least one source that informed the ranking";
+	const parsed: ResearchSource[] = [];
+	for (const [index, source] of sources.entries()) {
+		if (!isRecord(source)) return `basis.sources[${index}] must be an object`;
+		if (typeof source.url !== "string" || !isUsableUrl(source.url))
+			return `basis.sources[${index}].url must be an http(s) URL with a host`;
+		if (!isNonBlank(source.influence))
+			return `basis.sources[${index}].influence must say how the source informed the ranking`;
+		parsed.push({ url: source.url, influence: source.influence });
+	}
+	const [first, ...rest] = parsed;
+	if (!first)
+		return "research needs at least one source that informed the ranking";
+	if (!isNonBlank(uncertainty))
+		return "research must disclose its remaining uncertainty";
+	return { kind: "research", sources: [first, ...rest], uncertainty };
+}
+
 function writerStatus(pi: ExtensionAPI): WriterStatus {
 	const tool = pi.getAllTools().find((candidate) => candidate.name === WRITER);
 	return tool ? { state: writerContract(tool), tool } : { state: "absent" };
 }
 
-/** Exact `provider/model-id` references whose provider has configured auth. */
+/**
+ * Exact `provider/model-id` references whose provider has configured auth,
+ * across every registered model. The report and change flows use this.
+ */
 export function authenticatedRefs(ctx: ExtensionContext): string[] {
 	return ctx.modelRegistry
 		.getAll()
 		.filter((model) => ctx.modelRegistry.hasConfiguredAuth(model))
 		.map((model) => `${model.provider}/${model.id}`)
 		.toSorted();
+}
+
+/**
+ * Exact references in the active registry's available snapshot, the source
+ * pi-herdr-agents builds its init brief from. Init flows check against this,
+ * so they never crawl every registered model.
+ */
+export function availableRefs(ctx: ExtensionContext): string[] {
+	return ctx.modelRegistry
+		.getAvailable()
+		.map((model) => `${model.provider}/${model.id}`);
 }
 
 /** Reasons a stored or proposed reference cannot be written as-is. */
@@ -207,9 +303,37 @@ function preferenceLines(
 	return { lines, findings };
 }
 
+/**
+ * Why changes cannot be applied from this session. `hasModels` says whether
+ * the caller's model list is nonempty: the report lists the registry, while
+ * an init flow already holds the host's brief. Nothing here lists models.
+ */
+function applyBlockers(
+	pi: ExtensionAPI,
+	ctx: ExtensionContext,
+	hasModels: boolean,
+): string[] {
+	const blockers: string[] = [];
+	if (process.env.PI_SUBAGENT_ID) blockers.push("this is a subagent session");
+	if (!ctx.hasUI)
+		blockers.push(`this ${ctx.mode} session cannot show an approval dialog`);
+	const writer = writerStatus(pi);
+	if (writer.state === "absent") blockers.push(`${WRITER} is not loaded`);
+	else if (writer.state !== "conditional")
+		blockers.push(`${WRITER} lacks the conditional-write contract`);
+	else if (!pi.getActiveTools().includes(WRITER))
+		blockers.push(`${WRITER} is not active`);
+	if (resolveOwnedSkill(loadedSkills(pi), "setup-pstack").state !== "owned")
+		blockers.push("the package setup-pstack skill is not the effective skill");
+	if (!hasModels) blockers.push("no authenticated models");
+	const { state } = readConfig();
+	if (state !== "present" && state !== "missing")
+		blockers.push(`the config file is ${state}`);
+	return blockers;
+}
+
 /** Code-built setup report. It never includes unrelated configuration fields. */
 export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
-	const blockers: string[] = [];
 	const lines: string[] = ["pi-herdr-pstack setup report", ""];
 	const child = Boolean(process.env.PI_SUBAGENT_ID);
 
@@ -217,9 +341,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 	lines.push(
 		`  ${child ? "pi-herdr-agents subagent (PI_SUBAGENT_ID is set): setup is report-only here; run it in your own session." : "parent session"}; mode ${ctx.mode}; dialogs ${ctx.hasUI ? "available" : "unavailable"}`,
 	);
-	if (child) blockers.push("this is a subagent session");
-	if (!ctx.hasUI)
-		blockers.push(`this ${ctx.mode} session cannot show an approval dialog`);
 
 	lines.push("", "Host (pi-herdr-agents)");
 	const tools = pi.getAllTools();
@@ -238,7 +359,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		lines.push(
 			`  ${WRITER}: not loaded (absent host, filtered tool, or a subagent session).`,
 		);
-		blockers.push(`${WRITER} is not loaded`);
 	} else {
 		const contract = {
 			conditional:
@@ -250,9 +370,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		lines.push(
 			`  ${WRITER}: ${contract}; ${writerActive ? "active" : "inactive"}; from ${sourceLabel(writer.tool)}`,
 		);
-		if (writer.state !== "conditional")
-			blockers.push(`${WRITER} lacks the conditional-write contract`);
-		else if (!writerActive) blockers.push(`${WRITER} is not active`);
 	}
 
 	lines.push("", "Pstack resources");
@@ -261,8 +378,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 	const setupSkill = resolveOwnedSkill(skills, "setup-pstack");
 	lines.push(`  ${describeSkill("poteto-mode", potetoSkill)}`);
 	lines.push(`  ${describeSkill("setup-pstack", setupSkill)}`);
-	if (setupSkill.state !== "owned")
-		blockers.push("the package setup-pstack skill is not the effective skill");
 	for (const name of ["poteto-mode", "setup-pstack"]) {
 		const invocations = pi
 			.getCommands()
@@ -289,7 +404,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 			? `  ${authenticated.length} authenticated exact model(s): ${authenticated.join(", ")}`
 			: "  No authenticated models in the current registry.",
 	);
-	if (authenticated.length === 0) blockers.push("no authenticated models");
 
 	lines.push("", "Shared preferences");
 	const snapshot = readConfig();
@@ -302,8 +416,6 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		);
 		lines.push(...described.lines);
 		findings.push(...described.findings);
-	} else if (snapshot.state !== "missing") {
-		blockers.push(`the config file is ${snapshot.state}`);
 	}
 
 	lines.push("", "Findings");
@@ -318,6 +430,7 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 		"  Task categories are shared pi-herdr-agents preferences: a change affects every pi-herdr-agents workflow and role pack, not only pstack.",
 		"  An explicit subagent model argument, including a task:<category> selector, takes precedence over role, per-agent and default models.",
 	);
+	const blockers = applyBlockers(pi, ctx, authenticated.length > 0);
 	if (blockers.length > 0)
 		lines.push(
 			`  Changes cannot be applied from this session: ${blockers.join("; ")}.`,
@@ -331,14 +444,40 @@ export function buildReport(pi: ExtensionAPI, ctx: ExtensionContext): Report {
 }
 
 /**
- * The apply window a `/setup-pstack <request>` command opens for its turn. It
- * is a convenience that keeps the apply tool out of other turns; the approval
- * dialog, not this window, is what lets a write through.
+ * What opened a flow. An init flow proposes against the host's brief: the
+ * config revision it read and the models it listed.
+ */
+type FlowOrigin =
+	| { kind: "change" }
+	| { kind: "init"; revision: string; refs: ReadonlySet<string> };
+
+/**
+ * How far the flow's own prompt has gone. Pi hands a command's prompt to
+ * `input` handlers (source "extension"), then checks the model and its auth,
+ * then emits `before_agent_start` and `agent_start`. A prompt that fails those
+ * checks, or that an input handler consumes, never reaches the later events,
+ * so any other input or run before `running` proves it did not start.
+ */
+type FlowPhase =
+	/** Submitted; its `input` event has not arrived. */
+	| "submitted"
+	/** Its `input` passed; Pi is checking the model and auth. */
+	| "preflight"
+	/** `before_agent_start` ran for it; its run is starting. */
+	| "starting"
+	/** Its run started; settlement closes the window. */
+	| "running";
+
+/**
+ * The apply window a `/setup-pstack <request>` command or a host init request
+ * opens for its turn. It is a convenience that keeps the apply tool out of
+ * other turns; the approval dialog, not this window, is what lets a write
+ * through.
  */
 type Flow = {
 	sessionId: string;
-	/** A run started after the command; its settlement closes the window. */
-	started: boolean;
+	origin: FlowOrigin;
+	phase: FlowPhase;
 	/** The window may still open its one approval dialog. */
 	applyOpen: boolean;
 	applying: boolean;
@@ -371,6 +510,19 @@ export function authorizationProblem(
 	return undefined;
 }
 
+/**
+ * References current authentication allows for a flow's proposal: the active
+ * registry an init brief came from, or the registry a change report listed.
+ */
+function currentRefs(
+	origin: FlowOrigin,
+	ctx: ExtensionContext,
+): ReadonlySet<string> {
+	return new Set(
+		origin.kind === "init" ? availableRefs(ctx) : authenticatedRefs(ctx),
+	);
+}
+
 function ok(text: string) {
 	return { content: [{ type: "text" as const, text }], details: undefined };
 }
@@ -386,6 +538,31 @@ function tableLines(before: TaskMap, after: TaskMap): string[] {
 		const to = formatRefs(after[category]);
 		return `  ${category}: ${from === to ? `${to} (unchanged)` : `${from} -> ${to}`}`;
 	});
+}
+
+/** Model-submitted text on one line, so it cannot add lines to the dialog. */
+function oneLine(text: string): string {
+	return text.replace(/[\s\p{Cc}]+/gu, " ").trim();
+}
+
+function basisLines(payload: WriterPayload): string[] {
+	const { basis } = payload;
+	if (!basis)
+		return [
+			"Ranking basis: registry-only. The loaded writer takes no basis field, so only tasksMeta.method records it.",
+		];
+	if (basis.kind === "registry-only")
+		return [
+			"Ranking basis, as submitted by the model: registry-only (no sources informed the ranking).",
+		];
+	return [
+		"Ranking basis, as submitted by the model and not independently verified: research.",
+		...basis.sources.map(
+			(source) => `  - ${oneLine(source.url)}: ${oneLine(source.influence)}`,
+		),
+		`  Uncertainty: ${oneLine(basis.uncertainty)}`,
+		"The basis goes to the writer with this payload but is not saved.",
+	];
 }
 
 export function approvalMessage(
@@ -404,6 +581,7 @@ export function approvalMessage(
 		...tableLines(before?.tasks ?? {}, payload.tasks),
 		"",
 		`Metadata, generated by pstack: method ${payload.tasksMeta.method}, generatedAt ${payload.tasksMeta.generatedAt} (was ${before?.tasksMeta ? `${before.tasksMeta.method} at ${before.tasksMeta.generatedAt}` : "not set"}).`,
+		...basisLines(payload),
 		"",
 		"Shared effect: task categories are pi-herdr-agents preferences used by every workflow and role pack, not only pstack.",
 		"The write is conditional: it fails without changing anything if the file changes before the writer runs. Reload Pi afterwards.",
@@ -411,6 +589,105 @@ export function approvalMessage(
 		`Exact ${WRITER} arguments:`,
 		JSON.stringify(payload, null, 2),
 	].join("\n");
+}
+
+/** What pstack reads from a host init request. */
+type InitRequest = {
+	context: ExtensionContext;
+	revision: string;
+	refs: ReadonlySet<string>;
+};
+
+/**
+ * pstack's answer when the host opens its offer: the v1 open result. The host
+ * calls `cancel` when it does not submit the prompt, which closes this flow.
+ */
+type InitOpened =
+	| {
+			kind: "ready";
+			destination: { toolName: string; instructions: string };
+			cancel: () => void;
+	  }
+	| { kind: "blocked"; reason: string };
+
+const OWNER_LABEL = /^[\x21-\x7e]{1,100}$/;
+const REVISION = /^(?:missing|sha256:[0-9a-f]{64})$/;
+
+/** Replaces the host's direct-writer instruction in its init prompt. */
+const INIT_INSTRUCTIONS = [
+	`Propose through ${APPLY_TOOL}, not ${WRITER}: pi-herdr-pstack refuses every writer call except the one it makes after the user approves. Call ${APPLY_TOOL} with changes holding every category you drafted, each with its complete ordered list, and with basis. Categories you omit keep their current models.`,
+	`Pstack checks the proposal against this brief's models and configRevision and against current authentication, sets tasksMeta from basis, and shows the exact writer payload in one approval dialog. A rejected proposal writes nothing; fix the named problem and call ${APPLY_TOOL} again. The window closes after the dialog or when this turn ends.`,
+	"Report the tool result as it states it: declined, rejected or stale, failed or uncertain, or saved and verified. A failed call is not proof that nothing was written. Do not retry after the dialog. A proposal equal to the current tasks writes nothing and leaves tasksMeta unchanged.",
+].join("\n\n");
+
+function hasMethods(value: unknown, names: readonly string[]): boolean {
+	return (
+		isRecord(value) && names.every((name) => typeof value[name] === "function")
+	);
+}
+
+function isThenable(value: unknown): value is PromiseLike<unknown> {
+	return (
+		value !== null &&
+		(typeof value === "object" || typeof value === "function") &&
+		"then" in value &&
+		typeof value.then === "function"
+	);
+}
+
+/**
+ * Reads a host init approval request (v1). Any other payload is not for
+ * pstack. A v1 request pstack cannot use still gets an offer whose open
+ * refuses, so the host never falls back to its direct writer.
+ */
+export function parseInitApproval(
+	raw: unknown,
+):
+	| { offer: (offer: unknown) => unknown; request: InitRequest | string }
+	| undefined {
+	if (!isRecord(raw) || raw.apiVersion !== 1) return undefined;
+	const { offer, brief, context } = raw;
+	if (typeof offer !== "function") return undefined;
+	const answer = (value: unknown) => offer.call(raw, value);
+	const models =
+		isRecord(brief) && Array.isArray(brief.models) ? brief.models : [];
+	const refs = models.flatMap((model) =>
+		isRecord(model) && typeof model.ref === "string" ? [model.ref] : [],
+	);
+	if (
+		!isRecord(brief) ||
+		typeof brief.configRevision !== "string" ||
+		!REVISION.test(brief.configRevision) ||
+		refs.length === 0 ||
+		refs.length !== models.length
+	)
+		return {
+			offer: answer,
+			request:
+				"the host's init brief has no usable configRevision or model list",
+		};
+	if (
+		!isRecord(context) ||
+		typeof context.mode !== "string" ||
+		typeof context.hasUI !== "boolean" ||
+		!hasMethods(context, ["isIdle", "hasPendingMessages"]) ||
+		!hasMethods(context.sessionManager, ["getSessionId"]) ||
+		!hasMethods(context.modelRegistry, ["getAvailable"])
+	)
+		return {
+			offer: answer,
+			request: "the host's init request has no usable command context",
+		};
+	return {
+		offer: answer,
+		request: {
+			// SAFETY: the members setup reads were checked above; the rest is the
+			// host command's own live context, from trusted in-process code.
+			context: context as unknown as ExtensionContext,
+			revision: brief.configRevision,
+			refs: new Set(refs),
+		},
+	};
 }
 
 const CHANGES = Type.Object(
@@ -421,6 +698,37 @@ const CHANGES = Type.Object(
 		]),
 	),
 	{ additionalProperties: false, minProperties: 1 },
+);
+
+/** The same shape as pi-herdr-agents' writer `basis`; parseBasis checks the rest. */
+const BASIS = Type.Union(
+	[
+		Type.Object(
+			{ kind: Type.Literal("registry-only") },
+			{ additionalProperties: false },
+		),
+		Type.Object(
+			{
+				kind: Type.Literal("research"),
+				sources: Type.Array(
+					Type.Object(
+						{
+							url: Type.String({ minLength: 1 }),
+							influence: Type.String({ minLength: 1 }),
+						},
+						{ additionalProperties: false },
+					),
+					{ minItems: 1 },
+				),
+				uncertainty: Type.String({ minLength: 1 }),
+			},
+			{ additionalProperties: false },
+		),
+	],
+	{
+		description:
+			'What the ranking rests on. {"kind":"registry-only"} (the default) when no usable source informed it; {"kind":"research"} only with the http(s) sources consulted in this run, how each informed the ranking, and the remaining uncertainty. Shown to the user as submitted, not verified. Not saved; tasksMeta.method records its kind.',
+	},
 );
 
 export function registerSetup(pi: ExtensionAPI): void {
@@ -450,6 +758,130 @@ export function registerSetup(pi: ExtensionAPI): void {
 		deactivateApply();
 	}
 
+	/**
+	 * Opens the one-turn apply window, or says why it cannot. Both origins share
+	 * the apply blockers and the idle check. The caller submits the flow's
+	 * prompt right after, before anything else can reach `input`.
+	 */
+	function openFlow(
+		ctx: ExtensionContext,
+		blockers: readonly string[],
+		origin: FlowOrigin,
+	): Flow | string {
+		if (blockers.length > 0) return blockers.join("; ");
+		if (!ctx.isIdle() || ctx.hasPendingMessages())
+			return "a turn is in progress or messages are queued. Nothing was queued; retry when idle";
+		if (!ctx.model)
+			return "no model is selected, so Pi cannot run the prompt. Select a model, then retry";
+		if (origin.kind === "init" && currentRevision() !== origin.revision)
+			return "the config file changed after pi-herdr-agents read it for this init; run init again";
+		const opened: Flow = {
+			sessionId: ctx.sessionManager.getSessionId(),
+			origin,
+			phase: "submitted",
+			applyOpen: true,
+			applying: false,
+		};
+		flow = opened;
+		pi.setActiveTools([...pi.getActiveTools(), APPLY_TOOL]);
+		return opened;
+	}
+
+	/** pstack's answer when the host selects its offer for one init request. */
+	function openInit(request: InitRequest | string): InitOpened {
+		closeFlow();
+		if (typeof request === "string")
+			return { kind: "blocked", reason: request };
+		// The brief's models stand in for the report's model list; init lists none.
+		const opened = openFlow(
+			request.context,
+			applyBlockers(pi, request.context, request.refs.size > 0),
+			{ kind: "init", revision: request.revision, refs: request.refs },
+		);
+		if (typeof opened === "string") return { kind: "blocked", reason: opened };
+		return {
+			kind: "ready",
+			destination: { toolName: APPLY_TOOL, instructions: INIT_INSTRUCTIONS },
+			// Closes only this request's flow, never a later one.
+			cancel: () => {
+				if (flow === opened) closeFlow();
+			},
+		};
+	}
+
+	// Offer before any check, so the host never mistakes a busy pstack for an
+	// absent one; openInit decides when the host selects this offer.
+	const stopInitApproval = pi.events.on(INIT_APPROVAL_EVENT, (raw) => {
+		const parsed = parseInitApproval(raw);
+		parsed?.offer({ owner: OWNER, open: () => openInit(parsed.request) });
+	});
+
+	/**
+	 * Starts host init for `/setup-pstack init`. Returns why it did not start;
+	 * once a host starts, the host's prompt and pstack's flow take over.
+	 */
+	function requestHostInit(
+		ctx: ExtensionCommandContext,
+		preferences: string,
+	): string | undefined {
+		const hosts: Array<{ owner: string; start: () => unknown }> = [];
+		const problems: string[] = [];
+		let collecting = true;
+		try {
+			pi.events.emit(INIT_START_EVENT, {
+				apiVersion: 1,
+				context: ctx,
+				preferences,
+				offer: (raw: unknown) => {
+					if (!collecting) return "closed";
+					const owner = isRecord(raw) ? raw.owner : undefined;
+					const start = isRecord(raw) ? raw.start : undefined;
+					if (
+						typeof owner === "string" &&
+						OWNER_LABEL.test(owner) &&
+						typeof start === "function"
+					)
+						hosts.push({ owner, start: () => start.call(raw) });
+					else
+						problems.push(
+							"an offer without an owner label and a start function",
+						);
+					return "recorded";
+				},
+			});
+		} finally {
+			collecting = false;
+		}
+		if (problems.length > 0)
+			return `an init host answered with ${problems.join("; ")}`;
+		const [host, ...others] = hosts;
+		if (!host)
+			return "no loaded pi-herdr-agents accepted the request. The host may be missing or older than this protocol, and hosts do not run init in subagent sessions. /setup-pstack <request> still proposes explicit changes";
+		if (others.length > 0)
+			return `more than one extension offered to run init (${hosts
+				.map((entry) => entry.owner)
+				.toSorted()
+				.join(", ")}); keep one loaded`;
+		let outcome: unknown;
+		try {
+			outcome = host.start();
+		} catch (error) {
+			return `${host.owner} failed to start init (${describeError(error)}); pstack cannot undo what it changed`;
+		}
+		if (isThenable(outcome)) {
+			outcome.then(undefined, () => {});
+			return `${host.owner} answered asynchronously, but v1 starts synchronously; pstack cannot undo what it changed`;
+		}
+		if (isRecord(outcome) && outcome.kind === "started") return undefined;
+		if (
+			isRecord(outcome) &&
+			outcome.kind === "not-started" &&
+			isNonBlank(outcome.reason)
+		)
+			return oneLine(outcome.reason);
+		return `${host.owner} returned an unrecognized result`;
+	}
+
 	pi.on("session_start", () => {
 		closeFlow();
 		directApplyCalls.clear();
@@ -458,12 +890,29 @@ export function registerSetup(pi: ExtensionAPI): void {
 	pi.on("session_shutdown", () => {
 		closeFlow();
 		ended = true;
+		stopInitApproval();
+	});
+	// Each event moves the window's prompt one step. Anything out of order is
+	// another prompt or run, so the window closes before it can use apply.
+	// Input during the flow's own run is a steer or follow-up and keeps it.
+	pi.on("input", (event) => {
+		if (!flow || flow.phase === "running") return;
+		if (flow.phase === "submitted" && event.source === "extension")
+			flow.phase = "preflight";
+		else closeFlow();
+	});
+	pi.on("before_agent_start", () => {
+		if (!flow || flow.phase === "running") return;
+		if (flow.phase === "preflight") flow.phase = "starting";
+		else closeFlow();
 	});
 	pi.on("agent_start", () => {
-		if (flow) flow.started = true;
+		if (!flow || flow.phase === "running") return;
+		if (flow.phase === "starting") flow.phase = "running";
+		else closeFlow();
 	});
 	pi.on("agent_settled", () => {
-		if (flow?.started) closeFlow();
+		if (flow?.phase === "running") closeFlow();
 	});
 
 	pi.on("tool_call", (event) => {
@@ -496,8 +945,8 @@ export function registerSetup(pi: ExtensionAPI): void {
 	pi.registerTool({
 		name: APPLY_TOOL,
 		label: "Apply pstack task models",
-		description: `Setup-only. Inside an active /setup-pstack change flow, propose new model lists for named pi-herdr-agents task categories (${TASK_CATEGORIES.join(", ")}). Use only exact authenticated provider/model-id references from the setup report. Every category you omit keeps its current models. The user approves the complete ${WRITER} payload in a dialog before a conditional write. One dialog per flow. Refuses outside the flow.`,
-		parameters: Type.Object({ changes: CHANGES }),
+		description: `Setup-only. Inside an active /setup-pstack change flow or a /subagents-init flow pstack opened, propose new model lists for named pi-herdr-agents task categories (${TASK_CATEGORIES.join(", ")}). Use only exact authenticated provider/model-id references from the setup report or init brief. Every category you omit keeps its current models. Optional basis says what the ranking rests on; without it the proposal is registry-only. The user approves the complete ${WRITER} payload in a dialog before a conditional write. One dialog per flow. Refuses outside the flow.`,
+		parameters: Type.Object({ changes: CHANGES, basis: Type.Optional(BASIS) }),
 		defaultActive: false,
 		executionMode: "sequential",
 		annotations: { readOnlyHint: false, openWorldHint: false },
@@ -510,7 +959,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 				active.sessionId !== ctx.sessionManager.getSessionId()
 			)
 				throw new Error(
-					`No open /setup-pstack change flow in this session. ${APPLY_TOOL} cannot write; ask the user to run /setup-pstack <request>.`,
+					`No open /setup-pstack change flow in this session. ${APPLY_TOOL} cannot write; ask the user to run /setup-pstack <request> or /subagents-init.`,
 				);
 			if (!directApplyCalls.has(toolCallId))
 				throw new Error(`${APPLY_TOOL} must be called directly by the model.`);
@@ -518,7 +967,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 				throw new Error("Another setup proposal is already awaiting approval.");
 			active.applying = true;
 			try {
-				return await apply(active, toolCallId, params.changes, signal, ctx);
+				return await apply(active, toolCallId, params, signal, ctx);
 			} finally {
 				active.applying = false;
 			}
@@ -528,7 +977,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 	async function apply(
 		active: Flow,
 		toolCallId: string,
-		changes: TaskMap,
+		proposal: { changes: TaskMap; basis?: unknown },
 		signal: AbortSignal | undefined,
 		ctx: ExtensionToolContext,
 	) {
@@ -536,8 +985,9 @@ export function registerSetup(pi: ExtensionAPI): void {
 			throw new Error("Setup writes are not available in subagent sessions.");
 		if (!ctx.hasUI)
 			throw new Error("No approval dialog is available; nothing was written.");
+		const writer = writerStatus(pi);
 		if (
-			writerStatus(pi).state !== "conditional" ||
+			writer.state !== "conditional" ||
 			!ctx.tools.some((tool) => tool.name === WRITER)
 		)
 			throw new Error(
@@ -548,6 +998,23 @@ export function registerSetup(pi: ExtensionAPI): void {
 			throw new Error(
 				`The config file is ${snapshot.state}; setup is report-only and wrote nothing.`,
 			);
+		// An init proposal answers the host's brief; a newer file needs a new brief.
+		if (
+			active.origin.kind === "init" &&
+			snapshot.revision !== active.origin.revision
+		)
+			throw new Error(
+				`Proposal rejected; nothing was written. The config file changed after pi-herdr-agents read it for this init (revision ${active.origin.revision}). Run /subagents-init again for a fresh brief.`,
+			);
+		const { changes } = proposal;
+		const basis = parseBasis(proposal.basis);
+		if (typeof basis === "string")
+			throw new Error(`Proposal rejected; nothing was written. ${basis}.`);
+		const carriesBasis = writerAcceptsBasis(writer.tool);
+		if (basis.kind === "research" && !carriesBasis)
+			throw new Error(
+				`Proposal rejected; nothing was written. The loaded ${WRITER} takes no basis, so it cannot carry research evidence. Propose again with a registry-only basis, or update pi-herdr-agents.`,
+			);
 		const unknown = Object.keys(changes).some(
 			(key) => !(TASK_CATEGORIES as readonly string[]).includes(key),
 		);
@@ -555,7 +1022,7 @@ export function registerSetup(pi: ExtensionAPI): void {
 			throw new Error(
 				`Proposal rejected; nothing was written. It names a category other than ${TASK_CATEGORIES.join(", ")}.`,
 			);
-		const authenticated = new Set(authenticatedRefs(ctx));
+		const authenticated = currentRefs(active.origin, ctx);
 		const current =
 			snapshot.state === "present" ? snapshot.preferences.tasks : {};
 		const tasks: TaskMap = {};
@@ -569,7 +1036,11 @@ export function registerSetup(pi: ExtensionAPI): void {
 			if (new Set(refs).size !== refs.length)
 				problems.push(`${category} lists a reference twice`);
 			for (const ref of refs) {
-				const problem = refProblem(ref, authenticated);
+				const problem =
+					refProblem(ref, authenticated) ??
+					(active.origin.kind === "init" && !active.origin.refs.has(ref)
+						? "is not among the init brief's models"
+						: undefined);
 				if (problem)
 					problems.push(
 						`${category}: ${displayRef(ref)} ${problem}${changes[category] ? "" : " (retained category: include it in changes with authenticated models)"}`,
@@ -582,17 +1053,18 @@ export function registerSetup(pi: ExtensionAPI): void {
 			);
 		if (canonicalJson(tasks) === canonicalJson(current))
 			return ok(
-				"No change: the proposal equals the current task preferences. Nothing was written.",
+				"No change: the proposal equals the current task preferences. Nothing was written, and tasksMeta was not refreshed.",
 			);
 
-		const payload: WriterPayload = deepFreeze({
+		const fields = {
 			tasks,
-			tasksMeta: {
-				generatedAt: new Date().toISOString(),
-				method: "registry-only",
-			},
+			// One timestamp, taken before the dialog, is what the user approves.
+			tasksMeta: { generatedAt: new Date().toISOString(), method: basis.kind },
 			expectedConfigRevision: snapshot.revision,
-		});
+		};
+		const payload: WriterPayload = deepFreeze(
+			carriesBasis ? { ...fields, basis } : fields,
+		);
 		// One dialog per flow: whatever happens next, this run cannot ask again.
 		active.applyOpen = false;
 		deactivateApply();
@@ -615,14 +1087,18 @@ export function registerSetup(pi: ExtensionAPI): void {
 		if (currentRevision() !== payload.expectedConfigRevision)
 			stale.push("the config file changed during approval");
 		if (!ended) {
-			const nowAuthenticated = new Set(authenticatedRefs(ctx));
+			const nowAuthenticated = currentRefs(active.origin, ctx);
 			if (
 				Object.values(tasks)
 					.flat()
 					.some((ref) => !nowAuthenticated.has(ref))
 			)
 				stale.push("model authentication changed during approval");
-			if (writerStatus(pi).state !== "conditional")
+			const now = writerStatus(pi);
+			if (
+				now.state !== "conditional" ||
+				(payload.basis !== undefined && !writerAcceptsBasis(now.tool))
+			)
 				stale.push(`${WRITER} changed`);
 		}
 		if (stale.length > 0)
@@ -656,11 +1132,22 @@ export function registerSetup(pi: ExtensionAPI): void {
 
 	pi.registerCommand("setup-pstack", {
 		description:
-			"Report pstack setup; /setup-pstack <request> proposes shared task-model changes for approval",
+			"Report pstack setup; /setup-pstack <request> proposes shared task-model changes for approval; /setup-pstack init [preferences] runs pi-herdr-agents' task-model init",
 		handler: async (args, ctx) => {
 			const request = args.trim();
 			// Any earlier window, and an approval it holds, ends here.
 			closeFlow();
+			// Only the exact first word: "initialize ..." is an ordinary request.
+			if (/^init(?:\s|$)/.test(request)) {
+				const blocked = requestHostInit(ctx, request.slice("init".length));
+				if (blocked)
+					pi.sendMessage({
+						customType: REPORT_MESSAGE_TYPE,
+						content: `Task-model init not started: ${blocked}. Nothing was written.`,
+						display: true,
+					});
+				return;
+			}
 			const report = buildReport(pi, ctx);
 			if (
 				request === "" ||
@@ -677,32 +1164,29 @@ export function registerSetup(pi: ExtensionAPI): void {
 				});
 				return;
 			}
-			if (!ctx.isIdle() || ctx.hasPendingMessages()) {
-				ctx.ui.notify(
-					"Setup change not started: a turn is in progress or messages are queued. Nothing was queued; retry when idle.",
-					"warning",
-				);
+			const opened = openFlow(ctx, report.applyBlockers, { kind: "change" });
+			if (typeof opened === "string") {
+				ctx.ui.notify(`Setup change not started: ${opened}.`, "warning");
 				return;
 			}
-			flow = {
-				sessionId: ctx.sessionManager.getSessionId(),
-				started: false,
-				applyOpen: true,
-				applying: false,
-			};
-			pi.setActiveTools([...pi.getActiveTools(), APPLY_TOOL]);
-			pi.sendUserMessage(
-				skillWrapper(
-					"setup-pstack",
-					[
-						"/setup-pstack opened change flow. It ends when this turn settles.",
-						"",
-						report.text.replace(/\n\nNo changes were made\.$/, ""),
-						"",
-						`User request: ${request}`,
-					].join("\n"),
-				),
-			);
+			try {
+				pi.sendUserMessage(
+					skillWrapper(
+						"setup-pstack",
+						[
+							"/setup-pstack opened change flow. It ends when this turn settles.",
+							"",
+							report.text.replace(/\n\nNo changes were made\.$/, ""),
+							"",
+							`User request: ${request}`,
+						].join("\n"),
+					),
+				);
+			} catch (error) {
+				// Nothing was submitted, so nothing may inherit the window.
+				if (flow === opened) closeFlow();
+				throw error;
+			}
 		},
 	});
 }

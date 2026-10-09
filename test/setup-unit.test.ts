@@ -10,12 +10,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
-import type {
-	ExtensionAPI,
-	ExtensionCommandContext,
-	ExtensionContext,
-	ToolDefinition,
-	ToolInfo,
+import {
+	createEventBus,
+	type ExtensionAPI,
+	type ExtensionCommandContext,
+	type ExtensionContext,
+	type ToolDefinition,
+	type ToolInfo,
 } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import {
@@ -31,10 +32,14 @@ import {
 	approvalMessage,
 	authorizationProblem,
 	buildReport,
+	INIT_APPROVAL_EVENT,
+	INIT_START_EVENT,
+	parseBasis,
 	refProblem,
 	registerSetup,
 	WRITER,
 	WRITER_POINTER,
+	writerAcceptsBasis,
 	writerContract,
 } from "../pi-extension/pstack/setup.ts";
 import { ownedSkillFile } from "../pi-extension/pstack/resources.ts";
@@ -175,7 +180,23 @@ describe("config snapshot", () => {
 			[[], /models must be an object/],
 			[{ extra: 1 }, /^models has an unsupported key$/],
 			[{ default: "" }, /models\.default/],
+			[
+				{ default: "task:coding" },
+				/^models\.default cannot use task: references$/,
+			],
+			[
+				{ default: " TaSk:coding " },
+				/^models\.default cannot use task: references$/,
+			],
 			[{ agents: { someone: 3 } }, /^models\.agents has a value that is not/],
+			[
+				{ agents: { someone: "task:review" } },
+				/^models\.agents cannot use task: references$/,
+			],
+			[
+				{ agents: { someone: " TASK:review " } },
+				/^models\.agents cannot use task: references$/,
+			],
 			[
 				{ tasks: { speed: ["a/b"] } },
 				/^models\.tasks has an unsupported category$/,
@@ -219,6 +240,8 @@ describe("config snapshot", () => {
 			{ [key]: 1 },
 			{ agents: { [key]: 3 } },
 			{ agents: { [key]: "" } },
+			{ agents: { [key]: `task:${key}` } },
+			{ default: `task:${key}` },
 			{ tasks: { [key]: ["a/b"] } },
 			{ tasks: { [key]: [] } },
 			{ tasksMeta: { [key]: 1 } },
@@ -388,12 +411,40 @@ const CONDITIONAL_WRITER = {
 	sourceInfo: { source: "test", path: "/test/writer.ts" },
 } as unknown as ToolInfo;
 
+/** The conditional writer plus pi-herdr-agents' optional ranking `basis`. */
+const BASIS_WRITER = {
+	...CONDITIONAL_WRITER,
+	parameters: Type.Object({
+		tasks: TASKS,
+		tasksMeta: META,
+		expectedConfigRevision: Type.Optional(
+			Type.Union([
+				Type.Literal("missing"),
+				Type.String({ pattern: "^sha256:[0-9a-f]{64}$" }),
+			]),
+		),
+		basis: Type.Optional(
+			Type.Union([
+				Type.Object({ kind: Type.Literal("registry-only") }),
+				Type.Object({
+					kind: Type.Literal("research"),
+					sources: Type.Array(Type.Object({})),
+					uncertainty: Type.String(),
+				}),
+			]),
+		),
+	}),
+} as unknown as ToolInfo;
+
+const REVIEW = { changes: { review: ["a/b"] } };
+
 /**
- * registerSetup on a minimal in-memory API: the real command, apply tool and
- * guard, with a missing config file, one authenticated model and a dialog.
- * `ctx.executeTool` runs `before`, then the apply call's own nested
- * `tool_call` (unless `skipNested`), then `after`, and returns a failed
- * outcome so the apply call reports the unchanged file.
+ * registerSetup on a minimal in-memory API: the real command, apply tool,
+ * guard and init listener on Pi's real event bus, with a missing config file,
+ * authenticated `models` (default a/b) and a dialog. `ctx.executeTool` runs
+ * `before`, then the apply call's own nested `tool_call` (unless
+ * `skipNested`), then `after`, and returns a failed outcome so the apply call
+ * reports the unchanged file.
  */
 function gate(
 	options: {
@@ -401,6 +452,10 @@ function gate(
 		before?: (payload: WriterInput, signal?: AbortSignal) => void;
 		after?: (payload: WriterInput) => void;
 		skipNested?: boolean;
+		writerTool?: ToolInfo;
+		models?: string[];
+		/** Stands in for Pi's sendUserMessage, which can throw synchronously. */
+		submit?: () => void;
 	} = {},
 ) {
 	const handlers = new Map<string, Array<(...args: unknown[]) => unknown>>();
@@ -411,8 +466,18 @@ function gate(
 	let active = [WRITER];
 	let calls = 0;
 	const nested: Decision[] = [];
+	const messages: string[] = [];
+	const dialogs: string[] = [];
 	let payload: WriterInput | undefined;
+	const writerTool = options.writerTool ?? CONDITIONAL_WRITER;
+	const registered = () =>
+		(options.models ?? ["a/b"]).map((ref) => {
+			const [provider, id] = ref.split("/");
+			return { provider, id };
+		});
+	const events = createEventBus();
 	const api = {
+		events,
 		on: (name: string, handler: (...args: unknown[]) => unknown) =>
 			handlers.set(name, [...(handlers.get(name) ?? []), handler]),
 		registerTool: (definition: ToolDefinition) => {
@@ -428,7 +493,7 @@ function gate(
 		setActiveTools: (names: string[]) => {
 			active = names;
 		},
-		getAllTools: () => [CONDITIONAL_WRITER],
+		getAllTools: () => [writerTool],
 		getCommands: () => [
 			{
 				name: "skill:setup-pstack",
@@ -436,8 +501,10 @@ function gate(
 				sourceInfo: { path: ownedSkillFile("setup-pstack") },
 			},
 		],
-		sendMessage: () => {},
-		sendUserMessage: () => {},
+		sendMessage: (message: { content: string }) => {
+			messages.push(message.content);
+		},
+		sendUserMessage: () => options.submit?.(),
 	};
 	// SAFETY: registerSetup uses only the members above.
 	registerSetup(api as unknown as ExtensionAPI);
@@ -460,16 +527,25 @@ function gate(
 		hasUI: true,
 		isIdle: () => true,
 		hasPendingMessages: () => false,
+		model: { provider: "a", id: "b" } as
+			| { provider: string; id: string }
+			| undefined,
 		ui: {
-			notify: () => {},
-			confirm: async () => options.confirm?.() ?? true,
+			notify: (message: string) => {
+				messages.push(message);
+			},
+			confirm: async (_title: string, message: string) => {
+				dialogs.push(message);
+				return options.confirm?.() ?? true;
+			},
 		},
 		sessionManager: { getSessionId: () => "session-1" },
 		modelRegistry: {
-			getAll: () => [{ provider: "a", id: "b" }],
+			getAll: () => registered(),
 			hasConfiguredAuth: () => true,
+			getAvailable: () => registered(),
 		},
-		tools: [CONDITIONAL_WRITER],
+		tools: [writerTool],
 		executeTool: async (
 			_name: string,
 			input: WriterInput,
@@ -485,41 +561,67 @@ function gate(
 			};
 		},
 	};
-	/** Runs `/setup-pstack review` and starts its turn. */
-	async function open() {
+	/** Runs `/setup-pstack <args>` with this context. */
+	async function run(args: string) {
 		// SAFETY: the command reads only the context members above.
-		await command?.("review", ctx as unknown as ExtensionCommandContext);
+		await command?.(args, ctx as unknown as ExtensionCommandContext);
+	}
+	/** Pi's events for a submitted prompt that passes preflight and starts. */
+	function startPrompt() {
+		emit("input", { source: "extension" });
+		emit("before_agent_start");
 		emit("agent_start");
 	}
-	/** Opens a window and lets the model apply once. */
-	async function apply(id = "apply-1", signal?: AbortSignal) {
-		await open();
+	/** Runs `/setup-pstack review` and starts its turn. */
+	async function open() {
+		await run("review");
+		startPrompt();
+	}
+	/** Lets the model call the apply tool once, in whatever flow is open. */
+	async function propose(
+		input: object = REVIEW,
+		id = "apply-1",
+		signal?: AbortSignal,
+	) {
 		const decision = emit("tool_call", {
 			toolName: APPLY_TOOL,
 			toolCallId: id,
-			input: { changes: { review: ["a/b"] } },
+			input,
 		})?.[0];
 		assert.equal(decision, undefined, "a direct apply call is allowed");
 		applyId = id;
 		try {
-			await tool?.execute(
+			const result = await tool?.execute(
 				id,
-				{ changes: { review: ["a/b"] } },
+				input as never,
 				signal,
 				undefined,
 				ctx as never,
 			);
-			return "";
+			const [first] = result?.content ?? [];
+			return first?.type === "text" ? first.text : "";
 		} catch (error) {
 			return String(error);
 		}
 	}
+	/** Opens a window and lets the model apply once. */
+	async function apply(id = "apply-1", signal?: AbortSignal) {
+		await open();
+		return propose(REVIEW, id, signal);
+	}
 	return {
+		run,
 		open,
+		startPrompt,
+		propose,
 		apply,
 		emit,
+		events,
 		writer,
 		nested,
+		messages,
+		dialogs,
+		ctx,
 		payload: () => payload as WriterInput,
 		active: () => active,
 	};
@@ -561,7 +663,10 @@ describe("unconditional writer gate", () => {
 		assert.match(WRITER_POINTER, /\/setup-pstack <request>/);
 		assert.match(WRITER_POINTER, /\/subagents-init/);
 		// An open window or a declined dialog authorizes nothing.
-		assert.match(await setup.apply(), /^$/);
+		assert.match(
+			await setup.apply(),
+			/declined or the approval dialog timed out\. Nothing was written/,
+		);
 		assert.match(setup.writer("apply-1", input)?.reason ?? "", NONE);
 		assert.deepEqual(setup.nested, [], "a declined apply never dispatches");
 	});
@@ -649,6 +754,586 @@ describe("unconditional writer gate", () => {
 		await setup.open();
 		await setup.apply();
 		assert.equal(setup.active().includes(APPLY_TOOL), false, "one dialog");
+	});
+
+	it("closes a window whose prompt never started before another prompt or run can use it", async () => {
+		const NO_FLOW = /No open \/setup-pstack change flow/;
+		const cases: Array<[string, Array<[string, object?]>]> = [
+			[
+				"preflight rejected it, then the user typed",
+				[
+					["input", { source: "extension" }],
+					["input", { source: "interactive" }],
+				],
+			],
+			[
+				"preflight rejected it, then another extension prompted",
+				[
+					["input", { source: "extension" }],
+					["input", { source: "extension" }],
+				],
+			],
+			["another prompt's input came first", [["input", { source: "rpc" }]]],
+			["a run started without any prompt", [["agent_start"]]],
+			[
+				"an input handler consumed it, then a custom message ran",
+				[["input", { source: "extension" }], ["agent_start"]],
+			],
+			[
+				"a prompt reached before_agent_start out of order",
+				[["before_agent_start"]],
+			],
+		];
+		for (const [label, events] of cases) {
+			const setup = gate();
+			await setup.run("review");
+			assert.equal(setup.active().includes(APPLY_TOOL), true, label);
+			for (const [name, event] of events) setup.emit(name, event);
+			assert.equal(setup.active().includes(APPLY_TOOL), false, label);
+			// The next run that does start is not the window's run either.
+			setup.startPrompt();
+			assert.match(await setup.propose(), NO_FLOW, label);
+			assert.deepEqual(setup.dialogs, [], label);
+		}
+	});
+
+	it("keeps the window for steering input during its own run", async () => {
+		const setup = gate({ confirm: () => false });
+		await setup.open();
+		setup.emit("input", { source: "interactive" });
+		setup.emit("agent_start");
+		assert.match(await setup.propose(), /declined/);
+		assert.equal(setup.dialogs.length, 1);
+	});
+
+	it("opens nothing without a selected model and closes the window when Pi refuses the prompt", async () => {
+		const unselected = gate();
+		unselected.ctx.model = undefined;
+		await unselected.run("review");
+		assert.deepEqual(unselected.messages, [
+			"Setup change not started: no model is selected, so Pi cannot run the prompt. Select a model, then retry.",
+		]);
+		assert.equal(unselected.active().includes(APPLY_TOOL), false);
+
+		const refused = gate({
+			submit: () => {
+				throw new Error("stale extension context");
+			},
+		});
+		await assert.rejects(refused.run("review"), /stale extension context/);
+		assert.equal(refused.active().includes(APPLY_TOOL), false);
+		refused.startPrompt();
+		assert.match(await refused.propose(), /No open \/setup-pstack change flow/);
+	});
+});
+
+const RESEARCH = {
+	kind: "research",
+	sources: [
+		{ url: "https://vendor.example/a", influence: "coding: ranks a/b first" },
+	],
+	uncertainty: "vendor-reported results only",
+};
+
+describe("ranking basis", () => {
+	it("defaults to registry-only and accepts research only with usable sources", () => {
+		assert.deepEqual(parseBasis(undefined), { kind: "registry-only" });
+		assert.deepEqual(parseBasis({ kind: "registry-only" }), {
+			kind: "registry-only",
+		});
+		assert.deepEqual(parseBasis(RESEARCH), RESEARCH);
+		const invalid: Array<[unknown, RegExp]> = [
+			[null, /^basis must be an object$/],
+			[{ kind: "guess" }, /"registry-only" or "research"/],
+			[{ kind: "registry-only", sources: [] }, /no other fields/],
+			[{ ...RESEARCH, sources: [] }, /at least one source/],
+			[{ ...RESEARCH, sources: "https://x.example" }, /at least one source/],
+			[
+				{
+					...RESEARCH,
+					sources: [{ url: "ftp://x.example/a", influence: "x" }],
+				},
+				/^basis\.sources\[0\]\.url must be an http\(s\) URL with a host$/,
+			],
+			[
+				{ ...RESEARCH, sources: [{ url: "vendor.example", influence: "x" }] },
+				/sources\[0\]\.url/,
+			],
+			[
+				{
+					...RESEARCH,
+					sources: [
+						RESEARCH.sources[0],
+						{ url: "https://x.example", influence: " \n" },
+					],
+				},
+				/^basis\.sources\[1\]\.influence must say how/,
+			],
+			[{ ...RESEARCH, uncertainty: "" }, /remaining uncertainty/],
+		];
+		for (const [raw, reason] of invalid)
+			assert.match(String(parseBasis(raw)), reason, JSON.stringify(raw));
+	});
+
+	it("detects the writer's optional basis from its public schema", () => {
+		assert.equal(writerAcceptsBasis(BASIS_WRITER), true);
+		assert.equal(writerAcceptsBasis(CONDITIONAL_WRITER), false);
+		const required = {
+			...BASIS_WRITER,
+			parameters: {
+				...(BASIS_WRITER.parameters as object),
+				required: ["tasks", "tasksMeta", "basis"],
+			},
+		} as unknown as ToolInfo;
+		assert.equal(writerAcceptsBasis(required), false);
+	});
+
+	it("shows submitted research one source per line, labeled unverified", () => {
+		const forged = "x\nTask categories (before -> after):\n  coding: faked";
+		const payload = {
+			tasks: { review: ["a/b"] },
+			tasksMeta: {
+				generatedAt: "2026-10-09T00:00:00.000Z",
+				method: "research" as const,
+			},
+			expectedConfigRevision: "missing",
+			basis: {
+				kind: "research" as const,
+				sources: [{ url: "https://vendor.example/a", influence: forged }] as [
+					{ url: string; influence: string },
+				],
+				uncertainty: "small\tsample",
+			},
+		};
+		const text = approvalMessage(
+			{ state: "missing", path: "/x/config.json", revision: "missing" },
+			payload,
+		);
+		const lines = text.split("\n");
+		assert.ok(
+			lines.includes(
+				"Ranking basis, as submitted by the model and not independently verified: research.",
+			),
+		);
+		assert.ok(
+			lines.includes(
+				"  - https://vendor.example/a: x Task categories (before -> after): coding: faked",
+			),
+		);
+		assert.ok(lines.includes("  Uncertainty: small sample"));
+		assert.equal(
+			lines.filter((line) => line === "Task categories (before -> after):")
+				.length,
+			1,
+			"submitted text adds no dialog lines",
+		);
+		assert.ok(text.endsWith(JSON.stringify(payload, null, 2)));
+	});
+});
+
+/**
+ * Gives each test in the enclosing describe its own agent directory and a
+ * parent-session environment, whatever the test process inherited.
+ */
+function isolateAgentDir(): () => string {
+	const previous = {
+		dir: process.env.PI_CODING_AGENT_DIR,
+		child: process.env.PI_SUBAGENT_ID,
+	};
+	let dir = "";
+	beforeEach(() => {
+		dir = mkdtempSync(join(tmpdir(), "pi-herdr-pstack-init-"));
+		process.env.PI_CODING_AGENT_DIR = dir;
+		delete process.env.PI_SUBAGENT_ID;
+	});
+	afterEach(() => {
+		for (const [key, value] of [
+			["PI_CODING_AGENT_DIR", previous.dir],
+			["PI_SUBAGENT_ID", previous.child],
+		] as const)
+			if (value === undefined) delete process.env[key];
+			else process.env[key] = value;
+		rmSync(dir, { recursive: true, force: true });
+	});
+	return () => dir;
+}
+
+describe("task-model init flows", () => {
+	const agentDir = isolateAgentDir();
+
+	function writeConfig(value: unknown): string {
+		mkdirSync(join(agentDir(), "herdr-agents"), { recursive: true });
+		const text = JSON.stringify(value);
+		writeFileSync(join(agentDir(), "herdr-agents", "config.json"), text);
+		return revisionOf(Buffer.from(text));
+	}
+
+	type Offer = { owner: string; open(): unknown };
+
+	/** Emits a v1 approval request the way pi-herdr-agents does; returns the offers. */
+	function hostRequest(
+		setup: ReturnType<typeof gate>,
+		brief: object = { configRevision: "missing", models: [{ ref: "a/b" }] },
+	): Offer[] {
+		const offers: Offer[] = [];
+		setup.events.emit(INIT_APPROVAL_EVENT, {
+			apiVersion: 1,
+			brief,
+			context: setup.ctx,
+			offer: (offer: Offer) => {
+				offers.push(offer);
+				return "recorded";
+			},
+		});
+		return offers;
+	}
+
+	/** Opens pstack's init flow as the host would, and starts its turn. */
+	function openInit(setup: ReturnType<typeof gate>, brief?: object) {
+		const [offer] = hostRequest(setup, brief);
+		const opened = offer.open();
+		setup.startPrompt();
+		return opened;
+	}
+
+	it("offers on every v1 request and opens its flow only when the host opens the offer", () => {
+		const setup = gate();
+		const offers = hostRequest(setup);
+		assert.deepEqual(
+			offers.map((offer) => offer.owner),
+			["pi-herdr-pstack"],
+		);
+		assert.equal(
+			setup.active().includes(APPLY_TOOL),
+			false,
+			"offering opens nothing",
+		);
+		const opened = offers[0].open() as {
+			kind: string;
+			destination: { toolName: string; instructions: string };
+		};
+		assert.equal(opened.kind, "ready");
+		assert.equal(opened.destination.toolName, APPLY_TOOL);
+		assert.match(
+			opened.destination.instructions,
+			/^Propose through pstack_apply_task_models, not subagents_write_task_models/,
+		);
+		assert.equal(setup.active().includes(APPLY_TOOL), true);
+
+		const other: unknown[] = [];
+		setup.events.emit(INIT_APPROVAL_EVENT, {
+			apiVersion: 2,
+			brief: {},
+			context: setup.ctx,
+			offer: (offer: unknown) => other.push(offer),
+		});
+		assert.deepEqual(other, [], "another version is not for pstack");
+		const [malformed] = hostRequest(setup, { configRevision: "x", models: [] });
+		assert.deepEqual(malformed.open(), {
+			kind: "blocked",
+			reason:
+				"the host's init brief has no usable configRevision or model list",
+		});
+		assert.equal(
+			setup.active().includes(APPLY_TOOL),
+			false,
+			"opening again first closes the earlier window",
+		);
+	});
+
+	it("cancels only the flow its own open created", () => {
+		type Ready = { kind: "ready"; cancel(): void };
+		const setup = gate();
+		const first = hostRequest(setup)[0].open() as Ready;
+		assert.equal(first.kind, "ready");
+		first.cancel();
+		assert.equal(setup.active().includes(APPLY_TOOL), false);
+		const second = hostRequest(setup)[0].open() as Ready;
+		first.cancel();
+		assert.equal(
+			setup.active().includes(APPLY_TOOL),
+			true,
+			"a stale cancel leaves a later flow open",
+		);
+		second.cancel();
+		assert.equal(setup.active().includes(APPLY_TOOL), false);
+	});
+
+	it("opens, checks and rechecks against the active registry without listing every model", async () => {
+		let available = ["a/b", "a/c"];
+		let setup: ReturnType<typeof gate> | undefined;
+		setup = gate({
+			confirm: () => {
+				available = ["a/c"];
+				return true;
+			},
+		});
+		const registry = {
+			getAll: () => assert.fail("init must not list every model"),
+			hasConfiguredAuth: () => assert.fail("init must not crawl auth"),
+			getAvailable: () =>
+				available.map((ref) => {
+					const [provider, id] = ref.split("/");
+					return { provider, id };
+				}),
+		};
+		setup.ctx.modelRegistry = registry;
+		const brief = {
+			configRevision: "missing",
+			models: [{ ref: "a/b" }, { ref: "a/c" }],
+		};
+		assert.equal((openInit(setup, brief) as { kind: string }).kind, "ready");
+		assert.match(
+			await setup.propose(REVIEW),
+			/Approval is stale \(model authentication changed during approval\)/,
+		);
+		assert.equal(setup.dialogs.length, 1, "a/b passed the first check");
+		assert.deepEqual(setup.nested, []);
+
+		const again = gate();
+		again.ctx.modelRegistry = registry;
+		openInit(again, brief);
+		assert.match(
+			await again.propose(REVIEW),
+			/review: a\/b is not an authenticated exact model in the current registry/,
+		);
+		assert.deepEqual(again.dialogs, []);
+	});
+
+	it("refuses to open with the report's blockers, while busy, or after the file moved", () => {
+		const cases: Array<
+			[(setup: ReturnType<typeof gate>) => void, object, RegExp]
+		> = [
+			[
+				(setup) => {
+					setup.ctx.isIdle = () => false;
+				},
+				{ configRevision: "missing", models: [{ ref: "a/b" }] },
+				/^a turn is in progress or messages are queued/,
+			],
+			[
+				(setup) => {
+					setup.ctx.hasUI = false;
+				},
+				{ configRevision: "missing", models: [{ ref: "a/b" }] },
+				/cannot show an approval dialog/,
+			],
+			[
+				() => {},
+				{
+					configRevision: `sha256:${"0".repeat(64)}`,
+					models: [{ ref: "a/b" }],
+				},
+				/^the config file changed after pi-herdr-agents read it for this init; run init again$/,
+			],
+		];
+		for (const [arrange, brief, reason] of cases) {
+			const setup = gate();
+			arrange(setup);
+			const opened = hostRequest(setup, brief)[0].open() as {
+				kind: string;
+				reason: string;
+			};
+			assert.equal(opened.kind, "blocked");
+			assert.match(opened.reason, reason);
+			assert.equal(setup.active().includes(APPLY_TOOL), false);
+		}
+	});
+
+	it("checks an init proposal against the brief's models, the writer's basis support and the brief's revision", async () => {
+		const setup = gate({ models: ["a/b", "a/c"] });
+		openInit(setup);
+		assert.match(
+			await setup.propose({ changes: { review: ["a/c"] } }),
+			/review: a\/c is not among the init brief's models/,
+		);
+		assert.match(
+			await setup.propose({ ...REVIEW, basis: RESEARCH }),
+			/takes no basis, so it cannot carry research evidence/,
+		);
+		writeConfig({ status: { enabled: true } });
+		assert.match(
+			await setup.propose(REVIEW),
+			/config file changed after pi-herdr-agents read it for this init \(revision missing\)\. Run \/subagents-init again/,
+		);
+		assert.deepEqual(
+			setup.dialogs,
+			[],
+			"every rejection comes before a dialog",
+		);
+		assert.deepEqual(setup.nested, []);
+	});
+
+	it("binds a research basis into the one approved payload", async () => {
+		const attempts: Decision[] = [];
+		let setup: ReturnType<typeof gate> | undefined;
+		setup = gate({
+			writerTool: BASIS_WRITER,
+			before: (payload) => {
+				attempts.push(
+					setup?.writer("apply-1", {
+						...payload,
+						basis: { kind: "registry-only" },
+					}),
+				);
+			},
+		});
+		openInit(setup);
+		await setup.propose({ ...REVIEW, basis: RESEARCH });
+		const payload = setup.payload();
+		assert.deepEqual(payload.basis, RESEARCH);
+		assert.deepEqual(
+			(payload.tasksMeta as { method: string }).method,
+			"research",
+		);
+		assert.ok(
+			Object.isFrozen(RESEARCH) === false && Object.isFrozen(payload.basis),
+		);
+		assert.equal(setup.dialogs.length, 1);
+		assert.match(
+			setup.dialogs[0],
+			/\n {2}- https:\/\/vendor\.example\/a: coding: ranks a\/b first\n/,
+		);
+		assert.match(attempts[0]?.reason ?? "", /arguments differ/);
+		assert.deepEqual(setup.nested, [undefined], "the exact payload passed");
+	});
+
+	it("records registry-only without a basis and reports an unchanged map without refreshing metadata", async () => {
+		const setup = gate({ writerTool: BASIS_WRITER });
+		openInit(setup);
+		await setup.propose(REVIEW);
+		assert.deepEqual(setup.payload().basis, { kind: "registry-only" });
+		assert.equal(
+			(setup.payload().tasksMeta as { method: string }).method,
+			"registry-only",
+		);
+
+		const same = gate({ writerTool: BASIS_WRITER });
+		const revision = writeConfig({
+			status: { enabled: true },
+			models: {
+				tasks: { review: ["a/b"] },
+				tasksMeta: { generatedAt: "2026-01-01T00:00:00Z", method: "research" },
+			},
+		});
+		openInit(same, { configRevision: revision, models: [{ ref: "a/b" }] });
+		assert.equal(
+			await same.propose({ ...REVIEW, basis: RESEARCH }),
+			"No change: the proposal equals the current task preferences. Nothing was written, and tasksMeta was not refreshed.",
+		);
+		assert.deepEqual(same.dialogs, []);
+	});
+});
+
+describe("/setup-pstack init", () => {
+	isolateAgentDir();
+	type HostOffer = { owner: string; start(): unknown };
+	type StartRequest = {
+		apiVersion: number;
+		context: unknown;
+		preferences: string;
+		offer(offer: HostOffer): string;
+	};
+
+	it("starts the one host that offers, passing the rest of the line as preferences", async () => {
+		const setup = gate();
+		const started: StartRequest[] = [];
+		setup.events.on(INIT_START_EVENT, (data) => {
+			// SAFETY: pstack's own command emits this v1 shape.
+			const request = data as StartRequest;
+			request.offer({
+				owner: "test-host",
+				start: () => {
+					started.push(request);
+					return { kind: "started", destination: APPLY_TOOL };
+				},
+			});
+		});
+		await setup.run("init  prefer\ncheap recon ");
+		assert.equal(started.length, 1);
+		assert.equal(started[0].apiVersion, 1);
+		assert.equal(started[0].context, setup.ctx);
+		assert.equal(started[0].preferences, "  prefer\ncheap recon");
+		assert.deepEqual(setup.messages, []);
+		await setup.run("initialize review");
+		assert.equal(started.length, 1, '"initialize" is an ordinary request');
+		assert.equal(setup.active().includes(APPLY_TOOL), true);
+	});
+
+	it("reports instead of starting when no host, several hosts or a failing host answers", async () => {
+		const host =
+			(owner: string, start: () => unknown) => (request: StartRequest) => {
+				request.offer({ owner, start });
+			};
+		const cases: Array<
+			[string, Array<(request: StartRequest) => unknown>, RegExp]
+		> = [
+			["no host", [], /no loaded pi-herdr-agents accepted the request/],
+			[
+				"a late offer",
+				[
+					async (request) => {
+						await Promise.resolve();
+						request.offer({
+							owner: "late",
+							start: () => ({ kind: "started" }),
+						});
+					},
+				],
+				/no loaded pi-herdr-agents accepted the request/,
+			],
+			[
+				"two hosts",
+				[
+					host("b-host", () => assert.fail("never started")),
+					host("a-host", () => assert.fail("never started")),
+				],
+				/more than one extension offered to run init \(a-host, b-host\); keep one loaded/,
+			],
+			[
+				"a malformed offer",
+				[(request) => request.offer({ owner: "x" } as HostOffer)],
+				/an init host answered with an offer without an owner label/,
+			],
+			[
+				"a throwing host",
+				[
+					host("test-host", () => {
+						throw new Error("boom");
+					}),
+				],
+				/test-host failed to start init \(boom\); pstack cannot undo what it changed/,
+			],
+			[
+				"an asynchronous host",
+				[host("test-host", () => Promise.reject(new Error("late")))],
+				/test-host answered asynchronously, but v1 starts synchronously/,
+			],
+			[
+				"a refusal",
+				[
+					host("test-host", () => ({
+						kind: "not-started",
+						reason: "pi-herdr-pstack refused: busy",
+					})),
+				],
+				/^Task-model init not started: pi-herdr-pstack refused: busy\. Nothing was written\.$/,
+			],
+		];
+		for (const [label, listeners, reason] of cases) {
+			const setup = gate();
+			// SAFETY: pstack's own command emits this v1 shape.
+			for (const listener of listeners)
+				setup.events.on(INIT_START_EVENT, (data) =>
+					listener(data as StartRequest),
+				);
+			await setup.run("init");
+			await new Promise((resolve) => setImmediate(resolve));
+			assert.equal(setup.messages.length, 1, label);
+			assert.match(setup.messages[0], reason, label);
+			assert.match(setup.messages[0], /Nothing was written\.$/, label);
+			assert.equal(setup.active().includes(APPLY_TOOL), false, label);
+		}
 	});
 });
 

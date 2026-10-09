@@ -126,10 +126,11 @@ sandboxed adversary.
 
 **While pstack is loaded, every `subagents_write_task_models` call is refused
 by default**, in every run, whether or not a setup flow is open. That includes
-pi-herdr-agents' `/subagents-init`, whose prompt has the model call the writer
-directly, any direct model call and any call relayed through another tool. The
-block reason names `/setup-pstack <request>` as the replacement. Uninstall or
-disable pstack to use `/subagents-init`.
+any direct model call and any call relayed through another tool. It also
+includes the writer call an older host's `/subagents-init` prompt asks for; a
+host with the task-model init events sends its draft to pstack's flow instead
+(see below). The block reason names `/setup-pstack <request>` and
+`/subagents-init`.
 
 The sole exception is checked in pstack's `tool_call` handler: a nested call
 whose `parentToolCallId` strictly equals the tool-call ID of a pstack apply call
@@ -148,18 +149,91 @@ window, such as a report command, a reload or a session replacement, clears
 the approval or leaves the call to a fresh instance without one.
 
 The apply tool itself must be called directly by the model; a call from another
-tool is blocked. `/setup-pstack <request>` activates it for the next run that
-starts and closes that window when the run settles, after one dialog, or at
-session start, tree navigation or shutdown. The window is a convenience: if
-another extension delays or consumes the setup prompt, the run that starts
-first may make the one proposal instead, and the dialog still shows the exact
-payload. The approval dialog is the gate.
+tool is blocked. `/setup-pstack <request>` activates it for the run its own
+prompt starts and closes that window when the run settles, after one dialog,
+or at session start, tree navigation or shutdown. Opening requires a selected
+model. The window follows its prompt through Pi's events: Pi hands a command's
+prompt to `input` handlers (source `"extension"`), then checks the model and
+its auth, then emits `before_agent_start` and `agent_start`. Any other input,
+or a run that skipped those steps (such as a custom message that triggers a
+turn), closes a window whose prompt has not started, so a prompt Pi rejected
+or another extension consumed leaves nothing for a later request. Input during
+the window's own run is a steer or follow-up and keeps it. Two cases remain:
+if an input handler that runs before pstack's consumes the prompt, pstack never
+sees it, and the next prompt from another extension may take the window; and
+Pi runs asynchronous `before_agent_start` handlers before `agent_start`, so a
+run triggered in that gap may too. The window is a convenience either way, and
+the dialog still shows the exact payload. The approval dialog is the gate.
 
 Pi-herdr-agents does not expose the writer in child sessions, so pstack in a
 child changes nothing.
 
 Results are judged from the saved file because a later `tool_result` handler
 can mark a completed write as an error.
+
+## Task-model init with pi-herdr-agents
+
+pstack takes part in `/subagents-init` through two public pi-herdr-agents
+events, version 1, without importing host code:
+
+- On `pi-herdr-subagents:task-models:init:approval:v1`, pstack offers as
+  `pi-herdr-pstack` before any check. When the host opens that offer, pstack
+  applies the same apply blockers, idle check and selected-model check as
+  `/setup-pstack <request>`, with the brief's models standing in for the
+  report's model list; it builds no report. It checks that the config still has
+  the brief's `configRevision`, opens its apply window with an init origin, and
+  returns its tool, its instructions and a `cancel` that closes that window
+  only. The host writes the prompt, and calls `cancel` when it does not hand
+  the prompt to Pi (an inactive tool, or `sendUserMessage` throwing). A prompt
+  Pi rejects later, such as one whose selected model has no configured auth,
+  is handled by the window's event tracking above.
+- `/setup-pstack init [preferences]` emits
+  `pi-herdr-subagents:task-models:init:start:v1` and starts the host only when
+  exactly one host offered. No host means the alias is unsupported. More than
+  one host, an invalid offer, a throw or an asynchronous answer stops it; none
+  of these writes anything.
+
+An init proposal must use refs that are both in the host's brief and in the
+active registry's available models now (`modelRegistry.getAvailable()`, the
+same source as the brief), and it is refused when the file's revision differs
+from the brief's. The post-dialog authentication recheck reads the same
+source. Init never lists every registered model with `getAll`; the report and
+explicit change flows still do, with `hasConfiguredAuth`. The writer gate, canonical payload, parent call check, one-use
+approval, post-dialog rechecks and reconciliation are unchanged. The approval
+event itself authorizes nothing.
+
+The optional ranking `basis` uses pi-herdr-agents' writer field of the same
+name and shape. pstack detects that field from the writer's public schema. With
+it, the basis is part of the exact approved payload, so any change to it
+fails as an argument mismatch. Without it, pstack refuses research proposals
+and sends registry-only payloads without a basis.
+
+Pi's event bus swallows listener exceptions, so a pstack listener that failed
+before offering would look absent to the host. The host would then prompt for
+its direct writer, and the writer gate would refuse that call.
+
+Verification status: the host side is uncommitted work on pi-herdr-agents
+`f182ea592c666eaca358a4fe6a13b886af0b1c98`, not a published release, and no
+published version of either package supports these events yet. With that
+working tree as `PI_HERDR_AGENTS_HOST`, the real Pi 1.0.3 SDK setup suite
+passed with a scripted provider, with the host loaded before and after pstack.
+It covered both commands, a research basis, refusals, two approval offers,
+reload and a new session, pack-only and host-only sessions, a registry whose
+`getAll` throws, and init with no selected model or with a selected model that
+has no configured auth, followed by an unrelated request.
+
+On installed Pi 1.1.0, a command smoke over RPC loaded both source working
+trees as separate packages with a scripted provider and test-owned agent
+directories. It passed `/subagents-init` and `/setup-pstack init` in both load
+orders, a declined dialog and a submitted research basis: each showed one
+dialog, wrote nothing before consent and at most one nested writer call after
+it, preserved `models.default`, agent preferences and an unrelated setting,
+and did not save the basis. It also passed a direct writer call and an apply
+call without a flow (both refused, no dialog), an external config edit during
+the dialog (approval stale, no writer dispatched, edit preserved), and
+`/setup-pstack init` without a host (refused, no prompt, no write). This is
+not a TUI check. Scripted providers prove routing and the gate, not model
+research quality or honesty.
 
 ## Child-context signal
 

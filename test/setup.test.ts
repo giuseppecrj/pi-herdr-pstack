@@ -73,6 +73,42 @@ function confirmCalls(pi: SdkPi) {
 	return pi.uiCalls.filter((call) => call.method === "confirm");
 }
 
+function firstUserText(pi: SdkPi): string {
+	const message = pi.session.messages.find((entry) => entry.role === "user");
+	assert.ok(message, "a prompt was sent");
+	const { content } = message;
+	return typeof content === "string"
+		? content
+		: content.map((part) => (part.type === "text" ? part.text : "")).join("");
+}
+
+/** The text of one user message; negative indexes count from the end. */
+function userTextAt(pi: SdkPi, index: number): string {
+	const message = pi.session.messages
+		.filter((entry) => entry.role === "user")
+		.at(index);
+	assert.ok(message, "a prompt was sent");
+	const { content } = message;
+	return typeof content === "string"
+		? content
+		: content.map((part) => (part.type === "text" ? part.text : "")).join("");
+}
+
+function initBrief(pi: SdkPi) {
+	const json = firstUserText(pi).match(/```json\n([\s\S]*?)\n```/);
+	assert.ok(json, "the prompt carries the registry brief");
+	return JSON.parse(json[1]);
+}
+
+function dialogPayload(pi: SdkPi, index = 0) {
+	const [, message] = confirmCalls(pi)[index].args as [string, string];
+	const marker = `Exact ${WRITER} arguments:\n`;
+	return {
+		message,
+		payload: JSON.parse(message.slice(message.indexOf(marker) + marker.length)),
+	};
+}
+
 /** The guard's refusal of a writer call, with its pointer to /setup-pstack. */
 const BLOCKED = /pi-herdr-pstack blocked subagents_write_task_models: /;
 const NO_APPROVAL = /no approved \/setup-pstack write is in progress/;
@@ -359,7 +395,9 @@ describe(
 						"tasks",
 						"tasksMeta",
 						"expectedConfigRevision",
+						"basis",
 					]);
+					assert.deepEqual(payload.basis, { kind: "registry-only" });
 					assert.equal(payload.expectedConfigRevision, sha(BASE_TEXT));
 					assert.deepEqual(payload.tasks, {
 						coding: ["faux/faux-1"],
@@ -1329,8 +1367,7 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 
 	/**
 	 * Every writer call in the session so far was refused before the host ran
-	 * it. A run that claimed a displaced setup window may propose once, but its
-	 * dialog is declined here.
+	 * it, and no proposal reached a dialog unless `dialogs` says so.
 	 */
 	function assertNothingWritten(
 		pi: SdkPi,
@@ -1373,27 +1410,31 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 		);
 	});
 
-	it("refuses the host's /subagents-init write with the /setup-pstack pointer", async () => {
+	it("routes /subagents-init through the approval flow and still refuses a direct write in that run", async () => {
 		const executions = writerExecutions();
 		await withHost(
 			() => true,
 			async (pi) => {
-				pi.armToolCall(WRITER, RAW);
+				applyThenRaw(pi);
 				await pi.prompt("/subagents-init prefer faux-2");
-				const prompt = pi.session.messages.find(
-					(message) => message.role === "user",
-				);
 				assert.match(
-					JSON.stringify(prompt?.content),
-					/call subagents_write_task_models/,
-					"the host's own init prompt ran",
+					firstUserText(pi),
+					/Propose through pstack_apply_task_models/,
 				);
-				const [result] = pi.toolResults(WRITER);
-				assertBlocked(result.text);
-				assert.match(result.text, /\/subagents-init, are refused/);
-				assertNothingWritten(pi, executions);
+				const [apply, again] = pi.toolResults(APPLY_TOOL);
+				assert.match(apply.text, /Verified the saved file/);
+				assert.equal(again.isError, true);
+				const [direct] = pi.toolResults(WRITER);
+				assertBlocked(direct.text);
+				assert.ok(
+					direct.text.includes("/subagents-init (also /setup-pstack init)"),
+				);
+				assertBlocked(pi.toolResults("test_relay")[0].text);
+				assert.equal(confirmCalls(pi).length, 1);
+				assert.equal(executions.count(), 1, "only the approved write ran");
+				await assertWriterBlocked(pi);
 			},
-			{ extensions: [executions.factory] },
+			{ extensions: [relayTool, executions.factory] },
 		);
 	});
 
@@ -1453,7 +1494,7 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 		);
 	});
 
-	it("blocks writes in a run that displaced a held setup prompt, across a reload, and in the late setup run", async () => {
+	it("closes a held setup prompt's window for the run that displaced it, across a reload, and in the late setup run", async () => {
 		let release: () => void = () => {};
 		const gate = new Promise<void>((resolve) => {
 			release = resolve;
@@ -1468,8 +1509,8 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 			() => false,
 			async (pi) => {
 				await pi.session.prompt("/setup-pstack review");
-				// The setup prompt waits in an input handler; another prompt runs first
-				// and claims the apply window, so its one proposal reaches the dialog.
+				// The setup prompt waits in an input handler; another prompt's input
+				// arrives first and closes the window, so its proposal finds none.
 				rawRelayApply(pi);
 				await pi.prompt("an unrelated request");
 				assert.equal(pi.toolResults(WRITER).length, 1);
@@ -1481,14 +1522,14 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 					await pi.idle();
 				await pi.idle();
 				assert.equal(pi.toolResults(WRITER).length, 2, "the late run wrote");
-				assertNothingWritten(pi, executions, 1);
+				assertNothingWritten(pi, executions);
 				await assertWriterBlocked(pi);
 			},
 			{ extensions: [holdSetupInput, relayTool, executions.factory] },
 		);
 	});
 
-	it("blocks writes in a custom-message run after a consumed setup prompt and a reload", async () => {
+	it("closes a consumed setup prompt's window for a custom-message run, before and after a reload", async () => {
 		const executions = writerExecutions();
 		await withHost(
 			() => false,
@@ -1505,10 +1546,424 @@ describe("the writer gate holds in every other run shape", needsHost, () => {
 					await pi.idle();
 				}
 				assert.equal(pi.toolResults(WRITER).length, 2);
-				// The first triggered run claimed the window; the reload closed it.
-				assertNothingWritten(pi, executions, 1);
+				// The triggered run skipped input and before_agent_start, so it is not
+				// the setup prompt's run: its agent_start closed the window.
+				assertNothingWritten(pi, executions);
 			},
 			{ extensions: [consumeSetupPrompt, relayTool, executions.factory] },
 		);
 	});
+});
+
+const RESEARCH_BASIS = {
+	kind: "research",
+	sources: [
+		{
+			url: "https://vendor.example/faux-2-evals",
+			influence: "review: faux-2 leads faux-1 on the vendor's review suite",
+		},
+	],
+	uncertainty: "one vendor source; no independent comparison found",
+};
+
+describe("one-command task-model init", needsHost, () => {
+	const orders: Array<[string, Partial<SdkOptions>]> = [
+		["host loaded after pstack", {}],
+		[
+			"host loaded before pstack",
+			{ packages: [], packagesBefore: [HOST ?? ""] },
+		],
+	];
+	const commands = [
+		"/subagents-init prefer faux-2 for review",
+		"/setup-pstack init prefer faux-2 for review",
+	];
+	for (const [order, packages] of orders)
+		for (const command of commands)
+			it(`${command.split(" ")[0]} ${command.includes("setup-pstack") ? "init " : ""}drafts from the host brief and writes once after approval (${order})`, async () => {
+				const executions = writerExecutions();
+				await withHost(
+					() => true,
+					async (pi) => {
+						pi.armToolCall(APPLY_TOOL, {
+							changes: { review: ["faux/faux-2"] },
+							basis: { kind: "registry-only" },
+						});
+						await pi.prompt(command);
+						const prompt = firstUserText(pi);
+						assert.match(prompt, /Complete registry brief: 2 models/);
+						assert.match(
+							prompt,
+							/\n\nPropose through pstack_apply_task_models, not subagents_write_task_models/,
+						);
+						assert.doesNotMatch(
+							prompt,
+							/call subagents_write_task_models with the reviewed draft/i,
+						);
+						const brief = initBrief(pi);
+						assert.equal(brief.operatorPreferences, "prefer faux-2 for review");
+						assert.equal(brief.configRevision, sha(BASE_TEXT));
+						assert.deepEqual(
+							brief.models.map((model: { ref: string }) => model.ref),
+							["faux/faux-1", "faux/faux-2"],
+						);
+						assert.deepEqual(brief.current.agents, BASE.models.agents);
+						assert.equal(brief.current.default, BASE.models.default);
+
+						assert.equal(confirmCalls(pi).length, 1);
+						const { payload } = dialogPayload(pi);
+						assert.equal(payload.expectedConfigRevision, sha(BASE_TEXT));
+						assert.deepEqual(payload.basis, { kind: "registry-only" });
+						assert.equal(payload.tasksMeta.method, "registry-only");
+						const [result] = pi.toolResults(APPLY_TOOL);
+						assert.match(result.text, /Verified the saved file/);
+						assert.equal(executions.count(), 1);
+						const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
+						assert.deepEqual(saved.models.tasks, {
+							...BASE.models.tasks,
+							review: ["faux/faux-2"],
+						});
+						assert.deepEqual(saved.models.tasksMeta, payload.tasksMeta);
+						assert.equal(saved.models.default, BASE.models.default);
+						assert.deepEqual(saved.models.agents, BASE.models.agents);
+						assert.deepEqual(saved.unrelated, BASE.unrelated);
+						assert.equal(Object.hasOwn(saved.models, "basis"), false);
+						assert.equal(
+							pi.session.getActiveToolNames().includes(APPLY_TOOL),
+							false,
+						);
+					},
+					{ ...packages, extensions: [executions.factory] },
+				);
+			});
+
+	it("saves research only with usable sources, rejecting an unusable claim before the dialog", async () => {
+		await withHost(
+			() => true,
+			async (pi) => {
+				pi.respond([
+					fauxAssistantMessage([
+						fauxToolCall(APPLY_TOOL, {
+							changes: { review: ["faux/faux-2"] },
+							basis: {
+								...RESEARCH_BASIS,
+								sources: [{ url: "ftp://vendor.example/x", influence: "x" }],
+							},
+						}),
+					]),
+					fauxAssistantMessage([
+						fauxToolCall(APPLY_TOOL, {
+							changes: { review: ["faux/faux-2"] },
+							basis: RESEARCH_BASIS,
+						}),
+					]),
+					fauxAssistantMessage("done"),
+				]);
+				await pi.prompt("/subagents-init");
+				const [rejected, saved] = pi.toolResults(APPLY_TOOL);
+				assert.equal(rejected.isError, true);
+				assert.match(
+					rejected.text,
+					/basis\.sources\[0\]\.url must be an http\(s\) URL with a host/,
+				);
+				assert.match(saved.text, /Verified the saved file/);
+				assert.equal(confirmCalls(pi).length, 1);
+				const { message, payload } = dialogPayload(pi);
+				assert.deepEqual(payload.basis, RESEARCH_BASIS);
+				assert.equal(payload.tasksMeta.method, "research");
+				assert.match(message, /not independently verified: research/);
+				assert.match(
+					message,
+					/ {2}- https:\/\/vendor\.example\/faux-2-evals: review: faux-2 leads/,
+				);
+				const file = JSON.parse(readFileSync(pi.configPath, "utf8"));
+				assert.equal(file.models.tasksMeta.method, "research");
+				assert.doesNotMatch(
+					readFileSync(pi.configPath, "utf8"),
+					/vendor\.example/,
+				);
+			},
+		);
+	});
+
+	it("refuses a proposal after the config changed under the brief, and a model the brief left out", async () => {
+		let configPath = "";
+		const changed = `${JSON.stringify({ ...BASE, extra: true })}\n`;
+		const editBeforeApply: ExtensionFactory = (api) => {
+			api.on("tool_call", (event) => {
+				if (event.toolName === APPLY_TOOL) writeFileSync(configPath, changed);
+			});
+		};
+		await withHost(
+			() => true,
+			async (pi) => {
+				configPath = pi.configPath;
+				pi.armToolCall(APPLY_TOOL, { changes: { review: ["faux/faux-2"] } });
+				await pi.prompt("/subagents-init");
+				const [result] = pi.toolResults(APPLY_TOOL);
+				assert.equal(result.isError, true);
+				assert.match(
+					result.text,
+					/config file changed after pi-herdr-agents read it for this init/,
+				);
+				assert.deepEqual(confirmCalls(pi), []);
+				assert.equal(readFileSync(pi.configPath, "utf8"), changed);
+			},
+			{ extensions: [editBeforeApply] },
+		);
+		await withHost(
+			() => true,
+			async (pi) => {
+				pi.armToolCall(APPLY_TOOL, { changes: { review: ["noauth/model-x"] } });
+				await pi.prompt("/subagents-init");
+				assert.deepEqual(
+					initBrief(pi).models.map((model: { ref: string }) => model.ref),
+					["faux/faux-1", "faux/faux-2"],
+				);
+				assert.match(
+					pi.toolResults(APPLY_TOOL)[0].text,
+					/noauth\/model-x is not an authenticated exact model/,
+				);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+			},
+		);
+	});
+
+	it("refuses init when a second extension also offers approval, opening neither", async () => {
+		const competitor: ExtensionFactory = (api) => {
+			api.events.on(
+				"pi-herdr-subagents:task-models:init:approval:v1",
+				(request) => {
+					// SAFETY: the host emits this v1 shape.
+					(request as { offer(offer: unknown): void }).offer({
+						owner: "test-approval",
+						open: () => assert.fail("never opened"),
+					});
+				},
+			);
+		};
+		await withHost(
+			() => true,
+			async (pi) => {
+				await pi.prompt("/subagents-init");
+				assert.deepEqual(
+					pi.notifications().filter((text) => text.includes("init")),
+					[
+						"Task-model init not started: more than one extension offered to approve task-model writes (pi-herdr-pstack, test-approval); keep one loaded. Nothing was written.",
+					],
+				);
+				assert.equal(
+					pi.session.messages.some((message) => message.role === "user"),
+					false,
+				);
+				assert.equal(
+					pi.session.getActiveToolNames().includes(APPLY_TOOL),
+					false,
+				);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+			},
+			{ extensions: [competitor] },
+		);
+	});
+
+	it("answers once per request after a reload and a new session", async () => {
+		await withHost(
+			() => true,
+			async (pi) => {
+				await pi.session.reload();
+				await pi.newSession();
+				await pi.session.reload();
+				pi.armToolCall(APPLY_TOOL, { changes: { review: ["faux/faux-2"] } });
+				await pi.prompt("/setup-pstack init");
+				assert.deepEqual(
+					pi.notifications().filter((text) => text.includes("init")),
+					[],
+					"no stale listener made a second offer",
+				);
+				assert.match(
+					pi.toolResults(APPLY_TOOL)[0].text,
+					/Verified the saved file/,
+				);
+				assert.equal(confirmCalls(pi).length, 1);
+			},
+		);
+	});
+
+	it("reports the alias as unsupported without a host and writes nothing", async () => {
+		await withPi({ config: BASE_TEXT }, async (pi) => {
+			pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+			await pi.prompt("/setup-pstack init prefer faux-2");
+			assert.match(
+				lastReport(pi),
+				/^Task-model init not started: no loaded pi-herdr-agents accepted the request\..*Nothing was written\.$/s,
+			);
+			assert.deepEqual(pi.toolResults(APPLY_TOOL), []);
+			assert.equal(pi.session.getActiveToolNames().includes(APPLY_TOOL), false);
+			assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+		});
+	});
+
+	it("keeps the host's own writer flow, with revision and research basis, when pstack is absent", async () => {
+		await withHost(
+			() => true,
+			async (pi) => {
+				const revision = sha(BASE_TEXT);
+				pi.armToolCall(WRITER, {
+					tasks: { review: ["faux/faux-2"] },
+					tasksMeta: {
+						generatedAt: "2026-10-09T00:00:00Z",
+						method: "research",
+					},
+					expectedConfigRevision: revision,
+					basis: RESEARCH_BASIS,
+				});
+				await pi.prompt("/subagents-init prefer faux-2");
+				assert.match(
+					firstUserText(pi),
+					/call subagents_write_task_models with the reviewed draft/,
+				);
+				assert.equal(initBrief(pi).configRevision, revision);
+				const [result] = pi.toolResults(WRITER);
+				assert.equal(result.isError, false, result.text);
+				assert.match(result.text, /"basis": \{\n\s+"kind": "research"/);
+				const saved = JSON.parse(readFileSync(pi.configPath, "utf8"));
+				assert.deepEqual(saved.models.tasks, { review: ["faux/faux-2"] });
+				assert.equal(saved.models.tasksMeta.method, "research");
+				assert.equal(saved.models.default, BASE.models.default);
+				assert.equal(Object.hasOwn(saved.models, "basis"), false);
+			},
+			{ pack: false },
+		);
+	});
+});
+
+describe("init reads only the active registry", needsHost, () => {
+	it("drafts, approves and writes once through both commands while getAll throws, and explicit setup still reports", async () => {
+		const crawls: string[] = [];
+		let crawlable = false;
+		const noCrawl: ExtensionFactory = (api) => {
+			api.on("session_start", (_event, ctx) => {
+				const registry = ctx.modelRegistry;
+				const getAll = registry.getAll.bind(registry);
+				registry.getAll = () => {
+					if (crawlable) return getAll();
+					crawls.push(new Error("getAll").stack ?? "");
+					throw new Error("test: init must not crawl getAll");
+				};
+			});
+		};
+		const executions = writerExecutions();
+		await withHost(
+			() => true,
+			async (pi) => {
+				const changes = [["faux/faux-2"], ["faux/faux-1"]];
+				for (const [index, command] of [
+					"/subagents-init",
+					"/setup-pstack init",
+				].entries()) {
+					pi.armToolCall(APPLY_TOOL, {
+						changes: { review: changes[index] },
+						basis: { kind: "registry-only" },
+					});
+					await pi.prompt(command);
+					assert.deepEqual(
+						pi.notifications().filter((text) => text.includes("init")),
+						[],
+						command,
+					);
+					const result = pi.toolResults(APPLY_TOOL)[index];
+					assert.match(result.text, /Verified the saved file/, command);
+					assert.equal(confirmCalls(pi).length, index + 1, command);
+					assert.equal(executions.count(), index + 1, command);
+					assert.deepEqual(
+						JSON.parse(readFileSync(pi.configPath, "utf8")).models.tasks.review,
+						changes[index],
+					);
+				}
+				assert.deepEqual(crawls, [], "neither package crawled getAll");
+
+				crawlable = true;
+				pi.armToolCall(APPLY_TOOL, REVIEW_CHANGE);
+				await pi.prompt("/setup-pstack review");
+				assert.match(
+					userTextAt(pi, -1),
+					/\/setup-pstack opened change flow[\s\S]*2 authenticated exact model\(s\): faux\/faux-1, faux\/faux-2/,
+				);
+				assert.match(
+					pi.toolResults(APPLY_TOOL)[2].text,
+					/Verified the saved file/,
+				);
+				assert.equal(executions.count(), 3);
+			},
+			{ extensions: [noCrawl, executions.factory] },
+		);
+	});
+});
+
+describe("an init window never outlives its own prompt", needsHost, () => {
+	/** Sets the parent model without Pi's auth check, as a stale selection would be. */
+	function selectModel(pi: SdkPi, ref: string | undefined) {
+		const model = ref
+			? pi.session.modelRuntime
+					.getModels()
+					.find((entry) => `${entry.provider}/${entry.id}` === ref)
+			: undefined;
+		if (ref) assert.ok(model, ref);
+		// SAFETY: Pi reads an unset model as "No model selected" during preflight.
+		(pi.session.agent.state as { model: unknown }).model = model;
+	}
+
+	const commands = ["/subagents-init", "/setup-pstack init"];
+	for (const command of commands)
+		for (const [label, selected] of [
+			["no parent model is selected", undefined],
+			["the parent model has no configured auth", "noauth/model-x"],
+		] as const)
+			it(`${command} opens nothing a later request can use when ${label}`, async () => {
+				const executions = writerExecutions();
+				await withHost(
+					() => true,
+					async (pi) => {
+						selectModel(pi, selected);
+						await pi.prompt(command);
+						assert.equal(
+							pi.session.messages.some((message) => message.role === "user"),
+							false,
+							"no init run started",
+						);
+						const windowOpen = pi.session
+							.getActiveToolNames()
+							.includes(APPLY_TOOL);
+						if (selected) {
+							// Pi rejected the submitted prompt in its own preflight.
+							assert.match(
+								pi.errors.join("\n"),
+								/No API key found for "?noauth/,
+							);
+							assert.equal(windowOpen, true, "the window waits for its prompt");
+						} else {
+							const shown = command.startsWith("/setup-pstack")
+								? lastReport(pi)
+								: pi.notifications().join("\n");
+							assert.match(shown, /not started: no model is selected/);
+							assert.equal(windowOpen, false, "nothing opened");
+						}
+						await pi.session.setModel(pi.faux.getModel());
+						pi.armToolCall(APPLY_TOOL, {
+							changes: { review: ["faux/faux-2"] },
+						});
+						await pi.prompt("an unrelated request");
+						const [apply] = pi.toolResults(APPLY_TOOL);
+						assert.equal(apply?.isError, true);
+						assert.match(
+							apply.text,
+							/pstack_apply_task_models not found|No open \/setup-pstack change flow/,
+						);
+						assert.deepEqual(confirmCalls(pi), []);
+						assert.equal(executions.count(), 0);
+						assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+					},
+					{ extensions: [executions.factory] },
+				);
+			});
 });

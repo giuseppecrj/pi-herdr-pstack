@@ -43,6 +43,8 @@ export type SdkOptions = {
 	packages?: string[];
 	/** Package roots or extension files that load before pstack. */
 	packagesBefore?: string[];
+	/** `false` leaves pstack itself out, for host-only sessions. */
+	pack?: boolean;
 	/** Extra process environment for this session. */
 	env?: Record<string, string>;
 	/** Pi settings merged over the isolated defaults. */
@@ -138,7 +140,7 @@ export class SdkPi {
 		const settingsManager = SettingsManager.inMemory({
 			packages: [
 				...(options.packagesBefore ?? []),
-				PACK_ROOT,
+				...(options.pack === false ? [] : [PACK_ROOT]),
 				...(options.packages ?? []),
 			],
 			extensions: BUILTIN_EXTENSIONS,
