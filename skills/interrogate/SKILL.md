@@ -40,7 +40,7 @@ For each reviewer:
 - `model`: that reviewer's exact `provider/model-id`
 - do not grant write/edit tools
 
-If a model is rejected as unresolvable when you try to spawn the subagent, pick another authenticated model from the live catalog, choose the closest equivalent (prefer the highest-reasoning tier of the same family), spawn with it, and say so in the verdict. Do not block the review on the model issue.
+If a model is rejected as unresolvable when you try to spawn the subagent, pick another authenticated model from the live catalog, choose the closest equivalent (prefer the same family and reasoning tier), spawn with it, and say so in the verdict. Do not block the review on the model issue.
 
 ```json subagent
 {

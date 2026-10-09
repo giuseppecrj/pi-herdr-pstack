@@ -28,7 +28,7 @@ change.
 sibling path such as `../agents/comment-sicko.md` is relative to it.
 `test/fixtures/upstream-scope.json` records the scope and the status and
 SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
-`2cbf58508f40de470d7490b55c51d71241928fa2`. With `PSTACK_CURSOR_SOURCE` set,
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. With `PSTACK_CURSOR_SOURCE` set,
 `npm test` checks that the file list and every hash match the pin, that every
 top-level `pstack/` entry is classified, and that every file under
 `pstack/skills` at the pin is referenced by the inventory or a skill-provenance
@@ -53,12 +53,17 @@ table check until it gets a row here.
 | `pstack/agents/poteto-agent.md` | excluded: a named role; pstack ships no named roles (Wave 2: role removal) |
 | `pstack/docs/guide/**` (11 Markdown pages, 6 images) | excluded: under decision Q1 |
 
-No file under these roots is in the not-yet-carried state. At cursor/plugins
-`d0ef80d86795816da932a153458c5dbe192d294e` the file list is the same and
-`pstack/agents` is byte-identical. `df58112` (#511) changed
-`pstack/docs/guide/01-setup.md` and `04-design.md` (model and reasoning-budget
-wording), and both stay excluded under Q1. The pin does not move here; the
-fixture hashes move with the pin.
+No file under these roots is in the not-yet-carried state. The file list under
+`pstack/agents` and `pstack/docs` is unchanged from the previous pin
+`2cbf58508f40de470d7490b55c51d71241928fa2`. `1e56b29` (#509) and `df58112`
+(#511) sit between those pins. They change `pstack/docs/guide/01-setup.md` and
+`04-design.md` (model and reasoning-budget wording); both stay excluded under
+Q1. `pstack/agents` is byte-identical. `pstack/LICENSE` is unchanged
+(`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). No new
+or deleted file appeared under `pstack/skills`, `pstack/agents` or
+`pstack/docs`. Top-level `pstack/` entries are unchanged. Unscoped
+`pstack/README.md` and out-of-scope `pstack/.cursor-plugin/plugin.json`
+(0.15.13 to 0.15.15) changed and were not ported.
 
 ## Wave 1: moved role and package files
 
@@ -100,7 +105,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
 | mimir | https://github.com/casualjim/pi-mimir | `f07dd981f62c9c994a5d043ede67d6c63c721454` | `packages/pi-pstack/skills` |
-| cursor | https://github.com/cursor/plugins | `2cbf58508f40de470d7490b55c51d71241928fa2` | `pstack/skills` |
+| cursor | https://github.com/cursor/plugins | `ccb5507cec1546dc88135c1139c811e6c59115ba` | `pstack/skills` |
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
@@ -179,17 +184,17 @@ source and an explanation in its fixture.
 | `skills/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
 | `skills/{no-comments,teach}/SKILL.md` | mimir, Cursor as context | adapted |
 | `skills/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
-| `skills/poteto-help/**` (3 files) | Cursor `poteto-help/` at `2cbf58508f40de470d7490b55c51d71241928fa2` | adapted, re-authored for Pi from Cursor's structure |
+| `skills/poteto-help/**` (3 files) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
 
-`skills/poteto-help/SKILL.md` also adapts the one-time setup nudge from
-cursor/plugins `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d` (PR #509). That commit
-is later than the pin. The fixture still records the Cursor blob at
-`2cbf58508f40de470d7490b55c51d71241928fa2`, because each provenance fixture's
-`sources.cursor.commit` must equal the single cursor commit in
-`docs/skill-inventory.json`. The nudge asks once, when the answer depends on
-the six task categories and a `/setup-pstack` report does not already show
-them set, whether to run `/setup-pstack` (report only) or leave the categories
-as they are. A category counts as unset when the Config line ends with the
+`skills/poteto-help/SKILL.md` adapts the one-time setup nudge that landed in
+cursor/plugins `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d` (PR #509) and is now
+in the pin. The fixture records the Cursor blob at
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. The nudge asks once, when the
+answer depends on the six task categories and a `/setup-pstack` report does
+not already show them set, whether to run `/setup-pstack` (report only) or
+leave the categories as they are. The pin also changes the interrogate table
+row from "several models" to "different models". Cursor's Later line that
+every role keeps its default model is still uncopied. A category counts as unset when the Config line ends with the
 missing-file sentence, or when a present file's preference value is
 `(not set)`. Findings are not unset: the host trims a reference and both
 sides of `/` before it checks authentication, and the report cannot show
@@ -247,8 +252,9 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 
 Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
 added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
-the shared fan-out protocol. The package now ships 113 skill files: 49 copied,
-61 adapted and 3 new.
+the shared fan-out protocol. The package now ships 113 skill files: 48 copied,
+62 adapted and 3 new. The ccb5507 pin move re-adapted `blast-radius` (it was a
+mimir copy after reconcile) for the "more than one model" wording.
 
 The remaining upstream helper scripts stay excluded in `w2.json`, each
 disposition naming its replacement: `scripts/orch/*` (the Orchestrate playbook
@@ -266,8 +272,8 @@ in `w4-p.json`). No target was deferred to Wave 5, so every fixture under
 `planned W4` marker and interim "until it ships" clause from the hub, the base
 playbooks, `bugbot-triage.md`, `setup-pstack`, `poteto-help`, the six Wave 3
 files and the Wave 4 files that cited each other, and rewrote each route to name
-the workflow's real behavior and scope-down limits. `blast-radius` and
-`principle-prove-it-works` became byte-identical copies again.
+the workflow's real behavior and scope-down limits. `principle-prove-it-works` remains a byte-identical copy.
+`blast-radius` was a copy after reconcile; the ccb5507 pin move adapted it.
 
 The content test now exempts fenced code blocks from the placeholder-marker and
 model-name bans (inline code too for placeholder markers, and for model names
@@ -284,8 +290,8 @@ Judgment and prose synthesis (the how explainer, the why synthesizer, and
 reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
 with thinking at high or above. Reflect's tooling lens is a diversity seat.
 The hardest implementation changes go to that category or to the strongest
-exact catalog model with `thinking: xhigh`. The cursor pin stays
-`2cbf58508f40de470d7490b55c51d71241928fa2`. The host describes `architecture`
+exact catalog model with `thinking: xhigh`. The cursor pin is
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. The host describes `architecture`
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
@@ -300,9 +306,10 @@ relabeled context-isolated.
 
 cursor/plugins ships a user guide under `pstack/docs/guide/`: a `README.md`
 index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
-1,100 lines in all at `2cbf58508f40de470d7490b55c51d71241928fa2` and
-`d0ef80d86795816da932a153458c5dbe192d294e` (the parity-review checkout, later
-than the pin)) and six `images/*.jpg`. It walks a user from setup and prompting
+1,100 lines in all at the previous pin
+`2cbf58508f40de470d7490b55c51d71241928fa2`, at
+`d0ef80d86795816da932a153458c5dbe192d294e`, and at the current pin
+`ccb5507cec1546dc88135c1139c811e6c59115ba`) and six `images/*.jpg`. It walks a user from setup and prompting
 through design, verification, overnight runs and customization. It sits outside
 the pinned `pstack/skills` root and is deliberately not ported, adapted or
 packed.
@@ -321,11 +328,48 @@ shipped file links a guide page.
 
 Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
 operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
-sources still offer Origin; the cursor pin stays
-`2cbf58508f40de470d7490b55c51d71241928fa2`. The content test bans capitalized
+sources still offer Origin; the cursor pin is
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. The content test bans capitalized
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
+
+## Pin move: cursor/plugins `ccb5507`
+
+The cursor pin moved from `2cbf58508f40de470d7490b55c51d71241928fa2` to
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. The two commits in between that
+touch `pstack/` are `1e56b29` (#509, poteto-help setup nudge) and `df58112`
+(#511, drop Sol and retune default effort). The casualjim/pi-mimir pin stays
+`f07dd981f62c9c994a5d043ede67d6c63c721454`.
+
+Hand-ported, platform-neutral substance only:
+
+- `skills/blast-radius/SKILL.md`: "several models" became "more than one
+  model". Status is `adapted`; the destination equals the Cursor blob and is
+  no longer a mimir copy.
+- `skills/architect/references/runner-prompt.md`: "one of several runners"
+  became "one of the parallel runners".
+- `skills/poteto-help/SKILL.md`: the interrogate table says "different
+  models". The G5 setup nudge is now in the pin; the Pi mapping is unchanged.
+- `skills/interrogate/SKILL.md`: a rejected model prefers the same family and
+  reasoning tier. Seats still follow the live catalog, one family each.
+
+Documented skips (Cursor-only model defaults, rule file, budget ladder, or
+excluded scripts):
+
+- `architect/SKILL.md`, `arena/SKILL.md`, `how/SKILL.md`, `why/SKILL.md`,
+  `reflect/SKILL.md`, `poteto-mode/SKILL.md`: hardcoded Cursor slugs and the
+  default panel list (Opus `max` to `xhigh`, Sol dropped). This pack already
+  uses task categories and exact catalog diversity seats.
+- `setup-pstack/SKILL.md`: the budget ladder now treats `large` as the
+  default and `unlimited` as `max`. This pack has no ladder.
+- `poteto-mode/scripts/orch/orch.test.ts`: verifier label `sol` to `opus`.
+  The orch/ledger scripts stay excluded.
+- `pstack/docs/guide/01-setup.md` and `04-design.md`: excluded under Q1.
+- `pstack/README.md`: unscoped. `pstack/.cursor-plugin/plugin.json`:
+  out of scope. `pstack/LICENSE`: unchanged.
+
+No new agents or docs file is in the not-yet-carried state.
 
 ## Skipped: Benny
 

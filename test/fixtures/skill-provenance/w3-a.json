@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
 			"root": "pstack/skills"
 		}
 	},
@@ -30,17 +30,23 @@
 		},
 		{
 			"path": "skills/blast-radius/SKILL.md",
-			"sha256": "5f02db9101ccf26c20254718f0fcd5c2c7ac5d4292b0e0923d0944ac47237aff",
-			"status": "copied",
+			"sha256": "2e10745b97f5862323dcda3b29ca60d56b5c3c98e37020085d26b48efbe0a436",
+			"status": "adapted",
 			"sources": [
 				{
 					"source": "mimir",
 					"path": "blast-radius/SKILL.md",
 					"sha256": "5f02db9101ccf26c20254718f0fcd5c2c7ac5d4292b0e0923d0944ac47237aff",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "blast-radius/SKILL.md",
+					"sha256": "2e10745b97f5862323dcda3b29ca60d56b5c3c98e37020085d26b48efbe0a436",
+					"use": "context"
 				}
 			],
-			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line. W4 reconcile: the planned W4 markers and interim fallbacks for how, why and arena are retired now that they ship, restoring the upstream lines; the file is again a byte-identical copy."
+			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line. W4 reconcile: the planned W4 markers and interim fallbacks for how, why and arena are retired now that they ship, restoring the upstream lines; the file is again a byte-identical copy. Pin move to cursor/plugins ccb5507: step 6 now says 'more than one model' instead of 'several models', matching the Cursor wording. The file equals that Cursor blob and is no longer a copy of the mimir primary."
 		},
 		{
 			"path": "skills/correct/SKILL.md",
