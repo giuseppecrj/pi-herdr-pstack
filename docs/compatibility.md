@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.2.1` (full inventory, 51 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.3.0` (full inventory, 51 skills and 23 playbooks).
 
 ## Host baseline
 
@@ -14,21 +14,31 @@ used during the private wave experiments are gone.
 
 | Component | Tested revision |
 | --- | --- |
-| pi-herdr-agents | `f182ea592c666eaca358a4fe6a13b886af0b1c98` (published `3.0.3`) |
+| pi-herdr-agents | `1b6bacd0b5eecb6f83ffba1d5a5ee57a8b0fa944` (3.1.0 release candidate feature commit; published `3.0.3` is `f182ea592c666eaca358a4fe6a13b886af0b1c98`) |
 | pi-herdr-roles (coexistence) | `fc3383daaa839228cc9f703c2d99728684acfe07` |
-| Pi SDK and CLI | `1.0.3` (full checks); `1.1.0` (mode CLI checks) |
+| Pi SDK and CLI | `1.0.3` (full checks); `1.1.0` (mode and init CLI checks) |
+
+The peer range `>=3.0.0` keeps the report and explicit change flows working
+on hosts 3.0.x. Task-model init (`/setup-pstack init`, `/subagents-init`
+routed through pstack) requires pi-herdr-agents `>=3.1.0`; the range does not
+enforce that, and an older host leaves init unsupported.
+
+For 0.3.0, `npm run check` passed all 219 tests with no skips using the host
+and roles revisions above, the legacy host fixture, and all pinned upstream
+sources.
 
 For 0.2.1, `npm run check` passed all 189 tests with no skips on Node
-26.8.2, using the host and roles revisions above, the legacy host fixture,
-and all pinned upstream sources. The 20 mode tests also passed against
+26.8.2, using host `f182ea592c666eaca358a4fe6a13b886af0b1c98` (published
+3.0.3), the roles revision above, the legacy host fixture, and all pinned
+upstream sources. The 20 mode tests also passed against
 installed Pi 1.1.0 with test-owned agent directories and a scripted provider.
 These checks cover hub deduplication, compaction recovery, extension-message
 wakes, failed prompt preparation, and session transitions; they prove
 instruction delivery, not live-model adherence.
 
-A separate parent-owned real-Herdr smoke gate also passed both the task-form
-and explicit-enable paths on Pi 1.1.0 with the host revision above and a
-local scripted provider. Each parent request, including the actual child
+For 0.2.1, a separate parent-owned real-Herdr smoke gate also passed both
+the task-form and explicit-enable paths on Pi 1.1.0 with host
+`f182ea592c666eaca358a4fe6a13b886af0b1c98` and a local scripted provider. Each parent request, including the actual child
 completion wake, contained exactly one hub; each forked child inherited the
 parent's mode record but received no sticky reminder. These two focused
 checks are not a rerun of the historical G1 to G7 host/worktree suite.
@@ -212,18 +222,18 @@ Pi's event bus swallows listener exceptions, so a pstack listener that failed
 before offering would look absent to the host. The host would then prompt for
 its direct writer, and the writer gate would refuse that call.
 
-Verification status: the host side is uncommitted work on pi-herdr-agents
-`f182ea592c666eaca358a4fe6a13b886af0b1c98`, not a published release, and no
-published version of either package supports these events yet. With that
-working tree as `PI_HERDR_AGENTS_HOST`, the real Pi 1.0.3 SDK setup suite
+The host-side protocol is part of pi-herdr-agents `3.1.0`. Hosts before
+3.1.0 do not emit these events. Verification used host feature commit
+`1b6bacd0b5eecb6f83ffba1d5a5ee57a8b0fa944` as `PI_HERDR_AGENTS_HOST`.
+The real Pi 1.0.3 SDK setup suite
 passed with a scripted provider, with the host loaded before and after pstack.
 It covered both commands, a research basis, refusals, two approval offers,
 reload and a new session, pack-only and host-only sessions, a registry whose
 `getAll` throws, and init with no selected model or with a selected model that
 has no configured auth, followed by an unrelated request.
 
-On installed Pi 1.1.0, a command smoke over RPC loaded both source working
-trees as separate packages with a scripted provider and test-owned agent
+On installed Pi 1.1.0, a command smoke over RPC loaded both source checkouts
+as separate packages with a scripted provider and test-owned agent
 directories. It passed `/subagents-init` and `/setup-pstack init` in both load
 orders, a declined dialog and a submitted research basis: each showed one
 dialog, wrote nothing before consent and at most one nested writer call after

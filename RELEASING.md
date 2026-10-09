@@ -4,16 +4,22 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.2.1
+## Current state: 0.3.0
 
-The `0.2.1` release fixes sticky `/poteto-mode` guidance delivery. When its
-version commit reaches `main`, the detect step sees the previous public
-`0.2.0` manifest and the current `0.2.1`, sets `release=true`, and the workflow
-publishes `0.2.1`. The peer range stays `"pi-herdr-agents": ">=3.0.0"`, and
-the published `pi-herdr-agents@3.0.0` remains the peer baseline. This release
-was checked against published host `3.0.3` at
-`f182ea592c666eaca358a4fe6a13b886af0b1c98` (see
-[compatibility](docs/compatibility.md)).
+The `0.3.0` release adds `/setup-pstack init [preferences]` and routes
+`/subagents-init` drafts through pstack's exact-payload approval flow. When
+its version commit reaches `main`, the detect step sees the previous public
+`0.2.1` manifest and the current `0.3.0`, sets `release=true`, and the workflow
+publishes `0.3.0`.
+
+The peer range stays `"pi-herdr-agents": ">=3.0.0"` so the report and explicit
+change flows keep working on published hosts 3.0.x. The new init flow needs
+pi-herdr-agents `>=3.1.0` (the host release that adds the task-model init
+events); on an older host `/setup-pstack init` reports it is unsupported and
+writes nothing. The feature was tested against host feature commit
+`1b6bacd0b5eecb6f83ffba1d5a5ee57a8b0fa944` (host release candidate 3.1.0,
+see [compatibility](docs/compatibility.md)); publish pi-herdr-agents `3.1.0`
+before or together with this release.
 
 Before 0.1.0 the package was private with a prerelease version. While a
 package is private or its version is not a strict `major.minor.patch`, the
