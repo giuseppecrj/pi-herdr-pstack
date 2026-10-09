@@ -88,7 +88,7 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Settle types and module shape before code that crosses a function boundary | `/skill:architect` |
 | Get several attempts at one brief, merged into the best one | `/skill:arena` |
 | Run parallel checks over slices, or race workers | `/skill:swarm` |
-| Have several models review a diff and try to break it | `/skill:interrogate` |
+| Have different models review a diff and try to break it | `/skill:interrogate` |
 | Fix a bug test-first when a cheap local test exists | `/skill:tdd` |
 | Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` |
 | Strip comments before review, using a reviewer that didn't write them | `/skill:no-comments` |

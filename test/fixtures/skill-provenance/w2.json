@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
 			"root": "pstack/skills"
 		}
 	},
@@ -28,11 +28,11 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
 					"use": "context"
 				}
 			],
-			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries, Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required. W3 reconcile: the 24 principle summaries name their shipped leaves without markers and the preamble says to read the leaf in full before citing it; the availability section lists the W3 skills that ship; W3 interim clauses for benchmark-checklist, unslop, technical-writing and no-comments are retired, restoring the upstream trigger wording; adds the D6 routing line for typescript-best-practices (explicit-only) and the comment-sicko delegate as the worked bare-specialist example. W4 routes stay marked. W4 reconcile: every planned W4 marker and interim clause is retired. The availability section names all 51 skills and 23 playbooks and points at references/fan-out.md; triggers and playbook routes name each scope-down limit in one line (how/why fan-out and MCP-visible why investigators, exact-family seats with disclosed fallback, swarm worktrees, reflect session scope and approved backlog filing, recall, automate-me, the verification skills, make-bot-ui, gh-only babysit, explicit-request shipping, root-run autopilots, depth-1 orchestrate, worktree_list cleanup); the closing sentence says nothing in pstack lands PRs or removes worktrees without explicit authorization. Wave 4 fix round: children never launch further agents and hand delegation needs back to the root; the Shipping routes name gh-only access, one-shot watcher waits and merge-queue report-and-stop; the worktree-cleanup route states the macOS and xcrun condition for simulators. Sticky-mode context loading: activation now describes a short per-prompt checklist and automatic loading of the canonical hub only when its full text is absent from model context, including after compaction. Playbooks and references remain on demand, and off stops future automatic loading."
+			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries, Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required. W3 reconcile: the 24 principle summaries name their shipped leaves without markers and the preamble says to read the leaf in full before citing it; the availability section lists the W3 skills that ship; W3 interim clauses for benchmark-checklist, unslop, technical-writing and no-comments are retired, restoring the upstream trigger wording; adds the D6 routing line for typescript-best-practices (explicit-only) and the comment-sicko delegate as the worked bare-specialist example. W4 routes stay marked. W4 reconcile: every planned W4 marker and interim clause is retired. The availability section names all 51 skills and 23 playbooks and points at references/fan-out.md; triggers and playbook routes name each scope-down limit in one line (how/why fan-out and MCP-visible why investigators, exact-family seats with disclosed fallback, swarm worktrees, reflect session scope and approved backlog filing, recall, automate-me, the verification skills, make-bot-ui, gh-only babysit, explicit-request shipping, root-run autopilots, depth-1 orchestrate, worktree_list cleanup); the closing sentence says nothing in pstack lands PRs or removes worktrees without explicit authorization. Wave 4 fix round: children never launch further agents and hand delegation needs back to the root; the Shipping routes name gh-only access, one-shot watcher waits and merge-queue report-and-stop; the worktree-cleanup route states the macOS and xcrun condition for simulators. Sticky-mode context loading: activation now describes a short per-prompt checklist and automatic loading of the canonical hub only when its full text is absent from model context, including after compaction. Playbooks and references remain on demand, and off stops future automatic loading. Pin move to cursor/plugins ccb5507: Cursor's Task default slug bump (opus max to xhigh) was not copied; this hub still uses task categories and exact catalog models, with no hardcoded Cursor slugs."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autonomous-run.md",
@@ -288,7 +288,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
 					"use": "derived"
 				}
 			],
@@ -328,7 +328,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "404c0ef4a78e93451b2ab555ca532e7197b5cf87de29205b6f7109dbee5d9c4d",
+					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
 					"use": "derived"
 				}
 			],
@@ -374,11 +374,11 @@
 				{
 					"source": "cursor",
 					"path": "setup-pstack/SKILL.md",
-					"sha256": "125dd0c8f588782cfb271efae8f97a0719e43e79f56b3495c095f460bcee6389",
+					"sha256": "d61b47256a18155a81c8e5ef95e3cc6569ce8c18317c35c4dd9c8015cf68cb59",
 					"use": "primary"
 				}
 			],
-			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement. W3 reconcile: adds that /skill:no-comments launches its comment editor as a bare delegate, not a role. W4 reconcile: the create-verification-skill planned W4 clause is retired; setup names the skill when no harness exists and does not run it. G6: findings name unset categories the methodology launches (coding, recon, review, architecture). qa and docs are reported when configured; an unset one is not a finding. Task-model init revision: describes the init flow that /subagents-init and /setup-pstack init open, the optional ranking basis and its research rules, the init proposal checks and the no-change outcome, and names /subagents-init alongside /setup-pstack <request> as a way to change task models."
+			"explanation": "Substantially rewritten from the Cursor onboarding skill. Drops the Cursor rule file, model-budget ladder, per-role model map and aliases. Pin move to cursor/plugins ccb5507: the Cursor budget-ladder rewrite (large matches defaults, unlimited raises effort to max) was not copied, because this skill has no ladder. Keeps detection, current-state loading, validation against available models and the optional verification-skill check, now as guidance around the extension's code-built report on pi-herdr-agents shared task preferences. W2 runtime revision: describes the /setup-pstack change flow, where the extension validates one proposal, shows the complete conditional writer payload for explicit approval and verifies the saved file; direct skill use stays informational. W2 no-role amendment and review fixes: removes the poteto role and override lines, states that an explicit model argument (exact or task:<category>) wins over role, per-agent and default models, and reports post-dispatch outcomes from the saved file. W2 unconditional writer gate: states that every direct writer call, including /subagents-init, is refused while pstack is installed and names /setup-pstack <request> as the replacement. W3 reconcile: adds that /skill:no-comments launches its comment editor as a bare delegate, not a role. W4 reconcile: the create-verification-skill planned W4 clause is retired; setup names the skill when no harness exists and does not run it. G6: findings name unset categories the methodology launches (coding, recon, review, architecture). qa and docs are reported when configured; an unset one is not a finding. Task-model init revision: describes the init flow that /subagents-init and /setup-pstack init open, the optional ranking basis and its research rules, the init proposal checks and the no-change outcome, and names /subagents-init alongside /setup-pstack <request> as a way to change task models."
 		}
 	],
 	"planned": [],
@@ -401,7 +401,7 @@
 			"source": "mimir",
 			"path": "poteto-mode/scripts/orch/orch.test.ts",
 			"sha256": "174b86d21ff51ccd28d1a8c938cb2e0c6fa287b209d4ca6c03932fcb1b53372e",
-			"disposition": "Excluded: the Orchestrate playbook's own scheduler and task-ledger store. Replaced in W4 by playbooks/orchestrate.md as a depth-1 single-session coordinator: pi-herdr-agents supervision with a hand-kept file store under show-me-your-work append-only rules, not a duplicate engine.",
+			"disposition": "Excluded: the Orchestrate playbook's own scheduler and task-ledger store. Replaced in W4 by playbooks/orchestrate.md as a depth-1 single-session coordinator: pi-herdr-agents supervision with a hand-kept file store under show-me-your-work append-only rules, not a duplicate engine. Cursor's copy at ccb5507 only renamed a fixture verifier label from sol to opus; still not shipped.",
 			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
 		},
 		{

@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"description": "Upstream cursor/plugins pstack scope (decision Q6) and the status of every file under the in-scope roots other than skills at the cursor pin. skills is accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. See test/upstream-scope.test.ts and docs/provenance.md.",
 	"repository": "https://github.com/cursor/plugins",
-	"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+	"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
 	"root": "pstack",
 	"inScope": ["agents", "docs", "skills"],
 	"outOfScope": [
@@ -52,7 +52,7 @@
 		},
 		{
 			"path": "docs/guide/01-setup.md",
-			"sha256": "6d1f73090752058b0a42a23395a09b57ac50be4a4ad6bf8d85e22764b8ad1cb3",
+			"sha256": "86d0330f245d16254a2069955f993c15d96cf29cd1a73690a0164074b7ac1190",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
@@ -70,7 +70,7 @@
 		},
 		{
 			"path": "docs/guide/04-design.md",
-			"sha256": "333683f203fa9c5428002430834a04cc2bdcf6df4be6cb89f4145b92b304d700",
+			"sha256": "31f2abe6e9b29feafd1a9eece8f4fe21992f86b8c19ab2e9b5c11a20f36587e7",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},

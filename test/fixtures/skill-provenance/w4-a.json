@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "2cbf58508f40de470d7490b55c51d71241928fa2",
+			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
 			"root": "pstack/skills"
 		}
 	},
@@ -44,7 +44,7 @@
 		},
 		{
 			"path": "skills/architect/references/runner-prompt.md",
-			"sha256": "3c25296b217ed60e738262a6c69a931771f55b56452dfbc439efb105c10149bd",
+			"sha256": "25a0d0ee15eb6ce59a72d0f1170afb9c2ee8f1a8b41bbd4ff8638dd96e6300ac",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,9 +52,15 @@
 					"path": "architect/references/runner-prompt.md",
 					"sha256": "983bf2820cc14ed8ecab6e448e1033e5cfe6031967d0a9287b48c7fa9c33d925",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "architect/references/runner-prompt.md",
+					"sha256": "21dd5314aab778c5007228027a4591d97693fbec6ab86524037772b63f40948e",
+					"use": "context"
 				}
 			],
-			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The upstream `// TODO` pseudocode marker, once lowered to pass the placeholder ban, was restored at reconcile, when the content test exempted inline code. Per fan-out section 5, the 'git worktree when available, otherwise a per-runner subdirectory' fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one."
+			"explanation": "The relative rationale-template link became the backticked skill-relative references/rationale-template.md; six short principle names became full names (edit class 1). The upstream `// TODO` pseudocode marker, once lowered to pass the placeholder ban, was restored at reconcile, when the content test exempted inline code. Per fan-out section 5, the 'git worktree when available, otherwise a per-runner subdirectory' fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one. Pin move to cursor/plugins ccb5507: 'You are one of several runners' became 'You are one of the parallel runners', matching the Cursor wording. Hardcoded Cursor model defaults were not copied."
 		},
 		{
 			"path": "skills/architect/SKILL.md",
@@ -138,7 +144,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3). G6: the explainer seats (direct explain and synthesize) use task:architecture with thinking high or above, while explorers stay on task:recon. Before the complex explorers and the direct explainer, the parent follows the architecture shortlist preflight in delegation.md. Upstream how/SKILL.md (cursor/plugins d0ef80d) puts the explainer on the judgment/prose model and explorers on the code model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
+			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3). G6: the explainer seats (direct explain and synthesize) use task:architecture with thinking high or above, while explorers stay on task:recon. Before the complex explorers and the direct explainer, the parent follows the architecture shortlist preflight in delegation.md. Upstream how/SKILL.md (cursor/plugins d0ef80d and ccb5507) puts the explainer on the judgment/prose model and explorers on the code model; no model ids are copied. Cursor's explainer slug bump (opus max to xhigh) was not copied."
 		},
 		{
 			"path": "skills/interrogate/references/code-quality-review.md",
@@ -198,7 +204,7 @@
 		},
 		{
 			"path": "skills/interrogate/SKILL.md",
-			"sha256": "e58d484c2fd3786305f210d554ae7cb3ac914032dcb0d881963250c0379f7cac",
+			"sha256": "6f8f3a614f0a6b11bb7ee28ebd358834a53215b15b32bfcfaf9df7b08f735097",
 			"status": "adapted",
 			"sources": [
 				{
@@ -206,9 +212,15 @@
 					"path": "interrogate/SKILL.md",
 					"sha256": "a7f4bc0c55236e5fa9e8d8b0657e705066aa8982ae40b5d03b3adb06af84bf51",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "interrogate/SKILL.md",
+					"sha256": "2f7e570ec23791ed2e485a09c98ed0597c46035e2050b351b84d3dc760ddd71f",
+					"use": "context"
 				}
 			],
-			"explanation": "The configured interrogate-reviewers models, the inherit-parent default-model table, agent: poteto-agent and the one parallel subagent call became one bare subagent call per reviewer in one turn citing ../poteto-mode/references/fan-out.md, each reviewer a diversity seat on an exact provider/model-id of a distinct family, with references/reviewer-prompt.md verbatim as systemPrompt (fork: false) and its placeholder values in task, and one json subagent example; the rejected-model fallback no longer opens a separate PR to update the default table or treats inherit-parent and auto aliases specially (edit classes 2-3)."
+			"explanation": "The configured interrogate-reviewers models, the inherit-parent default-model table, agent: poteto-agent and the one parallel subagent call became one bare subagent call per reviewer in one turn citing ../poteto-mode/references/fan-out.md, each reviewer a diversity seat on an exact provider/model-id of a distinct family, with references/reviewer-prompt.md verbatim as systemPrompt (fork: false) and its placeholder values in task, and one json subagent example; the rejected-model fallback no longer opens a separate PR to update the default table or treats inherit-parent and auto aliases specially (edit classes 2-3). Pin move to cursor/plugins ccb5507: a rejected model prefers the same family and reasoning tier, not the highest-reasoning tier of that family. Cursor's A/B default table, dropped Sol slug and gpt-* family prefix were not copied; seats still follow the live catalog, one family each."
 		},
 		{
 			"path": "skills/reflect/references/divergent-reviewer.md",
@@ -480,7 +492,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "agent: poteto-agent and the configured why-investigators and why-synthesizer models with their inherit-parent defaults became bare subagent launches on task:recon with the delegation.md Investigator prompt as systemPrompt (fork: false) and the filled template as task; the single-message launch became independent calls in one turn citing ../poteto-mode/references/fan-out.md; restricted-tool mode became omitting the tools list so MCP stays visible, with the contract fallback to source control plus named gaps when a child cannot see its MCP; one json subagent example per seat type (edit classes 2-3). G6: the synthesizer uses task:architecture with thinking high or above; investigators stay on task:recon. Before the investigators, the parent follows the architecture shortlist preflight in delegation.md. Upstream why/SKILL.md (cursor/plugins d0ef80d) puts the synthesizer on the judgment model; no model ids are copied. The fixture pin stays 2cbf585, which already contains that split."
+			"explanation": "agent: poteto-agent and the configured why-investigators and why-synthesizer models with their inherit-parent defaults became bare subagent launches on task:recon with the delegation.md Investigator prompt as systemPrompt (fork: false) and the filled template as task; the single-message launch became independent calls in one turn citing ../poteto-mode/references/fan-out.md; restricted-tool mode became omitting the tools list so MCP stays visible, with the contract fallback to source control plus named gaps when a child cannot see its MCP; one json subagent example per seat type (edit classes 2-3). G6: the synthesizer uses task:architecture with thinking high or above; investigators stay on task:recon. Before the investigators, the parent follows the architecture shortlist preflight in delegation.md. Upstream why/SKILL.md (cursor/plugins d0ef80d and ccb5507) puts the synthesizer on the judgment model; no model ids are copied. Cursor's synthesizer slug bump (opus max to xhigh) was not copied."
 		}
 	],
 	"planned": [],
