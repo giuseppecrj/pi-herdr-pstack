@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.3.0` (full inventory, 51 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.3.1` (full inventory, 51 skills and 23 playbooks).
 
 ## Host baseline
 
@@ -16,12 +16,22 @@ used during the private wave experiments are gone.
 | --- | --- |
 | pi-herdr-agents | `1b6bacd0b5eecb6f83ffba1d5a5ee57a8b0fa944` (3.1.0 release candidate feature commit; published `3.0.3` is `f182ea592c666eaca358a4fe6a13b886af0b1c98`) |
 | pi-herdr-roles (coexistence) | `fc3383daaa839228cc9f703c2d99728684acfe07` |
-| Pi SDK and CLI | `1.0.3` (full checks); `1.1.0` (mode and init CLI checks) |
+| Pi SDK and CLI | `1.0.3` (full checks); `1.1.0` (mode and init CLI checks); `1.2.0` (mode CLI checks, see below) |
 
 The peer range `>=3.0.0` keeps the report and explicit change flows working
 on hosts 3.0.x. Task-model init (`/setup-pstack init`, `/subagents-init`
 routed through pstack) requires pi-herdr-agents `>=3.1.0`; the range does not
 enforce that, and an older host leaves init unsupported.
+
+For 0.3.1, `npm run check` on Pi 1.0.3 passed 155 tests with 6 skipped: the
+host, legacy-host and upstream-source checks ran without their variables. The
+mode tests ran against Pi 1.2.0 in a scratch copy with test-owned agent
+directories and a scripted provider. Before the fix, a run started by an
+extension message with poteto-mode on raised an `extension_error` in
+`before_agent_start`; after it, no error. 18 of the 20 mode tests pass on
+1.2.0. The two wake tests fail because they assert the pre-1.2 behavior, where
+such runs skip `before_agent_start` and lose the section after the first turn;
+on 1.2.0 those runs keep the section and receive the hub like prompt runs.
 
 For 0.3.0, `npm run check` passed all 219 tests with no skips using the host
 and roles revisions above, the legacy host fixture, and all pinned upstream
