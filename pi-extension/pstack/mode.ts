@@ -1,4 +1,5 @@
 import type {
+	BeforeAgentStartEvent,
 	ContextEvent,
 	ExtensionAPI,
 	ExtensionContext,
@@ -133,6 +134,20 @@ export function hubPresent(
 }
 
 /**
+ * Whether the input starting this run already carries the full hub. From Pi
+ * 1.2, runs started by an extension message also reach before_agent_start, with
+ * `messageType: "custom"` and the starting `message` instead of a `prompt`.
+ */
+function triggerCarriesHub(
+	event: BeforeAgentStartEvent,
+	body: string,
+): boolean {
+	const trigger: { prompt?: unknown; message?: AgentMessage } = event;
+	if (typeof trigger.prompt === "string") return trigger.prompt.includes(body);
+	return trigger.message !== undefined && hubPresent([trigger.message], body);
+}
+
+/**
  * What one agent run applies, fixed when it starts so that toggling the mode
  * mid-run changes only the next prompt.
  */
@@ -140,7 +155,7 @@ type RunMode =
 	| { kind: "off" }
 	/** Started by a prompt; before_agent_start added the section for the whole run. */
 	| { kind: "prompt"; skill: OwnedSkillText }
-	/** Started without a prompt, e.g. by an extension message with triggerTurn, so Pi skips before_agent_start and runs without the section. */
+	/** Started without the section, e.g. by an extension message with triggerTurn on Pi before 1.2, which skips before_agent_start. */
 	| { kind: "wake"; skill: OwnedSkillText; reminder: string };
 
 type Parsed =
@@ -249,7 +264,7 @@ export function registerPotetoMode(pi: ExtensionAPI): void {
 		const skill = readHub(ctx, "poteto-mode hub not added");
 		if (!skill) return;
 		if (
-			event.prompt.includes(skill.body) ||
+			triggerCarriesHub(event, skill.body) ||
 			hubPresent(
 				ctx.sessionManager.buildSessionProjection().messages,
 				skill.body,
