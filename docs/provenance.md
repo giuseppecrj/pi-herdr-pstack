@@ -13,8 +13,10 @@ are out of scope:
   platform-specific. This package's manifest is the `pi` block in
   `package.json` plus `pi-extension/pstack/*.ts`.
 
-The top-level `pstack/README.md`, `LICENSE`, `.gitignore` and `assets/` are
-unscoped: none of them is ported. `pstack/LICENSE` is also watched, because
+The top-level `pstack/README.md`, `LICENSE`, `.gitignore`, `assets/` and
+`plugin.json` are unscoped: none of them is ported. `pstack/plugin.json` is
+the Agent Plugins v1 root manifest added at this pin; it is platform-specific
+in the same way as `pstack/.cursor-plugin`. `pstack/LICENSE` is also watched, because
 `THIRD_PARTY_NOTICES.md` reproduces its MIT notice. The fixture records its
 SHA-256 at the pin. With a checkout, the scope test fails when the upstream
 file at the recorded commit no longer matches that hash. Without one, it fails
@@ -28,7 +30,7 @@ change.
 sibling path such as `../agents/comment-sicko.md` is relative to it.
 `test/fixtures/upstream-scope.json` records the scope and the status and
 SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
-`ccb5507cec1546dc88135c1139c811e6c59115ba`. With `PSTACK_CURSOR_SOURCE` set,
+`f713f14203cd6420cec13cd7c55c32d598dbab68`. With `PSTACK_CURSOR_SOURCE` set,
 `npm test` checks that the file list and every hash match the pin, that every
 top-level `pstack/` entry is classified, and that every file under
 `pstack/skills` at the pin is referenced by the inventory or a skill-provenance
@@ -55,15 +57,16 @@ table check until it gets a row here.
 
 No file under these roots is in the not-yet-carried state. The file list under
 `pstack/agents` and `pstack/docs` is unchanged from the previous pin
-`2cbf58508f40de470d7490b55c51d71241928fa2`. `1e56b29` (#509) and `df58112`
-(#511) sit between those pins. They change `pstack/docs/guide/01-setup.md` and
-`04-design.md` (model and reasoning-budget wording); both stay excluded under
-Q1. `pstack/agents` is byte-identical. `pstack/LICENSE` is unchanged
-(`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). No new
-or deleted file appeared under `pstack/skills`, `pstack/agents` or
-`pstack/docs`. Top-level `pstack/` entries are unchanged. Unscoped
-`pstack/README.md` and out-of-scope `pstack/.cursor-plugin/plugin.json`
-(0.15.13 to 0.15.15) changed and were not ported.
+`ccb5507cec1546dc88135c1139c811e6c59115ba`. Between those pins,
+`pstack/agents/comment-sicko.md` (frontmatter name only),
+`pstack/agents/poteto-agent.md` (excluded) and `pstack/docs/guide/08-principles.md`
+(excluded under Q1) changed. `pstack/LICENSE` is unchanged
+(`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). New
+files under `pstack/skills` (`in-your-own-words`, `ketchup`, `sharpen`, and
+`poteto-mode/scripts/check-plan.test.ts`) are flagged, not shipped. Top-level
+`pstack/plugin.json` is new and unscoped. Unscoped `pstack/README.md` and
+out-of-scope `pstack/.cursor-plugin/plugin.json` (0.15.15 to 0.15.25) changed
+and were not ported.
 
 ## Wave 1: moved role and package files
 
@@ -105,7 +108,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
 | mimir | https://github.com/casualjim/pi-mimir | `f07dd981f62c9c994a5d043ede67d6c63c721454` | `packages/pi-pstack/skills` |
-| cursor | https://github.com/cursor/plugins | `ccb5507cec1546dc88135c1139c811e6c59115ba` | `pstack/skills` |
+| cursor | https://github.com/cursor/plugins | `f713f14203cd6420cec13cd7c55c32d598dbab68` | `pstack/skills` |
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
@@ -291,7 +294,7 @@ reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
 with thinking at high or above. Reflect's tooling lens is a diversity seat.
 The hardest implementation changes go to that category or to the strongest
 exact catalog model with `thinking: xhigh`. The cursor pin is
-`ccb5507cec1546dc88135c1139c811e6c59115ba`. The host describes `architecture`
+`f713f14203cd6420cec13cd7c55c32d598dbab68`. The host describes `architecture`
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
@@ -309,7 +312,7 @@ index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
 1,100 lines in all at the previous pin
 `2cbf58508f40de470d7490b55c51d71241928fa2`, at
 `d0ef80d86795816da932a153458c5dbe192d294e`, and at the current pin
-`ccb5507cec1546dc88135c1139c811e6c59115ba`) and six `images/*.jpg`. It walks a user from setup and prompting
+`f713f14203cd6420cec13cd7c55c32d598dbab68`) and six `images/*.jpg`. It walks a user from setup and prompting
 through design, verification, overnight runs and customization. It sits outside
 the pinned `pstack/skills` root and is deliberately not ported, adapted or
 packed.
@@ -329,7 +332,7 @@ shipped file links a guide page.
 Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
 operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
 sources still offer Origin; the cursor pin is
-`ccb5507cec1546dc88135c1139c811e6c59115ba`. The content test bans capitalized
+`f713f14203cd6420cec13cd7c55c32d598dbab68`. The content test bans capitalized
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
@@ -389,3 +392,69 @@ twice before and after the fix. The sources are
 `triage-issue-reports/SKILL.md`, read at
 `d0ef80d86795816da932a153458c5dbe192d294e` and byte-identical at the pin. The
 bug-fix entry in `w2.json` records which steps changed.
+
+## Pin move: cursor/plugins `f713f14`
+
+The cursor pin moved from `ccb5507cec1546dc88135c1139c811e6c59115ba` to
+`f713f14203cd6420cec13cd7c55c32d598dbab68`. About 79 commits sit between those
+pins; the ones that change in-scope pstack methodology are the token-cut and
+principle restatements (`00b14f1`, `08bd59b`, `e5136d8`, `99743e9`),
+verification readiness (`c49b37a`), fence-aware plan checks (`87c8103`),
+subagent-effort and playbook cuts (`ce649c0`), and the new skills
+`in-your-own-words`, `ketchup` and `sharpen`. The casualjim/pi-mimir pin stays
+`f07dd981f62c9c994a5d043ede67d6c63c721454`.
+
+Hand-ported, platform-neutral substance only:
+
+- `skills/poteto-mode/scripts/check-plan.mjs`: CommonMark fence pairing so
+  nested fences are not treated as prose. PROGRAM_MARKERS, the
+  unchanged-patch-id scan and git mode `100644` stay. Upstream's `/loop 1h`
+  and `git show origin/main:` markers were not restored.
+- `skills/correct/SKILL.md`: step 3 now fails a test that still passes when
+  the checked behavior breaks, or that fails when only the internals change.
+  Destination equals the Cursor blob; status is `adapted`.
+- `skills/create-verification-skill/SKILL.md`: launch readiness means usable
+  from an empty data dir; a missing seed precondition fails the journey;
+  a stand-in proof lists unverified setup steps. `.pi/skills` paths stay.
+- `skills/principle-attack-the-premise/SKILL.md`: write the premise down and
+  test it; follow the evidence; remove the condition. Pi backticked paths stay.
+- `skills/principle-fix-root-causes/SKILL.md`: fault versus symptom; a guard
+  is a fix only when the state is legitimate; cheap always-on signal after a
+  deep dig. Destination equals the Cursor blob; was a mimir copy.
+- `skills/principle-make-operations-idempotent/SKILL.md`: derive steps from
+  existing state; judge leftover artifacts as stale by crash-surviving
+  evidence. Destination equals the Cursor blob; was a mimir copy.
+- `skills/principle-test-behavior-not-implementation/SKILL.md`: two imagined
+  edits (break behavior / change internals) replace the `undefined`-import
+  heuristic. Destination equals the Cursor blob; was a mimir copy.
+- `skills/poteto-mode/SKILL.md`: the three principle summaries above follow
+  the ported leaves.
+- `skills/poteto-mode/playbooks/opening-a-pr.md`: as a parent merges, move
+  its child onto trunk per `playbooks/shipping.md` step 4.
+
+Documented skips (Cursor-only tools, token cuts that only delete examples,
+or excluded scripts):
+
+- Hub and most playbooks: `poteto-agent`, `subagent_type`, hardcoded slugs,
+  `cursor-team-kit`, `/loop`, Origin, Graphite, cloud agents, ketchup replies
+  on Autopilot-full/stack, shipping rewrite (G1 allowlist stays).
+- `multi-phase-plan.md`: upstream "full swarm once" plus `poteto-agent`.
+  This pack keeps per-push swarm markers that `check-plan.mjs` still requires,
+  and still defers rebase/patch-id to `shipping.md`.
+- Copied mimir leaves whose Cursor delta only deleted sections or flattened
+  headings (encode-lessons, exhaust-the-design-space, laziness-protocol,
+  migrate-callers, most why/how/interrogate/reflect references).
+- `principle-type-system-discipline`: Cursor deleted most patterns; dest
+  kept. Flagged for G.
+- `pstack/docs/guide/**` and `pstack/agents/poteto-agent.md`: excluded.
+- `pstack/README.md`: unscoped. `pstack/.cursor-plugin/plugin.json` and
+  `pstack/plugin.json`: out of scope / unscoped. `pstack/LICENSE`: unchanged.
+
+Flagged, not shipped (recommendation: later Pi-authored leaves if G wants
+them; do not copy Cursor slash-command rows as-is):
+
+- `in-your-own-words`, `ketchup`, `sharpen`
+- `poteto-mode/scripts/check-plan.test.ts` (bun tests; this pack already
+  checks `check-plan.mjs` in `test/scripts.test.ts`)
+
+No new agents or docs file is in the not-yet-carried state.

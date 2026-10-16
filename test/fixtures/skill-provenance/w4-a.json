@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+			"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
 			"root": "pstack/skills"
 		}
 	},
@@ -216,7 +216,7 @@
 				{
 					"source": "cursor",
 					"path": "interrogate/SKILL.md",
-					"sha256": "2f7e570ec23791ed2e485a09c98ed0597c46035e2050b351b84d3dc760ddd71f",
+					"sha256": "a16dfe179005abc22a4651b82f25b0c8ab953284276efe4e6dc341958fb63647",
 					"use": "context"
 				}
 			],
@@ -306,7 +306,7 @@
 				{
 					"source": "cursor",
 					"path": "swarm/SKILL.md",
-					"sha256": "bdcee4168e22428036e93d7cdeec3f391dbc4132f927f6db2540328c22db0273",
+					"sha256": "031657cb81e490f9aed5c75d6ff2a4fda35ccafbaf72be604e59481cc4080cdc",
 					"use": "context"
 				}
 			],

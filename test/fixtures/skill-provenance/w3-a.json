@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+			"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
 			"root": "pstack/skills"
 		}
 	},
@@ -50,21 +50,27 @@
 		},
 		{
 			"path": "skills/correct/SKILL.md",
-			"sha256": "bf482bacc972b3f124a4af8bf9364b4b3e280cb5845e44c326ea4f4565e5c904",
-			"status": "copied",
+			"sha256": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
+			"status": "adapted",
 			"sources": [
 				{
 					"source": "mimir",
 					"path": "correct/SKILL.md",
 					"sha256": "bf482bacc972b3f124a4af8bf9364b4b3e280cb5845e44c326ea4f4565e5c904",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "correct/SKILL.md",
+					"sha256": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
+					"use": "context"
 				}
 			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+			"explanation": "Pin move to cursor/plugins f713f14: step 3 now says to fix or delete a test that still passes when the checked behavior breaks, or that fails when only the internals change, matching the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
 			"path": "skills/principle-attack-the-premise/SKILL.md",
-			"sha256": "18b1159d50e412b782c89a69b097207199a7ca37baa4c9df864cff389bbb2d11",
+			"sha256": "2bbfcc5f1fdb979f2d6c1df8760990a4831207925130dd0aafcf0ae9a95f61ce",
 			"status": "adapted",
 			"sources": [
 				{
@@ -72,9 +78,15 @@
 					"path": "principle-attack-the-premise/SKILL.md",
 					"sha256": "c87bd7536f772f8a403ad8155535ee17a1bbec9a353156693eb3bb1520c87ae3",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "principle-attack-the-premise/SKILL.md",
+					"sha256": "6a932884daad4aa189e9b5d1665226bbc75621d4d2a398fd4003bebd382f4599",
+					"use": "context"
 				}
 			],
-			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1). Pin move to cursor/plugins f713f14: the census/skew pattern became write the premise down, test it directly, follow the evidence, and remove the condition instead of compensating. Cursor Markdown links stay backticked."
 		},
 		{
 			"path": "skills/principle-boundary-discipline/SKILL.md",
@@ -162,17 +174,23 @@
 		},
 		{
 			"path": "skills/principle-fix-root-causes/SKILL.md",
-			"sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707",
-			"status": "copied",
+			"sha256": "8df3c8c3fe57eb0055a5c8efab8ab144557fdf301da70b1cdc77a3a3ef3f3052",
+			"status": "adapted",
 			"sources": [
 				{
 					"source": "mimir",
 					"path": "principle-fix-root-causes/SKILL.md",
 					"sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "principle-fix-root-causes/SKILL.md",
+					"sha256": "8df3c8c3fe57eb0055a5c8efab8ab144557fdf301da70b1cdc77a3a3ef3f3052",
+					"use": "context"
 				}
 			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+			"explanation": "Pin move to cursor/plugins f713f14: restated as fix the fault, not where it surfaced; a guard is a fix only when the state it handles is legitimate; propose a cheap always-on signal after a deep dig. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
 			"path": "skills/principle-foundational-thinking/SKILL.md",
@@ -218,17 +236,23 @@
 		},
 		{
 			"path": "skills/principle-make-operations-idempotent/SKILL.md",
-			"sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70",
-			"status": "copied",
+			"sha256": "7aa9327cf1f1aa057e95d47a0a78bd88a8f9d556b608866fee939d455a53a019",
+			"status": "adapted",
 			"sources": [
 				{
 					"source": "mimir",
 					"path": "principle-make-operations-idempotent/SKILL.md",
 					"sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "principle-make-operations-idempotent/SKILL.md",
+					"sha256": "7aa9327cf1f1aa057e95d47a0a78bd88a8f9d556b608866fee939d455a53a019",
+					"use": "context"
 				}
 			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+			"explanation": "Pin move to cursor/plugins f713f14: derive each step from existing state, judge leftover artifacts as stale by evidence that survives a crash, and converge from where the previous run stopped. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
 			"path": "skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
@@ -372,17 +396,23 @@
 		},
 		{
 			"path": "skills/principle-test-behavior-not-implementation/SKILL.md",
-			"sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e",
-			"status": "copied",
+			"sha256": "f7223698623b6a26fea49c751e466b38e6691b1f32ce841d3983e7ffbe2b74a6",
+			"status": "adapted",
 			"sources": [
 				{
 					"source": "mimir",
 					"path": "principle-test-behavior-not-implementation/SKILL.md",
 					"sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e",
 					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "principle-test-behavior-not-implementation/SKILL.md",
+					"sha256": "f7223698623b6a26fea49c751e466b38e6691b1f32ce841d3983e7ffbe2b74a6",
+					"use": "context"
 				}
 			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
+			"explanation": "Pin move to cursor/plugins f713f14: judge each test against two imagined edits (break the behavior / change the internals) instead of the undefined-import heuristic. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
 			"path": "skills/principle-type-system-discipline/SKILL.md",

@@ -9,14 +9,14 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+			"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
 			"root": "pstack/skills"
 		}
 	},
 	"files": [
 		{
 			"path": "skills/poteto-mode/SKILL.md",
-			"sha256": "31743afad65654fdbea4eccc28ebb6aa7971094d9c9637848353303790b45187",
+			"sha256": "89b7995a00162e5b4f6c54f7a94d4028a3d1899a804535a925e023d76bd16759",
 			"status": "adapted",
 			"sources": [
 				{
@@ -28,11 +28,11 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
+					"sha256": "c5e6b605f46e5d9fbab31afa7a99d3d50680f2180d1fdfae3a924901bc52d99a",
 					"use": "context"
 				}
 			],
-			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries, Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required. W3 reconcile: the 24 principle summaries name their shipped leaves without markers and the preamble says to read the leaf in full before citing it; the availability section lists the W3 skills that ship; W3 interim clauses for benchmark-checklist, unslop, technical-writing and no-comments are retired, restoring the upstream trigger wording; adds the D6 routing line for typescript-best-practices (explicit-only) and the comment-sicko delegate as the worked bare-specialist example. W4 routes stay marked. W4 reconcile: every planned W4 marker and interim clause is retired. The availability section names all 51 skills and 23 playbooks and points at references/fan-out.md; triggers and playbook routes name each scope-down limit in one line (how/why fan-out and MCP-visible why investigators, exact-family seats with disclosed fallback, swarm worktrees, reflect session scope and approved backlog filing, recall, automate-me, the verification skills, make-bot-ui, gh-only babysit, explicit-request shipping, root-run autopilots, depth-1 orchestrate, worktree_list cleanup); the closing sentence says nothing in pstack lands PRs or removes worktrees without explicit authorization. Wave 4 fix round: children never launch further agents and hand delegation needs back to the root; the Shipping routes name gh-only access, one-shot watcher waits and merge-queue report-and-stop; the worktree-cleanup route states the macOS and xcrun condition for simulators. Sticky-mode context loading: activation now describes a short per-prompt checklist and automatic loading of the canonical hub only when its full text is absent from model context, including after compaction. Playbooks and references remain on demand, and off stops future automatic loading. Pin move to cursor/plugins ccb5507: Cursor's Task default slug bump (opus max to xhigh) was not copied; this hub still uses task categories and exact catalog models, with no hardcoded Cursor slugs."
+			"explanation": "Hub adapted from the pi-mimir hub with Cursor context. Preserves the triggers, all 24 principle summaries, Autonomy, reply and comment rules and the 23-playbook routing table. Replaces set_tasks, poteto-agent, role/tasks/chain parameters, model defaults and the shell-confirmation guard claim with a visible checklist, deliberate bare delegates, task categories and behavioral authorization. Adds activation, availability and per-reference planned fallbacks. W2 no-role amendment (docs/plans/09-wave2-no-poteto-role.md): the retired poteto role is no longer named; every delegate is bare, and no role is required. W3 reconcile: the 24 principle summaries name their shipped leaves without markers and the preamble says to read the leaf in full before citing it; the availability section lists the W3 skills that ship; W3 interim clauses for benchmark-checklist, unslop, technical-writing and no-comments are retired, restoring the upstream trigger wording; adds the D6 routing line for typescript-best-practices (explicit-only) and the comment-sicko delegate as the worked bare-specialist example. W4 routes stay marked. W4 reconcile: every planned W4 marker and interim clause is retired. The availability section names all 51 skills and 23 playbooks and points at references/fan-out.md; triggers and playbook routes name each scope-down limit in one line (how/why fan-out and MCP-visible why investigators, exact-family seats with disclosed fallback, swarm worktrees, reflect session scope and approved backlog filing, recall, automate-me, the verification skills, make-bot-ui, gh-only babysit, explicit-request shipping, root-run autopilots, depth-1 orchestrate, worktree_list cleanup); the closing sentence says nothing in pstack lands PRs or removes worktrees without explicit authorization. Wave 4 fix round: children never launch further agents and hand delegation needs back to the root; the Shipping routes name gh-only access, one-shot watcher waits and merge-queue report-and-stop; the worktree-cleanup route states the macOS and xcrun condition for simulators. Sticky-mode context loading: activation now describes a short per-prompt checklist and automatic loading of the canonical hub only when its full text is absent from model context, including after compaction. Playbooks and references remain on demand, and off stops future automatic loading. Pin move to cursor/plugins ccb5507: Cursor's Task default slug bump (opus max to xhigh) was not copied; this hub still uses task categories and exact catalog models, with no hardcoded Cursor slugs. Pin move to cursor/plugins f713f14: hub summaries for principle-attack-the-premise, principle-fix-root-causes and principle-test-behavior-not-implementation follow the ported leaf methodology. Cursor poteto-agent, model-slug, cursor-team-kit, ketchup/sharpen/in-your-own-words routes and Origin/loop playbook blurbs were not copied."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/autonomous-run.md",
@@ -48,7 +48,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/autonomous-run.md",
-					"sha256": "15e54ad3ac92565613980772d8708de6e19cc4690bfd4bb3fb8836522407377b",
+					"sha256": "6ac974fd2b09748add56493e89f578a35a6a9289e1026515878d81ef3cf129d1",
 					"use": "context"
 				}
 			],
@@ -68,7 +68,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/bug-fix.md",
-					"sha256": "018bbc146ae19145caa6c7e70591fee081b64447dda1c1c4b681c9974d928b13",
+					"sha256": "66e26542dad131cfd7df80ac0cdf81ed4d85e7b5e3f0eb65b933888760c4831f",
 					"use": "context"
 				}
 			],
@@ -88,7 +88,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/feature.md",
-					"sha256": "3a62cc4a8cbcf144bb9dd05f05420a15be0d38b784d3b141bb730a5852f50a62",
+					"sha256": "af8ce700b99953741cb547e34308fde0cf6b98ce67e1652c800d0deedf53aba1",
 					"use": "context"
 				}
 			],
@@ -116,7 +116,7 @@
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/opening-a-pr.md",
-			"sha256": "4870f96c0305025688099d1e04077ea2a1931009fd67df55115c4e9da1b54156",
+			"sha256": "b14c142860442a585d086fbf35724411be3888c5b06247961a45c94db12b629d",
 			"status": "adapted",
 			"sources": [
 				{
@@ -128,11 +128,11 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/opening-a-pr.md",
-					"sha256": "ab40de7163c1c6e274f46ee559b2e53ef45673703f601f13f4931c199e6fb90f",
+					"sha256": "a5aef646de8b651306c2d10974623650e4a013a245aec1c00525bbe0e31bfa76",
 					"use": "context"
 				}
 			],
-			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves. Q5: Origin is dropped, so gh is the only forge, matching babysit, shipping and the autopilots; the Forge paragraph no longer resolves between forges, and the stack and readiness rules give only the gh commands. The mimir and cursor sources still offer Origin, and the cursor pin is not moved. The Forge paragraph confirms gh auth status and gh repo view like the other gh playbooks. If either fails, a run with a built-in PR tool uses the tool and reports the gh steps it skipped; only a run with neither falls back to the no-authorization report."
+			"explanation": "Runs only when the task authorizes a pull request; replaces Cursor/deslop and git reset guidance with a manual cleanup pass and pi-herdr-agents managed worktrees; keeps title, description, forge, stack and readiness rules; babysit and autopilot owners planned W4. W3 reconcile: no-comments, technical-writing and unslop markers and their interim fallbacks are retired now that those skills ship. W4 reconcile: the Babysit, interrogate and autopilot planned W4 markers and interim clauses are retired; the autopilot exception now says an owner round's brief may assign a babysit pass while the root runs every watcher, since children are leaves. Q5: Origin is dropped, so gh is the only forge, matching babysit, shipping and the autopilots; the Forge paragraph no longer resolves between forges, and the stack and readiness rules give only the gh commands. The mimir and cursor sources still offer Origin, and the cursor pin is not moved. The Forge paragraph confirms gh auth status and gh repo view like the other gh playbooks. If either fails, a run with a built-in PR tool uses the tool and reports the gh steps it skipped; only a run with neither falls back to the no-authorization report. Pin move to cursor/plugins f713f14: Size and stacks now says that as a parent merges, move its child onto trunk per playbooks/shipping.md step 4. Origin, cursor-team-kit and /deslop remain uncopied."
 		},
 		{
 			"path": "skills/poteto-mode/playbooks/pause-safely.md",
@@ -168,7 +168,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/perf-issue.md",
-					"sha256": "2b88ad0f880e4d4d755ac19fe52414d6631d6baa816d060f53cf0a7429d7e14a",
+					"sha256": "c12aa2f82de7651a11676a3d5fea168f539b7f0faaa3a501d279255dd2a469c8",
 					"use": "context"
 				}
 			],
@@ -208,7 +208,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/refactoring.md",
-					"sha256": "50f4f7d3d301551f8b8a57c3303c99958c5ca630ae0d0051823b6987c0eb5b96",
+					"sha256": "0f5dd38113379ea8cf61e2182eca0a7478eea9a869eb40c2dddab3335aeca197",
 					"use": "context"
 				}
 			],
@@ -228,7 +228,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/runtime-forensics.md",
-					"sha256": "594f02c40c243a346e1f57b688ecf2ed5e882f21b3d24ed2204d1ac6f1c24a8a",
+					"sha256": "3463372b578c28f27c236f2627f09b5c5b1e85e86db7399fb984f3892fb450f5",
 					"use": "context"
 				}
 			],
@@ -248,7 +248,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/session-pickup.md",
-					"sha256": "1604fb463f7c7410d43fa024ca76c1c1824c166a01fd69d61f073d06fdca2a47",
+					"sha256": "d194f2a7ef392c1598ef3f0e3b561370ca25c2c7a78308007af4aa46ada8ee12",
 					"use": "context"
 				}
 			],
@@ -268,7 +268,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/playbooks/trace-forensics.md",
-					"sha256": "137ce3984fb96e45971fdff4d3c79fa4ccc647c5b30ae4945783b9fb23f8cec7",
+					"sha256": "ef0bbf79856a4ae1a8993d54c1a1da159cb97623941b652c0069cf75a017e0f5",
 					"use": "context"
 				}
 			],
@@ -288,7 +288,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
+					"sha256": "c5e6b605f46e5d9fbab31afa7a99d3d50680f2180d1fdfae3a924901bc52d99a",
 					"use": "derived"
 				}
 			],
@@ -328,7 +328,7 @@
 				{
 					"source": "cursor",
 					"path": "poteto-mode/SKILL.md",
-					"sha256": "31cd02290360ce63564ef22b74d69fc6d90e62181d05a644cbed8f6c47cc9412",
+					"sha256": "c5e6b605f46e5d9fbab31afa7a99d3d50680f2180d1fdfae3a924901bc52d99a",
 					"use": "derived"
 				}
 			],
@@ -515,6 +515,13 @@
 			"sha256": "266d157fb5230bbd6618c752f99dc8fdfa44c842cb8acc250ea7c4ee2d0fdb1f",
 			"disposition": "Excluded: direct worktree pruning that can bypass pi-herdr-agents managed-worktree ownership. Replaced in W4 by playbooks/worktree-cleanup.md: a worktree_list inventory and per-path worktree_remove (or git worktree remove) only under explicit authorization.",
 			"explanation": "Documented disposition, not a runnable missing dependency. No shipped W2 file references this script."
+		},
+		{
+			"source": "cursor",
+			"path": "poteto-mode/scripts/check-plan.test.ts",
+			"sha256": "c80f3ea043b81f219b92c4c8a3af6bdd4f8d32ea596ec15b5b9e0252645f2ae8",
+			"disposition": "Flagged at the f713f14 pin: new bun check-plan tests. The shipped checker is check-plan.mjs with test/scripts.test.ts. Other orch/watch-pr/bootstrap scripts stay excluded.",
+			"explanation": "New upstream script at this pin, accounted so the skills-root inventory check stays closed. Not shipped."
 		}
 	]
 }
