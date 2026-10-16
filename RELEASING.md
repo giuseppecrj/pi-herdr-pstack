@@ -4,14 +4,18 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.3.1
+## Current state: 0.3.2
+
+The `0.3.2` release syncs the cursor/plugins pin to `f713f14` (PR #22):
+fence-aware `check-plan`, verification readiness, and four principle
+restatements. When its version commit reaches `main`, the detect step sees the
+previous public `0.3.1` manifest and the current `0.3.2`, sets
+`release=true`, and the workflow publishes `0.3.2`.
 
 The `0.3.1` release fixes `/poteto-mode` crashing on Pi 1.2.0 when an
 extension starts a run with `pi.sendMessage(..., { triggerTurn: true })`, as
 realtime voice does. Pi 1.2.0 fires `before_agent_start` for those runs with no
-`prompt`. When its version commit reaches `main`, the detect step sees the
-previous public `0.3.0` manifest and the current `0.3.1`, sets
-`release=true`, and the workflow publishes `0.3.1`.
+`prompt`.
 
 The `0.3.0` release added `/setup-pstack init [preferences]` and routed
 `/subagents-init` drafts through pstack's exact-payload approval flow.
