@@ -1749,12 +1749,21 @@ describe("model precedence", () => {
 describe("methodology provenance", () => {
 	const sourceRows = (wave: string) =>
 		inventory.skills.filter((row) => row.wave === wave);
+	/** New cursor/plugins skills flagged at f713f14 and not added to the inventory. */
+	const FLAGGED_UNSHIPPED_CURSOR = new Set([
+		"in-your-own-words/SKILL.md",
+		"ketchup/SKILL.md",
+		"sharpen/SKILL.md",
+	]);
 	/** W4-P cites only the hub row's playbooks and scripts. */
 	const listedSource = (wave: string, source: SourceKey, path: string) =>
-		wave === "W4-P"
+		(source === "cursor" && FLAGGED_UNSHIPPED_CURSOR.has(path)) ||
+		(wave === "W4-P"
 			? /^poteto-mode\/(?:playbooks|scripts)\//.test(path) &&
 				(rowOf.get("poteto-mode")?.sourceFiles[source]?.includes(path) ?? false)
-			: sourceRows(wave).some((row) => row.sourceFiles[source]?.includes(path));
+			: sourceRows(wave).some((row) =>
+					row.sourceFiles[source]?.includes(path),
+				));
 	const sourceKey = ({ source, path }: { source: SourceKey; path: string }) =>
 		`${source}:${path}`;
 	/** Primary sources the W4-P batch has shipped. */

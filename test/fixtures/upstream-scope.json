@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"description": "Upstream cursor/plugins pstack scope (decision Q6) and the status of every file under the in-scope roots other than skills at the cursor pin. skills is accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. See test/upstream-scope.test.ts and docs/provenance.md.",
 	"repository": "https://github.com/cursor/plugins",
-	"commit": "ccb5507cec1546dc88135c1139c811e6c59115ba",
+	"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
 	"root": "pstack",
 	"inScope": ["agents", "docs", "skills"],
 	"outOfScope": [
@@ -21,6 +21,10 @@
 			"note": "Upstream packaging file outside the Q6 decision; this repository keeps its own."
 		},
 		{
+			"path": "assets",
+			"note": "Outside the Q6 decision; upstream branding image (logo.png)."
+		},
+		{
 			"path": "LICENSE",
 			"note": "Not ported; its MIT notice is preserved in THIRD_PARTY_NOTICES.md.",
 			"watch": {
@@ -29,24 +33,24 @@
 			}
 		},
 		{
-			"path": "README.md",
-			"note": "Outside the Q6 decision; this package's README is written for Pi."
+			"path": "plugin.json",
+			"note": "Agent Plugins v1 root manifest; platform-specific like .cursor-plugin. This package's manifest is the pi block in package.json plus pi-extension/pstack/*.ts."
 		},
 		{
-			"path": "assets",
-			"note": "Outside the Q6 decision; upstream branding image (logo.png)."
+			"path": "README.md",
+			"note": "Outside the Q6 decision; this package's README is written for Pi."
 		}
 	],
 	"files": [
 		{
 			"path": "agents/comment-sicko.md",
-			"sha256": "c0fd0383008da45fc78cfac17b9007d62c42f87ad1c8d5c2fb658b1fd01f7c82",
+			"sha256": "3e239e40b7b4b9beb2cf7f3ccc57f2388eb8b69bd1ba8ae888ef87ef6e0e2116",
 			"status": "carried",
 			"destination": "skills/no-comments/references/comment-sicko.md"
 		},
 		{
 			"path": "agents/poteto-agent.md",
-			"sha256": "abe41c169ecbfe65641f1725f4188d568e046c0dec7fd2dc271abb594c299201",
+			"sha256": "979f18abd000d185a0b4c41a2a4111c0910596a7f5c81cbb571885bc721b2bf7",
 			"status": "excluded",
 			"reason": "Named role routed through subagent_type. Pstack ships no named roles and delegates are deliberately bare (docs/provenance.md, Wave 2: role removal)."
 		},
@@ -94,7 +98,7 @@
 		},
 		{
 			"path": "docs/guide/08-principles.md",
-			"sha256": "73c3db659d356d4aa6d7674d30d0db46fab2bdd60152fca717c2d1772a042bdc",
+			"sha256": "cffa270108189345351aab16835e95540ba3c765bb5f1b8c1de843a96a212421",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},

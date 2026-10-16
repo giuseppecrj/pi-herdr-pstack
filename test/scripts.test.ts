@@ -230,6 +230,23 @@ describe("poteto-mode check-plan.mjs", {
 		assert.match(result.stderr, DEFER);
 	});
 
+	it("ignores mid-sentence colons and long dashes inside a nested fence", () => {
+		const text = skeleton().replace(
+			"<Each open question a prototype answered, with the branch, the SHA, and the artifact links. Each question that stays unproven.>",
+			[
+				"````text",
+				"example: value",
+				"em-dash — here",
+				"```",
+				"inner: still code",
+				"```",
+				"````",
+			].join("\n"),
+		);
+		const result = check("nested-fence.md", text);
+		assert.equal(result.status, 0, result.stderr);
+	});
+
 	it("fails a skeleton that drops a verdict or rebase marker", () => {
 		const markers = [
 			"Keep that merge base in fix rounds",
