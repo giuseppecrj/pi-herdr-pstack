@@ -32,6 +32,7 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 ## Review and ship
 
 - `/skill:interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read the dismissals too.
+- `/skill:create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` After merges or refactors in that code: `/skill:maintain-formal-verification-skill`.
 - `/skill:swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.` Opening a PR is an external action. Send this only when you mean it, because the request is the authorization.
 - `/poteto-mode babysit this pr. get it green.` For status only: `/poteto-mode check on pr <number>. anything outstanding?` (`../poteto-mode/playbooks/babysit.md`)

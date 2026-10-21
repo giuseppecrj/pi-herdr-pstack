@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"description": "Upstream cursor/plugins pstack scope (decision Q6) and the status of every file under the in-scope roots other than skills at the cursor pin. skills is accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. See test/upstream-scope.test.ts and docs/provenance.md.",
 	"repository": "https://github.com/cursor/plugins",
-	"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
+	"commit": "190d28736eff128ec94f502a22c7fe0c4b56cd37",
 	"root": "pstack",
 	"inScope": ["agents", "docs", "skills"],
 	"outOfScope": [
@@ -56,67 +56,67 @@
 		},
 		{
 			"path": "docs/guide/01-setup.md",
-			"sha256": "86d0330f245d16254a2069955f993c15d96cf29cd1a73690a0164074b7ac1190",
+			"sha256": "384655bdecc713122ca69a485723c58462002a1d512415e94e48597d0dce2fa5",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/02-poteto-mode.md",
-			"sha256": "979f61ca3d44cb8e68affda40327d32797e93fa9cc53ced7444c15e2600897e1",
+			"sha256": "d168829def6c410b1afd87d1a6eb297df385f89faa9b31260684074e9e4eb52a",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/03-understand.md",
-			"sha256": "0090afa9b8670adf175466a2a973ff4349e95ed67d2aa8cebdfc55ff4b7382c9",
+			"sha256": "1ac97cbad51c15c18b3aade8634d81c8bbe50d2b3135c75c113ddb2a6dcb7af0",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/04-design.md",
-			"sha256": "31f2abe6e9b29feafd1a9eece8f4fe21992f86b8c19ab2e9b5c11a20f36587e7",
+			"sha256": "cff616278303b533e617c5c4408af6d28895edbb8687d6ce99bb5dd1f6644a6c",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/05-build-and-clean.md",
-			"sha256": "a93cc7771f7b35c7b54d0120b6f66e8367794ce6791237e889a30e7585c190fa",
+			"sha256": "1284e80595ae4f214dfa7c5c5f7758ff90a47b3273aa7b8142e51e574f5c5290",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/06-verify-and-ship.md",
-			"sha256": "3ef0eed5ea084dfbbaf1b1ae9e08d84f2c8a2b536ffb3ef5226710bf105f70e6",
+			"sha256": "5c16c88bf377bf5ea5ffd4cd9dc1a83f19a0415090cc4645865d16a5500d1cab",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/07-overnight.md",
-			"sha256": "d7bd33a3d880768688dff4c1c2b5481ca9f0f194f5d97e44b65c9f96624d3ff0",
+			"sha256": "b767a5dc5d7257efdb5cc8cfac92acfbb18fe8e023a3438339f4b45ce4a9264a",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/08-principles.md",
-			"sha256": "cffa270108189345351aab16835e95540ba3c765bb5f1b8c1de843a96a212421",
+			"sha256": "0b26b85292f0c09768abe727c9e92987dbf81f5b439a4871034c2fd1c4cb1723",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/09-make-it-yours.md",
-			"sha256": "157e0c20ad3c657857c2fbbea3afd26895b71b8f68475bc56f4c382dcdd0e118",
+			"sha256": "50642f7f894988f7c263700f46478e7aed7eb94a257683350d91a9a0d70dc141",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/10-recipes-and-pitfalls.md",
-			"sha256": "c652474764b08da4a6364d85f5d03cf1fc1cf35e9d7c549348fb66e2d09f7b1f",
+			"sha256": "006d8282db567aeae57398d5de1f3a802af2e3ac1a1f564198c384183fca3f92",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
 		{
 			"path": "docs/guide/README.md",
-			"sha256": "49d92cfe91e01c04bd1150e5b000ee4fd4dfda8ce789b66a9dda98f7e5456e00",
+			"sha256": "5c888d034d38f380789fad57c2c6fa7307ace803a0622cdde9e57fa2afe182de",
 			"status": "excluded",
 			"reason": "User guide excluded under decision Q1; see docs/provenance.md."
 		},
@@ -155,6 +155,12 @@
 			"sha256": "2a76b52007a1cd2866ba67fd47d7d9ef3e1118bb5a09c4665eee8c3f161bd09a",
 			"status": "excluded",
 			"reason": "User guide image, excluded with the guide under decision Q1."
+		},
+		{
+			"path": "docs/harness/claude-code.md",
+			"sha256": "c79e2283d3a83c6be3dd1cac33f9c074067c95e610ae6e0a16d9fdee84058927",
+			"status": "excluded",
+			"reason": "Claude Code harness adapter; Cursor/Claude-Code platform-specific. This pack stays Pi/pi-herdr-agents only and does not ship harness adapters (docs/provenance.md)."
 		}
 	]
 }

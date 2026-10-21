@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.3.2` (full inventory, 51 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.4.0` (full inventory, 53 skills and 23 playbooks).
 
 ## Host baseline
 
@@ -22,6 +22,15 @@ The peer range `>=3.0.0` keeps the report and explicit change flows working
 on hosts 3.0.x. Task-model init (`/setup-pstack init`, `/subagents-init`
 routed through pstack) requires pi-herdr-agents `>=3.1.0`; the range does not
 enforce that, and an older host leaves init unsupported.
+
+For 0.4.0, `npm test` with the pinned upstream sources passed 162 tests with
+0 skipped at the test level: cursor/plugins
+`190d28736eff128ec94f502a22c7fe0c4b56cd37`, pi-mimir
+`f07dd981f62c9c994a5d043ede67d6c63c721454`, and pi-herdr-agents
+`6164458896a2c2284863b935ffa94e3b340612cb` as `PI_HERDR_AGENTS_SOURCE`.
+The host, legacy-host and roles-pack suites were unset and were not counted
+as passes. The same `npm run check` without those variables (what CI runs)
+passed 153 tests with 9 skipped, 0 fail.
 
 For 0.3.2, `npm test` with the pinned upstream sources passed 162 tests with
 0 skipped at the test level: cursor/plugins

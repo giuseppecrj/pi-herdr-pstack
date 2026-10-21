@@ -511,12 +511,12 @@ describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 51);
+		assert.equal(inventory.skills.length, 53);
 		const count = (prefix: string) =>
 			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 29, 6, 8, 6],
+			[2, 29, 6, 8, 8],
 		);
 		for (const row of inventory.skills) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);
