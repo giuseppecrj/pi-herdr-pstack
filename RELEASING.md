@@ -4,13 +4,17 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.3.2
+## Current state: 0.4.0
 
-The `0.3.2` release syncs the cursor/plugins pin to `f713f14` (PR #22):
+The `0.4.0` release syncs the cursor/plugins pin to `190d287` (pstack
+`0.15.29`) and ships `create-formal-verification-skill` and
+`maintain-formal-verification-skill`. When its version commit reaches `main`,
+the detect step sees the previous public `0.3.2` manifest and the current
+`0.4.0`, sets `release=true`, and the workflow publishes `0.4.0`.
+
+The `0.3.2` release synced the cursor/plugins pin to `f713f14` (PR #22):
 fence-aware `check-plan`, verification readiness, and four principle
-restatements. When its version commit reaches `main`, the detect step sees the
-previous public `0.3.1` manifest and the current `0.3.2`, sets
-`release=true`, and the workflow publishes `0.3.2`.
+restatements.
 
 The `0.3.1` release fixes `/poteto-mode` crashing on Pi 1.2.0 when an
 extension starts a run with `pi.sendMessage(..., { triggerTurn: true })`, as

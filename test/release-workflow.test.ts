@@ -418,7 +418,7 @@ test("experimental private or prerelease packages are not released", async () =>
 	const manifest = JSON.parse(await readFile("package.json", "utf8"));
 	const thisRelease = runDetect(detect, {
 		eventName: "push",
-		previousVersion: "0.3.1",
+		previousVersion: "0.3.2",
 		currentVersion: manifest.version,
 		currentPrivate: manifest.private === true,
 	});
