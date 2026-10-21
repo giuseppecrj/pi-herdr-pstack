@@ -30,7 +30,7 @@ change.
 sibling path such as `../agents/comment-sicko.md` is relative to it.
 `test/fixtures/upstream-scope.json` records the scope and the status and
 SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
-`f713f14203cd6420cec13cd7c55c32d598dbab68`. With `PSTACK_CURSOR_SOURCE` set,
+`190d28736eff128ec94f502a22c7fe0c4b56cd37`. With `PSTACK_CURSOR_SOURCE` set,
 `npm test` checks that the file list and every hash match the pin, that every
 top-level `pstack/` entry is classified, and that every file under
 `pstack/skills` at the pin is referenced by the inventory or a skill-provenance
@@ -54,19 +54,20 @@ table check until it gets a row here.
 | `pstack/agents/comment-sicko.md` | carried: context source for `skills/no-comments/references/comment-sicko.md` (adapted from mimir's copy; Wave 3) |
 | `pstack/agents/poteto-agent.md` | excluded: a named role; pstack ships no named roles (Wave 2: role removal) |
 | `pstack/docs/guide/**` (11 Markdown pages, 6 images) | excluded: under decision Q1 |
+| `pstack/docs/harness/claude-code.md` | excluded: Claude Code harness adapter; this pack stays Pi/pi-herdr-agents only |
 
 No file under these roots is in the not-yet-carried state. The file list under
-`pstack/agents` and `pstack/docs` is unchanged from the previous pin
-`ccb5507cec1546dc88135c1139c811e6c59115ba`. Between those pins,
-`pstack/agents/comment-sicko.md` (frontmatter name only),
-`pstack/agents/poteto-agent.md` (excluded) and `pstack/docs/guide/08-principles.md`
-(excluded under Q1) changed. `pstack/LICENSE` is unchanged
+`pstack/agents` and `pstack/docs` gained `docs/harness/claude-code.md` from the
+previous pin `f713f14203cd6420cec13cd7c55c32d598dbab68`. Between those pins the
+guide pages changed (excluded under Q1) and the harness page was added
+(excluded). `pstack/agents/*` is unchanged. `pstack/LICENSE` is unchanged
 (`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). New
-files under `pstack/skills` (`in-your-own-words`, `ketchup`, `sharpen`, and
-`poteto-mode/scripts/check-plan.test.ts`) are flagged, not shipped. Top-level
-`pstack/plugin.json` is new and unscoped. Unscoped `pstack/README.md` and
-out-of-scope `pstack/.cursor-plugin/plugin.json` (0.15.15 to 0.15.25) changed
-and were not ported.
+shipped skills under `pstack/skills` are `create-formal-verification-skill` and
+`maintain-formal-verification-skill`. `in-your-own-words`, `ketchup`, `sharpen`,
+and `poteto-mode/scripts/check-plan.test.ts` stay flagged, not shipped.
+Unscoped `pstack/README.md` and `pstack/plugin.json`, and out-of-scope
+`pstack/.cursor-plugin/plugin.json` (0.15.25 to 0.15.29), changed and were not
+ported.
 
 ## Wave 1: moved role and package files
 
@@ -108,7 +109,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
 | mimir | https://github.com/casualjim/pi-mimir | `f07dd981f62c9c994a5d043ede67d6c63c721454` | `packages/pi-pstack/skills` |
-| cursor | https://github.com/cursor/plugins | `f713f14203cd6420cec13cd7c55c32d598dbab68` | `pstack/skills` |
+| cursor | https://github.com/cursor/plugins | `190d28736eff128ec94f502a22c7fe0c4b56cd37` | `pstack/skills` |
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
@@ -220,8 +221,10 @@ are attributed to Diátaxis and ASD-STE100 in `THIRD_PARTY_NOTICES.md`.
 ## Wave 4: 14 skills, 11 playbooks and two scripts
 
 Wave 4 shipped the last 14 inventory rows and the 11 remaining poteto-mode
-playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
-23 playbooks ship. Each batch owns its fixtures:
+playbooks. The 190d287 pin move added two more inventory rows
+(`create-formal-verification-skill`, `maintain-formal-verification-skill`), so
+all 53 rows are `shipped` in `docs/skill-inventory.json` and all 23 playbooks
+ship. Each batch owns its fixtures:
 
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
   `interrogate`, `reflect`, `figure-it-out`. 33 files, 21 copied and 12 adapted,
@@ -235,14 +238,17 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
   from the claims in the brief, with any other proved defect still `ISSUES`,
   and uses the result whenever it differs from the reported status.
 - W4-B (`w4-b.json`): `show-me-your-work`, `recall`, `automate-me`,
-  `create-verification-skill`, `maintain-verification-skill`, `make-bot-ui`.
-  11 files, 4 copied and 7 adapted. `scripts/log.sh` is copied with its
-  upstream mode `100755`. `make-bot-ui` is adapted from Cursor
+  `create-verification-skill`, `maintain-verification-skill`,
+  `create-formal-verification-skill`, `maintain-formal-verification-skill`,
+  `make-bot-ui`. 13 files, 4 copied and 9 adapted. `scripts/log.sh` is copied
+  with its upstream mode `100755`. `make-bot-ui` is adapted from Cursor
   `make-bot-ui/SKILL.md` at `2cbf58508f40de470d7490b55c51d71241928fa2` and
   substantially re-authored for Pi: a loopback-bound local page whose server
   starts one `pi -p` run per request, with the key in a local file and exposure
   or installs only on authorization. Cursor's frontmatter name `Make Bot UI`
-  became `make-bot-ui`.
+  became `make-bot-ui`. The two formal-verification skills are adapted from
+  Cursor at `190d28736eff128ec94f502a22c7fe0c4b56cd37` (Pi paths, `/skill:`
+  forms, install and PR authorization).
 - W4-P (`w4-p.json`): `playbooks/{hillclimb,eval,visual-parity,authoring-a-skill,babysit,shipping,autopilot-full,autopilot-stack,multi-phase-plan,orchestrate,worktree-cleanup}.md`
   and `scripts/check-plan.mjs` (mode `100644`), all 12 adapted from mimir.
   `check-plan.mjs` changed with the multi-phase-plan skeleton, since upstream
@@ -255,9 +261,10 @@ playbooks, so all 51 rows are `shipped` in `docs/skill-inventory.json` and all
 
 Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
 added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
-the shared fan-out protocol. The package now ships 113 skill files: 48 copied,
-62 adapted and 3 new. The ccb5507 pin move re-adapted `blast-radius` (it was a
-mimir copy after reconcile) for the "more than one model" wording.
+the shared fan-out protocol. The package now ships 115 skill files: 48 copied,
+64 adapted and 3 new. The ccb5507 pin move re-adapted `blast-radius` (it was a
+mimir copy after reconcile) for the "more than one model" wording. The 190d287
+pin move added the two formal-verification skills as adapted Cursor leaves.
 
 The remaining upstream helper scripts stay excluded in `w2.json`, each
 disposition naming its replacement: `scripts/orch/*` (the Orchestrate playbook
@@ -294,7 +301,7 @@ reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
 with thinking at high or above. Reflect's tooling lens is a diversity seat.
 The hardest implementation changes go to that category or to the strongest
 exact catalog model with `thinking: xhigh`. The cursor pin is
-`f713f14203cd6420cec13cd7c55c32d598dbab68`. The host describes `architecture`
+`190d28736eff128ec94f502a22c7fe0c4b56cd37`. The host describes `architecture`
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
@@ -311,8 +318,9 @@ cursor/plugins ships a user guide under `pstack/docs/guide/`: a `README.md`
 index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
 1,100 lines in all at the previous pin
 `2cbf58508f40de470d7490b55c51d71241928fa2`, at
-`d0ef80d86795816da932a153458c5dbe192d294e`, and at the current pin
-`f713f14203cd6420cec13cd7c55c32d598dbab68`) and six `images/*.jpg`. It walks a user from setup and prompting
+`d0ef80d86795816da932a153458c5dbe192d294e`, at
+`f713f14203cd6420cec13cd7c55c32d598dbab68`, and at the current pin
+`190d28736eff128ec94f502a22c7fe0c4b56cd37`) and six `images/*.jpg`. It walks a user from setup and prompting
 through design, verification, overnight runs and customization. It sits outside
 the pinned `pstack/skills` root and is deliberately not ported, adapted or
 packed.
@@ -332,7 +340,7 @@ shipped file links a guide page.
 Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
 operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
 sources still offer Origin; the cursor pin is
-`f713f14203cd6420cec13cd7c55c32d598dbab68`. The content test bans capitalized
+`190d28736eff128ec94f502a22c7fe0c4b56cd37`. The content test bans capitalized
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
@@ -458,3 +466,56 @@ them; do not copy Cursor slash-command rows as-is):
   checks `check-plan.mjs` in `test/scripts.test.ts`)
 
 No new agents or docs file is in the not-yet-carried state.
+
+## Pin move: cursor/plugins `190d287` (pstack 0.15.29)
+
+The cursor pin moved from `f713f14203cd6420cec13cd7c55c32d598dbab68` to
+`190d28736eff128ec94f502a22c7fe0c4b56cd37` (current cursor/plugins `main`;
+`pstack/plugin.json` reads `0.15.29`). The commits between those pins that
+change in-scope pstack methodology are the formal-verification skills
+(`4382e68`, `6b78e9f`, `7b353f7`), setup/help/guide sync (`f9be7aa`,
+`d457567`), TypeScript brand type-guard (`0317eb8`), ketchup decidability
+(`16541c6`, `bc14437`), sharpen restore (`75fabac`, `88d4751`), frontmatter
+name fixes (`a968159`), Claude Code harness (`182f2ce`, `1b80080`), and
+plugin version bumps through 0.15.29. The casualjim/pi-mimir pin stays
+`f07dd981f62c9c994a5d043ede67d6c63c721454`.
+
+Hand-ported, platform-neutral substance only:
+
+- `skills/create-formal-verification-skill/SKILL.md`: new, adapted from
+  Cursor. Pi `.pi/skills/` paths, `/skill:` forms, and install authorization.
+- `skills/maintain-formal-verification-skill/SKILL.md`: new, adapted from
+  Cursor. Same path and slash adaptations; PR push authorization on the
+  report's change, matching maintain-verification-skill.
+- `skills/typescript-best-practices/SKILL.md` and `references/patterns.md`:
+  a brand comes from a verifying type guard, never from `as`.
+- `skills/setup-pstack/SKILL.md`: mention once when the project has no
+  formal verification skill; do not run create from setup.
+- `skills/poteto-mode/SKILL.md`: inventory 53; availability routes for the
+  two formal-verification skills.
+- `skills/poteto-help/SKILL.md` and `references/recipes.md`: check-state,
+  skill table and recipe for the two formal-verification skills.
+
+Documented skips (Cursor-only tools, named-role agents, harness, or
+excluded skills):
+
+- `make-bot-ui/SKILL.md`: upstream only renamed frontmatter `Make Bot UI` to
+  `make-bot-ui`; this pack already uses that name after the Pi re-author.
+- `poteto-mode/SKILL.md`: upstream only renamed frontmatter `Poteto Mode` to
+  `poteto-mode`; already that name here. Substance ports are listed above.
+- `setup-pstack/SKILL.md`: Cursor auto-invokes `/create-*-verification-skill`
+  from setup; this pack only mentions the gap and names the skill.
+- `poteto-help/SKILL.md`: Claude Code install path, `pstack:` prefix, and
+  guide/harness links; ketchup/sharpen/in-your-own-words table rows.
+- `ketchup`, `sharpen`, `in-your-own-words`: still flagged, not shipped.
+  Upstream ketchup and sharpen bodies changed; dispositions updated.
+- `pstack/docs/guide/**`: excluded under Q1.
+- `pstack/docs/harness/claude-code.md`: **new**, excluded (Claude Code
+  adapter).
+- `pstack/agents/poteto-agent.md`: excluded named role.
+- `pstack/README.md`, `pstack/plugin.json`: unscoped.
+- `pstack/.cursor-plugin/plugin.json`: out of scope (0.15.25 → 0.15.29).
+- `pstack/LICENSE`: unchanged.
+
+No file under `pstack/agents` or `pstack/docs` is in the not-yet-carried
+state after classifying the harness page as excluded.

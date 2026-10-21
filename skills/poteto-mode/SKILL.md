@@ -18,7 +18,7 @@ Paths in this skill, its playbooks and its references are relative to this skill
 
 ## Availability in this release
 
-This release ships the full inventory: all 51 skills, including this hub, `setup-pstack`, the 24 principle leaves and every workflow skill, and all 23 playbooks with this hub's four references. Several workflows are scoped down for Pi. Their routes below name each limit in one line, and the playbook or skill states it in full.
+This release ships the full inventory: all 53 skills, including this hub, `setup-pstack`, the 24 principle leaves and every workflow skill, and all 23 playbooks with this hub's four references. Several workflows are scoped down for Pi. Their routes below name each limit in one line, and the playbook or skill states it in full.
 
 - Fan-out, prompt placement, model seats, dropouts, writers and the watcher child follow one shared protocol, `references/fan-out.md`. Children are leaves.
 - Where a limit blocks a step (no forge access, no grant, a tool this session lacks), keep the step in your checklist as `skip: <reason>`, stop the dependent part of the workflow and report it.
@@ -50,6 +50,7 @@ Remaining triggers:
 - Long, autonomous or multi-phase work, or any task the user steps away from to review later → a decision trail via the **show-me-your-work** skill. Commit it only when the commit policy allows and the stakes need an auditable record. Keep it local otherwise.
 - End of a long run, or asked to learn from a session → the **reflect** skill. It reads `$PI_SESSION_FILE` and this working directory's sessions, never another project's, and files backlog items only with approval. To find earlier work, use the **recall** skill under the same session rule. To turn a repeated workflow into a skill, use the **automate-me** skill.
 - A project needs a verification skill → the **create-verification-skill** skill, and the **maintain-verification-skill** skill keeps it current. Both work on the project's own `.pi/skills/` directory.
+- A project needs formal verification of a race, invariant, or other property tests rarely reach → the **create-formal-verification-skill** skill, and the **maintain-formal-verification-skill** skill brings it back in line after covered code changes. Both work on the project's own `.pi/skills/` directory. Installing a verification tool needs authorization.
 - Asked for a local web UI that drives a bot → the **make-bot-ui** skill. It builds a loopback-only local page that starts a per-request `pi -p` run, and exposure beyond loopback or any install needs authorization.
 
 ## Principles

@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "f713f14203cd6420cec13cd7c55c32d598dbab68",
+			"commit": "190d28736eff128ec94f502a22c7fe0c4b56cd37",
 			"root": "pstack/skills"
 		}
 	},
@@ -444,7 +444,7 @@
 		},
 		{
 			"path": "skills/typescript-best-practices/references/patterns.md",
-			"sha256": "2b62dfec98a3de6d86718853f975a6d31ca9167f94c2c28804a9733f8318f440",
+			"sha256": "c8994cfcc8d9da751128b8de06617b9ae36a678429fc93a0db59b473ff4f596a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -456,15 +456,15 @@
 				{
 					"source": "cursor",
 					"path": "typescript-best-practices/references/patterns.md",
-					"sha256": "faa1362055374452efccac1b629677c61acfb0bcc6c4e3311836b5715638ee18",
+					"sha256": "12e70c9419a8b3f5d6a1ab80e272c1f00a43ac0b3bbf72d68199033570e5de77",
 					"use": "context"
 				}
 			],
-			"explanation": "Short principle names became full inventory names (edit class 2). The boundary section and the overly wide source bullet now follow the SKILL.md boundary row: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The branded-types line says Parse once at the boundary for consistency. principle-boundary-discipline stays the full name. Upstream patterns.md is byte-identical at the mimir pin, the Cursor pin 2cbf585 and d0ef80d86795816da932a153458c5dbe192d294e, and still says Validate once and narrow it, so this alignment is a deliberate adaptation."
+			"explanation": "Short principle names became full inventory names (edit class 2). The boundary section and the overly wide source bullet now follow the SKILL.md boundary row: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The branded-types line says Parse once at the boundary for consistency. principle-boundary-discipline stays the full name. Upstream patterns.md is byte-identical at the mimir pin, the Cursor pin 2cbf585 and d0ef80d86795816da932a153458c5dbe192d294e, and still says Validate once and narrow it, so this alignment is a deliberate adaptation. Pin move to cursor/plugins 190d287: branded-types example uses an `isAgentId` type guard and returns the narrowed input without `as`."
 		},
 		{
 			"path": "skills/typescript-best-practices/SKILL.md",
-			"sha256": "cbec2cdca770fd385b3ccc1d1bf0542851eea9539ce781dcc7a4d52befecfcd3",
+			"sha256": "c83a6f94b8f620422783472ca236b3676b61c2e7dd5c55b62f81219d0aec2812",
 			"status": "adapted",
 			"sources": [
 				{
@@ -476,11 +476,11 @@
 				{
 					"source": "cursor",
 					"path": "typescript-best-practices/SKILL.md",
-					"sha256": "28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e",
+					"sha256": "ec1dac086d3708e5940d45d250c30a37dd953b4e3cb2ca0692f5851d7a039e27",
 					"use": "context"
 				}
 			],
-			"explanation": "Dropped the Cursor-only paths frontmatter, which Pi 1.0.3 ignores, keeping disable-model-invocation true per D6 (edit class 4); short principle names became full inventory names (edit class 2). The boundary-validation row now follows the Cursor file at the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The full principle name principle-boundary-discipline stays, and paths frontmatter stays dropped, so the file remains adapted."
+			"explanation": "Dropped the Cursor-only paths frontmatter, which Pi 1.0.3 ignores, keeping disable-model-invocation true per D6 (edit class 4); short principle names became full inventory names (edit class 2). The boundary-validation row now follows the Cursor file at the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The full principle name principle-boundary-discipline stays, and paths frontmatter stays dropped, so the file remains adapted. Pin move to cursor/plugins 190d287: branded-types row now says a brand comes from a verifying type guard (`input is AgentId`), never from `as`."
 		}
 	],
 	"planned": [],

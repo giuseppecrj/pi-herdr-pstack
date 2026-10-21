@@ -48,6 +48,10 @@ The report has these sections, in order: Session, Host, Pstack resources, Models
 
 When explaining the report, check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. If none exists, mention the gap once and name the **create-verification-skill** skill, which generates one when the user asks for it. Do not run it from setup.
 
+## Check for a project formal verification skill
+
+Also check whether the project already has a formal verification skill (a project skill under `.pi/skills/` that runs a model checker, a proof, or another verifier against the code). If not, mention the gap once and name the **create-formal-verification-skill** skill, which generates one when the user asks for it. Do not run it from setup.
+
 ## Your reply
 
 Lead with what the user asked: the state of the install, or the outcome of the change. Give each claim its evidence, such as a report line or the tool result. Label anything not checked as not checked. Outside a successful saved change, end with "No changes were made."

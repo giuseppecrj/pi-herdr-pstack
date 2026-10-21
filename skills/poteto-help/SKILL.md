@@ -14,7 +14,7 @@ This file maps questions to the skills and files that hold the answers. Those fi
 
 ## What this release ships
 
-This release ships the full inventory: all 51 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
+This release ships the full inventory: all 53 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -32,6 +32,7 @@ Check the state that changes the answer, and mention it only when it does:
 
 - If the user hasn't seen a `/setup-pstack` report in this session, suggest it first. It shows whether pi-herdr-agents is loaded, whether the `poteto-mode` and `setup-pstack` skills resolve to this package, which exact models are authenticated, and which task categories poteto-mode uses are unset. When the setup question below applies, ask that once instead of a separate suggestion.
 - No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention the gap when the question is about proving a change works, and offer the **create-verification-skill** skill, which generates one.
+- No formal verification skill in the project means no property is checked past what tests reach. Mention the gap when the question is about a race, an invariant, or another case tests rarely hit, and offer the **create-formal-verification-skill** skill. When one exists and the code it covers changed after the commit it records as last in sync, mention **maintain-formal-verification-skill** if the question touches that code.
 
 When the answer depends on the task categories pstack uses (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`) and you cannot see that they are set, ask once whether to run `/setup-pstack` now or leave the categories as they are for now. It depends when the user is new, the question is about setup or cost, or the answer would name which model a category resolves to. Ask at most once per chat. If the need is still unclear, fold this into that one multiple-choice question. Offer two choices:
 
@@ -48,7 +49,7 @@ You cannot tell whether those categories are unset on your own. No host tool rea
 ## Get set up
 
 1. Install pi-herdr-agents and pi-herdr-pstack through Pi. pi-herdr-agents is the execution host and an explicit prerequisite: pstack declares it as a peer, and a peer declaration does not activate an extension. Install pstack where pi-herdr-agents children load packages too, normally the same user settings. Both packages are experimental, and the README has the current install steps.
-2. Run `/setup-pstack`. It shows a report built in code and makes no change. To change which models pstack's delegates use, run `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`. The model proposes one change. The extension shows the complete payload in an approval dialog and writes it once, only after the user approves. Reload Pi after a saved change. `/skill:setup-pstack` explains each report section.
+2. Run `/setup-pstack`. It shows a report built in code and makes no change. To change which models pstack's delegates use, run `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`. The model proposes one change. The extension shows the complete payload in an approval dialog and writes it once, only after the user approves. Reload Pi after a saved change. `/skill:setup-pstack` explains each report section. The report path can also mention once each when the project has no verification skill and no formal verification skill; generating either is a separate `/skill:` the user types.
 3. Start a real task with `/poteto-mode <task>`, stating a goal and a check that can pass or fail.
 
 Installing adds two commands, `/poteto-mode` and `/setup-pstack`, and a writer gate. Every skill except `setup-pstack` is explicit-only. It loads when the user types `/skill:<name>` or when poteto-mode reads it for a step. Only `setup-pstack` can load from the user's words. Offer to word their first prompt with them, per `references/prompting.md`.
@@ -97,6 +98,8 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Hear the last reply again in plain words | `/skill:bro` |
 | Give agents a scripted way to drive the app and prove behavior | `/skill:create-verification-skill` |
 | Bring a verification skill and its feature map back in line with the app | `/skill:maintain-verification-skill` |
+| Formally verify a race, invariant, or other property that tests rarely reach | `/skill:create-formal-verification-skill` |
+| Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | `/skill:maintain-formal-verification-skill` |
 | Vet a performance number before reporting or acting on it | `/skill:benchmark-checklist` |
 | Run a large or cross-cutting change, or one to review after stepping away | `/skill:figure-it-out` |
 | Keep a decision log during a run, and review it afterward | `/skill:show-me-your-work` |
