@@ -23,6 +23,14 @@ on hosts 3.0.x. Task-model init (`/setup-pstack init`, `/subagents-init`
 routed through pstack) requires pi-herdr-agents `>=3.1.0`; the range does not
 enforce that, and an older host leaves init unsupported.
 
+For the 8b3326d pin sync (package still 0.4.0), `npm test` with the pinned
+upstream sources passed 162 tests with 0 skipped at the test level:
+cursor/plugins `8b3326d99fd4b993cb33a24dad8af03175c642c5`, pi-mimir
+`f07dd981f62c9c994a5d043ede67d6c63c721454` (unchanged), and pi-herdr-agents
+`8864764e65a469f7d90f9a0deb39ec3f0b26befc` as `PI_HERDR_AGENTS_SOURCE`. The host, legacy-host and roles-pack suites were
+unset and were not counted as passes. The same `npm run check` without those
+variables (what CI runs) passed 153 tests with 9 skipped, 0 fail.
+
 For 0.4.0, `npm test` with the pinned upstream sources passed 162 tests with
 0 skipped at the test level: cursor/plugins
 `190d28736eff128ec94f502a22c7fe0c4b56cd37`, pi-mimir
