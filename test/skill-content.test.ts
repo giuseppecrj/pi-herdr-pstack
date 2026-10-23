@@ -1749,11 +1749,24 @@ describe("model precedence", () => {
 describe("methodology provenance", () => {
 	const sourceRows = (wave: string) =>
 		inventory.skills.filter((row) => row.wave === wave);
-	/** New cursor/plugins skills flagged at f713f14 and not added to the inventory. */
+	/** New cursor/plugins skills flagged and not added to the inventory. */
 	const FLAGGED_UNSHIPPED_CURSOR = new Set([
 		"in-your-own-words/SKILL.md",
 		"ketchup/SKILL.md",
 		"sharpen/SKILL.md",
+		// statechart (8b3326d): executable scripts + TLA+/TLC tooling; not shipped
+		"statechart/SKILL.md",
+		"statechart/scripts/chart-to-tla.mjs",
+		"statechart/scripts/compare-charts.mjs",
+		"statechart/scripts/lib.mjs",
+		"statechart/scripts/model/OutputFolder.cfg",
+		"statechart/scripts/model/OutputFolder.map.mjs",
+		"statechart/scripts/model/OutputFolder.tla",
+		"statechart/scripts/statechart.mjs",
+		"statechart/scripts/test/statechart.test.mjs",
+		"statechart/scripts/test/sync.mmd",
+		"statechart/scripts/test/upload.mmd",
+		"statechart/scripts/tlc-to-chart.mjs",
 	]);
 	/** W4-P cites only the hub row's playbooks and scripts. */
 	const listedSource = (wave: string, source: SourceKey, path: string) =>
