@@ -4,13 +4,18 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.4.0
+## Current state: 0.5.0
 
-The `0.4.0` release syncs the cursor/plugins pin to `190d287` (pstack
-`0.15.29`) and ships `create-formal-verification-skill` and
-`maintain-formal-verification-skill`. When its version commit reaches `main`,
-the detect step sees the previous public `0.3.2` manifest and the current
-`0.4.0`, sets `release=true`, and the workflow publishes `0.4.0`.
+The `0.5.0` release syncs the cursor/plugins pin to `1ba91fc` (pstack
+`0.15.36`), ships optional `statechart` (runtime scripts only; needs Java
+11+ and TLA+/TLC), and ships `in-your-own-words`, `ketchup` and `sharpen`.
+`ketchup-video` stays flagged. When its version commit reaches `main`, the detect step sees the
+previous public `0.4.0` manifest and the current `0.5.0`, sets
+`release=true`, and the workflow publishes `0.5.0`.
+
+The `0.4.0` release synced the cursor/plugins pin to `190d287` (pstack
+`0.15.29`) and shipped `create-formal-verification-skill` and
+`maintain-formal-verification-skill`.
 
 The `0.3.2` release synced the cursor/plugins pin to `f713f14` (PR #22):
 fence-aware `check-plan`, verification readiness, and four principle

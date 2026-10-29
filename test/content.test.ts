@@ -149,7 +149,7 @@ describe("package manifest", () => {
 	it("is a public released Pi package with host peers", () => {
 		assert.equal(manifest.name, "pi-herdr-pstack");
 		assert.equal(manifest.private, undefined);
-		assert.equal(manifest.version, "0.4.0");
+		assert.equal(manifest.version, "0.5.0");
 		assert.equal(manifest.license, "MIT");
 		assert.ok(manifest.keywords.includes("pi-package"));
 		assert.deepEqual(manifest.peerDependencies, {
@@ -190,24 +190,74 @@ describe("package manifest", () => {
 		);
 		assert.deepEqual(skills.toSorted(), recorded.toSorted());
 		assert.ok(skills.length >= 17);
-		assert.deepEqual(
-			pack.files.map(({ path }) => path).toSorted(),
-			[
-				"CHANGELOG.md",
-				"LICENSE",
-				"README.md",
-				"RELEASING.md",
-				"THIRD_PARTY_NOTICES.md",
-				"docs/compatibility.md",
-				"docs/provenance.md",
-				"package.json",
-				"pi-extension/pstack/config.ts",
-				"pi-extension/pstack/index.ts",
-				"pi-extension/pstack/mode.ts",
-				"pi-extension/pstack/resources.ts",
-				"pi-extension/pstack/setup.ts",
-				...skills,
-			].toSorted(),
+		const expected = [
+			"CHANGELOG.md",
+			"LICENSE",
+			"README.md",
+			"RELEASING.md",
+			"THIRD_PARTY_NOTICES.md",
+			"docs/compatibility.md",
+			"docs/provenance.md",
+			"package.json",
+			"pi-extension/pstack/config.ts",
+			"pi-extension/pstack/index.ts",
+			"pi-extension/pstack/mode.ts",
+			"pi-extension/pstack/resources.ts",
+			"pi-extension/pstack/setup.ts",
+			...skills,
+		].toSorted();
+		assert.deepEqual(pack.files.map(({ path }) => path).toSorted(), expected);
+	});
+
+	it("keeps the npm pack lean: no test corpora, jars, node_modules or caches", () => {
+		const [pack] = JSON.parse(
+			execFileSync("npm", ["pack", "--dry-run", "--json"], {
+				cwd: PACK_ROOT,
+				encoding: "utf8",
+			}),
+		) as Array<{ files: Array<{ path: string }> }>;
+		const paths = pack.files.map(({ path }) => path);
+		// Pre-statechart 0.4.0 packed 128 files. 0.5.0 adds optional statechart
+		// runtime (~29) plus three leaves; stay well under a silent balloon.
+		assert.ok(
+			paths.length <= 200,
+			`pack has ${paths.length} files; expected <= 200 (0.4.0 baseline was 128)`,
 		);
+		const banned = [
+			/node_modules\//,
+			/\/\.cache\//,
+			/\.jar$/i,
+			/scripts\/test\//,
+			/\/corpus\//,
+			/^docs\/guide\//,
+			/^docs\/plans\//,
+			/^docs\/evidence\//,
+			/^test\//,
+			/^skills\/ketchup-video\//,
+		];
+		for (const path of paths)
+			for (const pattern of banned) assert.doesNotMatch(path, pattern, path);
+		for (const required of [
+			"skills/statechart/SKILL.md",
+			"skills/statechart/scripts/statechart",
+			"skills/statechart/scripts/statechart.ts",
+			"skills/statechart/references/render.md",
+			"skills/in-your-own-words/SKILL.md",
+			"skills/ketchup/SKILL.md",
+			"skills/sharpen/SKILL.md",
+		])
+			assert.ok(paths.includes(required), required);
+		assert.ok(
+			!paths.includes("skills/ketchup-video/SKILL.md"),
+			"ketchup-video stays unshipped",
+		);
+	});
+
+	it("marks statechart optional with a Java and TLA+/TLC note", () => {
+		const skill = read("skills/statechart/SKILL.md");
+		assert.match(skill, /optional/i);
+		assert.match(skill, /Java/);
+		assert.match(skill, /TLA+|TLC/);
+		assert.match(skill, /\/skill:statechart/);
 	});
 });

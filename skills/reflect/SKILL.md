@@ -83,6 +83,8 @@ Before applying any Accepted edit, present the synthesizer's full Accepted/Rejec
 
 Backlog items go to whatever devex / backlog tracker your team uses. Filing one is an external action under `../poteto-mode/references/authorization.md`, so present the Backlog list with the Accepted list and file only the items the user approves.
 
+Never edit a packaged or cache install of a skill in place. Before approval, show each skill's destination: the project's `.pi/skills/<skill>/`, or the user's Pi skills directory such as `~/.pi/agent/skills/<skill>/` when the user chose a personal install. After approval, copy the skill folder there and edit the copy. Never open a PR or push for a skill install.
+
 For each approved Accepted item, follow the Routing field exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.

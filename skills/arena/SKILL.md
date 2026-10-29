@@ -27,7 +27,7 @@ The N candidates will receive the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. The rubric is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Runners are diversity seats: each gets an exact authenticated `provider/model-id` from the live catalog, one model family per seat, per `../poteto-mode/references/fan-out.md` section 3, which also covers having fewer families than seats. If a launch rejects a model, run that seat on another model of the same family and say so. Spawn more when the arena covers multiple design directions. Same-family seats, including the same model N times when the work is generation-bound rather than judgment-sensitive, are allowed only when disclosed as context-isolated, not cross-family, and the cross-family result is then reported incomplete.
+3. Pick the runners. Runners are diversity seats: each gets an exact authenticated `provider/model-id` from the live catalog, one model family per seat, per `../poteto-mode/references/fan-out.md` section 3, which also covers having fewer families than seats. If a launch rejects a model, run that seat on another authenticated model of the same family and say so. If the family has no other authenticated model, or that fallback is rejected too, drop the seat and say so. If dropped seats leave fewer than two runners, add runners until there are two, or one when only one seat was planned. Run each added runner on a remaining runner's model, or omit `model` so it runs on the parent model when none remain, and say so. Spawn more when the arena covers multiple design directions. Same-family seats, including the same model N times when the work is generation-bound rather than judgment-sensitive, are allowed only when disclosed as context-isolated, not cross-family, and the cross-family result is then reported incomplete.
 4. Assign output paths. Each candidate writes to its own location (its own managed `worktree` branch from committed HEAD, per `../poteto-mode/references/fan-out.md` section 5; if the host cannot create one, report that launch as blocked rather than substituting a directory), per the **principle-separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
@@ -52,7 +52,7 @@ If a candidate fails to produce output, proceed with N-1 and note the dropout in
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one exact authenticated `provider/model-id` from the live catalog for the cross-judge, a diversity seat. Its family must differ from every candidate author's family, not only the parent's, per `../poteto-mode/references/fan-out.md` section 3; if no such family is authenticated, disclose a same-family context-isolated judge and report the cross-judgment incomplete. Spawn one readonly judge subagent on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, spawn one readonly judge subagent, a diversity seat. The judge's family must differ from the parent's family and from every candidate author's family, per `../poteto-mode/references/fan-out.md` section 3. Try only exact authenticated `provider/model-id` values from another family. If a launch rejects an entry, try another model of that family, or move to the next other-family candidate when there is none. If no other-family model runs, skip the judge, pick the base alone in Phase D, and say so. Do not fall back to a same-family judge. If you do not know the parent's model, try other-family candidates in catalog order and say that the family check did not run. The judge sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
 ```json subagent
 {
@@ -70,11 +70,11 @@ After all Phase B candidates complete, choose one exact authenticated `provider/
 
 Read every candidate end to end before picking.
 
-Score each candidate against the rubric criterion by criterion, not on holistic feel. Compare against the cross-judge. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
+Score each candidate against the rubric criterion by criterion, not on holistic feel. Compare against the cross-judge when Phase C ran one. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
 
 Pick the base on which candidate a future maintainer can extend most easily without breaking invariants. Prefer the cleaner boundary or smaller API when two feel tied, per the Laziness Protocol.
 
-Record the pick and the reason in a short synthesis note alongside the base artifact, including the cross-judge's verdict.
+Record the pick and the reason in a short synthesis note alongside the base artifact, including the cross-judge's verdict or that Phase C skipped the judge.
 
 ## Phase E: Graft
 
@@ -94,4 +94,4 @@ If verification surfaces a problem the arena did not catch, either Phase A was w
 
 ## Outputs
 
-One synthesized artifact. One short synthesis note alongside, naming the base, the grafts (with source candidate), the rejections, the dropouts if any, and the verification result.
+One synthesized artifact. One short synthesis note alongside, naming the base and why, the cross-judge's verdict or that Phase C skipped the judge, the grafts (with source candidate), the rejections, the dropouts if any, and the verification result.

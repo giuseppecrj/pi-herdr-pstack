@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "190d28736eff128ec94f502a22c7fe0c4b56cd37",
+			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
 			"root": "pstack/skills"
 		}
 	},
@@ -160,7 +160,7 @@
 		},
 		{
 			"path": "skills/principle-explain-the-number/SKILL.md",
-			"sha256": "4253907fcf0df011eec68cb41383678268fc8efc64669053e750e8e11d6a3642",
+			"sha256": "9272160f996b7c1d4f5adb9d7dbe62307013966ec33abb4314e9d5927ae7007e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -170,7 +170,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
+			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
 			"path": "skills/principle-fix-root-causes/SKILL.md",

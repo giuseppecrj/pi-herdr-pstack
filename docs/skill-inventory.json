@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 53,
+  "expectedSkillCount": 57,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -9,7 +9,7 @@
     },
     "cursor": {
       "repository": "https://github.com/cursor/plugins",
-      "commit": "190d28736eff128ec94f502a22c7fe0c4b56cd37",
+      "commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
       "root": "pstack/skills"
     }
   },
@@ -182,24 +182,35 @@
       }
     },
     {
+      "name": "in-your-own-words",
+      "wave": "W3-B",
+      "status": "shipped",
+      "primarySource": "cursor",
+      "sourceFiles": {
+        "cursor": [
+          "in-your-own-words/SKILL.md"
+        ]
+      }
+    },
+    {
       "name": "interrogate",
       "wave": "W4-A",
       "status": "shipped",
-      "primarySource": "mimir",
+      "primarySource": "cursor",
       "sourceFiles": {
-        "mimir": [
-          "interrogate/SKILL.md",
-          "interrogate/references/code-quality-review.md",
-          "interrogate/references/lead-judgment.md",
-          "interrogate/references/reviewer-prompt.md",
-          "interrogate/references/rubric.md"
-        ],
         "cursor": [
-          "interrogate/SKILL.md",
-          "interrogate/references/code-quality-review.md",
-          "interrogate/references/lead-judgment.md",
-          "interrogate/references/reviewer-prompt.md",
-          "interrogate/references/rubric.md"
+          "interrogate/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "ketchup",
+      "wave": "W3-B",
+      "status": "shipped",
+      "primarySource": "cursor",
+      "sourceFiles": {
+        "cursor": [
+          "ketchup/SKILL.md"
         ]
       }
     },
@@ -755,6 +766,17 @@
       }
     },
     {
+      "name": "sharpen",
+      "wave": "W3-B",
+      "status": "shipped",
+      "primarySource": "cursor",
+      "sourceFiles": {
+        "cursor": [
+          "sharpen/SKILL.md"
+        ]
+      }
+    },
+    {
       "name": "show-me-your-work",
       "wave": "W4-B",
       "status": "shipped",
@@ -769,6 +791,45 @@
           "show-me-your-work/SKILL.md",
           "show-me-your-work/references/decision-log-template.tsv",
           "show-me-your-work/scripts/log.sh"
+        ]
+      }
+    },
+    {
+      "name": "statechart",
+      "wave": "W4-B",
+      "status": "shipped",
+      "primarySource": "cursor",
+      "sourceFiles": {
+        "cursor": [
+          "statechart/SKILL.md",
+          "statechart/references/render.md",
+          "statechart/scripts/backends/cfg.ts",
+          "statechart/scripts/backends/mermaid.ts",
+          "statechart/scripts/backends/plain-text.ts",
+          "statechart/scripts/backends/report.ts",
+          "statechart/scripts/frontends/config.ts",
+          "statechart/scripts/frontends/dot.ts",
+          "statechart/scripts/frontends/marks.ts",
+          "statechart/scripts/frontends/messages.ts",
+          "statechart/scripts/frontends/spec.ts",
+          "statechart/scripts/frontends/trace.ts",
+          "statechart/scripts/frontends/value.ts",
+          "statechart/scripts/frontends/verdict.ts",
+          "statechart/scripts/frontends/view.ts",
+          "statechart/scripts/ir.ts",
+          "statechart/scripts/passes/annotate.ts",
+          "statechart/scripts/passes/label.ts",
+          "statechart/scripts/passes/lift.ts",
+          "statechart/scripts/passes/loop-check.ts",
+          "statechart/scripts/passes/paths.ts",
+          "statechart/scripts/passes/reach.ts",
+          "statechart/scripts/passes/region-check.ts",
+          "statechart/scripts/passes/regions.ts",
+          "statechart/scripts/pipeline.ts",
+          "statechart/scripts/run.ts",
+          "statechart/scripts/statechart",
+          "statechart/scripts/statechart.ts",
+          "statechart/scripts/worker.ts"
         ]
       }
     },

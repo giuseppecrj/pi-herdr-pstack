@@ -1,6 +1,6 @@
 ### Orchestrate
 
-**You own the program, never the code. Author briefs, drain the queue, keep the frontier green, decide.** For a whole project handed to one coordinator chat: many stacked PRs, many subagents, the human checking in between waves instead of every five minutes. One task driven to a predicate is Autonomous run. One ambitious run needing a bespoke workflow is the **figure-it-out** skill. Route here when the work outlives any single child. Work one agent could finish inside the session's budget is not a program.
+**You run the program, never the code. Decide which agent does each piece of work, then check what each one produces.** For a standing project handed to one coordinator chat: many stacked PRs, many subagents, the human checking in between waves instead of every five minutes. One task driven to a predicate is Autonomous run. One ambitious run needing a bespoke workflow is the **figure-it-out** skill. Route here when the work outlives any single child. Work one agent could finish inside the session's budget is not a program.
 
 **Scope in this release.** Say this to the operator when you frame the program. This playbook is a depth-1, single-session coordinator. It is not an unattended runner.
 
@@ -39,6 +39,15 @@ Create `orchestrate/<project-slug>/` in a directory the operator names. By defau
 - `inbox.tsv` gets one row per delivered result. `gates.md` parks human gates (question, options, default on no answer).
 - `decisions.tsv` is the trail via the **show-me-your-work** skill.
 - `status.md` is derived from `units.tsv` and `ledger.tsv` at each drain, never hand-maintained. Regenerate it from the tables instead of narrating events into it.
+
+#### Supervision
+
+- **Each kickoff names the evidence that proves the work is done,** such as a command and its expected output, a control-skill check, or an artifact. It also names the goal, the paths the worker may and may not write, and the actions it must not take. If you can't name the evidence, the unit isn't scoped yet.
+- **Read the diff or the artifact, not only the worker's summary.** Green CI is an input to a verdict, not a verdict. Behavioral work needs more than a type check. A verdict covers one head SHA, so a new push needs a new verdict. Sample briefs while a wave runs, and fix the template when one fails.
+- **Send back work that drifts from scope or grows past what was asked.** Keep only the fixes that block the program, and park the rest as follow-ups.
+- **Check a PR's live state before you report on it,** with `gh pr view` and `gh pr checks`, not the worker's last report. Account for every child you launched as done, replaced, or absorbed into another child's scope, on the checklist that `references/fan-out.md` requires.
+- **Stop or replace a child that stalls or loops.** Judge it by its pushes and PR activity, not its status text, per Liveness and failure below. Retry by cause: a smaller scope after a context or memory limit, the same kickoff after a dropped connection, and a different model after a tool error. After two retries, drop the unit and replan around it. When a cancelled child's result arrives late, check it against the PR's current state, and hand any unique findings to a fresh child.
+- **Ask the user only for a real decision or a blocker,** such as an irreversible action no grant names, a product or preference call that no experiment settles, or a dead end that survived a replan. Rebase mechanics, retries, CI flakes, review triage, and "should I keep going" never reach the user.
 
 #### The brief
 
@@ -117,4 +126,4 @@ Never reaches the human: frontier nudges, rebase mechanics inside a granted stac
 
 Mid-run discoveries fix only what blocks the frontier. Everything else parks in follow-ups. At this fan-out a small scope leak multiplies into PRs nobody asked for.
 
-**Reply:** at checkpoints and close: the predicate and the count against it from `units.tsv` and `ledger.tsv`, tracks and what each landed, the frontier (PR list plus SHAs), verdicts summary, what was abandoned and why, gates awaiting the human (the only asks), the grants used, the store path, and the trail path. Numbers from the tables, not narrative. Include PR links.
+**Reply:** at checkpoints and close: what landed against the goal, the predicate and the count against it from `units.tsv` and `ledger.tsv`, each PR's live state and verdict with its link, what was dropped and why, gates awaiting the human (the only asks), the grants used, the store path, and the trail path. Numbers from the tables, not narrative.

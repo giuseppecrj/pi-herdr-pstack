@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"description": "Per-file content provenance for the W3-B skills: unslop, bro, technical-writing, teach, no-comments (including references/comment-sicko.md) and poteto-help. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
+	"description": "Per-file content provenance for the W3-B skills: unslop, bro, technical-writing, teach, no-comments (including references/comment-sicko.md), poteto-help, in-your-own-words, ketchup and sharpen. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
 	"sources": {
 		"mimir": {
 			"repository": "https://github.com/casualjim/pi-mimir",
@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "190d28736eff128ec94f502a22c7fe0c4b56cd37",
+			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
 			"root": "pstack/skills"
 		}
 	},
@@ -76,17 +76,17 @@
 		},
 		{
 			"path": "skills/poteto-help/SKILL.md",
-			"sha256": "b904cd5a7a4bff7252422b86e87338e3407ca2f2ed5010366aa5ced0415ae928",
+			"sha256": "eabc95e4d11146835573ec437896b913306e05981bb9a7b3e67f754736655697",
 			"status": "adapted",
 			"sources": [
 				{
 					"source": "cursor",
 					"path": "poteto-help/SKILL.md",
-					"sha256": "67c77ee5e91c19809b01d08cc73cc2870a52fb95fc64dc33328bf8ff9e49891c",
+					"sha256": "768368881379d688c4e3bbdae55dd2d7874fde98a258324d3527de1bf09f9bd1",
 					"use": "primary"
 				}
 			],
-			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row. W3 reconcile: retires the cross-batch planned W3 markers on the five W3-A rows; the availability paragraph names the 35 W3 skills; adds a 24-row principle sub-table routing to the shipped ../principle-*/SKILL.md leaves so every inventory row is routed; the setup-report claims now name the two skills the report actually resolves (poteto-mode and setup-pstack). W4 reconcile: every planned W4 marker and interim route is retired; the release paragraph names all 51 skills and 23 playbooks; the make-bot-ui row describes the Pi re-authoring (loopback, per-request pi -p, authorization for exposure or installs); scoped-down workflows (babysit, shipping, autopilots, orchestrate, worktree cleanup, reflect, recall, arena, swarm, interrogate, why) carry one-line limits; a symptom row covers idle coordinators and watcher advisories. Wave 4 fix round: the Shipping route also names its gh-only access, one-shot watcher waits and merge-queue report-and-stop. G5 adapts the setup nudge now in the cursor pin (1e56b291 / PR #509): when the answer depends on the six task categories and a session report does not show them set, ask once to run /setup-pstack (report only) or leave the categories as they are. Later says delegations that use an unset category fail and do not fall back to host defaults, because poteto-mode always passes task:<category>, until an approved /setup-pstack <request> write sets it. A category is unset only when the Config line ends with the missing-file sentence, or a present file (the Config line ends with space, open-paren, revision sha256:, 64 lowercase hex digits, close-paren, period) has the preference value (not set). Findings are not unset: host parseExactModelRef at 7d35371 trims the reference and both sides of the slash before the auth check, while setup.ts refProblem flags surrounding whitespace and a raw ref that is not an authenticated id, including spaces around the slash. The report withholds those strings, so it cannot show the post-trim result, and the nudge does not tell the user to write config because of a Finding. Any other Config-line ending is unknown. The preference value is compared whole to (not set), so a comma inside one model id cannot change the decision. The skill does not read or write herdr-agents config. The Cursor source hash is the pin blob. Pin move to ccb5507: the interrogate table says 'different models' instead of 'several models'. Cursor's Later line that every role keeps its default model is still uncopied; the Pi Later line still says unset task:<category> delegations fail. Sticky-mode context loading: the start-a-task guidance now describes the short checklist, automatic hub loading when its full text is absent, compaction recovery, and reuse for the task form. The drift symptom checks status before distinguishing an off switch from a model that skipped supplied instructions. Task-model init revision: an approved write from /subagents-init also sets a category. Init fix round: the writer-gate paragraph and the refused-write symptom row now say that a host with the task-model init protocol routes /subagents-init and /setup-pstack init through pstack's approval dialog, keep the older-host caveat (its /subagents-init direct write is refused and the alias reports init unsupported, so /setup-pstack <request> remains the path), and list why an init notice can say it did not start. Pin move to cursor/plugins 190d287: inventory count is 53; check-state and skill table cover formal verification create/maintain; setup step notes the optional verification and formal-verification gaps without Cursor slash invoke or Claude Code adapter."
+			"explanation": "Pi re-authoring that keeps the pinned Cursor file's structure: intent, need-finding question, Get set up, Start a task, Pick a skill with close calls, Playbooks and principles, Fix a run, Make pstack my own, Reply (user decision D4; pi-mimir has no copy). Removed as Cursor-only: /add-plugin and Customize, the ~/.cursor rules file, reasoning-budget ladder, auto and inherit-parent model refs, Option+Enter Custom Modes, the poteto agent type for subagents, cloud agents, /loop, cursor-team-kit and its commands, Cursor Plan Mode, cursor.com links and the ten ../../docs/guide pages, which this package does not ship. Replaced with what this package ships: the explicit pi-herdr-agents prerequisite and same-settings install, the /setup-pstack report and its single approved write with reload, sticky /poteto-mode on/task/status/off versus non-sticky /skill:poteto-mode, /skill:<name> invocation, explicit-only skills except setup-pstack, no named roles with bare delegates, and the writer gate that refuses /subagents-init. The routing table keeps all 27 non-principle inventory rows with W4 rows marked planned and an availability rule; the only external link is the public README (D5). Fix-a-run gains rows for refused enable, refused tasks, the writer gate and planned skills; the /loop and cloud-agent rows become an autonomous-run predicate row and a worktree row. W3 reconcile: retires the cross-batch planned W3 markers on the five W3-A rows; the availability paragraph names the 35 W3 skills; adds a 24-row principle sub-table routing to the shipped ../principle-*/SKILL.md leaves so every inventory row is routed; the setup-report claims now name the two skills the report actually resolves (poteto-mode and setup-pstack). W4 reconcile: every planned W4 marker and interim route is retired; the release paragraph names all 51 skills and 23 playbooks; the make-bot-ui row describes the Pi re-authoring (loopback, per-request pi -p, authorization for exposure or installs); scoped-down workflows (babysit, shipping, autopilots, orchestrate, worktree cleanup, reflect, recall, arena, swarm, interrogate, why) carry one-line limits; a symptom row covers idle coordinators and watcher advisories. Wave 4 fix round: the Shipping route also names its gh-only access, one-shot watcher waits and merge-queue report-and-stop. G5 adapts the setup nudge now in the cursor pin (1e56b291 / PR #509): when the answer depends on the six task categories and a session report does not show them set, ask once to run /setup-pstack (report only) or leave the categories as they are. Later says delegations that use an unset category fail and do not fall back to host defaults, because poteto-mode always passes task:<category>, until an approved /setup-pstack <request> write sets it. A category is unset only when the Config line ends with the missing-file sentence, or a present file (the Config line ends with space, open-paren, revision sha256:, 64 lowercase hex digits, close-paren, period) has the preference value (not set). Findings are not unset: host parseExactModelRef at 7d35371 trims the reference and both sides of the slash before the auth check, while setup.ts refProblem flags surrounding whitespace and a raw ref that is not an authenticated id, including spaces around the slash. The report withholds those strings, so it cannot show the post-trim result, and the nudge does not tell the user to write config because of a Finding. Any other Config-line ending is unknown. The preference value is compared whole to (not set), so a comma inside one model id cannot change the decision. The skill does not read or write herdr-agents config. The Cursor source hash is the pin blob. Pin move to ccb5507: the interrogate table says 'different models' instead of 'several models'. Cursor's Later line that every role keeps its default model is still uncopied; the Pi Later line still says unset task:<category> delegations fail. Sticky-mode context loading: the start-a-task guidance now describes the short checklist, automatic hub loading when its full text is absent, compaction recovery, and reuse for the task form. The drift symptom checks status before distinguishing an off switch from a model that skipped supplied instructions. Task-model init revision: an approved write from /subagents-init also sets a category. Init fix round: the writer-gate paragraph and the refused-write symptom row now say that a host with the task-model init protocol routes /subagents-init and /setup-pstack init through pstack's approval dialog, keep the older-host caveat (its /subagents-init direct write is refused and the alias reports init unsupported, so /setup-pstack <request> remains the path), and list why an init notice can say it did not start. Pin move to cursor/plugins 190d287: inventory count is 53; check-state and skill table cover formal verification create/maintain; setup step notes the optional verification and formal-verification gaps without Cursor slash invoke or Claude Code adapter. Pin move to cursor/plugins 8b3326d (pstack 0.15.30): upstream poteto-help adds only a /statechart skill-table row; not copied because statechart is flagged and not shipped (executable scripts + TLA+/TLC tooling dependency). Pin move to cursor/plugins 1ba91fc25c0977741dd0e267849e6234b037ed0a (pstack 0.15.36): ships optional /skill:statechart table row (Java + TLA+/TLC); adds autopilot don't-merge phrasing; interrogate row follows arena prove-with-run; ketchup/ketchup-video/in-your-own-words/sharpen rows still uncopied."
 		},
 		{
 			"path": "skills/poteto-help/references/prompting.md",
@@ -104,17 +104,17 @@
 		},
 		{
 			"path": "skills/poteto-help/references/recipes.md",
-			"sha256": "2d0b5fda140a0ce80ab8d9b372de138704a1c9036fd28a6047339503f5ef5928",
+			"sha256": "81f1562e99d3fc7f6813f384ac4af7ab312ef7d02251ec36bf8319a93e6f6028",
 			"status": "adapted",
 			"sources": [
 				{
 					"source": "cursor",
 					"path": "poteto-help/references/recipes.md",
-					"sha256": "f2d573014f72f7c798b1998b45f4360a8a83e7b8026c4ed9074e56c5a9d49338",
+					"sha256": "5323aca73a39a3b607c2bb22cd33551fe893563dfd4b104df838da010e9fc702",
 					"use": "primary"
 				}
 			],
-			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired. W4 reconcile: every planned W4 marker is retired; the intro's planned-recipe rule becomes a reminder that recipes which push, open PRs or merge need the grants their playbooks name, and the autopilot recipe asks the user to name them. Pin move to cursor/plugins 190d287: review-and-ship recipe for create/maintain-formal-verification-skill using /skill: forms. ketchup/sharpen recipe rows stay uncopied."
+			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired. W4 reconcile: every planned W4 marker is retired; the intro's planned-recipe rule becomes a reminder that recipes which push, open PRs or merge need the grants their playbooks name, and the autopilot recipe asks the user to name them. Pin move to cursor/plugins 190d287: review-and-ship recipe for create/maintain-formal-verification-skill using /skill: forms. ketchup/sharpen recipe rows stay uncopied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: Dropped wording and autopilot don't-merge recipe; ketchup-video recipe not copied."
 		},
 		{
 			"path": "skills/teach/SKILL.md",
@@ -175,30 +175,58 @@
 				}
 			],
 			"explanation": "Byte-identical copy of the pinned pi-mimir file, which also equals the Cursor file. Stable rule numbers with gaps are upstream ids that other skills cite, so they stay as written."
+		},
+		{
+			"path": "skills/in-your-own-words/SKILL.md",
+			"sha256": "251e7e0dc80af640ab652439453ad9cb1ca6977c6a02615e8e3e86b1fa3b714d",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "in-your-own-words/SKILL.md",
+					"sha256": "fa8ba74e27d7be371dc270ec78bbf816411477d0dfab185356c861ac8dd413ad",
+					"use": "primary"
+				}
+			],
+			"explanation": "Adapted from pinned Cursor leaf: /skill:in-your-own-words invocation. Body otherwise follows upstream."
+		},
+		{
+			"path": "skills/ketchup/SKILL.md",
+			"sha256": "3b8165c947fd64a9aea41153e1d69ed9193e6f04328602e09bd65525f9eaa2ae",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "ketchup/SKILL.md",
+					"sha256": "f2923ffd14f6fc778f75a47aaed1f317fb5fd00b5701ca769d6446c74106dead",
+					"use": "primary"
+				}
+			],
+			"explanation": "Adapted from pinned Cursor catch-up leaf: /skill:ketchup invocation. Keeps bro voice cross-link and read-only catch-up rules; no Cursor-only tooling. Softened Cursor /visualize references to plain charts."
+		},
+		{
+			"path": "skills/sharpen/SKILL.md",
+			"sha256": "0d0ed27041096d4ba9109539cd0c2ccfb74be3c20a1d184f4fcfd935bae313de",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "cursor",
+					"path": "sharpen/SKILL.md",
+					"sha256": "563dfc460c605d311e650726288e2f1cbd61eab817db178d6e7e29643e07e7a2",
+					"use": "primary"
+				}
+			],
+			"explanation": "Adapted from pinned Cursor leaf: /skill:sharpen invocation. Body otherwise follows upstream."
 		}
 	],
 	"planned": [],
 	"excluded": [
 		{
 			"source": "cursor",
-			"path": "in-your-own-words/SKILL.md",
-			"sha256": "fa8ba74e27d7be371dc270ec78bbf816411477d0dfab185356c861ac8dd413ad",
-			"disposition": "Flagged at the f713f14 pin: new Cursor skill that restates the user's goals before work. Not added to the inventory and not shipped. Recommend a later Pi-authored leaf if G wants it; poteto-help table rows were not copied.",
-			"explanation": "New upstream skill at this pin, accounted so the skills-root inventory check stays closed. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "ketchup/SKILL.md",
-			"sha256": "f2923ffd14f6fc778f75a47aaed1f317fb5fd00b5701ca769d6446c74106dead",
-			"disposition": "Flagged at the f713f14 pin (still not shipped at 190d287): Cursor catch-up skill. Upstream body changed at this pin (decidable waiting items; never cut items for a word count). Autopilot-full/stack ketchup lines were not ported. Recommend a later Pi-authored leaf if G wants it.",
-			"explanation": "New upstream skill at this pin, accounted so the skills-root inventory check stays closed. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "sharpen/SKILL.md",
-			"sha256": "563dfc460c605d311e650726288e2f1cbd61eab817db178d6e7e29643e07e7a2",
-			"disposition": "Flagged at the f713f14 pin (still not shipped at 190d287): Cursor pre-task sharpening skill. Upstream body changed at this pin (restore original rewrite-only prompt). Recommend a later Pi-authored leaf if G wants it; poteto-help table rows were not copied.",
-			"explanation": "New upstream skill at this pin, accounted so the skills-root inventory check stays closed. No dest file."
+			"path": "ketchup-video/SKILL.md",
+			"sha256": "027aed9a01adf208aeac3a134f47d12f7c1e42d6fea03095aedc2bae58cdcfd1",
+			"disposition": "Flagged at pin 1ba91fc (pstack 0.15.36): ketchup-style catch-up as a subtitled slide video. Depends on ketchup visuals and needs video render tooling outside the repo. Not shipped. poteto-help row not copied.",
+			"explanation": "Upstream skill accounted so the skills-root inventory check stays closed. No dest file."
 		}
 	]
 }
