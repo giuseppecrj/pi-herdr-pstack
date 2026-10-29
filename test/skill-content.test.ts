@@ -166,10 +166,13 @@ const W4P_FILES = [
 const ownerWaveOf = (path: string) =>
 	W4P_FILES.includes(path) ? "W4-P" : waveOf.get(path.split("/")[1]);
 const FAN_OUT = "skills/poteto-mode/references/fan-out.md";
-/** Every script that may ship, with its upstream git mode. */
+/** Runnable shebang entrypoints under skills/.../scripts and their git modes. */
 const SCRIPT_MODES: Record<string, string> = {
 	"skills/poteto-mode/scripts/check-plan.mjs": "100644",
 	"skills/show-me-your-work/scripts/log.sh": "100755",
+	"skills/statechart/scripts/statechart": "100755",
+	"skills/statechart/scripts/statechart.ts": "100644",
+	"skills/statechart/scripts/test/java.ts": "100755",
 };
 const W2_FILES = [
 	"skills/poteto-mode/SKILL.md",
@@ -511,12 +514,12 @@ describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 53);
+		assert.equal(inventory.skills.length, 54);
 		const count = (prefix: string) =>
 			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 29, 6, 8, 8],
+			[2, 29, 6, 8, 9],
 		);
 		for (const row of inventory.skills) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);
@@ -1189,10 +1192,16 @@ describe("delegation contract", () => {
 		];
 		for (const path of SHIPPED_FILES) {
 			const text = read(path);
-			for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+			const status = statusOf(path);
+			// Copied tooling (for example statechart corpora and compilers) may
+			// contain identifiers that collide with slash-command bans such as
+			// /loop inside path strings like loop-check.ts.
+			if (status !== "copied") {
+				for (const pattern of banned) assert.doesNotMatch(text, pattern, path);
+			}
 			// Only copies and allowlisted quotations may quote a model name.
 			assert.doesNotMatch(
-				bannable(path, text, statusOf(path), QUOTED_MODELS),
+				bannable(path, text, status, QUOTED_MODELS),
 				MODEL_SLUG,
 				path,
 			);
@@ -1753,20 +1762,8 @@ describe("methodology provenance", () => {
 	const FLAGGED_UNSHIPPED_CURSOR = new Set([
 		"in-your-own-words/SKILL.md",
 		"ketchup/SKILL.md",
+		"ketchup-video/SKILL.md",
 		"sharpen/SKILL.md",
-		// statechart (8b3326d): executable scripts + TLA+/TLC tooling; not shipped
-		"statechart/SKILL.md",
-		"statechart/scripts/chart-to-tla.mjs",
-		"statechart/scripts/compare-charts.mjs",
-		"statechart/scripts/lib.mjs",
-		"statechart/scripts/model/OutputFolder.cfg",
-		"statechart/scripts/model/OutputFolder.map.mjs",
-		"statechart/scripts/model/OutputFolder.tla",
-		"statechart/scripts/statechart.mjs",
-		"statechart/scripts/test/statechart.test.mjs",
-		"statechart/scripts/test/sync.mmd",
-		"statechart/scripts/test/upload.mmd",
-		"statechart/scripts/tlc-to-chart.mjs",
 	]);
 	/** W4-P cites only the hub row's playbooks and scripts. */
 	const listedSource = (wave: string, source: SourceKey, path: string) =>
@@ -1972,20 +1969,17 @@ describe("methodology provenance", () => {
 		}
 	});
 
-	const shippedScripts = SHIPPED_FILES.filter((path) =>
-		path.includes("/scripts/"),
-	);
+	const shippedScripts = Object.keys(SCRIPT_MODES).toSorted();
 	const gitMode = (path: string) =>
 		execFileSync("git", ["-C", PACK_ROOT, "ls-files", "-s", "--", path])
 			.toString("utf8")
 			.split(" ")[0];
 	it("ships only the recorded scripts, each with a shebang and its recorded mode", () => {
-		assert.deepEqual(
-			shippedScripts.filter((path) => !(path in SCRIPT_MODES)),
-			[],
-			"every shipped script has a recorded mode",
-		);
 		for (const path of shippedScripts) {
+			assert.ok(
+				SHIPPED_FILES.includes(path),
+				`${path} is recorded in SCRIPT_MODES but missing from the tree`,
+			);
 			assert.match(read(path), /^#!\/\S+/, `${path} has no shebang`);
 			const executable = (statSync(join(PACK_ROOT, path)).mode & 0o111) !== 0;
 			assert.equal(
@@ -1996,6 +1990,13 @@ describe("methodology provenance", () => {
 			const indexed = gitMode(path);
 			if (indexed)
 				assert.equal(indexed, SCRIPT_MODES[path], `${path} git mode`);
+		}
+		for (const path of SHIPPED_FILES.filter((p) => p.includes("/scripts/"))) {
+			if (!read(path).startsWith("#!/")) continue;
+			assert.ok(
+				path in SCRIPT_MODES,
+				`${path} has a shebang but is not in SCRIPT_MODES`,
+			);
 		}
 	});
 

@@ -1,116 +1,43 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
+description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Adversaries try to break a change or design, and only findings proven by a run survive."
 disable-model-invocation: true
 ---
 
 # Interrogate
 
-Spawn one reviewer per model family to adversarially review code changes. Each model gets the same prompt and rubric. The adversarial signal comes from model diversity, not assigned personas.
+Adversaries try to break a change or a design. A finding survives only when a run proves it. Report the findings. Do not apply fixes.
 
-The deliverable is a synthesized verdict. Do NOT auto-apply changes.
+## Frame
 
-## Step 1, Determine Scope
+The scope is what the user names. Otherwise it is the branch diff from its merge base with the base branch, through the working tree. State the intent in your own words, from the user's message, the commits, and the PR description. Ask the user when the intent is unclear.
 
-Identify what to review from context:
+## Fan out
 
-- If the user points at specific files or a diff, use that
-- If on a feature branch, run `git diff main...HEAD` (or the appropriate base branch) for the full changeset
-- If the user's message references recent work, gather the relevant files
+Run Phase A steps 3 and 4 and Phase B of the **arena** skill, with four changes. Every launch follows `../poteto-mode/references/fan-out.md`. Adversaries are diversity seats like arena runners: one exact authenticated `provider/model-id` per family from the live catalog. Seat fallbacks, dropped seats, and topping up to two runners follow arena Phase A step 3. Commit or otherwise materialize the scope's uncommitted changes before worktree launches, because a Pi worktree starts from committed HEAD and does not copy the parent's dirty tree. Spawn each adversary as a bare `subagent` with the Implementer prompt from `../poteto-mode/references/delegation.md` as `systemPrompt` and `fork: false`. In place of the arena task and rationale, give each adversary the scope, the intent, and this brief:
 
-Package the diff (or file contents) plus any surrounding context files the reviewers need to understand the code.
-
-## Step 2, State the Intent
-
-Before spawning reviewers, state the intent explicitly. Derive this from:
-
-- The user's message
-- Commit messages
-- PR description if one exists
-- The code itself
-
-Write one clear paragraph. If you're unsure about the intent, ask the user before proceeding.
-
-## Step 3, Spawn Reviewers
-
-Launch all reviewers as independent bare `subagent` calls in one turn, per `../poteto-mode/references/fan-out.md`, then end the turn. Reviewers are diversity seats: label them Reviewer A, B, C and D, extending or shrinking the labels to the number of authenticated model families, and give each an exact `provider/model-id` from a different family in the live catalog. With fewer families than seats, follow `../poteto-mode/references/fan-out.md` section 3.
-
-For each reviewer:
-- bare, with `references/reviewer-prompt.md` verbatim as `systemPrompt` and `fork: false`
-- `model`: that reviewer's exact `provider/model-id`
-- do not grant write/edit tools
-
-If a model is rejected as unresolvable when you try to spawn the subagent, pick another authenticated model from the live catalog, choose the closest equivalent (prefer the same family and reasoning tier), spawn with it, and say so in the verdict. Do not block the review on the model issue.
+> Break this change. Prove each finding with a run against the real code, such as a failing test, a repro script, or command output that shows the wrong behavior. For a design or plan, run a prototype or probe the current tree. Keep repros in your own worktree. Report each finding with a title, the exact command, the output it printed, and the output the intent requires. Leave out anything you did not run. That covers style, naming, structure, and risks that need a future change to matter. No findings is a valid result.
 
 ```json subagent
 {
-  "name": "<slug>-reviewer-a",
-  "task": "{INTENT}: <the intent paragraph>. {DIFF_OR_FILES}: <the diff or file contents>. {RUBRIC_CONTENTS}: <the full text of references/rubric.md>. {CODE_QUALITY_CONTENTS}: <the full text of references/code-quality-review.md>. Read-only. You are a leaf: launch nothing.",
-  "systemPrompt": "<the full text of references/reviewer-prompt.md, verbatim>",
+  "name": "<slug>-adversary-1",
+  "task": "Scope: <paths or diff summary>. Intent: <the intent paragraph>. <the break-this-change brief above>. Shared grounding: <path>. Write repros only in your worktree; do not push, merge or open a PR. You are a leaf: launch nothing.",
+  "systemPrompt": "<the Implementer prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "<provider>/<model-id>",
   "thinking": "high",
-  "tools": "read, bash",
-  "fork": false
+  "fork": false,
+  "worktree": { "branch": "<slug>-adversary-1" }
 }
 ```
 
-Read `references/reviewer-prompt.md` and fill in the template with:
-1. The stated intent
-2. The diff or file contents
-3. The review rubric from `references/rubric.md`
-4. The code-quality lens from `references/code-quality-review.md`
+## Verify
 
-The same filled template goes to all reviewers, so every model applies the code-quality lens: the prompt as `systemPrompt`, and the value for each placeholder in `task`.
+Verify each finding per arena Phase F by rerunning its command. Keep a finding when the output shows the failure and the failure breaks the intent. Drop the rest. Merge findings that share a root cause.
 
-## Step 4, Synthesize
+Skip arena Phases C, D, and E. Adversaries find different failures, so the verdict keeps every verified finding, not one adversary's list.
 
-As results come back, build a unified picture:
+## Output
 
-1. **Parse all findings** from the reviewers
-2. **Identify consensus**. Findings raised by 2+ models independently are highest signal.
-3. **Identify lone-model findings**. Still worth reading, but weight accordingly.
-4. **Deduplicate**. Different models may describe the same issue differently. Merge these and note which models raised it.
-5. **Note disagreements**. If one model flags something and another explicitly says the opposite, that's useful context for the verdict.
-
-## Step 5, Lead Judgment
-
-You are the lead reviewer, a pragmatic senior engineer, not a neutral aggregator.
-
-Read `references/lead-judgment.md` for the full framework.
-
-Categorize every finding using these buckets:
-
-- **Act on**. Real issues affecting correctness, security, or maintainability given the actual goals. These would block a real PR.
-- **Consider**. Legitimate points, but you're not sure they outweigh the cost of addressing them right now. Worth the user's attention.
-- **Noted**. Technically valid but not actionable. Context-dependent, premature optimization, or low-impact given the current stage.
-- **Dismissed**. Wrong, nitpicky, or missing context. Brief explanation why.
-
-For each finding, include:
-- Which model(s) raised it
-- The category (act on / consider / noted / dismissed)
-- A one-line rationale for the categorization
-
-## Output Format
-
-Present the verdict in this structure:
-
-### Intent
-> [The stated intent paragraph from Step 2]
-
-### Reviewers
-- Reviewer [label]: [model name], [N findings] (one bullet per reviewer)
-
-### Act On
-[Findings that should be addressed. For each: description, which models raised it, why it matters.]
-
-### Consider
-[Findings worth thinking about. For each: description, which models raised it, tradeoff involved.]
-
-### Noted
-[Valid but low-priority. Brief list.]
-
-### Dismissed
-[Rejected findings with brief rationale.]
-
-### Agreement Map
-[Where did models agree, where did they diverge, and what does the pattern of agreement/disagreement tell us?]
+- **Intent**: the restatement.
+- **Findings**: for each verified finding, the command, its output, how it breaks the intent, and the adversaries that found it. Say "no verified findings" when none survive.
+- **Dropped**: for each adversary, the count of dropped findings and why.

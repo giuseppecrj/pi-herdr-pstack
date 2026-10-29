@@ -4,7 +4,7 @@ This package supplies the full unprefixed pstack skill inventory and a small Pi 
 
 ## Current scope
 
-All 53 skills and 23 playbooks ship, and pi-herdr-agents, pi-herdr-roles and pi-herdr-pstack are published on npm via trusted publishing. Releases follow `RELEASING.md`; version bumps on `main` publish. Historical wave plans were deleted; they remain readable at commit `96910f507046285071453b660099b0c3549e6161` under `docs/plans/`.
+All 54 skills and 23 playbooks ship (including optional `statechart`, which needs Java/TLC), and pi-herdr-agents, pi-herdr-roles and pi-herdr-pstack are published on npm via trusted publishing. Releases follow `RELEASING.md`; version bumps on `main` publish. Historical wave plans were deleted; they remain readable at commit `96910f507046285071453b660099b0c3549e6161` under `docs/plans/`.
 
 Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. `poteto-mode` and `/setup-pstack` are retained; pstack contributes no named roles and delegates use deliberate bare prompts. The other roles belong to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are not part of this pack. The host writer gate is unconditional while pstack is loaded.
 

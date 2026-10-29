@@ -30,7 +30,7 @@ change.
 sibling path such as `../agents/comment-sicko.md` is relative to it.
 `test/fixtures/upstream-scope.json` records the scope and the status and
 SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
-`8b3326d99fd4b993cb33a24dad8af03175c642c5`. With `PSTACK_CURSOR_SOURCE` set,
+`1ba91fc25c0977741dd0e267849e6234b037ed0a`. With `PSTACK_CURSOR_SOURCE` set,
 `npm test` checks that the file list and every hash match the pin, that every
 top-level `pstack/` entry is classified, and that every file under
 `pstack/skills` at the pin is referenced by the inventory or a skill-provenance
@@ -57,13 +57,11 @@ table check until it gets a row here.
 | `pstack/docs/harness/claude-code.md` | excluded: Claude Code harness adapter; this pack stays Pi/pi-herdr-agents only |
 
 No file under these roots is in the not-yet-carried state. Between the previous
-pin `190d28736eff128ec94f502a22c7fe0c4b56cd37` and this pin, `docs/guide/06-verify-and-ship.md`
+pin `190d28736eff128ec94f502a22c7fe0c4b56cd37` and the 8b3326d pin, `docs/guide/06-verify-and-ship.md`
 changed (excluded under Q1). `pstack/agents/*` and `docs/harness/claude-code.md`
 are unchanged. `pstack/LICENSE` is unchanged
 (`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). Under
-`pstack/skills`, `poteto-help/SKILL.md` gained a `/statechart` table row (not
-ported) and `statechart/**` was added (flagged, not shipped: executable scripts
-and TLA+/TLC tooling). `in-your-own-words`, `ketchup`, `sharpen`, and
+`pstack/skills`, `poteto-help/SKILL.md` gained a `/statechart` table row and `statechart/**` was added at 8b3326d (then flagged); both ship as of the 1ba91fc pin as an optional Java/TLC skill. `in-your-own-words`, `ketchup`, `sharpen`, and
 `poteto-mode/scripts/check-plan.test.ts` stay flagged, not shipped. Unscoped
 `pstack/README.md` and `pstack/plugin.json`, and out-of-scope
 `pstack/.cursor-plugin/plugin.json` (0.15.29 to 0.15.30), changed and were not
@@ -109,7 +107,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
 | mimir | https://github.com/casualjim/pi-mimir | `f07dd981f62c9c994a5d043ede67d6c63c721454` | `packages/pi-pstack/skills` |
-| cursor | https://github.com/cursor/plugins | `8b3326d99fd4b993cb33a24dad8af03175c642c5` | `pstack/skills` |
+| cursor | https://github.com/cursor/plugins | `1ba91fc25c0977741dd0e267849e6234b037ed0a` | `pstack/skills` |
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
@@ -223,7 +221,7 @@ are attributed to Diátaxis and ASD-STE100 in `THIRD_PARTY_NOTICES.md`.
 Wave 4 shipped the last 14 inventory rows and the 11 remaining poteto-mode
 playbooks. The 190d287 pin move added two more inventory rows
 (`create-formal-verification-skill`, `maintain-formal-verification-skill`), so
-all 53 rows are `shipped` in `docs/skill-inventory.json` and all 23 playbooks
+all 54 rows are `shipped` in `docs/skill-inventory.json` and all 23 playbooks
 ship. Each batch owns its fixtures:
 
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
@@ -301,7 +299,7 @@ reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
 with thinking at high or above. Reflect's tooling lens is a diversity seat.
 The hardest implementation changes go to that category or to the strongest
 exact catalog model with `thinking: xhigh`. The cursor pin is
-`8b3326d99fd4b993cb33a24dad8af03175c642c5`. The host describes `architecture`
+`1ba91fc25c0977741dd0e267849e6234b037ed0a`. The host describes `architecture`
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
@@ -321,7 +319,7 @@ index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
 `d0ef80d86795816da932a153458c5dbe192d294e`, at
 `f713f14203cd6420cec13cd7c55c32d598dbab68`, at
 `190d28736eff128ec94f502a22c7fe0c4b56cd37`, and at the current pin
-`8b3326d99fd4b993cb33a24dad8af03175c642c5`) and six `images/*.jpg`. It walks a user from setup and prompting
+`1ba91fc25c0977741dd0e267849e6234b037ed0a`) and six `images/*.jpg`. It walks a user from setup and prompting
 through design, verification, overnight runs and customization. It sits outside
 the pinned `pstack/skills` root and is deliberately not ported, adapted or
 packed.
@@ -341,7 +339,7 @@ shipped file links a guide page.
 Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
 operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
 sources still offer Origin; the cursor pin is
-`8b3326d99fd4b993cb33a24dad8af03175c642c5`. The content test bans capitalized
+`1ba91fc25c0977741dd0e267849e6234b037ed0a`. The content test bans capitalized
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
@@ -557,3 +555,28 @@ Documented skips and classifications:
 
 No file under `pstack/agents` or `pstack/docs` is in the not-yet-carried
 state.
+
+## Pin move: cursor/plugins `1ba91fc` (pstack 0.15.36)
+
+The cursor pin moved from `8b3326d99fd4b993cb33a24dad8af03175c642c5` to
+`1ba91fc25c0977741dd0e267849e6234b037ed0a` (cursor/plugins `main` at sync;
+`pstack/plugin.json` reads `0.15.36`). The casualjim/pi-mimir pin stays
+`f07dd981f62c9c994a5d043ede67d6c63c721454`.
+
+Hand-ported substance:
+
+- `skills/statechart/**`: **shipped** as an optional skill (Java 11+ and
+  TLA+/TLC). `SKILL.md` and `references/render.md` adapted for Pi
+  (`/skill:statechart`, no silent installer, Mermaid-first, optional image
+  render with install authorization). Scripts/fixtures copied from the pin.
+- Tip deltas ported into adapted leaves: arena, interrogate (refs deleted),
+  poteto-mode hub/playbooks/`check-plan.mjs`, poteto-help (+ statechart row),
+  principle-explain-the-number, reflect, swarm, create-formal-verification-skill.
+- Inventory is **54** skills and 23 playbooks.
+
+Still unshipped (accounted in `w3-b.json` excluded + `FLAGGED_UNSHIPPED_CURSOR`):
+
+- `in-your-own-words`, `ketchup`, `sharpen` — nothing unusual; include when
+  authorized.
+- `ketchup-video` (new at this pin) — flag: depends on ketchup and needs
+  video render tooling outside the repo.

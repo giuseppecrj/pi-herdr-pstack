@@ -51,7 +51,7 @@ shipped the other 35 skills and the comment-sicko delegate prompt at
   The package directory carries Lauren Tan's MIT notice; the repository root
   carries Ivan Porto Carrero's MIT notice.
 - [cursor/plugins](https://github.com/cursor/plugins) at commit
-  `8b3326d99fd4b993cb33a24dad8af03175c642c5`, path `pstack/skills`, under
+  `1ba91fc25c0977741dd0e267849e6234b037ed0a`, path `pstack/skills`, under
   Lauren Tan's MIT notice. The previous pin was
   `190d28736eff128ec94f502a22c7fe0c4b56cd37`. `pstack/LICENSE` is unchanged
   between those commits

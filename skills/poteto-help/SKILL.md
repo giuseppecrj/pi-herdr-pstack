@@ -14,7 +14,7 @@ This file maps questions to the skills and files that hold the answers. Those fi
 
 ## What this release ships
 
-This release ships the full inventory: all 53 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
+This release ships the full inventory: all 54 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -89,7 +89,7 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Settle types and module shape before code that crosses a function boundary | `/skill:architect` |
 | Get several attempts at one brief, merged into the best one | `/skill:arena` |
 | Run parallel checks over slices, or race workers | `/skill:swarm` |
-| Have different models review a diff and try to break it | `/skill:interrogate` |
+| Have adversaries try to break a change, and keep only findings a run proves | `/skill:interrogate` |
 | Fix a bug test-first when a cheap local test exists | `/skill:tdd` |
 | Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` |
 | Strip comments before review, using a reviewer that didn't write them | `/skill:no-comments` |
@@ -100,6 +100,7 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Bring a verification skill and its feature map back in line with the app | `/skill:maintain-verification-skill` |
 | Formally verify a race, invariant, or other property that tests rarely reach | `/skill:create-formal-verification-skill` |
 | Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | `/skill:maintain-formal-verification-skill` |
+| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | `/skill:statechart` (optional; needs Java and TLA+/TLC) |
 | Vet a performance number before reporting or acting on it | `/skill:benchmark-checklist` |
 | Run a large or cross-cutting change, or one to review after stepping away | `/skill:figure-it-out` |
 | Keep a decision log during a run, and review it afterward | `/skill:show-me-your-work` |
@@ -117,7 +118,7 @@ Close calls:
 - `/skill:how` explains what the code does. `/skill:why` explains the reasons. `/skill:teach` runs one or both and explains the result plainly. how and why fan out read-only children, and why's investigators launch without a tools list so they see MCP servers.
 - `/skill:arena` gives every worker the same brief and merges the best parts. `/skill:swarm` splits work into slices or a race and returns one report. Arena uses one exact model per family and discloses a same-family fallback. Swarm launches separate bare calls and gives writers worktrees.
 - `/skill:architect` implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
-- `/skill:interrogate` reviews the diff with one exact model per family, and a same-family fallback is disclosed. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
+- `/skill:interrogate` fans out adversaries that try to break the change, and keeps only findings a run proves. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
 - `/skill:recall` rebuilds context across recent sessions in this working directory, never another project's. Resuming one specific session or branch is the Session pickup playbook, `../poteto-mode/playbooks/session-pickup.md`.
 - `/skill:figure-it-out` designs one rigorous run and keeps its trail via `/skill:show-me-your-work`. The Orchestrate playbook (`../poteto-mode/playbooks/orchestrate.md`) runs a program of many PRs as a depth-1 single-session coordinator with a hand-kept store. It is not an unattended or multi-day runner. The Autonomous run playbook, `../poteto-mode/playbooks/autonomous-run.md`, drives one task to a finish condition.
 
@@ -134,7 +135,7 @@ Playbooks are step lists inside poteto-mode, not skills, so they have no `/skill
 - "land the stack" runs Shipping (`../poteto-mode/playbooks/shipping.md`). It lands the verified run only on that explicit request, and pushes, retargets and arming need their own grants. It uses `gh` only, waits through one-shot watcher children, and on a merge-queue base it reports and stops without merging.
 - "take over this branch" runs Session pickup.
 - "pause safely" runs Pause safely.
-- "full autopilot on this queue" runs Autopilot-full (`../poteto-mode/playbooks/autopilot-full.md`). "stack them, don't ship" runs Autopilot-stack (`../poteto-mode/playbooks/autopilot-stack.md`). Both are root-run, with fresh owner rounds continuing in the retained owner checkout and audits on wake, never a timer. Autopilot-full merges only under a grant that names merging, and Autopilot-stack never merges.
+- "full autopilot on this queue" runs Autopilot-full (`../poteto-mode/playbooks/autopilot-full.md`). "autopilot, don't merge" runs Autopilot-stack (`../poteto-mode/playbooks/autopilot-stack.md`). Both are root-run, with fresh owner rounds continuing in the retained owner checkout and audits on wake, never a timer. Autopilot-full merges only under a grant that names merging, and Autopilot-stack never merges.
 - "run the eval playbook" runs Eval (`../poteto-mode/playbooks/eval.md`).
 - "clean up worktrees" runs Worktree cleanup (`../poteto-mode/playbooks/worktree-cleanup.md`). It inventories with `worktree_list` and removes each path only on its own authorization.
 
@@ -165,7 +166,7 @@ Principles are one-rule skills that poteto-mode reads and cites in its replies. 
 | Trace a bug to its root cause instead of patching the symptom | `../principle-fix-root-causes/SKILL.md` |
 | Break multi-step work into small units that each end in a check | `../principle-sequence-verifiable-units/SKILL.md` |
 | Write or keep a test that checks behavior, not internals | `../principle-test-behavior-not-implementation/SKILL.md` |
-| Find what limits a measured number before trusting it | `../principle-explain-the-number/SKILL.md` |
+| Decide before you measure, and find what limits a measured number before trusting it | `../principle-explain-the-number/SKILL.md` |
 | Keep bulky output out of the main thread | `../principle-guard-the-context-window/SKILL.md` |
 | Proceed on reversible work instead of asking first | `../principle-never-block-on-the-human/SKILL.md` |
 | Turn a repeated instruction into a lint, check or script | `../principle-encode-lessons-in-structure/SKILL.md` |

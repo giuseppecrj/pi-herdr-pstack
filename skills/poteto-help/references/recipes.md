@@ -31,7 +31,7 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 
 ## Review and ship
 
-- `/skill:interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read the dismissals too.
+- `/skill:interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read the Dropped list too.
 - `/skill:create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` After merges or refactors in that code: `/skill:maintain-formal-verification-skill`.
 - `/skill:swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.` Opening a PR is an external action. Send this only when you mean it, because the request is the authorization.
@@ -43,6 +43,6 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 - `/poteto-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. keep going until done. if you're truly stuck after a few hours, stop and write up why.`
 - `/skill:show-me-your-work catch me up on what you did last night.` Read its Attention section first.
 - `/poteto-mode full autopilot on this queue. each item is independent.` (`../poteto-mode/playbooks/autopilot-full.md`) Name which of push, PR creation and merge the run may do.
-- `/poteto-mode autopilot these changes but stack them, don't ship. i'll land the stack.` (`../poteto-mode/playbooks/autopilot-stack.md`)
+- `/poteto-mode autopilot these changes, but don't merge. i'll land them.` (`../poteto-mode/playbooks/autopilot-stack.md`)
 - `/skill:reflect capture what we learned so the next run doesn't repeat it.` Approve only edits that change a future decision.
 - `/skill:bro` restates the last reply in plain words.

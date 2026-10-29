@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "8b3326d99fd4b993cb33a24dad8af03175c642c5",
+			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
 			"root": "pstack/skills"
 		}
 	},
@@ -78,7 +78,7 @@
 		},
 		{
 			"path": "skills/arena/SKILL.md",
-			"sha256": "30de642a4a2636c472c66382e840a76a83fdba6111bf0e694a7f379391ddd9df",
+			"sha256": "d12b9df5fbbe63e1949d8282443c2008621e379b0b18567e8d4c5460db3d2178",
 			"status": "adapted",
 			"sources": [
 				{
@@ -88,7 +88,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3). Per fan-out sections 3 and 5: the 'same model N times' option is kept only as a disclosed context-isolated mode whose cross-family result is reported incomplete; the worktree-or-/tmp output fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one; 'prefer a family different from the parent's' became a cross-judge family independent of every candidate author's family, or a disclosed same-family judge with the cross-judgment incomplete."
+			"explanation": "The todolist became a visible checklist and the launches cite ../poteto-mode/references/fan-out.md; inherit-parent runner and cross-judge defaults, the configured arena-runners and cross-judge pool lines and the model-name-prefix family rule became exact provider/model-id diversity seats per fan-out section 3; the one-message spawn became N independent bare subagent calls in one turn, with one json subagent example per seat type (candidate writer in its own worktree, read-only cross-judge); short principle names became full names (edit classes 1-3). Per fan-out sections 3 and 5: the 'same model N times' option is kept only as a disclosed context-isolated mode whose cross-family result is reported incomplete; the worktree-or-/tmp output fallback became a required managed worktree from committed HEAD, with the launch reported blocked if the host cannot create one; 'prefer a family different from the parent's' became a cross-judge family independent of every candidate author's family, or a disclosed same-family judge with the cross-judgment incomplete. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
 			"path": "skills/figure-it-out/SKILL.md",
@@ -147,80 +147,18 @@
 			"explanation": "agent: poteto-agent and the configured how-explorer and how-explainer models with their inherit-parent defaults became bare subagent launches on task:recon; the single-message explorer spawn became independent calls in one turn citing ../poteto-mode/references/fan-out.md; the filled explorer and explainer templates go in task with the delegation.md Investigator prompt as systemPrompt (fork: false), with one json subagent example per seat type (edit classes 2-3). G6: the explainer seats (direct explain and synthesize) use task:architecture with thinking high or above, while explorers stay on task:recon. Before the complex explorers and the direct explainer, the parent follows the architecture shortlist preflight in delegation.md. Upstream how/SKILL.md (cursor/plugins d0ef80d and ccb5507) puts the explainer on the judgment/prose model and explorers on the code model; no model ids are copied. Cursor's explainer slug bump (opus max to xhigh) was not copied."
 		},
 		{
-			"path": "skills/interrogate/references/code-quality-review.md",
-			"sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
-			"status": "copied",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "interrogate/references/code-quality-review.md",
-					"sha256": "79162fda183eafd40d51661fbb5e151c7ba250f89e506ba17f5bd135dcbd50a8",
-					"use": "primary"
-				}
-			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
-		},
-		{
-			"path": "skills/interrogate/references/lead-judgment.md",
-			"sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361",
-			"status": "copied",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "interrogate/references/lead-judgment.md",
-					"sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361",
-					"use": "primary"
-				}
-			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
-		},
-		{
-			"path": "skills/interrogate/references/reviewer-prompt.md",
-			"sha256": "e0598e254792b56de39bb16b1e6db559b03a522fdc54b98f942d254090920ae6",
-			"status": "copied",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "interrogate/references/reviewer-prompt.md",
-					"sha256": "e0598e254792b56de39bb16b1e6db559b03a522fdc54b98f942d254090920ae6",
-					"use": "primary"
-				}
-			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
-		},
-		{
-			"path": "skills/interrogate/references/rubric.md",
-			"sha256": "a85aa801abbaf14434f00579440abc0d8e2723227ba8bf57de7cca8d6e7d2f25",
-			"status": "copied",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "interrogate/references/rubric.md",
-					"sha256": "a85aa801abbaf14434f00579440abc0d8e2723227ba8bf57de7cca8d6e7d2f25",
-					"use": "primary"
-				}
-			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
-		},
-		{
 			"path": "skills/interrogate/SKILL.md",
-			"sha256": "6f8f3a614f0a6b11bb7ee28ebd358834a53215b15b32bfcfaf9df7b08f735097",
+			"sha256": "6f996b7ab03bf76bfff3997f15ac3d3173ac0f68856525049db17456ebab4060",
 			"status": "adapted",
 			"sources": [
 				{
-					"source": "mimir",
-					"path": "interrogate/SKILL.md",
-					"sha256": "a7f4bc0c55236e5fa9e8d8b0657e705066aa8982ae40b5d03b3adb06af84bf51",
-					"use": "primary"
-				},
-				{
 					"source": "cursor",
 					"path": "interrogate/SKILL.md",
-					"sha256": "a16dfe179005abc22a4651b82f25b0c8ab953284276efe4e6dc341958fb63647",
-					"use": "context"
+					"sha256": "3f3c2e9b8cf6b180dba9f32a4aff85e5691b09805232468e37a0ba45437a9984",
+					"use": "primary"
 				}
 			],
-			"explanation": "The configured interrogate-reviewers models, the inherit-parent default-model table, agent: poteto-agent and the one parallel subagent call became one bare subagent call per reviewer in one turn citing ../poteto-mode/references/fan-out.md, each reviewer a diversity seat on an exact provider/model-id of a distinct family, with references/reviewer-prompt.md verbatim as systemPrompt (fork: false) and its placeholder values in task, and one json subagent example; the rejected-model fallback no longer opens a separate PR to update the default table or treats inherit-parent and auto aliases specially (edit classes 2-3). Pin move to cursor/plugins ccb5507: a rejected model prefers the same family and reasoning tier, not the highest-reasoning tier of that family. Cursor's A/B default table, dropped Sol slug and gpt-* family prefix were not copied; seats still follow the live catalog, one family each."
+			"explanation": "Rewritten from the pinned Cursor arena-backed interrogate (break it / prove with a run). Uses bare Implementer subagents and ../poteto-mode/references/fan-out.md. Intent is restated inline (no unshipped in-your-own-words skill). Reference rubric files deleted upstream and here. Pin move to 1ba91fc."
 		},
 		{
 			"path": "skills/reflect/references/divergent-reviewer.md",
@@ -280,7 +218,7 @@
 		},
 		{
 			"path": "skills/reflect/SKILL.md",
-			"sha256": "9efe62aff00aa68b2b8ae6bec41456f49a360b1496b7fdc743d507c3d442e390",
+			"sha256": "08e7253c46a9929958b7ace278b9528e5a1609dc2db555c6449687093106159f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -290,11 +228,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable. W4 reconcile: the authoring-playbook planned W4 markers and interim rule are retired now that the playbook ships. G6: judgment, divergent and the synthesizer use task:architecture with thinking high or above. The tooling lens is a diversity seat whose family differs from the first model listed for architecture under Task-category shortlists, with a labeled same-family fallback; a later architecture candidate that matches the tooling family is relabeled context-isolated. The parent follows the architecture shortlist preflight before the reviewers. Upstream reflect/SKILL.md (cursor/plugins d0ef80d) runs tooling on a different family from the judgment lenses; no model ids are copied."
+			"explanation": "The recall tool became $PI_SESSION_FILE plus the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md; the parallel tasks call with agent: poteto-agent and the role field became three independent bare reviewer calls and one synthesizer call citing ../poteto-mode/references/fan-out.md, each prompt verbatim as systemPrompt (fork: false) with its marked values in task and no tools list so MCP stays visible, with one json subagent example per seat type; the configured reflect-judgment and reflect-tooling models with inherit-parent defaults became task:review; automatic backlog filing became filing only user-approved items under references/authorization.md; the Pi Agent Skills standard loops became the authoring playbook (planned W4) and Pi's skills documentation; a short principle name became its full name (edit classes 1-4). Each authoring-playbook line also gives the interim rule: until the playbook ships, follow Pi's skills documentation alone and tell the user the playbook was unavailable. W4 reconcile: the authoring-playbook planned W4 markers and interim rule are retired now that the playbook ships. G6: judgment, divergent and the synthesizer use task:architecture with thinking high or above. The tooling lens is a diversity seat whose family differs from the first model listed for architecture under Task-category shortlists, with a labeled same-family fallback; a later architecture candidate that matches the tooling family is relabeled context-isolated. The parent follows the architecture shortlist preflight before the reviewers. Upstream reflect/SKILL.md (cursor/plugins d0ef80d) runs tooling on a different family from the judgment lenses; no model ids are copied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
 			"path": "skills/swarm/SKILL.md",
-			"sha256": "8bb6a305e68c304df7120566f5bf905091f9359f92e6ffbbe5da14def79e231a",
+			"sha256": "632c72f4b0b0d67502edd6299ff6b7421132d22f88dc0f912943f84f426cb8bc",
 			"status": "adapted",
 			"sources": [
 				{
@@ -306,11 +244,11 @@
 				{
 					"source": "cursor",
 					"path": "swarm/SKILL.md",
-					"sha256": "031657cb81e490f9aed5c75d6ff2a4fda35ccafbaf72be604e59481cc4080cdc",
+					"sha256": "fea6bfbbf21e067a4e2d2ebab034bc3af508118e9df1abc9d2ba040d58a6df3a",
 					"use": "context"
 				}
 			],
-			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The task template keeps ISSUES in plain text. Each brief and the worker task template list the claims to verify (a Claims slot) before any result, and a listed claim with no result counts as inconclusive. The Verifier prompt's per-claim pass, fail or inconclusive maps onto one overall status, in the same order in the prose and the template: a proved fail always means ISSUES, even when other checks could not run, and inconclusive claims stay inconclusive; otherwise PASS requires at least one listed claim and a pass for every listed claim; otherwise BLOCKED with the reason stated (zero listed claims, an inconclusive claim, or no check could run). The parent writes the claims, and together they cover the slice's share of the Phase A done predicate, so one trivial claim cannot stand for the slice. Aggregation recomputes each result's status (a coverage slice or a race arm) from its per-claim results in the same order, against the claims listed in its brief, where any proved fail, or any other defect the worker proves, means ISSUES, and uses the recomputed status whenever it differs from the reported PASS, ISSUES or BLOCKED; it never changes a status on judgment alone. Aggregation treats a PASS with no listed claims, or with no result for a claim listed in its brief, as BLOCKED. A first-pass race selects only an overall PASS. In coverage mode a BLOCKED slice is unverified and is reported with its reason next to the gaps, never as covered, and an ISSUES slice carries its inconclusive claims into the gaps. Rank-all and best-of ranking of ISSUES and BLOCKED is left unspecified, as upstream leaves it. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted."
+			"explanation": "The cloud-worker wording and the cloud concurrency limit were dropped; the todolist became a visible checklist; the configured swarm-workers model with its inherit-parent default became task categories (task:qa, task:recon, task:coding) or exact race-arm models per fan-out section 3; the parallel tasks array, agent: poteto-agent and the role field became N independent bare subagent calls in one turn citing ../poteto-mode/references/fan-out.md, with one json subagent example; cloud_base_branch became the worktree base for writers (edit classes 2-3). Cursor's ISSUES sentence is restored on the reports line and in the worker task template: a worker that can prove a defect reports ISSUES and lists every issue it can prove, not only the first. The task template keeps ISSUES in plain text. Each brief and the worker task template list the claims to verify (a Claims slot) before any result, and a listed claim with no result counts as inconclusive. The Verifier prompt's per-claim pass, fail or inconclusive maps onto one overall status, in the same order in the prose and the template: a proved fail always means ISSUES, even when other checks could not run, and inconclusive claims stay inconclusive; otherwise PASS requires at least one listed claim and a pass for every listed claim; otherwise BLOCKED with the reason stated (zero listed claims, an inconclusive claim, or no check could run). The parent writes the claims, and together they cover the slice's share of the Phase A done predicate, so one trivial claim cannot stand for the slice. Aggregation recomputes each result's status (a coverage slice or a race arm) from its per-claim results in the same order, against the claims listed in its brief, where any proved fail, or any other defect the worker proves, means ISSUES, and uses the recomputed status whenever it differs from the reported PASS, ISSUES or BLOCKED; it never changes a status on judgment alone. Aggregation treats a PASS with no listed claims, or with no result for a claim listed in its brief, as BLOCKED. A first-pass race selects only an overall PASS. In coverage mode a BLOCKED slice is unverified and is reported with its reason next to the gaps, never as covered, and an ISSUES slice carries its inconclusive claims into the gaps. Rank-all and best-of ranking of ISSUES and BLOCKED is left unspecified, as upstream leaves it. The Cursor blob is the pinned commit, which is byte-identical at d0ef80d86795816da932a153458c5dbe192d294e. Cloud workers, the rules file and hardcoded model ids stay out, so the file remains adapted. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
 			"path": "skills/why/references/epistemics.md",
