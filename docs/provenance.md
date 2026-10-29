@@ -221,7 +221,7 @@ are attributed to Diátaxis and ASD-STE100 in `THIRD_PARTY_NOTICES.md`.
 Wave 4 shipped the last 14 inventory rows and the 11 remaining poteto-mode
 playbooks. The 190d287 pin move added two more inventory rows
 (`create-formal-verification-skill`, `maintain-formal-verification-skill`), so
-all 54 rows are `shipped` in `docs/skill-inventory.json` and all 23 playbooks
+all 57 rows are `shipped` in `docs/skill-inventory.json` and all 23 playbooks
 ship. Each batch owns its fixtures:
 
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
@@ -568,15 +568,21 @@ Hand-ported substance:
 - `skills/statechart/**`: **shipped** as an optional skill (Java 11+ and
   TLA+/TLC). `SKILL.md` and `references/render.md` adapted for Pi
   (`/skill:statechart`, no silent installer, Mermaid-first, optional image
-  render with install authorization). Scripts/fixtures copied from the pin.
+  render with install authorization). Runtime scripts copied; `scripts/test`
+  corpora, `package.json` and `tsconfig.json` are not shipped (keeps the
+  npm pack near the prior ~128-file baseline plus the new leaves).
+- `in-your-own-words`, `ketchup`, `sharpen`: shipped as adapted Cursor leaves
+  with `/skill:` invocation.
 - Tip deltas ported into adapted leaves: arena, interrogate (refs deleted),
-  poteto-mode hub/playbooks/`check-plan.mjs`, poteto-help (+ statechart row),
+  poteto-mode hub/playbooks/`check-plan.mjs`, poteto-help (+ new skill rows),
   principle-explain-the-number, reflect, swarm, create-formal-verification-skill.
-- Inventory is **54** skills and 23 playbooks.
+- Inventory is **57** skills and 23 playbooks.
 
 Still unshipped (accounted in `w3-b.json` excluded + `FLAGGED_UNSHIPPED_CURSOR`):
 
-- `in-your-own-words`, `ketchup`, `sharpen` — nothing unusual; include when
-  authorized.
-- `ketchup-video` (new at this pin) — flag: depends on ketchup and needs
-  video render tooling outside the repo.
+- `ketchup-video` (new at this pin) — flag: depends on ketchup visuals and
+  needs video render tooling outside the repo.
+
+Shipped at this pin beyond the prior 53: optional `statechart` (runtime
+scripts only; test corpora not packed), `in-your-own-words`, `ketchup` and
+`sharpen`.

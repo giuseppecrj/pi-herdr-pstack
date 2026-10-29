@@ -14,7 +14,7 @@ This file maps questions to the skills and files that hold the answers. Those fi
 
 ## What this release ships
 
-This release ships the full inventory: all 54 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
+This release ships the full inventory: all 57 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -85,6 +85,9 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Know why code is shaped this way, or where a number came from | `/skill:why` |
 | Understand a change or subsystem, explained plainly | `/skill:teach` |
 | Catch up on their own recent work on a topic | `/skill:recall` |
+| Check that the agent understood their goal and the problem before it starts | `/skill:in-your-own-words` |
+| Get a prompt rewritten deeper, not bigger, before sending it: what a top professional would add, their raw material and methods, and an outside check. It returns the prompt and doesn't do the task | `/skill:sharpen` |
+| Catch up on what changed in this chat since their last message, in plain words and small visuals, with every item waiting on them listed and decidable from the reply alone | `/skill:ketchup` |
 | Know what a small diff could break outside itself | `/skill:blast-radius` |
 | Settle types and module shape before code that crosses a function boundary | `/skill:architect` |
 | Get several attempts at one brief, merged into the best one | `/skill:arena` |
@@ -126,6 +129,7 @@ Not in pstack:
 
 - pstack has no orchestrate skill. Orchestrate is a poteto-mode playbook. pi-herdr-agents ships its own orchestrate skill for bounded reviews, which is unrelated. Any other orchestrate skill in the command list comes from another package.
 - pstack keeps no model configuration, rule file or alias of its own. Models come from pi-herdr-agents.
+- `/skill:recall` rebuilds context across recent chats. `/skill:ketchup` covers only this chat since the user's last message. Resuming one specific chat or branch is the Session pickup playbook.
 
 ## Playbooks and principles
 

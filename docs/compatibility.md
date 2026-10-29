@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.5.0` (full inventory, 54 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.5.0` (full inventory, 57 skills and 23 playbooks).
 
 ## Host baseline
 

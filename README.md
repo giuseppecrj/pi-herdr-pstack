@@ -1,6 +1,6 @@
 # pi-herdr-pstack
 
-pstack methodology for [Pi](https://pi.dev): 54 skills (including `poteto-mode` with its 23 playbooks and optional `statechart`), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
+pstack methodology for [Pi](https://pi.dev): 57 skills (including `poteto-mode` with its 23 playbooks and optional `statechart`), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
 
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs children in. This package supplies methodology only. It has no child runner, scheduler, model store, package installer or shell-permission engine of its own, and it ships no named roles.
 
@@ -76,7 +76,7 @@ Pstack skills keep unprefixed names.
 
 | Group | Skills | Purpose |
 | --- | --- | --- |
-| Methodology | `poteto-mode`, `poteto-help`, `setup-pstack` | The methodology hub (four references, 23 playbooks, `check-plan.mjs` plan checker), a guide to installing pstack and choosing a skill, and the setup flow. |
+| Methodology | `poteto-mode`, `poteto-help`, `setup-pstack`, `in-your-own-words`, `sharpen`, `ketchup` | The methodology hub (four references, 23 playbooks, `check-plan.mjs` plan checker), a guide to installing pstack and choosing a skill, and the setup flow. |
 | Understand code | `how`, `why`, `teach`, `recall`, `blast-radius` | Mechanics, design rationale, plain explanations, catching up on this working directory's sessions, breakage outside a diff. |
 | Design and fan-out | `architect`, `arena`, `swarm`, `interrogate`, `figure-it-out` | Parallel design sketches, bakeoffs, coverage and race swarms, multi-model adversarial review, bespoke playbooks for large efforts. Diversity seats use one exact model per family and disclose a same-family fallback. |
 | Engineering | `tdd`, `correct`, `benchmark-checklist`, `typescript-best-practices` | Test-first fixes, repo lessons, vetting measured numbers, TypeScript rules (load explicitly before `.ts`/`.tsx` edits). |

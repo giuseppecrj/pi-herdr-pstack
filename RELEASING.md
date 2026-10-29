@@ -7,8 +7,9 @@ The published version must be unique on npm.
 ## Current state: 0.5.0
 
 The `0.5.0` release syncs the cursor/plugins pin to `1ba91fc` (pstack
-`0.15.36`) and ships the optional `statechart` skill (needs Java 11+ and
-TLA+/TLC). When its version commit reaches `main`, the detect step sees the
+`0.15.36`), ships optional `statechart` (runtime scripts only; needs Java
+11+ and TLA+/TLC), and ships `in-your-own-words`, `ketchup` and `sharpen`.
+`ketchup-video` stays flagged. When its version commit reaches `main`, the detect step sees the
 previous public `0.4.0` manifest and the current `0.5.0`, sets
 `release=true`, and the workflow publishes `0.5.0`.
 

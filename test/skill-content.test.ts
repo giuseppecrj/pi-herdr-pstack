@@ -172,7 +172,6 @@ const SCRIPT_MODES: Record<string, string> = {
 	"skills/show-me-your-work/scripts/log.sh": "100755",
 	"skills/statechart/scripts/statechart": "100755",
 	"skills/statechart/scripts/statechart.ts": "100644",
-	"skills/statechart/scripts/test/java.ts": "100755",
 };
 const W2_FILES = [
 	"skills/poteto-mode/SKILL.md",
@@ -514,12 +513,12 @@ describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 54);
+		assert.equal(inventory.skills.length, 57);
 		const count = (prefix: string) =>
 			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 29, 6, 8, 9],
+			[2, 29, 9, 8, 9],
 		);
 		for (const row of inventory.skills) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);
@@ -1759,12 +1758,18 @@ describe("methodology provenance", () => {
 	const sourceRows = (wave: string) =>
 		inventory.skills.filter((row) => row.wave === wave);
 	/** New cursor/plugins skills flagged and not added to the inventory. */
-	const FLAGGED_UNSHIPPED_CURSOR = new Set([
-		"in-your-own-words/SKILL.md",
-		"ketchup/SKILL.md",
-		"ketchup-video/SKILL.md",
-		"sharpen/SKILL.md",
-	]);
+	/** Cursor upstream paths accounted as excluded (not shipped) in provenance fixtures. */
+	const FLAGGED_UNSHIPPED_CURSOR = new Set(
+		provenanceFixtures.flatMap(({ excluded }) =>
+			excluded
+				.filter((entry) => entry.source === "cursor")
+				.map((entry) => entry.path),
+		),
+	);
+	assert.ok(
+		FLAGGED_UNSHIPPED_CURSOR.has("ketchup-video/SKILL.md"),
+		"ketchup-video stays flagged and unshipped",
+	);
 	/** W4-P cites only the hub row's playbooks and scripts. */
 	const listedSource = (wave: string, source: SourceKey, path: string) =>
 		(source === "cursor" && FLAGGED_UNSHIPPED_CURSOR.has(path)) ||
