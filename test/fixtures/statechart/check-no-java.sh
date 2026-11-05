@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Rerun: proves /skill:statechart checks a TLA+ fixture via tla-ts with java
-# absent from PATH and without TLA2TOOLS/JAVA.
 set -euo pipefail
 root=$(cd "$(dirname "$0")/../../.." && pwd)
 fixture="$root/test/fixtures/statechart/Break.tla"
