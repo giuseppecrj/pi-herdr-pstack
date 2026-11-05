@@ -157,7 +157,7 @@ describe("package manifest", () => {
 			"pi-herdr-agents": ">=3.0.0",
 			typebox: "^1.3.27",
 		});
-		assert.equal(manifest.dependencies, undefined);
+		assert.deepEqual(manifest.dependencies, { "tla-ts": "0.0.8" });
 		assert.deepEqual(manifest.pi, {
 			extensions: ["./pi-extension/pstack/index.ts"],
 			skills: ["./skills"],
@@ -253,11 +253,11 @@ describe("package manifest", () => {
 		);
 	});
 
-	it("marks statechart optional with a Java and TLA+/TLC note", () => {
+	it("marks statechart optional with a tla-ts / no-Java note", () => {
 		const skill = read("skills/statechart/SKILL.md");
 		assert.match(skill, /optional/i);
-		assert.match(skill, /Java/);
-		assert.match(skill, /TLA+|TLC/);
+		assert.match(skill, /tla-ts/);
+		assert.match(skill, /no Java/i);
 		assert.match(skill, /\/skill:statechart/);
 	});
 });
