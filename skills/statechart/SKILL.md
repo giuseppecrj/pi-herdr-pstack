@@ -1,6 +1,6 @@
 ---
 name: statechart
-description: "Optional. Check a TLA+ model of a system that moves between states, such as a product flow, a protocol, or a service, and draw it as a Mermaid statechart. Needs Java 11+ and TLA+ tools (TLC). The report gives the shortest path to each state that breaks a rule. Use for /skill:statechart, or to show a bug as a path through states."
+description: "Optional. Check a TLA+ model of a system that moves between states, such as a product flow, a protocol, or a service, and draw it as a Mermaid statechart. Uses the pack's tla-ts dependency (no Java). The report gives the shortest path to each state that breaks a rule. Use for /skill:statechart, or to show a bug as a path through states."
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ The chart shows how a system moves between states, in the words of the person wh
 
 ## Run
 
-This skill is **optional**. It needs Java 11+ and TLA+ tools (TLC) on the machine. Prefer setting `TLA2TOOLS` to `tla2tools.jar` and `JAVA` to a Java 11+ binary before you run anything. Do not download jars, install Java, or run a package/mise installer unless the user authorizes that network or install step.
+This skill is **optional**. Model checking runs through the pack's `tla-ts` npm dependency (a TLC-compatible checker). No Java install and no `tla2tools.jar` are required. Do not download or install extra TLA+ tooling unless the user authorizes that network or install step.
 
 Work in a scratch folder outside the repo. Write a TLA+ spec and its config. Then run:
 

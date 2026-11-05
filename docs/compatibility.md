@@ -28,7 +28,8 @@ For 0.5.0, `npm test` with the pinned upstream sources passed 162 tests with
 `1ba91fc25c0977741dd0e267849e6234b037ed0a` (pstack 0.15.36), pi-mimir
 `f07dd981f62c9c994a5d043ede67d6c63c721454` (unchanged), and pi-herdr-agents
 `8864764e65a469f7d90f9a0deb39ec3f0b26befc` as `PI_HERDR_AGENTS_SOURCE`. The
-optional `statechart` skill ships and needs Java 11+ and TLA+/TLC. The host,
+optional `statechart` skill ships and checks models with the pack `tla-ts`
+dependency (no Java). The host,
 legacy-host and roles-pack suites were unset and were not counted as passes.
 
 For 0.4.0, `npm test` with the pinned upstream sources passed 162 tests with

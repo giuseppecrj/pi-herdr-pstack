@@ -61,7 +61,7 @@ pin `190d28736eff128ec94f502a22c7fe0c4b56cd37` and the 8b3326d pin, `docs/guide/
 changed (excluded under Q1). `pstack/agents/*` and `docs/harness/claude-code.md`
 are unchanged. `pstack/LICENSE` is unchanged
 (`bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`). Under
-`pstack/skills`, `poteto-help/SKILL.md` gained a `/statechart` table row and `statechart/**` was added at 8b3326d (then flagged); both ship as of the 1ba91fc pin as an optional Java/TLC skill. `in-your-own-words`, `ketchup`, `sharpen`, and
+`pstack/skills`, `poteto-help/SKILL.md` gained a `/statechart` table row and `statechart/**` was added at 8b3326d (then flagged); both ship as of the 1ba91fc pin as an optional skill. The shipped runner uses the pack `tla-ts` dependency (no Java). `in-your-own-words`, `ketchup`, `sharpen`, and
 `poteto-mode/scripts/check-plan.test.ts` stay flagged, not shipped. Unscoped
 `pstack/README.md` and `pstack/plugin.json`, and out-of-scope
 `pstack/.cursor-plugin/plugin.json` (0.15.29 to 0.15.30), changed and were not
@@ -565,12 +565,14 @@ The cursor pin moved from `8b3326d99fd4b993cb33a24dad8af03175c642c5` to
 
 Hand-ported substance:
 
-- `skills/statechart/**`: **shipped** as an optional skill (Java 11+ and
-  TLA+/TLC). `SKILL.md` and `references/render.md` adapted for Pi
+- `skills/statechart/**`: **shipped** as an optional skill. Checking runs
+  through the pack `tla-ts` dependency (no Java / `tla2tools.jar`).
+  `SKILL.md` and `references/render.md` adapted for Pi
   (`/skill:statechart`, no silent installer, Mermaid-first, optional image
-  render with install authorization). Runtime scripts copied; `scripts/test`
-  corpora, `package.json` and `tsconfig.json` are not shipped (keeps the
-  npm pack near the prior ~128-file baseline plus the new leaves).
+  render with install authorization). Runtime scripts started as copies from
+  the pin; `scripts/run.ts` is adapted to spawn `tla-ts`. Upstream
+  `scripts/test` corpora, `package.json` and `tsconfig.json` are not shipped
+  (keeps the npm pack near the prior ~128-file baseline plus the new leaves).
 - `in-your-own-words`, `ketchup`, `sharpen`: shipped as adapted Cursor leaves
   with `/skill:` invocation.
 - Tip deltas ported into adapted leaves: arena, interrogate (refs deleted),
