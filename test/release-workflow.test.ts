@@ -424,7 +424,7 @@ test("experimental private or prerelease packages are not released", async () =>
 	});
 	assert.equal(thisRelease.error, undefined);
 	assert.equal(thisRelease.outputs.release, "true");
-	assert.equal(thisRelease.outputs.version, "0.5.0");
+	assert.equal(thisRelease.outputs.version, "0.6.0");
 
 	const belowPrerelease = runDetect(detect, {
 		eventName: "push",
