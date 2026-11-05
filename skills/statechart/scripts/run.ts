@@ -1,7 +1,8 @@
 import { Buffer } from "node:buffer";
-import { type ChildProcess, execFile, type ExecFileException, spawn } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import fs from "node:fs";
+import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { inspect } from "node:util";
@@ -40,6 +41,8 @@ import {
 import { addPast, deadEnds, finder, lasso, mark } from "./passes/annotate.ts";
 import { pathGraph } from "./passes/paths.ts";
 
+const require = createRequire(import.meta.url);
+
 export function* fileLines(file: string) {
   const fd = fs.openSync(file, "r");
   try {
@@ -64,33 +67,7 @@ export function* fileLines(file: string) {
   }
 }
 
-const TLC_TOOL =
-  "http:tla2tools[url=https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar,checksum=sha256:936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88]@1.7.4";
-const JAVA_TOOL = "java@temurin-25";
 export const PINNED_FLAGS = ["-workers", "1", "-fp", "0", "-lncheck", "final"];
-
-type ChildResult = {
-  status: number | null;
-  stdout: string;
-  stderr: string;
-  error: ExecFileException | undefined;
-};
-
-const runChild = (file: string, args: string[], options: { cwd: string; env: NodeJS.ProcessEnv }) =>
-  new Promise<ChildResult>((resolve) => {
-    execFile(
-      file,
-      args,
-      { encoding: "utf8", maxBuffer: 1 << 30, ...options },
-      (error, stdout, stderr) =>
-        resolve({
-          status: error ? (typeof error.code === "number" ? error.code : null) : 0,
-          stdout,
-          stderr,
-          error: typeof error?.code === "string" ? error : undefined,
-        }),
-    );
-  });
 
 export const killGroup = (pid: number) =>
   new Promise((resolve) =>
@@ -107,6 +84,16 @@ export const messageOf = (error: unknown) =>
   typeof error.message === "string"
     ? error.message
     : inspect(error);
+
+const resolveTlaTsCli = (): string => {
+  try {
+    return path.join(path.dirname(require.resolve("tla-ts/package.json")), "dist", "cli.js");
+  } catch (error) {
+    throw new Error(
+      `Cannot find tla-ts. Run npm install in the pi-herdr-pstack package so the tla-ts dependency is present.\n${messageOf(error)}`,
+    );
+  }
+};
 
 const joined = (files: string[]): Output => {
   const fds: number[] = [];
@@ -190,28 +177,6 @@ const runToFiles = (
     });
   });
 
-async function findTlc(cwd: string) {
-  const { TLA2TOOLS, JAVA } = process.env;
-  if (TLA2TOOLS) return { jar: TLA2TOOLS, java: JAVA || "java" };
-  const mise = (...args: string[]) =>
-    runChild("mise", args, { cwd, env: { ...process.env, MISE_CEILING_PATHS: cwd } });
-  const where = () =>
-    Promise.all([mise("where", TLC_TOOL), mise("which", "java", "--tool", JAVA_TOOL)]);
-  let found = await where();
-  if (found.some((r) => r.status !== 0)) {
-    const r = await mise("install", JAVA_TOOL, TLC_TOOL);
-    if (r.status !== 0)
-      throw new Error(
-        `Cannot find TLC: mise install failed: ${r.error?.message ?? r.stderr.trim()}\nOr set TLA2TOOLS to the path of tla2tools.jar, and JAVA to a java binary (Java 11 or later).`,
-      );
-    found = await where();
-  }
-  return {
-    jar: path.join(found[0].stdout.trim(), "tla2tools.jar"),
-    java: JAVA || found[1].stdout.trim(),
-  };
-}
-
 const exitClass = (status: number | null) =>
   status === 0 ? 0 : status === 11 || status === 12 || status === 13 ? 1 : 2;
 
@@ -273,22 +238,21 @@ export async function check(specFile: string, configFile: string): Promise<Check
   const folder = path.dirname(path.resolve(specFile));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "statechart-"));
   try {
-    const tlc = await findTlc(dir);
+    const tlaTsCli = resolveTlaTsCli();
     const config = (name: string, sections: ConfigSection[], extra: string[]) => {
       fs.writeFileSync(path.join(dir, `${name}.cfg`), configText(sections, extra));
       return [`-metadir`, path.join(dir, `meta-${name}`), "-config", path.join(dir, `${name}.cfg`)];
     };
-    const runJava = (name: string, main: string, args: string[], jvm: string[] = []) => {
+    const runTlc = (name: string, main: string, args: string[], jvm: string[] = []) => {
       const tmp = path.join(dir, `tmp-${name}`);
       fs.mkdirSync(tmp);
       return runToFiles(
-        tlc.java,
+        process.execPath,
         [
+          tlaTsCli,
           `-Djava.io.tmpdir=${tmp}`,
           `-DTLA-Library=${folder}`,
           ...jvm,
-          "-cp",
-          tlc.jar,
           main,
           ...args,
         ],
@@ -299,12 +263,12 @@ export async function check(specFile: string, configFile: string): Promise<Check
         },
       );
     };
-    const xml = await runJava(
-      "sany",
-      "tla2sany.xml.XMLExporter",
-      ["-o", "-I", folder, path.resolve(specFile)],
-      ["-XX:TieredStopAtLevel=1"],
-    );
+    const xml = await runTlc("sany", "tla2sany.xml.XMLExporter", [
+      "-o",
+      "-I",
+      folder,
+      path.resolve(specFile),
+    ]);
     if (xml.status !== 0)
       throw new Error(`SANY could not read ${specFile} (exit ${xml.status}):\n${tail(xml)}`);
     const sany = readSany(fs.readFileSync(xml.stdout, "utf8"));
@@ -336,7 +300,7 @@ export async function check(specFile: string, configFile: string): Promise<Check
         if (properties.length) extra.push(`PROPERTY ${properties.join(" ")}`);
         const bounded = first !== undefined && !states.complete;
         if (bounded) extra.push("CONSTRAINT ChartBound");
-        const r = await runJava(name, "tlc2.TLC", [
+        const r = await runTlc(name, "tlc2.TLC", [
           "-tool",
           ...PINNED_FLAGS,
           ...(names(group, "deadlock").length ? [] : ["-deadlock"]),
@@ -412,7 +376,7 @@ export async function check(specFile: string, configFile: string): Promise<Check
     if (judged.states.distinct <= CHART_STATES) {
       const tag = `chart-${randomBytes(16).toString("hex")}`;
       fs.writeFileSync(path.join(dir, "ChartRun.tla"), chartRun(spec, tag));
-      const drawn = await runJava("ChartRun", "tlc2.TLC", [
+      const drawn = await runTlc("ChartRun", "tlc2.TLC", [
         "-tool",
         ...PINNED_FLAGS,
         "-deadlock",

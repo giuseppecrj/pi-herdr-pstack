@@ -103,7 +103,7 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Bring a verification skill and its feature map back in line with the app | `/skill:maintain-verification-skill` |
 | Formally verify a race, invariant, or other property that tests rarely reach | `/skill:create-formal-verification-skill` |
 | Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | `/skill:maintain-formal-verification-skill` |
-| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | `/skill:statechart` (optional; needs Java and TLA+/TLC) |
+| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | `/skill:statechart` (optional; uses pack `tla-ts`, no Java) |
 | Vet a performance number before reporting or acting on it | `/skill:benchmark-checklist` |
 | Run a large or cross-cutting change, or one to review after stepping away | `/skill:figure-it-out` |
 | Keep a decision log during a run, and review it afterward | `/skill:show-me-your-work` |
