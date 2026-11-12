@@ -11,33 +11,18 @@
 // disabled so a partial clone fails instead of reaching the network.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
+import { join, posix } from "node:path";
 import {
-	isAbsolute,
-	join,
-	posix,
-	relative as relativePath,
-	resolve,
-	sep,
-} from "node:path";
-import { fileURLToPath } from "node:url";
-
-const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
-const FIXTURE = "test/fixtures/upstream-scope.json";
-const GIT_OPTIONS = {
-	maxBuffer: 64 << 20,
-	env: { ...process.env, GIT_NO_LAZY_FETCH: "1" },
-};
-
-/** Parses a repository JSON file, naming it when it is missing or invalid. */
-function readJson(path) {
-	try {
-		return JSON.parse(readFileSync(join(PACK_ROOT, path), "utf8"));
-	} catch (error) {
-		console.error(`cannot read ${path}: ${error.message}`);
-		process.exit(2);
-	}
-}
+	FIXTURE,
+	gitIn,
+	lines,
+	mergedProvenanceFiles,
+	mergedSourceFlags,
+	PACK_ROOT,
+	provenanceUses,
+	readJson,
+} from "./upstream-scope-lib.mjs";
 
 const fixture = readJson(FIXTURE);
 const names = fixture.upstreams.map(({ upstream }) => upstream);
@@ -54,9 +39,7 @@ if (!scope || !checkout || !existsSync(checkout)) {
 	process.exit(2);
 }
 
-const git = (...args) =>
-	execFileSync("git", ["-C", checkout, ...args], GIT_OPTIONS);
-const lines = (output) => output.toString("utf8").split("\n").filter(Boolean);
+const git = gitIn(checkout);
 
 const { commit, root } = scope;
 // SAFETY: docs/skill-inventory.json is checked by test/skill-content.test.ts.
@@ -109,23 +92,9 @@ scope.files = upstream.map((path) => {
 // The skills root is accounted for by the inventory and the skill-provenance
 // fixtures, which a person maintains: report what a pin move changed there and
 // never rewrite it.
-const FIXTURES = "test/fixtures/skill-provenance";
-const recorded = new Map();
-for (const file of readdirSync(
-	join(PACK_ROOT, FIXTURE, "..", "skill-provenance"),
-)) {
-	const {
-		files,
-		planned = [],
-		excluded = [],
-	} = readJson(posix.join(FIXTURES, file));
-	for (const use of [
-		...files.flatMap(({ sources }) => sources),
-		...planned,
-		...excluded,
-	])
-		if (use.source === name) recorded.set(use.path, use.sha256);
-}
+const recorded = new Map(
+	provenanceUses(name).map((use) => [use.path, use.sha256]),
+);
 const accounted = new Set([
 	...recorded.keys(),
 	...inventory.skills.flatMap(({ sourceFiles }) => sourceFiles[name] ?? []),
@@ -157,43 +126,15 @@ const skillsChanged = skillFiles
 // either source must send a person to merge it by hand. List each merged file
 // that cites a skills-root path this upstream changed or removed, naming the
 // other sources it combines.
-// The fixture names the provenance file, so refuse a path that leaves the pack.
-if (fixture.merged) {
-	const away = relativePath(
-		PACK_ROOT,
-		resolve(PACK_ROOT, fixture.merged.provenance),
-	);
-	if (away === ".." || away.startsWith(`..${sep}`) || isAbsolute(away)) {
-		console.error(
-			`merged.provenance ${fixture.merged.provenance} is outside the pack root`,
-		);
-		process.exit(2);
-	}
-}
-const mergedFiles = fixture.merged
-	? readJson(fixture.merged.provenance).files.filter(
-			({ sources }) => new Set(sources.map(({ source }) => source)).size > 1,
-		)
-	: [];
+const mergedFiles = mergedProvenanceFiles(fixture);
 const drifted = new Set([
 	...skillsChanged.map((entry) => entry.split(" ")[0]),
 	...skillsRemoved,
 ]);
-const mergedFlagged = mergedFiles.flatMap(({ path, sources }) => {
-	const own = sources.filter(
-		(use) => use.source === name && drifted.has(use.path),
-	);
-	if (own.length === 0) return [];
-	const others = [
-		...new Set(
-			sources.filter((use) => use.source !== name).map((use) => use.source),
-		),
-	];
-	return own.map(
-		(use) =>
-			`${path}: ${name} source ${use.path} changed or was removed upstream; merge it by hand with the ${others.join(" and ")} source${others.length > 1 ? "s" : ""}, then record the new hashes in ${fixture.merged.provenance}`,
-	);
-});
+const mergedFlagged = mergedSourceFlags(mergedFiles, name, drifted).map(
+	({ file, use, others }) =>
+		`${file}: ${name} source ${use.path} changed or was removed upstream; merge it by hand with the ${others.join(" and ")} source${others.length > 1 ? "s" : ""}, then record the new hashes in ${fixture.merged.provenance}`,
+);
 
 // A watched hash is never rewritten here: a person re-checks what depends on
 // it (THIRD_PARTY_NOTICES.md for LICENSE) and updates it by hand.

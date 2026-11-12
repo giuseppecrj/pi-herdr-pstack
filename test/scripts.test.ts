@@ -380,7 +380,6 @@ describe("move-skills.mjs", () => {
 });
 
 describe("upstream-scope.mjs skills-root drift", () => {
-	const SCRIPT = join(PACK_ROOT, "scripts/upstream-scope.mjs");
 	const git = (cwd: string, ...args: string[]) =>
 		spawnSync("git", args, { cwd, encoding: "utf8" });
 	/**
@@ -414,7 +413,11 @@ describe("upstream-scope.mjs skills-root drift", () => {
 			0,
 		);
 		const commit = git(upstream, "rev-parse", "HEAD").stdout.trim();
-		put(join(root, "scripts/upstream-scope.mjs"), readFileSync(SCRIPT, "utf8"));
+		for (const script of ["upstream-scope.mjs", "upstream-scope-lib.mjs"])
+			put(
+				join(root, "scripts", script),
+				readFileSync(join(PACK_ROOT, "scripts", script), "utf8"),
+			);
 		put(
 			join(root, "test/fixtures/upstream-scope.json"),
 			JSON.stringify({

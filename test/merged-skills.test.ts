@@ -1011,7 +1011,6 @@ describe("merged skill supporting files", () => {
 
 /** Scratch upstreams and a scratch pack for the drift check below. */
 describe("upstream-scope.mjs merged skills", () => {
-	const SCRIPT = join(PACK_ROOT, "scripts/upstream-scope.mjs");
 	const scratch = mkdtempSync(join(tmpdir(), "pstack-merged-"));
 	after(() => rmSync(scratch, { recursive: true, force: true }));
 	const git = (cwd: string, ...args: string[]) =>
@@ -1063,7 +1062,11 @@ describe("upstream-scope.mjs merged skills", () => {
 			a: sha256("a one\n"),
 			b: sha256("b one\n"),
 		};
-		put(join(root, "scripts/upstream-scope.mjs"), readFileSync(SCRIPT, "utf8"));
+		for (const script of ["upstream-scope.mjs", "upstream-scope-lib.mjs"])
+			put(
+				join(root, "scripts", script),
+				readFileSync(join(PACK_ROOT, "scripts", script), "utf8"),
+			);
 		put(
 			join(root, "docs/skill-inventory.json"),
 			JSON.stringify({
