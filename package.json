@@ -34,6 +34,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --experimental-strip-types --test --test-concurrency=1 test/*.test.ts",
     "fixtures:upstream-scope": "node scripts/upstream-scope.mjs",
+    "upstream:drift": "node scripts/upstream-drift.mjs",
     "changelog": "auto-changelog",
     "version": "auto-changelog --package && git add CHANGELOG.md"
   },
