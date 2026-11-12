@@ -279,9 +279,10 @@ records every source. `tdd` and `teach` are the first two. Their provenance is
 path, SHA-256 and git blob at the pin, and what changed. A source's `use` is
 `primary` (Matt's file, the base of the merged text), `merged` (pstack's
 cursor/plugins file, whose method is merged in by hand) or `context` (the
-pi-mimir copy the pack shipped before, which is byte-identical to the cursor
-file for both skills). The inventory rows say `skills/merged` and list the
-source files of all three. `test/fixtures/upstream-scope.json` has a `merged`
+pi-mimir copy, which matches the cursor file for both skills; the pack's shipped
+`tdd` was byte-identical to it, but the shipped `teach` at `0b1dde5` already
+differed by one Pi sentence about the image tool). The inventory rows say
+`skills/merged` and list the source files of all three. `test/fixtures/upstream-scope.json` has a `merged`
 record naming the folder and its two pinned upstreams (`cursor` and
 `mattpocock`).
 
@@ -309,8 +310,14 @@ conflict the stricter rule is in the merged text:
 - Seams. Matt confirms them with the user before any test; pstack proceeds on
   an obvious cheap test path. The merged `tdd` confirms the seam in one line for
   such a bug, counts seams confirmed in a spec or ticket, and has a delegated
-  child take them from its brief or report its proposal and write no test at a
-  guess.
+  child take them from its brief, or from a spec or ticket the brief points at
+  that already confirms them, and report its proposal and write no test only
+  when neither names any. `implement-spec` has each implementer brief state
+  where its seams are (named, or "confirmed in <spec or ticket pointer>"), and
+  the parent never merges a child that stopped at "proposed seams, wrote no
+  test": it confirms the seams with the user or from the spec and re-briefs, and
+  the merger never integrates a diff whose tests did not go red when `tdd`
+  applied.
 - Skipping. The use-or-skip gate runs first and a skip is told to the user
   (before the substitution when they asked for TDD), never silent.
 - Writes. Explain mode writes nothing. Workspace mode writes only after the
@@ -323,8 +330,8 @@ conflict the stricter rule is in the merged text:
 - `disable-model-invocation: true` for both. pstack's `tdd` and `teach` and
   Matt's `teach` set it. Matt's `tdd` does not, but the merged `tdd` asks the
   user to confirm seams and its gate depends on what the user asked for, so the
-  model does not load it unprompted. `implement`, `implement-spec` and the
-  bug-fix playbook load it by path or name.
+  model does not load it unprompted. `implement` and `implement-spec` load it by
+  path; the bug-fix playbook only says "see the tdd skill", by name.
 
 `test/merged-skills.test.ts` holds the content-contract tests for both skills
 (each rule is shown to fail when its text is removed), the provenance checks
@@ -442,13 +449,14 @@ and `unslop`, `technical-writing`, `no-comments`, `teach`, `bro` and
 `poteto-help` (W3-B, `w3-b.json`). Those rows are `shipped` in
 `docs/skill-inventory.json`, so 37 rows ship in total. Of the 39 Wave 3 files,
 22 are copied byte-for-byte from mimir and 17 are adapted, each with one primary
-source and an explanation in its fixture.
+source and an explanation in its fixture. `tdd` and `teach` have since moved to
+`skills/merged/` (issue #36, see **Merged skills**); the rows below mark them.
 
 | Destination | Primary source | Status |
-| `skills/pstack/principle-*/SKILL.md`, `tdd`, `correct` | mimir file of the same name | 19 copied; 7 principles adapted for skill-relative paths, full principle names or a planned W4 reference |
+| `skills/pstack/principle-*/SKILL.md`, `correct` (`tdd` moved to `skills/merged/tdd`, #36) | mimir file of the same name | 18 copied; 7 principles adapted for skill-relative paths, full principle names or a planned W4 reference |
 | `skills/pstack/{benchmark-checklist,blast-radius}/SKILL.md`, `skills/pstack/typescript-best-practices/**` | mimir | adapted (paths, names, planned W4 interim rules; `paths:` frontmatter dropped; the boundary row follows the Cursor blob, and `references/patterns.md` is aligned to that row) |
 | `skills/pstack/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
-| `skills/pstack/{no-comments,teach}/SKILL.md` | mimir, Cursor as context | adapted |
+| `skills/pstack/no-comments/SKILL.md` (`teach` moved to `skills/merged/teach`, #36) | mimir, Cursor as context | adapted |
 | `skills/pstack/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
 | `skills/pstack/poteto-help/**` (3 files) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
 

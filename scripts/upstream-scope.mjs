@@ -12,7 +12,14 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, posix } from "node:path";
+import {
+	isAbsolute,
+	join,
+	posix,
+	relative as relativePath,
+	resolve,
+	sep,
+} from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -150,6 +157,19 @@ const skillsChanged = skillFiles
 // either source must send a person to merge it by hand. List each merged file
 // that cites a skills-root path this upstream changed or removed, naming the
 // other sources it combines.
+// The fixture names the provenance file, so refuse a path that leaves the pack.
+if (fixture.merged) {
+	const away = relativePath(
+		PACK_ROOT,
+		resolve(PACK_ROOT, fixture.merged.provenance),
+	);
+	if (away === ".." || away.startsWith(`..${sep}`) || isAbsolute(away)) {
+		console.error(
+			`merged.provenance ${fixture.merged.provenance} is outside the pack root`,
+		);
+		process.exit(2);
+	}
+}
 const mergedFiles = fixture.merged
 	? readJson(fixture.merged.provenance).files.filter(
 			({ sources }) => new Set(sources.map(({ source }) => source)).size > 1,

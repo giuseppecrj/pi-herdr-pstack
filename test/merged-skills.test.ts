@@ -254,6 +254,57 @@ describe("merged skills provenance", () => {
 });
 
 /**
+ * A delegated tdd child writes no test when its brief names no seams, so the
+ * orchestrator must put the seam source in the brief and must not merge the
+ * work of a child that stopped at proposing seams.
+ */
+describe("implement-spec hands delegated tdd children their seams", () => {
+	const SPEC = "skills/mattpocock/implement-spec/SKILL.md";
+	const HANDOFF: Rule[] = [
+		[
+			"the implementer brief stating where the seams are, named or confirmed in a spec or ticket pointer",
+			/gets its seams from its brief, which states where they are: the seams named outright, or "confirmed in <spec or ticket pointer>" when the spec or ticket already records them \(a pointer, not copied content\)\./,
+		],
+		[
+			"a child that proposed seams and wrote no test not being mergeable",
+			/A child that reports "proposed seams, wrote no test" has not finished: its work is not mergeable\. Confirm the seams with the user \(or find them in the spec or ticket\), then brief a fresh implementer with them\./,
+		],
+		[
+			"the merger never integrating a diff that never went red when tdd applied",
+			/When `tdd` applied to the ticket, never have the merger integrate a diff whose tests did not go red first\./,
+		],
+	];
+	const problems = (text: string) =>
+		HANDOFF.filter(([, pattern]) => !pattern.test(flat(text))).map(
+			([name]) => `missing ${name}`,
+		);
+
+	it("states the seam source in the implementer brief and refuses a seamless child's work", () => {
+		assert.deepEqual(problems(read(SPEC)), []);
+	});
+
+	it("fails when any one of those rules is removed", () => {
+		for (const [rule, pattern] of HANDOFF)
+			assert.ok(
+				problems(without(read(SPEC), pattern)).includes(`missing ${rule}`),
+				`removing "${rule}" did not fail`,
+			);
+	});
+
+	it("keeps tdd's child rule and the brief consistent about where seams come from", () => {
+		const tdd = flat(read(`${FOLDER}/tdd/SKILL.md`));
+		assert.match(
+			tdd,
+			/or from a spec or ticket the brief points at that already confirms them/,
+		);
+		assert.match(
+			flat(read(SPEC)),
+			/`tdd` has a child write no test when neither names seams/,
+		);
+	});
+});
+
+/**
  * Each recorded source hash and git blob reproduces from the pinned commit of
  * its upstream, in PSTACK_<UPSTREAM>_SOURCE (mimir, cursor and mattpocock).
  */
@@ -336,8 +387,9 @@ describe("merged skills provenance at the pins", () => {
 			!(checkouts.cursor && checkouts.mattpocock) &&
 			"set PSTACK_CURSOR_SOURCE and PSTACK_MATTPOCOCK_SOURCE to checkouts containing the pinned commits",
 	}, () => {
-		// Every sentence of pstack's tdd that states a rule survives in the merge,
-		// word for word, except where the provenance explanation records a change.
+		// Six of pstack's tdd rules (guardrails, the bad-test preference and the
+		// report line) survive in the merge word for word. This does not check
+		// every pstack sentence; the content contract below locks the rest.
 		const merged = read(`${FOLDER}/tdd/SKILL.md`).replace(/\s+/g, " ");
 		const pstack = git("cursor", "show", spec("cursor", "tdd/SKILL.md"))
 			.toString("utf8")
@@ -628,8 +680,8 @@ const TDD_RULES: Rule[] = [
 		/Seams the user already confirmed in a spec or ticket \(`\/skill:to-spec` asks for them\) count as agreed\./,
 	],
 	[
-		"a delegated child taking its seams from the brief and writing no test at a guess",
-		/A delegated child takes its seams from its brief; when the brief names none, it reports its proposed seams and writes no test at a guess\./,
+		"a delegated child taking its seams from the brief or the spec or ticket it points at, and writing no test when neither names any",
+		/A delegated child takes its seams from its brief, or from a spec or ticket the brief points at that already confirms them; when neither names any, it reports its proposed seams and writes no test at a guess\./,
 	],
 	[
 		"loading codebase-design by path for the seam vocabulary",
@@ -867,11 +919,11 @@ const TEACH_RULES: Rule[] = [
 	// Conflicts resolved to the stricter rule, and pack policy.
 	[
 		"confirming the directory before the first file is written",
-		/\*\*Confirm the directory before the first file is written\.\*\* If the current directory already holds a `MISSION\.md`, it is the workspace\. Otherwise name the directory you would use and ask the user to confirm it or give another\./,
+		/\*\*Confirm the directory before the first file is written\.\*\* If the current directory already holds a `MISSION\.md` and the user already confirmed it as their teaching workspace, it is the workspace\. Otherwise name the directory you would use and ask the user to confirm it or give another\./,
 	],
 	[
 		"not scattering workspace files into a code repository",
-		/Do not scatter workspace files into a code repository's working tree: a directory that is a git repository with project code in it needs the user's explicit yes, and a new subdirectory is the usual answer\. Write nothing outside the confirmed directory\./,
+		/Do not scatter workspace files into a code repository's working tree: a directory that is a git repository with project code in it needs the user's explicit yes before the first write, even when it holds a `MISSION\.md`, and a new subdirectory is the usual answer\. Write nothing outside the confirmed directory\./,
 	],
 	[
 		"opening only the lesson file",
@@ -891,11 +943,15 @@ const TEACH_RULES: Rule[] = [
 	],
 	[
 		"lessons loading no remote script, stylesheet or font",
-		/load no remote script, stylesheet or font from them, so a lesson works offline/,
+		/load no remote script, stylesheet or font from them and embed none through `<iframe>`, `<object>` or `<embed>`, and you never copy a source's script into the workspace, so a lesson works offline/,
 	],
 	[
-		"no secrets or credential-bearing URLs in workspace files",
-		/never contain a secret or a credential-bearing URL\./,
+		"assets being code you wrote, never a copied script or an embedded remote page",
+		/A component is code you wrote: never copy a source's script into `\.\/assets\/`, and never embed a remote page with `<iframe>`, `<object>` or `<embed>`\./,
+	],
+	[
+		"no secrets or credential-bearing URLs in any workspace file",
+		/No workspace file \(`MISSION\.md`, learning records, `GLOSSARY\.md`, `reference\/\*\.html`, `assets\/\*`, lessons, `NOTES\.md`, `RESOURCES\.md`\) contains a secret or a credential-bearing URL\./,
 	],
 	[
 		"what invoking the skill grants in each mode",
@@ -973,9 +1029,15 @@ describe("upstream-scope.mjs merged skills", () => {
 		writeFileSync(path, text);
 	};
 	/** Commits `text` as `skills/m/SKILL.md` in an upstream and returns the commit. */
-	const commit = (upstream: string, text: string | undefined) => {
+	const commit = (
+		upstream: string,
+		text: string | undefined,
+		extra: Record<string, string> = {},
+	) => {
 		if (text === undefined) rmSync(join(upstream, "skills/m/SKILL.md"));
 		else put(join(upstream, "skills/m/SKILL.md"), text);
+		for (const [path, body] of Object.entries(extra))
+			put(join(upstream, path), body);
 		assert.equal(git(upstream, "add", "-A").status, 0);
 		assert.equal(git(upstream, "commit", "-qm", "pin").status, 0);
 		return git(upstream, "rev-parse", "HEAD").stdout.trim();
@@ -984,7 +1046,7 @@ describe("upstream-scope.mjs merged skills", () => {
 	 * A scratch pack whose merged skill `m` combines `a/m/SKILL.md` and
 	 * `b/m/SKILL.md`. Returns helpers to move each upstream and run the script.
 	 */
-	const pack = (name: string) => {
+	const pack = (name: string, provenance?: string) => {
 		const root = join(scratch, name);
 		const checkouts = { a: join(root, "a"), b: join(root, "b") };
 		const pins = { a: "", b: "" };
@@ -1033,7 +1095,8 @@ describe("upstream-scope.mjs merged skills", () => {
 					merged: {
 						folder: "skills/merged",
 						upstreams: ["a", "b"],
-						provenance: "test/fixtures/skill-provenance/merged.json",
+						provenance:
+							provenance ?? "test/fixtures/skill-provenance/merged.json",
 					},
 					upstreams: (["a", "b"] as const).map((key) => ({
 						upstream: key,
@@ -1050,9 +1113,13 @@ describe("upstream-scope.mjs merged skills", () => {
 			);
 		writeFixture();
 		return {
-			/** Moves an upstream's pin to a new commit with `text` (undefined deletes the file). */
-			move(key: "a" | "b", text: string | undefined) {
-				pins[key] = commit(checkouts[key], text);
+			/** Moves an upstream's pin to a new commit with `text` (undefined deletes the file) and any `extra` files. */
+			move(
+				key: "a" | "b",
+				text: string | undefined,
+				extra: Record<string, string> = {},
+			) {
+				pins[key] = commit(checkouts[key], text, extra);
 				writeFixture();
 			},
 			run: (key: "a" | "b") =>
@@ -1112,19 +1179,25 @@ describe("upstream-scope.mjs merged skills", () => {
 
 	it("does not flag a merged skill when a different upstream file changes", () => {
 		const scope = pack("merged-other-file");
-		put(join(scratch, "merged-other-file/a/skills/z/SKILL.md"), "unrelated\n");
-		assert.equal(
-			git(join(scratch, "merged-other-file/a"), "add", "-A").status,
-			0,
-		);
-		assert.equal(
-			git(join(scratch, "merged-other-file/a"), "commit", "-qm", "z").status,
-			0,
-		);
+		scope.move("a", "a one\n", { "skills/z/SKILL.md": "unrelated\n" });
 		const result = scope.run("a");
 		// The new file is unaccounted for, which exits 1, but the merged skill is not named.
+		assert.equal(result.status, 1, result.stdout + result.stderr);
+		assert.match(result.stdout, /new skills\/ file with no inventory/);
 		assert.match(result.stdout, new RegExp(`${FLAG}: none`));
 	});
+
+	for (const [label, path] of [
+		["a relative path that climbs out of the pack", "../outside.json"],
+		["an absolute path", "/etc/hosts"],
+	] as const)
+		it(`refuses a merged.provenance that is ${label}`, () => {
+			const scope = pack(`merged-escape-${label.split(" ")[1]}`, path);
+			const result = scope.run("a");
+			assert.equal(result.status, 2, result.stdout + result.stderr);
+			assert.match(result.stderr, /is outside the pack root/);
+			assert.doesNotMatch(result.stdout, /merged skill with a changed/);
+		});
 
 	it("the real fixtures pass both upstreams at their pins when a checkout is available", {
 		skip:
