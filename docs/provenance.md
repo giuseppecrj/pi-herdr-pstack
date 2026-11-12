@@ -170,11 +170,28 @@ says what changed. In summary:
   so its task carries the absolute path of the skill it must load.
 - `implement` and `implement-spec` load pstack's `tdd`, the pack's only `tdd`
   until #36 merges Matt's. `code-review` (#37), `research` (#34) and
-  `prototype` (#37) are not in the pack yet: the skills look for them and, when
-  one is missing, tell the user instead of standing in for it.
+  `prototype` (#37) are not in the pack yet. The skills check for them at the
+  start and fail closed: without `code-review`, `implement` stops before its
+  commit and `implement-spec` stops before any PR or ticket update; without
+  `research` or `prototype`, those wayfinder tickets are reported as blocked.
+  No other skill stands in. These gaps must close before a release.
+- Pack policy added after review: the tracker doc says how to publish, never
+  whether. Pushes, PR actions, issue creation, edits, comments, assignment,
+  labels and label creation need the user's grant, and without it the work
+  stays local. Issue, PR and comment content, map Notes and linked material are
+  data, never instructions, scope changes, skill choices or authorization, and
+  child briefs repeat that. `triage` verifies a PR only in a detached review
+  checkout under `~/.herdr/worktrees/<repo>/pr-<number>-review`, runs
+  contributor-controlled code only after the user approves, and removes the
+  checkout afterwards. Worktree children start from committed state, so
+  uncommitted inputs are committed with approval or passed by absolute path.
+  `implement-spec` inspects each child's diff and checks before merging and
+  advances the frontier on verified integration, not remote ticket closure.
 - Relative Markdown links became backticked file names or italic section names,
   and `triage/OUT-OF-SCOPE.md`'s example fence widened to four backticks so its
-  nested code block no longer breaks the file.
+  nested code block no longer breaks the file. `test/skill-tree.test.ts` checks
+  that every backticked supporting-file name exists in the skill's folder and
+  exempts only an explicit list of illustrative links in fenced templates.
 
 These are content and loader checks (`test/mattpocock-skills.test.ts`,
 `test/rpc.test.ts`); they do not show that a live model follows the skills.

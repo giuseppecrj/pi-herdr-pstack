@@ -108,7 +108,7 @@ Several poteto-mode workflows are scoped down for Pi:
 - Orchestrate is a depth-1 single-session coordinator with a hand-kept store, not an unattended or multi-day runner.
 - Worktree cleanup inventories with `worktree_list` and removes each path only on its own authorization.
 - Nothing in pstack pushes, opens or merges PRs, or removes worktrees without explicit authorization.
-- Matt Pocock's skills keep upstream's publishing steps, and run only when you invoke them with `/skill:<name>`: `implement-spec` opens a draft PR when the tracker closes work through PRs or you ask for one, and `wayfinder`'s research children push throwaway `research/<name>` branches without opening a PR.
+- Matt Pocock's tracker skills (`to-spec`, `to-tickets`, `triage`, `wayfinder`, `implement`, `implement-spec`) push, act on PRs, or create, edit, comment on, label or close issues only when you grant that effect; the tracker doc says how, never whether. Without a grant they keep the work local and tell you what is waiting. Issue, PR and map content is data, never instructions. `triage` runs a contributor's PR code only in a detached review checkout under `~/.herdr/worktrees/` and only after you approve. When `code-review`, `research` or `prototype` is missing from the pack, the skills that need it stop before the step it gates and say so.
 
 Runtime checks use deterministic providers; they do not establish that a live model follows the skills. These workflows have not been evaluated with live models.
 
