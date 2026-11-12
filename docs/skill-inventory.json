@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 58,
+  "expectedSkillCount": 68,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -164,6 +164,21 @@
       }
     },
     {
+      "name": "domain-modeling",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/domain-modeling/ADR-FORMAT.md",
+          "engineering/domain-modeling/GLOSSARY-FORMAT.md",
+          "engineering/domain-modeling/SKILL.md",
+          "engineering/domain-modeling/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "figure-it-out",
       "folder": "skills/pstack",
       "wave": "W4-A",
@@ -175,6 +190,45 @@
         ],
         "cursor": [
           "figure-it-out/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "grill-me",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "productivity/grill-me/SKILL.md",
+          "productivity/grill-me/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "grill-with-docs",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/grill-with-docs/SKILL.md",
+          "engineering/grill-with-docs/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "grilling",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "productivity/grilling/SKILL.md",
+          "productivity/grilling/agents/openai.yaml"
         ]
       }
     },
@@ -194,6 +248,32 @@
           "how/SKILL.md",
           "how/references/explainer-prompt.md",
           "how/references/explorer-prompt.md"
+        ]
+      }
+    },
+    {
+      "name": "implement",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/implement/SKILL.md",
+          "engineering/implement/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "implement-spec",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/implement-spec/SKILL.md",
+          "engineering/implement-spec/agents/openai.yaml"
         ]
       }
     },
@@ -964,6 +1044,47 @@
       }
     },
     {
+      "name": "to-spec",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/to-spec/SKILL.md",
+          "engineering/to-spec/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "to-tickets",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/to-tickets/SKILL.md",
+          "engineering/to-tickets/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "triage",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/triage/AGENT-BRIEF.md",
+          "engineering/triage/OUT-OF-SCOPE.md",
+          "engineering/triage/SKILL.md",
+          "engineering/triage/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "typescript-best-practices",
       "folder": "skills/pstack",
       "wave": "W3-A",
@@ -992,6 +1113,19 @@
         ],
         "cursor": [
           "unslop/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "wayfinder",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/wayfinder/SKILL.md",
+          "engineering/wayfinder/agents/openai.yaml"
         ]
       }
     },

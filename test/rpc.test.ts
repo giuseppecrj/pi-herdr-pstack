@@ -9,6 +9,7 @@ import {
 	PACK_ROOT,
 	SKILL_NAMES,
 } from "./helpers/rpc.ts";
+import { SdkPi } from "./helpers/sdk.ts";
 
 const GENERIC_ROLES = [
 	"adversarial-reviewer",
@@ -108,6 +109,90 @@ describe("setup-repo from the mattpocock folder", () => {
 				request.user,
 				`<skill name="setup-repo" location="${SKILL}">\nReferences are relative to ${join(PACK_ROOT, "skills/mattpocock/setup-repo")}.\n\n${body}\n</skill>\n\nthe scratch repo`,
 			);
+		} finally {
+			await pi.close();
+		}
+	});
+});
+
+// The spec, ticket and triage flow (#33). Loader and expansion tests with the
+// faux provider; not evidence of live-model compliance.
+describe("spec, ticket and triage flow from the mattpocock folder", () => {
+	const FLOW = [
+		"domain-modeling",
+		"grill-me",
+		"grill-with-docs",
+		"grilling",
+		"implement",
+		"implement-spec",
+		"to-spec",
+		"to-tickets",
+		"triage",
+		"wayfinder",
+	];
+	/** Upstream leaves these model-invocable; the rest are /skill: only. */
+	const MODEL_INVOKED = ["domain-modeling", "grilling"];
+	const dirOf = (name: string) => join(PACK_ROOT, "skills/mattpocock", name);
+	const skillFile = (name: string) => join(dirOf(name), "SKILL.md");
+
+	it("loads every skill through Pi's package loader under its unprefixed name, with no diagnostics", async () => {
+		const pi = await SdkPi.start();
+		try {
+			const { skills, diagnostics } = pi.session.resourceLoader.getSkills();
+			assert.deepEqual(diagnostics, []);
+			for (const name of FLOW) {
+				const loaded = skills.filter((skill) => skill.name === name);
+				assert.deepEqual(
+					loaded.map(({ filePath, disableModelInvocation }) => ({
+						filePath,
+						disableModelInvocation,
+					})),
+					[
+						{
+							filePath: skillFile(name),
+							disableModelInvocation: !MODEL_INVOKED.includes(name),
+						},
+					],
+					name,
+				);
+			}
+		} finally {
+			pi.dispose();
+		}
+	});
+
+	it("lists each skill as /skill:<name> and expands it, showing only grilling and domain-modeling to the model", async () => {
+		const pi = new IsolatedPi({ packages: [PACK_ROOT] });
+		try {
+			const listed = (await commands(pi)).filter(({ name }) =>
+				FLOW.some((skill) => name === `skill:${skill}`),
+			);
+			assert.deepEqual(
+				listed.toSorted((a, b) => a.name.localeCompare(b.name)),
+				FLOW.map((name) => ({ name: `skill:${name}`, path: skillFile(name) })),
+			);
+			assert.equal(pi.stderr, "");
+
+			for (const name of FLOW) {
+				await pi.prompt(`/skill:${name} the scratch spec`);
+				const request = pi.requests().at(-1);
+				assert.ok(request, name);
+				for (const skill of FLOW)
+					assert.equal(
+						request.systemPrompt.includes(`<name>${skill}</name>`),
+						MODEL_INVOKED.includes(skill),
+						`${name}: ${skill} in the model's skill list`,
+					);
+				const body = readFileSync(skillFile(name), "utf8")
+					.replace(/^---\n[\s\S]*?\n---\n/, "")
+					.trim();
+				assert.equal(
+					request.user,
+					`<skill name="${name}" location="${skillFile(name)}">\nReferences are relative to ${dirOf(name)}.\n\n${body}\n</skill>\n\nthe scratch spec`,
+					name,
+				);
+			}
+			assert.equal(pi.stderr, "");
 		} finally {
 			await pi.close();
 		}

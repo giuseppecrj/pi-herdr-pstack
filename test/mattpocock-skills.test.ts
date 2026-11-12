@@ -7,7 +7,8 @@ import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
 // The skills/mattpocock folder (ADR-0003): setup-repo, adapted from Matt
-// Pocock's setup-matt-pocock-skills, and the provenance of every upstream file.
+// Pocock's setup-matt-pocock-skills, the spec, ticket and triage flow (#33),
+// and the provenance of every upstream file.
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
 const readJson = <T>(path: string): T => JSON.parse(read(path)) as T;
@@ -17,8 +18,23 @@ const sha256 = (value: string | Buffer) =>
 const FOLDER = "skills/mattpocock";
 const SKILL_DIR = `${FOLDER}/setup-repo`;
 const UPSTREAM_DIR = "engineering/setup-matt-pocock-skills";
+/** Each shipped skill in the folder and the upstream directory it adapts. */
+const UPSTREAM_DIRS: Record<string, string> = {
+	"domain-modeling": "engineering/domain-modeling",
+	"grill-me": "productivity/grill-me",
+	"grill-with-docs": "engineering/grill-with-docs",
+	grilling: "productivity/grilling",
+	implement: "engineering/implement",
+	"implement-spec": "engineering/implement-spec",
+	"setup-repo": UPSTREAM_DIR,
+	"to-spec": "engineering/to-spec",
+	"to-tickets": "engineering/to-tickets",
+	triage: "engineering/triage",
+	wayfinder: "engineering/wayfinder",
+};
+const SKILL_NAMES = Object.keys(UPSTREAM_DIRS);
 /** Issues that port, merge or decide the upstream skills not shipped yet. */
-const OWNING_ISSUES = ["#33", "#34", "#36", "#37"];
+const OWNING_ISSUES = ["#34", "#36", "#37"];
 
 type Source = { repository: string; commit: string; root: string };
 type Use = { source: string; path: string; sha256: string; blob: string };
@@ -236,8 +252,240 @@ describe("setup-repo content", () => {
 	});
 });
 
+// The spec, ticket and triage flow (#33). Content checks on the Pi adaptations
+// that matter for safety; they do not show that a live model follows them.
+describe("spec, ticket and triage flow content", () => {
+	const FLOW = SKILL_NAMES.filter((name) => name !== "setup-repo");
+	/** Skills upstream leaves model-invocable, so other skills can load them. */
+	const MODEL_INVOKED = ["domain-modeling", "grilling"];
+	/** Skills that read or write the configured issue tracker. */
+	const TRACKER = [
+		"implement",
+		"implement-spec",
+		"to-spec",
+		"to-tickets",
+		"triage",
+		"wayfinder",
+	];
+	/** Tracker skills that apply labels (triage roles or wayfinder:<type>). */
+	const LABELS = ["to-spec", "to-tickets", "triage", "wayfinder"];
+	const CATEGORIES = [
+		"coding",
+		"review",
+		"recon",
+		"qa",
+		"architecture",
+		"docs",
+	];
+	const flowFiles = FLOW.flatMap((name) => files(`${FOLDER}/${name}`));
+	const flat = (name: string) =>
+		read(`${FOLDER}/${name}/SKILL.md`).replace(/\s+/g, " ");
+
+	it("ships each skill under its upstream name and invocation setting, without Codex metadata", () => {
+		for (const name of FLOW) {
+			const dir = `${FOLDER}/${name}`;
+			const frontmatter =
+				/^---\n([\s\S]*?)\n---\n/.exec(read(`${dir}/SKILL.md`))?.[1] ?? "";
+			assert.match(frontmatter, new RegExp(`^name: ${name}$`, "m"), name);
+			if (MODEL_INVOKED.includes(name))
+				assert.doesNotMatch(frontmatter, /disable-model-invocation/, name);
+			else assert.match(frontmatter, /^disable-model-invocation: true$/m, name);
+			assert.equal(
+				files(dir).some((path) => /\/agents\/|openai\.yaml/.test(path)),
+				false,
+				name,
+			);
+		}
+		assert.deepEqual(
+			flowFiles.toSorted(),
+			[
+				"domain-modeling/ADR-FORMAT.md",
+				"domain-modeling/GLOSSARY-FORMAT.md",
+				"domain-modeling/SKILL.md",
+				"grill-me/SKILL.md",
+				"grill-with-docs/SKILL.md",
+				"grilling/SKILL.md",
+				"implement-spec/SKILL.md",
+				"implement/SKILL.md",
+				"to-spec/SKILL.md",
+				"to-tickets/SKILL.md",
+				"triage/AGENT-BRIEF.md",
+				"triage/OUT-OF-SCOPE.md",
+				"triage/SKILL.md",
+				"wayfinder/SKILL.md",
+			]
+				.map((path) => `${FOLDER}/${path}`)
+				.toSorted(),
+		);
+	});
+
+	it("uses Pi's /skill: syntax and loads other skills by path, with no Claude or Codex surface", () => {
+		const bareSlash =
+			/(?<![\w:/.*-])\/(?:setup-matt-pocock-skills|setup-repo|triage|wayfinder|to-spec|to-tickets|domain-modeling|grill-with-docs|grill-me|grilling|implement|implement-spec|improve-codebase-architecture|tdd|code-review|research|prototype)\b/;
+		for (const path of flowFiles) {
+			const text = read(path);
+			assert.doesNotMatch(text, bareSlash, path);
+			assert.doesNotMatch(
+				text,
+				/Skill tool|setup-matt-pocock-skills|sub-agent|background agent|Codex|Claude Code|openai\.yaml/i,
+				path,
+			);
+		}
+		assert.ok(
+			flat("implement-spec").includes("/skill:to-spec and /skill:to-tickets"),
+		);
+		assert.ok(
+			flat("triage").includes("The maintainer invokes `/skill:triage`"),
+		);
+		assert.ok(
+			flat("grill-me").includes(
+				"Read `../grilling/SKILL.md` (the `grilling` skill) and follow it.",
+			),
+		);
+		assert.ok(
+			flat("grill-with-docs").includes(
+				"Read `../grilling/SKILL.md` and `../domain-modeling/SKILL.md` (the `grilling` and `domain-modeling` skills) and follow both.",
+			),
+		);
+		for (const name of ["triage", "wayfinder"])
+			assert.ok(
+				flat(name).includes(
+					"load the `grilling` and `domain-modeling` skills (read `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`)",
+				),
+				name,
+			);
+		assert.ok(
+			flat("implement").includes(
+				"Load the `tdd` skill (read `../../pstack/tdd/SKILL.md`)",
+			),
+		);
+	});
+
+	it("reaches the tracker only through the configured tracker doc and its -R repo", () => {
+		for (const name of TRACKER) {
+			const text = flat(name);
+			for (const phrase of [
+				"points at `docs/agents/issue-tracker.md`",
+				"If not, tell the user to run `/skill:setup-repo`.",
+				"Run every tracker command the way the tracker doc writes it, with the repo it names (`-R <owner>/<repo>`), never the CLI's implicit default repo",
+			])
+				assert.ok(text.includes(phrase), `${name}: ${phrase}`);
+			assert.equal(
+				text.includes(
+					"never the CLI's implicit default repo, and ask the user before creating a label the tracker lacks.",
+				),
+				LABELS.includes(name),
+				name,
+			);
+		}
+		for (const name of ["to-spec", "to-tickets"])
+			assert.ok(flat(name).includes("`docs/agents/triage-labels.md`"), name);
+		assert.ok(
+			flat("triage").includes(
+				"The mapping should have been provided to you (`docs/agents/triage-labels.md`). If not, tell the user to run `/skill:setup-repo`.",
+			),
+		);
+		for (const path of flowFiles) {
+			const text = read(path);
+			// Every gh or glab issue, PR, MR or label command names its repo.
+			for (const [, command] of text.matchAll(
+				/`((?:gh|glab) (?:issue|pr|mr|label)\b[^`]*)`/g,
+			))
+				assert.match(
+					command,
+					/ -R <owner>\/<repo>(?: |$)/,
+					`${path}: ${command}`,
+				);
+			assert.doesNotMatch(
+				text,
+				/\{owner\}\/\{repo\}|projects\/:id|repo set-default|mattpocock\/skills|cursor\/plugins/,
+				path,
+			);
+		}
+	});
+
+	it("launches every subagent through pi-herdr-agents with an explicit model, fresh context and no polling", () => {
+		const launches = flowFiles.flatMap((path) =>
+			read(path)
+				.split("\n")
+				.filter((line) => /`subagent`|\*\*[a-z ]+subagent\*\* \(/.test(line))
+				.map((line) => ({ path, line })),
+		);
+		assert.ok(launches.length >= 6, String(launches.length));
+		for (const { path, line } of launches) {
+			const categories = [...line.matchAll(/task:([a-z]+)/g)].map(
+				([, category]) => category,
+			);
+			assert.ok(
+				categories.length > 0 ||
+					line.includes(
+						"the explicit `model` and `thinking` given for its kind below",
+					),
+				`${path}: no explicit model: ${line}`,
+			);
+			for (const category of categories)
+				assert.ok(CATEGORIES.includes(category), `${path}: ${category}`);
+			assert.match(line, /thinking/, `${path}: ${line}`);
+		}
+		// Each kind of subagent names its model and thinking where it is introduced.
+		const spec = flat("implement-spec");
+		for (const kind of [
+			'**exploration subagent** (`model: "task:recon"`, `thinking: "low"`)',
+			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"`) for each ticket, each in its own worktree on its own branch (`worktree: { branch: "<ticket-branch>", base: "<integration-branch>" }`)',
+			'**merger subagent** (`model: "task:coding"`, `thinking: "low"`, no `worktree`, so it works in this checkout on the integration branch; run one merger at a time)',
+			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"`, no `worktree`, working in this checkout on the integration branch)',
+		])
+			assert.ok(spec.includes(kind), kind);
+		for (const phrase of [
+			"launch each one with pi-herdr-agents' `subagent` tool, `fork: false`,",
+			"it pushes nothing, opens no PR and launches no subagents of its own unless this skill names that action",
+			"A launch returns once the child has started, and each child's result arrives on its own as a new turn: never sleep, poll or list status to wait for one.",
+			"its task gives the absolute path of `../../pstack/tdd/SKILL.md`, resolved from this skill's directory",
+			"list them with `worktree_list`, show the user that list, and remove each with `worktree_remove` once they approve",
+		])
+			assert.ok(spec.includes(phrase), phrase);
+		assert.ok(
+			flat("grilling").includes(
+				"launch a `subagent` with a fresh context window (`fork: false`), an explicit `model` (`task:recon`) and `thinking` (`low`), and a task that asks for that fact and changes nothing",
+			),
+		);
+		assert.ok(flat("grilling").includes("never poll for it"));
+		const wayfinder = flat("wayfinder");
+		for (const phrase of [
+			"Launch each with `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`), and its own worktree on that branch",
+			"the absolute path of the `research` skill's `SKILL.md`",
+			"never poll for it.",
+		])
+			assert.ok(wayfinder.includes(phrase), phrase);
+		for (const path of flowFiles)
+			assert.doesNotMatch(
+				read(path),
+				/\bagent"?\s*:|"agent"|`persistent`|persistent: true/,
+				path,
+			);
+	});
+
+	it("tells the user when a skill it loads is not installed, instead of standing in for it", () => {
+		for (const name of ["implement", "implement-spec"])
+			assert.ok(
+				flat(name).includes(
+					"`../../*/code-review/SKILL.md` in this pack (Pi hides skills that disable model invocation from that list)",
+				) &&
+					/[Ii]f it isn't installed, tell the user the review was skipped and why[;,] (?:and )?don't stand in for it with another skill\./.test(
+						flat(name),
+					),
+				name,
+			);
+		assert.ok(
+			flat("wayfinder").includes(
+				"If it isn't installed, tell the user and ask how to resolve the ticket; don't stand in for the skill.",
+			),
+		);
+	});
+});
+
 describe("mattpocock provenance", () => {
-	it("records the inventory's mattpocock pin and the one setup-repo row", () => {
+	it("records the inventory's mattpocock pin and one row per shipped skill", () => {
 		assert.equal(provenance.schemaVersion, 1);
 		assert.deepEqual(provenance.sources, { mattpocock: pin });
 		assert.equal(pin.repository, "https://github.com/mattpocock/skills");
@@ -246,9 +494,9 @@ describe("mattpocock provenance", () => {
 		const rows = inventory.skills.filter(({ folder }) => folder === FOLDER);
 		assert.deepEqual(
 			rows.map(({ name }) => name),
-			["setup-repo"],
+			SKILL_NAMES,
 		);
-		assert.equal(rows[0].primarySource, "mattpocock");
+		for (const row of rows) assert.equal(row.primarySource, "mattpocock");
 	});
 
 	it("records each adapted file's source path, git blob, SHA-256 and changes", () => {
@@ -257,17 +505,29 @@ describe("mattpocock provenance", () => {
 			files(FOLDER).toSorted(),
 		);
 		for (const file of provenance.files) {
-			assert.equal(file.status, "adapted", file.path);
-			assert.equal(
-				sha256(readFileSync(join(PACK_ROOT, file.path))),
-				file.sha256,
-			);
-			assert.ok(file.explanation.length > 40, file.path);
+			const hash = sha256(readFileSync(join(PACK_ROOT, file.path)));
+			assert.equal(hash, file.sha256, file.path);
 			assert.equal(file.sources.length, 1, file.path);
 			const [source] = file.sources;
+			// A copy is byte-identical to its source; anything else is adapted.
+			assert.equal(
+				file.status,
+				hash === source.sha256 ? "copied" : "adapted",
+				file.path,
+			);
+			assert.ok(
+				file.status === "copied"
+					? file.explanation.startsWith("Byte-identical copy")
+					: file.explanation.length > 40,
+				file.path,
+			);
 			assert.equal(source.source, "mattpocock");
 			assert.equal(source.use, "primary");
-			assert.ok(source.path.startsWith(`${UPSTREAM_DIR}/`), source.path);
+			const skill = file.path.split("/")[2];
+			assert.ok(
+				source.path.startsWith(`${UPSTREAM_DIRS[skill]}/`),
+				`${file.path}: ${source.path}`,
+			);
 			assert.match(source.sha256, /^[0-9a-f]{64}$/);
 			assert.match(source.blob, /^[0-9a-f]{40}$/);
 			assert.equal(posix.basename(source.path), posix.basename(file.path));
@@ -291,18 +551,30 @@ describe("mattpocock provenance", () => {
 			assert.ok(OWNING_ISSUES.includes(owningIssue), path);
 		for (const { path, disposition } of provenance.excluded)
 			assert.ok(disposition.length > 40, path);
-		const [row] = inventory.skills.filter(({ name }) => name === "setup-repo");
-		assert.deepEqual(
-			row.sourceFiles.mattpocock.toSorted(),
-			[
-				...provenance.files.flatMap(({ sources }) => sources),
-				...provenance.excluded.filter(({ path }) =>
-					path.startsWith(`${UPSTREAM_DIR}/`),
-				),
-			]
-				.map(({ path }) => path)
-				.toSorted(),
-		);
+		// Each row lists exactly its upstream directory's shipped and excluded files.
+		for (const [name, dir] of Object.entries(UPSTREAM_DIRS)) {
+			const [row] = inventory.skills.filter((skill) => skill.name === name);
+			assert.deepEqual(
+				row.sourceFiles.mattpocock.toSorted(),
+				[
+					...provenance.files.flatMap(({ sources }) => sources),
+					...provenance.excluded,
+				]
+					.map(({ path }) => path)
+					.filter((path) => path.startsWith(`${dir}/`))
+					.toSorted(),
+				name,
+			);
+			assert.ok(
+				row.sourceFiles.mattpocock.includes(`${dir}/agents/openai.yaml`),
+				name,
+			);
+			assert.equal(
+				provenance.planned.some(({ path }) => path.startsWith(`${dir}/`)),
+				false,
+				`${name} ships, so none of its files is planned`,
+			);
+		}
 		for (const path of ["misc/", "in-progress/software-factory/"])
 			assert.ok(
 				provenance.excluded.some((entry) => entry.path.startsWith(path)),

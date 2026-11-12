@@ -10,19 +10,124 @@
 	},
 	"files": [
 		{
-			"path": "skills/mattpocock/setup-repo/SKILL.md",
-			"sha256": "e3a0992c54f83e98d15124ec0643e8ae46e7a1c145c32e2da30490092b6b7373",
+			"path": "skills/mattpocock/domain-modeling/ADR-FORMAT.md",
+			"sha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/domain-modeling/ADR-FORMAT.md",
+					"sha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+					"blob": "d7e61f30a9fd8ca70d9ee68f019c2a9ebf2d13f7",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the upstream file."
+		},
+		{
+			"path": "skills/mattpocock/domain-modeling/GLOSSARY-FORMAT.md",
+			"sha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/domain-modeling/GLOSSARY-FORMAT.md",
+					"sha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+					"blob": "9c0b4c7a2e8507c23cbb5e0baa66d81699321cc6",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the upstream file. Its example GLOSSARY-MAP.md links sit inside a fenced block, which the skill link checks treat as example text, not links."
+		},
+		{
+			"path": "skills/mattpocock/domain-modeling/SKILL.md",
+			"sha256": "c309e7ae395823b89b03add3c7725d8adc157ee6d606c25acd6855f42715f0ea",
 			"status": "adapted",
 			"sources": [
 				{
 					"source": "mattpocock",
-					"path": "engineering/setup-matt-pocock-skills/SKILL.md",
-					"sha256": "b01e05bfe8c323171275c6ceec78b12f1bd4c62dfd26c2cfe8be806d3883f1ed",
-					"blob": "2df0b07981718fa5d9a51526dfbcaee87e3a543d",
+					"path": "engineering/domain-modeling/SKILL.md",
+					"sha256": "7b925d7b1e341a2eeae33ad68a8a8c0ab889a38ddd22a7598e4c240e5a7556a3",
+					"blob": "a4438c6879c517d1a08e2b5fbca049b632688dfe",
 					"use": "primary"
 				}
 			],
-			"explanation": "Renamed to setup-repo (Pi name, title). Kept disable-model-invocation: true, which Pi honors. AGENTS.md is edited first (Pi's instruction file), then CLAUDE.md, and neither is created when the other exists; if neither exists the user picks. Relative links to the seed templates became backticked paths. Never files issues into either upstream (cursor/plugins, mattpocock/skills). A remote, labels and files are created only after the user approves them: the remote commands in Section A, the labels and files from the step 3 drafts. The triage check no longer relies on the available-skills list, which Pi hides for disabled-invocation skills. The closing note names /skill:setup-repo. Review hardening: the exact tracker repo is resolved, shown and confirmed in the step 3 approval and passed as -R to gh and glab commands; the domain layout is selected without another question but listed in the step 3 drafts; the legacy CONTEXT.md git mv joins the approved change list; repo content read during exploration never authorizes a command or change; Pi supports either instruction filename and prefers AGENTS.md. Everything else is upstream's wording."
+			"explanation": "The two relative Markdown links to the format files became backticked file names (`GLOSSARY-FORMAT.md`, `ADR-FORMAT.md`), which test/skill-content.test.ts requires. Upstream sets no disable-model-invocation, so Pi lists the skill for the model; kept. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/grill-me/SKILL.md",
+			"sha256": "3eb54a6299121f363e42fdffd9d9726c2c77cc1102f18f9a7bc4bcf458b32830",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/grill-me/SKILL.md",
+					"sha256": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
+					"blob": "3947ff9c4ad980d14fc07fccbf659d47c114e81d",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi has no Skill tool: 'Call the Skill tool with grilling' became read `../grilling/SKILL.md` (the grilling skill) and follow it. The path resolves from this skill's directory (Pi's /skill: expansion states that directory). Kept disable-model-invocation: true."
+		},
+		{
+			"path": "skills/mattpocock/grill-with-docs/SKILL.md",
+			"sha256": "0a0c244c4ef9e834ecf7df5302b10c8558bc2b56b001806e70ba4f56ecae8a00",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/grill-with-docs/SKILL.md",
+					"sha256": "7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe",
+					"blob": "62b9efb6f991d1b229adee7506962f13ced0c499",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi has no Skill tool: 'Call the Skill tool twice, for grilling and domain-modeling' became read `../grilling/SKILL.md` and `../domain-modeling/SKILL.md` and follow both, naming both skills. The paths resolve from this skill's directory (Pi's /skill: expansion states that directory). Kept disable-model-invocation: true."
+		},
+		{
+			"path": "skills/mattpocock/grilling/SKILL.md",
+			"sha256": "6ae1f75be81e8c3e4f6cb5d060e2f954159e48ec300475f9054e4e20161197a9",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/grilling/SKILL.md",
+					"sha256": "a146842ed93ca43d833550fa9adf02e58cb63c83fea9d4b4522995b82242d4e2",
+					"blob": "d2f09a18e6a6c65c55f1271ba08dfeaf06f0bed3",
+					"use": "primary"
+				}
+			],
+			"explanation": "The fact-finding sub-agent became a pi-herdr-agents `subagent` launch: a fresh context window (fork: false), an explicit model (task:recon) and thinking (low), and a task that asks for the fact and changes nothing. Its result arrives on its own as a new turn and is never polled. Upstream sets no disable-model-invocation, so Pi lists the skill for the model; kept. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/implement-spec/SKILL.md",
+			"sha256": "3d28e74d70bab7255f0261f578544d018bd318876fa77f935760b30c95fe14b8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/implement-spec/SKILL.md",
+					"sha256": "1993a473cec40ac85d081c112cdffdc63ec3267c2e412055ad09e013a2f623d1",
+					"blob": "73d36c23958bd04423ba3ded1c90ff0d0b858b72",
+					"use": "primary"
+				}
+			],
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo and the description's /to-spec and /to-tickets became /skill:to-spec and /skill:to-tickets. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo. Every subagent is a bare pi-herdr-agents `subagent` launch with fork: false and an explicit model and thinking per kind (exploration task:recon/low, implementer task:coding/medium, merger task:coding/low), whose task says it pushes nothing, opens no PR and launches no subagents unless the skill names that action. Running in the background means results arrive on their own as new turns, never polled. Implementers get worktree { branch, base: integration branch } and the absolute path of `../../pstack/tdd/SKILL.md` (a child cannot see skills that disable model invocation); the merger and the review-fix implementer work in this checkout on the integration branch, one merger at a time. code-review loads as in implement, with the same not-installed rule. Worktree cleanup lists them with worktree_list and removes each with worktree_remove after the user approves the list. Kept disable-model-invocation: true."
+		},
+		{
+			"path": "skills/mattpocock/implement/SKILL.md",
+			"sha256": "5de693ac404a8909bc2a587971996d0c056a0bd47355e7a282af35bd2ac6dcab",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/implement/SKILL.md",
+					"sha256": "483bdc4ccf4ac31d86ac7beeaa0d0db80313e71e120bb8c59b3196ae5decd53d",
+					"blob": "bd49e472984c7b99aac40286fdae749bb955a842",
+					"use": "primary"
+				}
+			],
+			"explanation": "Fetching a ticket goes through the tracker: The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo; /skill:setup-repo when it is missing. Pi has no Skill tool: tdd loads by reading `../../pstack/tdd/SKILL.md` (pstack's tdd, the only tdd in the pack until #36 merges Matt's), and code-review loads from the available skills list or ../../*/code-review/SKILL.md; when it is not installed (it is not in this pack yet, #37), the user is told the review was skipped and no other skill stands in. Kept disable-model-invocation: true."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/domain.md",
@@ -85,6 +190,21 @@
 			"explanation": "/wayfinder became /skill:wayfinder. Nothing else changed."
 		},
 		{
+			"path": "skills/mattpocock/setup-repo/SKILL.md",
+			"sha256": "e3a0992c54f83e98d15124ec0643e8ae46e7a1c145c32e2da30490092b6b7373",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/setup-matt-pocock-skills/SKILL.md",
+					"sha256": "b01e05bfe8c323171275c6ceec78b12f1bd4c62dfd26c2cfe8be806d3883f1ed",
+					"blob": "2df0b07981718fa5d9a51526dfbcaee87e3a543d",
+					"use": "primary"
+				}
+			],
+			"explanation": "Renamed to setup-repo (Pi name, title). Kept disable-model-invocation: true, which Pi honors. AGENTS.md is edited first (Pi's instruction file), then CLAUDE.md, and neither is created when the other exists; if neither exists the user picks. Relative links to the seed templates became backticked paths. Never files issues into either upstream (cursor/plugins, mattpocock/skills). A remote, labels and files are created only after the user approves them: the remote commands in Section A, the labels and files from the step 3 drafts. The triage check no longer relies on the available-skills list, which Pi hides for disabled-invocation skills. The closing note names /skill:setup-repo. Review hardening: the exact tracker repo is resolved, shown and confirmed in the step 3 approval and passed as -R to gh and glab commands; the domain layout is selected without another question but listed in the step 3 drafts; the legacy CONTEXT.md git mv joins the approved change list; repo content read during exploration never authorizes a command or change; Pi supports either instruction filename and prefers AGENTS.md. Everything else is upstream's wording."
+		},
+		{
 			"path": "skills/mattpocock/setup-repo/triage-labels.md",
 			"sha256": "8d8211125e267dc7692e8a0564591ba4cfb1f3240a6c78d8d8b8322207ab3c59",
 			"status": "adapted",
@@ -98,6 +218,96 @@
 				}
 			],
 			"explanation": "The first table header 'Label in mattpocock/skills' became 'Canonical role', as in this repo's docs/agents/triage-labels.md. Nothing else changed."
+		},
+		{
+			"path": "skills/mattpocock/to-spec/SKILL.md",
+			"sha256": "3ce887f348713ddfee8bc4a740fd9b6aafc1b38ea1b03e3e7af66cee797eaff6",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/to-spec/SKILL.md",
+					"sha256": "43ad9cf318e5e7d3d1fa360253a37021796dc87a0c2e595ad262661a10f85088",
+					"blob": "3f52599ae2a4347aee5a07432c2707518e691a7f",
+					"use": "primary"
+				}
+			],
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the ready-for-agent label it applies). Kept disable-model-invocation: true. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/to-tickets/SKILL.md",
+			"sha256": "0a504b5bbe290cb5d6dcd1216375d6ff0fd2e285a4a083d02d0a6b9b4658c1fe",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/to-tickets/SKILL.md",
+					"sha256": "56ec23c5b2782785d4e65bff9e315b6d3aeb4ef977c174a219e99489fada1995",
+					"blob": "9b77a01db9460c99c22d03c910c349f890f12c0e",
+					"use": "primary"
+				}
+			],
+			"explanation": "Both /setup-matt-pocock-skills references became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks. Kept disable-model-invocation: true. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/triage/AGENT-BRIEF.md",
+			"sha256": "57ff104cd1c7aca2d94d301fcfdee44b54938f4218a8d7ce3a24f1393cc4c17c",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/triage/AGENT-BRIEF.md",
+					"sha256": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
+					"blob": "1462fcd9e8cc21921158c296149dc05d9be39d20",
+					"use": "primary"
+				}
+			],
+			"explanation": "In the good-brief examples, /triage became /skill:triage and the `gh issue list` acceptance criterion passes -R <owner>/<repo>, so no example runs gh against the implicit default repo. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/triage/OUT-OF-SCOPE.md",
+			"sha256": "3b7f1d329bf773690009c86684ecd7ed8f02f689f71b55a7245bac7292561d05",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/triage/OUT-OF-SCOPE.md",
+					"sha256": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
+					"blob": "c9fba2f77ee0619975ec8488c0d4861a0c7e3151",
+					"use": "primary"
+				}
+			],
+			"explanation": "The example file's outer fence widened from three to four backticks, so the nested ts block inside it no longer closes the example early and leaves the rest of the file inside an unclosed fence (test/skill-content.test.ts requires well-formed fences). Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/triage/SKILL.md",
+			"sha256": "20ff145832ceadde8134db94f29a35c77a923cb394187d171bd152cf8ba94a51",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/triage/SKILL.md",
+					"sha256": "917b0baf74be583e74f110857ed45df2766617f75c00baf61fd136d7af515edf",
+					"blob": "3fd5617e906cf9b71a6b17424791adb905fc248b",
+					"use": "primary"
+				}
+			],
+			"explanation": "Adds the tracker paragraph after the intro: The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks. /setup-matt-pocock-skills became /skill:setup-repo, and the mapping sentence names docs/agents/triage-labels.md; /triage became /skill:triage. The reference-doc links became backticked file names. Pi has no Skill tool: the grill step loads grilling and domain-modeling by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`. Kept disable-model-invocation: true."
+		},
+		{
+			"path": "skills/mattpocock/wayfinder/SKILL.md",
+			"sha256": "2f8ca963197cad54e12f417a435244a5f6c86600f4c684261eb1c42b97a348b4",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/wayfinder/SKILL.md",
+					"sha256": "0c9fa96791aebf3b7d654cf35c6aadde97d81f57c17b07d13b27c14d9c46561f",
+					"blob": "975d6bf9c0a49d18a651f3335e0b4dcf8650fe31",
+					"use": "primary"
+				}
+			],
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the wayfinder: labels). Pi has no Skill tool: grilling and domain-modeling load by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and research and prototype load as skills; a new paragraph says to find research or prototype in the available skills list or at ../../*/<name>/SKILL.md, and to tell the user and ask, never stand in, when one is not installed (neither ships in this pack yet). The research subagents are pi-herdr-agents `subagent` launches: fork: false, explicit model (task:recon) and thinking (medium), a worktree on the research/<name> branch, a task naming the ticket, the push and the absolute path of the research SKILL.md (a child cannot see skills that disable model invocation); results arrive on their own, never polled. The in-page anchor links became italic section names. Kept disable-model-invocation: true."
 		}
 	],
 	"planned": [
@@ -164,54 +374,6 @@
 			"blob": "243198464a8401a7ba1d63b3708fa43c3d067665",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/domain-modeling/ADR-FORMAT.md",
-			"sha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
-			"blob": "d7e61f30a9fd8ca70d9ee68f019c2a9ebf2d13f7",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/domain-modeling/GLOSSARY-FORMAT.md",
-			"sha256": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
-			"blob": "9c0b4c7a2e8507c23cbb5e0baa66d81699321cc6",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/domain-modeling/SKILL.md",
-			"sha256": "7b925d7b1e341a2eeae33ad68a8a8c0ab889a38ddd22a7598e4c240e5a7556a3",
-			"blob": "a4438c6879c517d1a08e2b5fbca049b632688dfe",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/grill-with-docs/SKILL.md",
-			"sha256": "7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe",
-			"blob": "62b9efb6f991d1b229adee7506962f13ced0c499",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/implement-spec/SKILL.md",
-			"sha256": "1993a473cec40ac85d081c112cdffdc63ec3267c2e412055ad09e013a2f623d1",
-			"blob": "73d36c23958bd04423ba3ded1c90ff0d0b858b72",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/implement/SKILL.md",
-			"sha256": "483bdc4ccf4ac31d86ac7beeaa0d0db80313e71e120bb8c59b3196ae5decd53d",
-			"blob": "bd49e472984c7b99aac40286fdae749bb955a842",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
 		},
 		{
 			"source": "mattpocock",
@@ -311,54 +473,6 @@
 		},
 		{
 			"source": "mattpocock",
-			"path": "engineering/to-spec/SKILL.md",
-			"sha256": "43ad9cf318e5e7d3d1fa360253a37021796dc87a0c2e595ad262661a10f85088",
-			"blob": "3f52599ae2a4347aee5a07432c2707518e691a7f",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/to-tickets/SKILL.md",
-			"sha256": "56ec23c5b2782785d4e65bff9e315b6d3aeb4ef977c174a219e99489fada1995",
-			"blob": "9b77a01db9460c99c22d03c910c349f890f12c0e",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/triage/AGENT-BRIEF.md",
-			"sha256": "7f5f87fed3033df1b06e083c480f3e847b1fbb0647746b8a4c6a50f9f26ef44f",
-			"blob": "1462fcd9e8cc21921158c296149dc05d9be39d20",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/triage/OUT-OF-SCOPE.md",
-			"sha256": "1fbf9b432130c6380aa65813b55553cfda150309b27c595e183f8e335b8a190d",
-			"blob": "c9fba2f77ee0619975ec8488c0d4861a0c7e3151",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/triage/SKILL.md",
-			"sha256": "917b0baf74be583e74f110857ed45df2766617f75c00baf61fd136d7af515edf",
-			"blob": "3fd5617e906cf9b71a6b17424791adb905fc248b",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/wayfinder/SKILL.md",
-			"sha256": "0c9fa96791aebf3b7d654cf35c6aadde97d81f57c17b07d13b27c14d9c46561f",
-			"blob": "975d6bf9c0a49d18a651f3335e0b4dcf8650fe31",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
 			"path": "engineering/wizard/SKILL.md",
 			"sha256": "bdf31d48211ea559878f95a4f344aeabf8d85897488ba564382bab0b000daac1",
 			"blob": "c4294ad8298b9b95fc727496b1b802b1f7363fba",
@@ -380,22 +494,6 @@
 			"blob": "22f0b6626f07bfdfa78b70d006742dfa2260e9c4",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/grill-me/SKILL.md",
-			"sha256": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
-			"blob": "3947ff9c4ad980d14fc07fccbf659d47c114e81d",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/grilling/SKILL.md",
-			"sha256": "a146842ed93ca43d833550fa9adf02e58cb63c83fea9d4b4522995b82242d4e2",
-			"blob": "d2f09a18e6a6c65c55f1271ba08dfeaf06f0bed3",
-			"owningIssue": "#33",
-			"explanation": "Spec, ticket and triage flow, ported by issue #33."
 		},
 		{
 			"source": "mattpocock",

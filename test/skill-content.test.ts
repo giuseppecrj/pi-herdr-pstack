@@ -537,11 +537,18 @@ const frontmatter = (path: string) =>
 	/^---\n([\s\S]*?)\n---\n/.exec(read(path))?.[1];
 const body = (path: string) => read(path).replace(/^---\n[\s\S]*?\n---\n/, "");
 
+/**
+ * The skills Pi lists for the model: setup-pstack, and Matt's grilling and
+ * domain-modeling, which upstream leaves model-invocable so other skills can
+ * load them. Every other skill disables model invocation.
+ */
+const MODEL_INVOKED = ["domain-modeling", "grilling", "setup-pstack"];
+
 describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 58);
+		assert.equal(inventory.skills.length, 68);
 		assert.equal(pstackRows.length, 57);
 		const count = (prefix: string) =>
 			pstackRows.filter(({ wave }) => wave.startsWith(prefix)).length;
@@ -581,7 +588,19 @@ describe("shipped skill tree", () => {
 			inventory.skills
 				.filter(({ folder }) => folder !== PSTACK)
 				.map(({ name, folder }) => `${folder}/${name}`),
-			["skills/mattpocock/setup-repo"],
+			[
+				"domain-modeling",
+				"grill-me",
+				"grill-with-docs",
+				"grilling",
+				"implement",
+				"implement-spec",
+				"setup-repo",
+				"to-spec",
+				"to-tickets",
+				"triage",
+				"wayfinder",
+			].map((name) => `skills/mattpocock/${name}`),
 		);
 		for (const name of ["poteto-mode", "setup-pstack"])
 			assert.equal(rowOf.get(name)?.status, "shipped", name);
@@ -672,14 +691,16 @@ describe("shipped skill tree", () => {
 				.map((row) => ({
 					name: row.name,
 					filePath: join(PACK_ROOT, rowDir(row), "SKILL.md"),
-					disableModelInvocation: row.name !== "setup-pstack",
+					disableModelInvocation: !MODEL_INVOKED.includes(row.name),
 				}))
 				.toSorted((a, b) => a.name.localeCompare(b.name)),
 		);
 		const prompt = formatSkillsForPrompt(skills);
 		assert.deepEqual(
-			[...prompt.matchAll(/<name>([^<]+)<\/name>/g)].map(([, name]) => name),
-			["setup-pstack"],
+			[...prompt.matchAll(/<name>([^<]+)<\/name>/g)]
+				.map(([, name]) => name)
+				.toSorted(),
+			MODEL_INVOKED,
 		);
 		for (const row of presentRows)
 			assert.doesNotMatch(
