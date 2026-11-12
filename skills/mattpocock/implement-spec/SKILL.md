@@ -26,7 +26,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 **Worktrees start from committed state.** A worktree child starts from its committed `base` and carries none of this checkout's uncommitted or untracked changes. Before launching one, run `git status` and name the committed base and every uncommitted input the child needs (local `.scratch/` tickets, new `docs/agents/` files, notes in the repo): commit them to the integration branch once the user approves, or give the brief absolute paths to readable copies.
 
-**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../pstack/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.
+**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.
 
 ## Steps
 
