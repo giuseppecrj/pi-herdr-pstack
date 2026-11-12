@@ -8,6 +8,8 @@ Issues and specs for this repo live as markdown files in `.scratch/`.
 - The spec is `.scratch/<feature-slug>/spec.md`
 - Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
+- Blocking edges are a `Blocked by: NN, NN` line under the `Status:` line, listing the numbers of the issue files in the same `issues/` directory that gate this one (`Blocked by: none` when nothing does). A ticket is unblocked when every file it lists is closed
+- **Close**: set the `Status:` line to `resolved` (a ticket triage rejected keeps `Status: wontfix`), then append a one-line resolution note under `## Comments`: what resolved it (a commit, branch or PR) or why it was closed. A file whose status is `resolved` or `wontfix` is closed
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 
 ## When a skill says "publish to the issue tracker"

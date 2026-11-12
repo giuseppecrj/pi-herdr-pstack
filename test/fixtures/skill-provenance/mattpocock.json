@@ -386,7 +386,7 @@
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-local.md",
-			"sha256": "52b8e973013141856f1c3513e8ddf760f1f4b3c027cdaf8fa23b7097b6c84832",
+			"sha256": "0f56eac91b7e4054f12e5af92412153e88ac7f5c3ece1cdffba798991246124f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -397,7 +397,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/wayfinder became /skill:wayfinder. Nothing else changed."
+			"explanation": "/wayfinder became /skill:wayfinder. Nothing else changed. Pre-release review C6: Conventions gain the blocking format (a `Blocked by: NN, NN` line under `Status:`, or `Blocked by: none`; unblocked when every listed file is closed) and a local Close convention (set `Status: resolved`, or keep `Status: wontfix` for a rejected ticket, and append a one-line resolution note under `## Comments`), which implement-spec step 8 and triage use as the tracker's way of closing work."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/triage-labels.md",
@@ -446,7 +446,7 @@
 		},
 		{
 			"path": "skills/mattpocock/to-tickets/SKILL.md",
-			"sha256": "3bfe49b4d066789b258e47e176004a007cad90471df41dffb337e81ae00e92fa",
+			"sha256": "63ea3df8b9c2a1a5308aa49709260bf82686bae3604ac65c16c2dfe6c74145f0",
 			"status": "adapted",
 			"sources": [
 				{
@@ -457,7 +457,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Both /setup-matt-pocock-skills references became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks. Kept disable-model-invocation: true. Everything else is upstream's wording. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:to-tickets invocation grants only publishing the tickets the user approved in step 4, with their blocking and sub-issue links, to the tracker doc's repo, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. The step 4 quiz also shows the publishing effects (issues in the tracker doc's repo, blocking and sub-issue links, applying the existing ready-for-agent label; a missing label is created only on its own approval), and the grant sentence includes that label."
+			"explanation": "Both /setup-matt-pocock-skills references became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks. Kept disable-model-invocation: true. Everything else is upstream's wording. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:to-tickets invocation grants only publishing the tickets the user approved in step 4, with their blocking and sub-issue links, to the tracker doc's repo, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. The step 4 quiz also shows the publishing effects (issues in the tracker doc's repo, blocking and sub-issue links, applying the existing ready-for-agent label; a missing label is created only on its own approval), and the grant sentence includes that label. Pre-release review C6: the local ticket template emits the local tracker's `Status: ready-for-agent` and `Blocked by: NN, NN` lines under the heading instead of bold **Blocked by:** and **Status:** lines, and step 5 says the `Blocked by:` line lists numbers or `none` in the tracker doc's format."
 		},
 		{
 			"path": "skills/mattpocock/triage/AGENT-BRIEF.md",

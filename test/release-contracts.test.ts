@@ -258,3 +258,61 @@ describe("the pr skill and the Opening a PR playbook don't compete for PR bodies
 		);
 	});
 });
+
+describe("the local-markdown tracker and to-tickets agree on ticket lines (C6)", () => {
+	const local = read("skills/mattpocock/setup-repo/issue-tracker-local.md");
+	const tickets = read("skills/mattpocock/to-tickets/SKILL.md");
+	const template =
+		/<local-ticket-template>\n([\s\S]*?)\n<\/local-ticket-template>/.exec(
+			tickets,
+		)?.[1] ?? "";
+
+	it("the tracker defines the Status, Blocked by and Close formats", () => {
+		for (const phrase of [
+			"Triage state is recorded as a `Status:` line near the top of each issue file",
+			"Blocking edges are a `Blocked by: NN, NN` line under the `Status:` line, listing the numbers of the issue files in the same `issues/` directory that gate this one (`Blocked by: none` when nothing does).",
+			"- **Close**: set the `Status:` line to `resolved` (a ticket triage rejected keeps `Status: wontfix`), then append a one-line resolution note under `## Comments`",
+		])
+			assert.ok(local.includes(phrase), phrase);
+	});
+
+	it("to-tickets' local template emits those lines right under the heading", () => {
+		const lines = template.trim().split("\n");
+		assert.match(lines[0], /^# <NN>: <Ticket title>$/);
+		assert.equal(lines[1], "");
+		assert.equal(lines[2], "Status: ready-for-agent");
+		assert.equal(lines[3], "Blocked by: NN, NN");
+		// The role string is one triage-labels.md maps.
+		assert.ok(
+			read("skills/mattpocock/setup-repo/triage-labels.md").includes(
+				"`ready-for-agent`",
+			),
+		);
+		// Same line shapes as the tracker doc, and no bold variants left.
+		assert.ok(local.includes("`Blocked by: NN, NN`"));
+		assert.ok(local.includes("`Status:`"));
+		assert.doesNotMatch(template, /\*\*(?:Status|Blocked by):\*\*/);
+		assert.ok(
+			flat("skills/mattpocock/to-tickets/SKILL.md").includes(
+				"Each file's `Blocked by:` line lists the numbers it depends on, or `none`, in the tracker doc's format.",
+			),
+		);
+	});
+
+	it("every tracker template has a Close convention that implement-spec and triage defer to", () => {
+		for (const name of ["github", "gitlab", "local"])
+			assert.match(
+				read(`skills/mattpocock/setup-repo/issue-tracker-${name}.md`),
+				/^- \*\*Close\*\*: /m,
+				name,
+			);
+		assert.ok(
+			flat("skills/mattpocock/implement-spec/SKILL.md").includes(
+				"resolve each ticket the way the issue tracker closes work",
+			),
+		);
+		assert.ok(
+			flat("skills/mattpocock/triage/SKILL.md").includes("close the issue"),
+		);
+	});
+});
