@@ -16,7 +16,7 @@
 	"files": [
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/authoring-a-skill.md",
-			"sha256": "70f1fcb0a0da9def47355efcbd698b0d206b10c6bf4255f11d15f2cf6343a299",
+			"sha256": "e8fe4c6204e38437e4ed83bc58258825dd9eb21ce8bc6add4bee05dcda50b17f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -32,7 +32,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir playbook (faithful). 'The Pi Agent Skills standard' becomes Pi's skills documentation (docs/skills.md in the installed Pi package) with its name, description and disable-model-invocation rules and skill-relative paths; validation adds Pi's startup diagnostics, the /skill: command and /reload, as the installed Pi 1.0.3 docs describe. The short principle name becomes principle-encode-lessons-in-structure, and step 4 opens a PR only when the task authorizes it. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
+			"explanation": "Adapted from the pinned pi-mimir playbook (faithful). 'The Pi Agent Skills standard' becomes Pi's skills documentation (docs/skills.md in the installed Pi package) with its name, description and disable-model-invocation rules and skill-relative paths; validation adds Pi's startup diagnostics, the /skill: command and /reload, as the installed Pi 1.0.3 docs describe. The short principle name becomes principle-encode-lessons-in-structure, and step 4 opens a PR only when the task authorizes it. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted). #37 decision 6: step 1 also says to write the instructions to the writing-for-agents skill (../../mattpocock/writing-for-agents/SKILL.md, with its SKILL-MECHANICS.md for the invocation choice) and prose for human readers, such as a README or the PR description, to the technical-writing skill (../technical-writing/SKILL.md); where they conflict, the reader decides and instructions an agent follows take writing-for-agents' advice."
 		},
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/autopilot-full.md",

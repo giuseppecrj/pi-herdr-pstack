@@ -12,6 +12,8 @@ Mine the current conversation for durable learnings, then route them into skill 
 
 Invoke when the user says "reflect" or "/reflect". Skip when the conversation is trivial, off-topic, or already covered by an existing skill the parent followed correctly. One-offs are not learnings.
 
+**`reflect` or `retro`.** Reflect routes learnings into skill edits. A lesson that belongs in the repo or its environment instead (a lint rule or other automated check, a `CODING_STANDARDS.md` rule, an `AGENTS.md` navigation pointer, tool economy, access to logs or services) is a job for `/skill:retro` (`../../mattpocock/retro/SKILL.md`), which proposes those guardrails for the user to approve. Route such a finding there, or list it as Backlog, instead of forcing it into a skill edit.
+
 ## Process
 
 ### 1. Locate the active transcript

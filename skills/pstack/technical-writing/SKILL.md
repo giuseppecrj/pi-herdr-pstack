@@ -8,6 +8,8 @@ disable-model-invocation: true
 
 The goal is writing a tired engineer understands on the first read. Four layers get you there, one question each: what kind of document is this, how do sentences address the reader, how much does each sentence carry, and can any sentence be read two ways. Apply all four.
 
+**Audience: humans.** This skill governs prose for human readers. Instructions an agent reads and acts on (a skill, `AGENTS.md`, a doc an agent reaches through a pointer) follow the **writing-for-agents** skill (`../../mattpocock/writing-for-agents/SKILL.md`). Where their advice conflicts, the reader decides: in a document for humans this skill wins; in a document for agents writing-for-agents wins, so its leading words stay even where this skill skips metaphors.
+
 Three rules sit above the layers:
 
 - **Cut every word that does no work.** If the sentence survives without a word, the word goes. "In order to" is "to". "It is important to note that" is nothing.

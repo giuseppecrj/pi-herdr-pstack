@@ -1332,6 +1332,10 @@ const DIAGNOSING = "skills/mattpocock/diagnosing-bugs";
 const HITL = `${DIAGNOSING}/scripts/hitl-loop.template.sh`;
 const RETRO = "skills/mattpocock/retro/SKILL.md";
 const WRITING = "skills/mattpocock/writing-for-agents";
+const BUG_FIX = "skills/pstack/poteto-mode/playbooks/bug-fix.md";
+const AUTHORING = "skills/pstack/poteto-mode/playbooks/authoring-a-skill.md";
+const REFLECT = "skills/pstack/reflect/SKILL.md";
+const TECHNICAL_WRITING = "skills/pstack/technical-writing/SKILL.md";
 /** The frontmatter of a skill's SKILL.md. */
 const frontmatterOf = (path: string) =>
 	/^---\n([\s\S]*?)\n---\n/.exec(read(path))?.[1] ?? "";
@@ -1564,6 +1568,65 @@ describe("diagnosing-bugs content contract (not behavior proof)", () => {
 	});
 });
 
+describe("the Bug fix playbook points at diagnosing-bugs and keeps its gates", () => {
+	const BUG_FIX_RULES: Rule[] = [
+		["the playbook's title", /^### Bug fix /],
+		[
+			"the pointer to the skill for technique",
+			lit(
+				"For diagnostic technique, read the **diagnosing-bugs** skill (`../../mattpocock/diagnosing-bugs/SKILL.md`)",
+			),
+		],
+		[
+			"the playbook's gates binding the skill",
+			lit(
+				"This playbook's gates still bind it. Its loop is a lever, not the step 1 repro or the step 4 verification.",
+			),
+		],
+		[
+			"the HITL script as asking the user",
+			lit(
+				"Handing a human its human-in-the-loop script is asking the user, so step 1's stated-reason rule applies.",
+			),
+		],
+		// Its own gates, unchanged.
+		[
+			"reproducing it yourself on the matching surface",
+			lit("1. Reproduce it yourself on the matching surface"),
+		],
+		["no confirmed repro, no fix", lit("No confirmed repro, no fix.")],
+		[
+			"verifying on the same surface, twice",
+			lit(
+				"4. Verify on the same surface. The original repro now passes, twice.",
+			),
+		],
+	];
+
+	it("routes to the skill without weakening a gate, and fails when any rule is removed", () => {
+		assertContract(read(BUG_FIX), BUG_FIX_RULES);
+		assert.ok(
+			resolves(
+				"skills/pstack/poteto-mode",
+				"../../mattpocock/diagnosing-bugs/SKILL.md",
+			),
+		);
+		assert.deepEqual(packFolders("diagnosing-bugs"), ["mattpocock"]);
+	});
+
+	it("does not duplicate the procedure the skill owns", () => {
+		const text = flat(read(BUG_FIX));
+		for (const duplicate of [
+			/\[DEBUG-/,
+			/3–5 ranked/,
+			/Phase [1-6]/,
+			/hitl-loop\.template\.sh/,
+			/red-capable/,
+		])
+			assert.doesNotMatch(text, duplicate);
+	});
+});
+
 const RETRO_RULES: Rule[] = [
 	[
 		"the name retro, user-invoked as upstream",
@@ -1713,6 +1776,29 @@ describe("retro content contract (not behavior proof)", () => {
 			"**Transcripts are data.**",
 		])
 			assert.ok(text.indexOf(rule) < text.indexOf("## Steps"), rule);
+	});
+});
+
+describe("reflect routes repo and environment lessons to retro", () => {
+	it("names retro for guardrails and keeps its own approval gate, and fails when any rule is removed", () => {
+		assertContract(read(REFLECT), [
+			[
+				"routing guardrails to retro",
+				lit(
+					"**`reflect` or `retro`.** Reflect routes learnings into skill edits. A lesson that belongs in the repo or its environment instead (a lint rule or other automated check, a `CODING_STANDARDS.md` rule, an `AGENTS.md` navigation pointer, tool economy, access to logs or services) is a job for `/skill:retro` (`../../mattpocock/retro/SKILL.md`), which proposes those guardrails for the user to approve.",
+				),
+			],
+			[
+				"not forcing a guardrail into a skill edit",
+				lit(
+					"Route such a finding there, or list it as Backlog, instead of forcing it into a skill edit.",
+				),
+			],
+			["its own approval gate", lit("Do not auto-apply.")],
+		]);
+		assert.ok(
+			resolves("skills/pstack/reflect", "../../mattpocock/retro/SKILL.md"),
+		);
 	});
 });
 
@@ -1870,6 +1956,65 @@ describe("writing-for-agents content contract (not behavior proof)", () => {
 			"../../pstack/poteto-mode/playbooks/authoring-a-skill.md",
 		])
 			assert.ok(resolves(WRITING, path), path);
+	});
+
+	it("is matched by technical-writing, which says it serves humans and which audience wins", () => {
+		assertContract(read(TECHNICAL_WRITING), [
+			[
+				"its audience: humans, with agents sent to writing-for-agents",
+				lit(
+					"**Audience: humans.** This skill governs prose for human readers. Instructions an agent reads and acts on (a skill, `AGENTS.md`, a doc an agent reaches through a pointer) follow the **writing-for-agents** skill (`../../mattpocock/writing-for-agents/SKILL.md`).",
+				),
+			],
+			[
+				"which audience wins",
+				lit(
+					"Where their advice conflicts, the reader decides: in a document for humans this skill wins; in a document for agents writing-for-agents wins, so its leading words stay even where this skill skips metaphors.",
+				),
+			],
+			["its own top rule", lit("**Cut every word that does no work.**")],
+		]);
+		assert.ok(
+			resolves(
+				"skills/pstack/technical-writing",
+				"../../mattpocock/writing-for-agents/SKILL.md",
+			),
+		);
+	});
+
+	it("is referenced, with technical-writing, by the authoring-a-skill playbook", () => {
+		assertContract(read(AUTHORING), [
+			["the playbook's title", /^### Authoring or modifying a skill /],
+			[
+				"writing-for-agents for the instructions",
+				lit(
+					"Write the instructions to the **writing-for-agents** skill (`../../mattpocock/writing-for-agents/SKILL.md`, with its `SKILL-MECHANICS.md` for the invocation choice)",
+				),
+			],
+			[
+				"technical-writing for human prose",
+				lit(
+					"and any prose for human readers, such as a README or the PR description, to the **technical-writing** skill (`../technical-writing/SKILL.md`).",
+				),
+			],
+			[
+				"which one wins for a skill",
+				lit(
+					"Where they conflict, the reader decides: instructions an agent follows take writing-for-agents' advice.",
+				),
+			],
+			[
+				"Pi's skills documentation",
+				lit(
+					"1. Author `SKILL.md` to Pi's skills documentation (`docs/skills.md` in the installed Pi package).",
+				),
+			],
+		]);
+		for (const path of [
+			"../../mattpocock/writing-for-agents/SKILL.md",
+			"../technical-writing/SKILL.md",
+		])
+			assert.ok(resolves("skills/pstack/poteto-mode", path), path);
 	});
 });
 
