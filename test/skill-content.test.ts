@@ -209,6 +209,7 @@ const ownerWaveOf = (path: string) =>
 const FAN_OUT = "skills/pstack/poteto-mode/references/fan-out.md";
 /** Runnable shebang entrypoints under skills/.../scripts and their git modes. */
 const SCRIPT_MODES: Record<string, string> = {
+	"skills/mattpocock/diagnosing-bugs/scripts/hitl-loop.template.sh": "100644",
 	"skills/pstack/poteto-mode/scripts/check-plan.mjs": "100644",
 	"skills/pstack/show-me-your-work/scripts/log.sh": "100755",
 	"skills/pstack/statechart/scripts/statechart": "100755",
@@ -555,13 +556,14 @@ const body = (path: string) => read(path).replace(/^---\n[\s\S]*?\n---\n/, "");
 /**
  * The skills Pi lists for the model: setup-pstack, and the Matt skills upstream
  * leaves model-invocable (grilling and domain-modeling, so other skills can
- * load them, and code-review, codebase-design, pr, research and wizard), and the
- * merged prototype, which keeps Matt's model invocation. Every other skill
- * disables model invocation.
+ * load them, and code-review, codebase-design, diagnosing-bugs, pr, research,
+ * wizard and writing-for-agents), and the merged prototype, which keeps Matt's
+ * model invocation. Every other skill disables model invocation.
  */
 const MODEL_INVOKED = [
 	"code-review",
 	"codebase-design",
+	"diagnosing-bugs",
 	"domain-modeling",
 	"grilling",
 	"pr",
@@ -569,13 +571,14 @@ const MODEL_INVOKED = [
 	"research",
 	"setup-pstack",
 	"wizard",
+	"writing-for-agents",
 ];
 
 describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 77);
+		assert.equal(inventory.skills.length, 80);
 		assert.equal(pstackRows.length, 54);
 		assert.deepEqual(
 			mergedRows.map(({ name }) => name),
@@ -639,6 +642,7 @@ describe("shipped skill tree", () => {
 			[
 				"code-review",
 				"codebase-design",
+				"diagnosing-bugs",
 				"domain-modeling",
 				"grill-me",
 				"grill-with-docs",
@@ -649,6 +653,7 @@ describe("shipped skill tree", () => {
 				"improve-codebase-architecture",
 				"pr",
 				"research",
+				"retro",
 				"setup-repo",
 				"to-questionnaire",
 				"to-spec",
@@ -656,6 +661,7 @@ describe("shipped skill tree", () => {
 				"triage",
 				"wayfinder",
 				"wizard",
+				"writing-for-agents",
 			].map((name) => `skills/mattpocock/${name}`),
 		);
 		for (const name of ["poteto-mode", "setup-pstack"])
@@ -2280,13 +2286,14 @@ describe("methodology provenance", () => {
 
 	it("records each shipped script's mode as its primary source's mode", {
 		skip:
-			(!(checkouts.mimir && checkouts.cursor) &&
-				"set PSTACK_MIMIR_SOURCE and PSTACK_CURSOR_SOURCE to checkouts containing the pinned commits") ||
+			(!(checkouts.mimir && checkouts.cursor && checkouts.mattpocock) &&
+				"set PSTACK_MIMIR_SOURCE, PSTACK_CURSOR_SOURCE and PSTACK_MATTPOCOCK_SOURCE to checkouts containing the pinned commits") ||
 			(shippedScripts.length === 0 &&
 				"no scripts ship yet: log.sh with W4-B, check-plan.mjs with W4-P"),
 	}, () => {
 		for (const path of shippedScripts) {
-			const primary = provenanceFiles
+			// diagnosing-bugs' HITL template (#37) ships from mattpocock/skills.
+			const primary = treeProvenance
 				.find((file) => file.path === path)
 				?.sources.find(({ use }) => use === "primary");
 			assert.ok(primary, path);

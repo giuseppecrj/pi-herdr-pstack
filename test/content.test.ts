@@ -215,10 +215,12 @@ describe("package manifest", () => {
 		) as Array<{ files: Array<{ path: string }> }>;
 		const paths = pack.files.map(({ path }) => path);
 		// Pre-statechart 0.4.0 packed 128 files. 0.5.0 adds optional statechart
-		// runtime (~29) plus three leaves; stay well under a silent balloon.
+		// runtime (~29) plus three leaves; v2 (#32-#37) adds Matt Pocock's skills,
+		// 204 files after #37 batch B. The test above pins the exact list against
+		// the provenance fixtures; this cap only stops a silent balloon.
 		assert.ok(
-			paths.length <= 200,
-			`pack has ${paths.length} files; expected <= 200 (0.4.0 baseline was 128)`,
+			paths.length <= 210,
+			`pack has ${paths.length} files; expected <= 210 (0.4.0 baseline was 128)`,
 		);
 		const banned = [
 			/node_modules\//,

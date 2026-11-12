@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 77,
+  "expectedSkillCount": 80,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -188,6 +188,20 @@
           "create-verification-skill/references/feature-map-example/README.md",
           "create-verification-skill/references/feature-map-example/create-note.md",
           "create-verification-skill/references/feature-map-example/search.md"
+        ]
+      }
+    },
+    {
+      "name": "diagnosing-bugs",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/diagnosing-bugs/SKILL.md",
+          "engineering/diagnosing-bugs/agents/openai.yaml",
+          "engineering/diagnosing-bugs/scripts/hitl-loop.template.sh"
         ]
       }
     },
@@ -991,6 +1005,19 @@
       }
     },
     {
+      "name": "retro",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/retro/SKILL.md",
+          "engineering/retro/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "setup-pstack",
       "folder": "skills/pstack",
       "wave": "W2",
@@ -1314,6 +1341,20 @@
           "engineering/wizard/SKILL.md",
           "engineering/wizard/agents/openai.yaml",
           "engineering/wizard/template.sh"
+        ]
+      }
+    },
+    {
+      "name": "writing-for-agents",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "productivity/writing-for-agents/SKILL-MECHANICS.md",
+          "productivity/writing-for-agents/SKILL.md",
+          "productivity/writing-for-agents/agents/openai.yaml"
         ]
       }
     }

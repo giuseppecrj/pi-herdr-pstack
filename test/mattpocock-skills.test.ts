@@ -22,6 +22,7 @@ const UPSTREAM_DIR = "engineering/setup-matt-pocock-skills";
 const UPSTREAM_DIRS: Record<string, string> = {
 	"code-review": "engineering/code-review",
 	"codebase-design": "engineering/codebase-design",
+	"diagnosing-bugs": "engineering/diagnosing-bugs",
 	"domain-modeling": "engineering/domain-modeling",
 	"grill-me": "productivity/grill-me",
 	"grill-with-docs": "engineering/grill-with-docs",
@@ -32,6 +33,7 @@ const UPSTREAM_DIRS: Record<string, string> = {
 	"improve-codebase-architecture": "engineering/improve-codebase-architecture",
 	pr: "engineering/pr",
 	research: "engineering/research",
+	retro: "engineering/retro",
 	"setup-repo": UPSTREAM_DIR,
 	"to-questionnaire": "productivity/to-questionnaire",
 	"to-spec": "engineering/to-spec",
@@ -39,6 +41,7 @@ const UPSTREAM_DIRS: Record<string, string> = {
 	triage: "engineering/triage",
 	wayfinder: "engineering/wayfinder",
 	wizard: "engineering/wizard",
+	"writing-for-agents": "productivity/writing-for-agents",
 };
 const SKILL_NAMES = Object.keys(UPSTREAM_DIRS);
 /** The spec, ticket and triage flow (#33). */

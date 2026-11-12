@@ -178,7 +178,7 @@ const skill = (name: string, body = "") =>
 
 describe("skill tree across upstream folders", () => {
 	it("finds every shipped skill", () => {
-		assert.equal(skillDirs(PACK_ROOT).length, 77);
+		assert.equal(skillDirs(PACK_ROOT).length, 80);
 		for (const dir of skillDirs(PACK_ROOT))
 			assert.match(dir, /^skills\/[a-z0-9-]+\/[a-z0-9-]+$/, dir);
 	});

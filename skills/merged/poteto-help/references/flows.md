@@ -25,13 +25,13 @@ The route most work travels. You have an idea and want it built.
 
    When the work goes up as a pull request, **`/skill:pr`** shapes the body: the smallest visual that shows the change, before/after evidence that it works, and a one-way or two-way door call. It's model-invoked, so the agent reaches for it whenever it writes a PR body. It drafts text only; opening or editing the PR needs the user's grant.
 
-4. **Close the loop.** Matt's `retro` skill is not in this package. To turn what a build taught into edits the user approves, use **`/skill:reflect`**.
+4. **`/skill:retro`** closes the loop. After a build, and especially one that went sideways, it looks back over the session and suggests changes to the agent's **environment**, not the code: navigation pointers, automated checks, the coding standards `/skill:code-review` enforces, steering files, tooling. Mechanical mistakes become deterministic checks; judgement calls become coding standards. The next build then starts from a better environment. It treats the transcript as data, keeps secrets out of what it proposes, and changes nothing until you approve; your global Pi configuration, credentials and installed extensions stay yours to change. A lesson that belongs in a skill goes to **`/skill:reflect`** instead, which turns it into skill edits you approve.
 
 None of these steps pushes, opens a pull request or writes to the tracker on its own say-so: each skill names what invoking it grants, and `implement` and `implement-spec` grant no remote write.
 
 ### Context hygiene
 
-Keep steps 1–3 in **one unbroken context window** (don't compact or start a new session until after `/skill:to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/skill:implement` then starts fresh, working from the ticket.
+Keep steps 1–3 in **one unbroken context window** (don't compact or start a new session until after `/skill:to-tickets`) so the grilling, spec, and tickets all build on the same thinking. Each `/skill:implement` then starts fresh, working from the ticket. Run `/skill:retro` in the session it's looking back on, before you start a new one; after `/new`, point it at that session's log instead (only this working directory's sessions).
 
 The limit on this is the **[smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone)**: the window (~150k tokens on state-of-the-art models) within which the model still reasons sharply. If a session approaches it before `/skill:to-tickets`, don't push on degraded; `/compact` at the nearest phase boundary and carry on (see Phase boundaries).
 
@@ -43,7 +43,7 @@ A starting situation that generates work, then merges onto the main flow.
 
   Triage is only for issues **you didn't create**: bug reports, incoming feature requests, anything that arrives raw. Tickets that `/skill:to-tickets` produced are already agent-ready, so **don't triage them**.
 
-- **Something's broken** → Matt's `diagnosing-bugs` skill is not in this package. Inside poteto-mode, describing the bug runs the Bug fix playbook (`../../pstack/poteto-mode/playbooks/bug-fix.md`): reproduce it yourself on the matching surface, binary-search the cause, then fix and verify on the same surface, with the failing test first where a cheap local test path exists (`/skill:tdd`). Where the real finding is that there's no good seam to lock the bug down, that's a job for **`/skill:improve-codebase-architecture`**.
+- **Something's broken** → **`/skill:diagnosing-bugs`**. For the hard ones: the bug that resists a first glance, the intermittent flake, the regression that crept in between two known-good states. It refuses to theorise until it has a **tight feedback loop** (one command that already goes red on *this* bug), then fixes with a regression test. Its loop does not replace reproducing the bug through the real path, and a human-in-the-loop script it writes is one the human runs, never the agent. Inside poteto-mode, describing the bug runs the Bug fix playbook (`../../pstack/poteto-mode/playbooks/bug-fix.md`), which uses this skill for technique and keeps its own gates: reproduce it yourself on the matching surface, observed twice, and verify the fix on the same surface, with the failing test first where a cheap local test path exists (`/skill:tdd`). Once the fix is in, run **`/skill:retro`** in the same session to ask what would have prevented the bug; where the real finding is that there's no good seam to lock it down, that's a job for **`/skill:improve-codebase-architecture`**.
 
 - **A huge, foggy effort: a greenfield project or a huge feature build, too big for one session** → **`/skill:wayfinder`**, the most cognitively demanding flow here. When the way from here to the destination isn't visible yet, it charts a **shared map** of **decision tickets** on the issue tracker and resolves them one at a time, producing **decisions, not deliverables**, until the fog is pushed back and the way is clear. Where **`/skill:grill-with-docs`** sharpens an idea you can hold in one session, wayfinder is for the idea you can't, and it's slower and denser, so save it for exactly that, never a well-scoped feature.
 
@@ -85,8 +85,9 @@ Off the main flow entirely.
 - **`/skill:to-questionnaire`** comes in when the thing blocking you isn't in your head or the codebase but in **someone else's**, and it writes them a questionnaire to fill in. It's the inverse of `/skill:grill-me`: instead of interviewing you about the subject, it interviews you about the **send** (who it's going to, what you need back) and aims the questions at the gap. What comes back is material for `/skill:grill-with-docs` or `/skill:to-spec`.
 - **`/skill:wizard`** is for the steps only a **human** can take: provisioning infrastructure, setting up credentials or CI secrets, clicking through an unfamiliar third-party dashboard, running a one-off migration or cutover. It generates an interactive bash script that opens each URL, captures each value, and writes it into `.env` and GitHub secrets, so the procedure stops being something you re-explain to an agent every time. It writes the script and never runs it. Model-invoked, so the agent reaches for it the moment it hits a wall only you can pass. If the agent could just do it itself, it should; this is for where a human is genuinely in the loop.
 - **`/skill:teach`**: learn a concept over multiple sessions, using a directory you confirm as a stateful workspace, or have a change explained plainly.
+- **`/skill:writing-for-agents`** is the reference for writing documents agents consume: skills, AGENTS.md, pointed-at docs. Prose for human readers follows `/skill:technical-writing`; where the two conflict, each says the reader's audience wins.
 
-Matt's `wait-what` and `writing-for-agents` skills are not in this package. For a reply that didn't land, `/skill:bro` restates it in plain words.
+Matt's `wait-what` skill is not in this package. For a reply that didn't land, `/skill:bro` restates it in plain words.
 
 ## Precondition
 

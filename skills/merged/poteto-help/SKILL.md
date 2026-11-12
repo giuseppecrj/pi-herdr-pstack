@@ -14,7 +14,7 @@ This file maps questions to the skills and files that hold the answers. Those fi
 
 ## What this release ships
 
-This release ships 77 skills and all 23 poteto-mode playbooks: pstack's skills in the tables below, and the skills of Matt Pocock's idea-to-ship flow, mapped in `references/flows.md` (see **Matt Pocock's flows** below). Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../../pstack/poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
+This release ships 80 skills and all 23 poteto-mode playbooks: pstack's skills in the tables below, and the skills of Matt Pocock's idea-to-ship flow, mapped in `references/flows.md` (see **Matt Pocock's flows** below). Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../../pstack/poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -52,7 +52,7 @@ You cannot tell whether those categories are unset on your own. No host tool rea
 2. Run `/setup-pstack`, optionally with a budget or a request, for example `/setup-pstack large` or `/setup-pstack use <provider>/<model-id> for review`. It asks for a budget (unlimited, large, medium or small, which set every category's thinking to max, xhigh, high or medium, clamped to what each model supports), shows every task category with its models and thinking and the upstream roles it drives, and lets the user change any of them. pi-herdr-agents then shows the exact change and writes it only after the user approves. Reload Pi after a saved change. Setup ends by offering once each to generate a verification skill and a formal verification skill when the project has none.
 3. Start a real task with `/poteto-mode <task>`, stating a goal and a check that can pass or fail.
 
-Installing adds two commands, `/poteto-mode` and `/setup-pstack`. Most skills are explicit-only: one loads when the user types `/skill:<name>`, or when poteto-mode or another skill reads it for a step. These can also load from the user's words: `setup-pstack`, and from Matt Pocock's skills `code-review`, `codebase-design`, `domain-modeling`, `grilling`, `pr`, `prototype`, `research` and `wizard`. Offer to word their first prompt with them, per `references/prompting.md`.
+Installing adds two commands, `/poteto-mode` and `/setup-pstack`. Most skills are explicit-only: one loads when the user types `/skill:<name>`, or when poteto-mode or another skill reads it for a step. These can also load from the user's words: `setup-pstack`, and from Matt Pocock's skills `code-review`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `grilling`, `pr`, `prototype`, `research`, `wizard` and `writing-for-agents`. Offer to word their first prompt with them, per `references/prompting.md`.
 
 pi-herdr-agents asks the user to approve every task-model write in its own dialog, whichever command or package asks for it, and refuses one in a session without dialogs. `/subagents-init` drafts from the host's registry brief through that same dialog. Task categories are shared pi-herdr-agents preferences, so a change affects every workflow and role pack that uses them, not only pstack.
 
@@ -97,10 +97,12 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Answer a design question or an empirical fork with a throwaway prototype, in scratch by default | `/skill:prototype` |
 | Turn an idea into a spec, tickets and reviewed code, or triage incoming issues | Matt Pocock's flow: see **Matt Pocock's flows** below |
 | Fix a bug test-first when a cheap local test exists | `/skill:tdd` |
+| Diagnose a hard bug, a flake or a performance regression, starting from a tight feedback loop | `/skill:diagnosing-bugs` |
 | Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` |
 | Strip comments before review, using a reviewer that didn't write them | `/skill:no-comments` |
 | Clean AI tells out of prose | `/skill:unslop` |
 | Write docs, an RFC, a README, a PR description, or a commit message to a standard | `/skill:technical-writing` |
+| Write a skill, an `AGENTS.md` or another document agents read | `/skill:writing-for-agents` |
 | Hear the last reply again in plain words | `/skill:bro` |
 | Give agents a scripted way to drive the app and prove behavior | `/skill:create-verification-skill` |
 | Bring a verification skill and its feature map back in line with the app | `/skill:maintain-verification-skill` |
@@ -113,6 +115,7 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | See which models and thinking pstack's delegates use, or change them with approval | `/setup-pstack`, whose steps are in `/skill:setup-pstack` |
 | Turn their own working habits into a personal mode skill | `/skill:automate-me` |
 | Turn what a finished task taught into skill edits | `/skill:reflect` |
+| Turn what a session taught into guardrails for the repo and its environment: checks, coding standards, `AGENTS.md` pointers | `/skill:retro` |
 | Stop agents from repeating the same mistakes in this repo | `/skill:correct` |
 | Build a local web page that starts a Pi run per request | `/skill:make-bot-ui`. Loopback only, a fresh `pi -p` run per request, and exposure or installs need authorization |
 | Find their way around pstack | `/skill:poteto-help` |
@@ -125,6 +128,9 @@ Close calls:
 - `/skill:arena` gives every worker the same brief and merges the best parts. `/skill:swarm` splits work into slices or a race and returns one report. Arena uses one exact model per family and discloses a same-family fallback. Swarm launches separate bare calls and gives writers worktrees.
 - `/skill:architect` implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
 - `/skill:interrogate` fans out adversaries that try to break the change, and keeps only findings a run proves. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe. `/skill:code-review` reads the diff, committed or not, against the repo's documented standards and the spec, in two separate read-only reports. poteto-mode's own review gates are unchanged by it.
+- `/skill:reflect` turns lessons into skill edits. `/skill:retro` turns them into guardrails for the repo and its environment (checks, coding standards, `AGENTS.md` pointers, tooling). Each sends the other kind of lesson to the other skill, and neither changes anything until the user approves.
+- `/skill:diagnosing-bugs` is the technique for a hard bug. The Bug fix playbook (`../../pstack/poteto-mode/playbooks/bug-fix.md`) is poteto-mode's route: it uses the skill for technique and keeps its own gates, a repro observed twice through the reported path and verification on the same surface. The skill's feedback loop never replaces that repro.
+- `/skill:writing-for-agents` is for documents agents read. `/skill:technical-writing` is for prose humans read. Where they conflict, the reader decides which one wins.
 - `/skill:prototype` is the procedure. The Prototype playbook (`../../pstack/poteto-mode/playbooks/prototype.md`) is poteto-mode's route to it, and hands the result to Feature.
 - `/skill:recall` rebuilds context across recent sessions in this working directory, never another project's. Resuming one specific session or branch is the Session pickup playbook, `../../pstack/poteto-mode/playbooks/session-pickup.md`.
 - `/skill:figure-it-out` designs one rigorous run and keeps its trail via `/skill:show-me-your-work`. The Orchestrate playbook (`../../pstack/poteto-mode/playbooks/orchestrate.md`) runs a program of many PRs as a depth-1 single-session coordinator with a hand-kept store. It is not an unattended or multi-day runner. The Autonomous run playbook, `../../pstack/poteto-mode/playbooks/autonomous-run.md`, drives one task to a finish condition.
