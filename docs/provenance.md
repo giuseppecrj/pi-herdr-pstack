@@ -115,7 +115,7 @@ and stay in the mimir list, where they exist.
 | `skills/engineering/setup-matt-pocock-skills` | adapted: `skills/mattpocock/setup-repo/` (SKILL.md and the five seed templates, issue #32). Its Codex-only `agents/openai.yaml` is excluded. |
 | `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `grill-me`, `grilling` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #33); `ADR-FORMAT.md` and `GLOSSARY-FORMAT.md` are byte-identical copies. Each Codex-only `agents/openai.yaml` is excluded. |
 | `research`, `handoff`, `to-questionnaire`, `wizard`, `codebase-design`, `improve-codebase-architecture`, `pr` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #34); `to-questionnaire/SKILL.md` and `pr/CREDITS.md` are byte-identical copies. Each Codex-only `agents/openai.yaml` is excluded. |
-| `tdd`, `teach` | planned: #36, merged with pstack's skills of the same name |
+| `tdd`, `teach` | merged: `skills/merged/<name>/` with pstack's skills of the same name (issue #36); see **Merged skills**. Their Codex-only `agents/openai.yaml` files are excluded. |
 | `ask-matt`, `code-review`, `diagnosing-bugs`, `prototype`, `retro`, `writing-for-agents`, `in-progress/chief-of-staff` | planned: #37, one pair at a time |
 | `skills/misc`, `skills/in-progress` (all but `chief-of-staff`), `skills/deprecated` | excluded: out of scope for v2 (#28) |
 | every `agents/openai.yaml`, the bucket `README.md` files | excluded: Codex-only metadata and upstream indexes |
@@ -149,7 +149,7 @@ says what changed. In summary:
 
 - Pi has no Skill tool. A skill that loads another reads its `SKILL.md` by a
   backticked path relative to its own directory (`../grilling/SKILL.md`,
-  `../../pstack/tdd/SKILL.md`), which `test/skill-tree.test.ts` resolves.
+  `../../merged/tdd/SKILL.md`), which `test/skill-tree.test.ts` resolves.
   `grilling` and `domain-modeling` stay model-invocable, as upstream has them,
   so Pi lists them for the model; the other eight load only through
   `/skill:<name>`.
@@ -168,8 +168,8 @@ says what changed. In summary:
   time, and removes worktrees with `worktree_remove` only after the user
   approves the list. A child cannot see skills that disable model invocation,
   so its task carries the absolute path of the skill it must load.
-- `implement` and `implement-spec` load pstack's `tdd`, the pack's only `tdd`
-  until #36 merges Matt's. `research` ships with #34, so wayfinder resolves
+- `implement` and `implement-spec` load the merged `tdd` (`skills/merged/tdd`,
+  issue #36). `research` ships with #34, so wayfinder resolves
   it in this pack; `code-review` (#37) and `prototype` (#37) are not in the
   pack yet. The skills look for each by name,
   in this pack first, then among the user's installed skills or at a path the
@@ -270,6 +270,66 @@ byte for byte. Each file's provenance entry says what changed. In summary:
 
 These are content and loader checks (`test/mattpocock-skills.test.ts`,
 `test/rpc.test.ts`); they do not show that a live model follows the skills.
+
+## Merged skills: `skills/merged/` (issue #36)
+
+A skill drawn from both upstreams lives once in `skills/merged/` (ADR-0003) and
+records every source. `tdd` and `teach` are the first two. Their provenance is
+`test/fixtures/skill-provenance/merged.json`. Each file lists, per source, its
+path, SHA-256 and git blob at the pin, and what changed. A source's `use` is
+`primary` (Matt's file, the base of the merged text), `merged` (pstack's
+cursor/plugins file, whose method is merged in by hand) or `context` (the
+pi-mimir copy the pack shipped before, which is byte-identical to the cursor
+file for both skills). The inventory rows say `skills/merged` and list the
+source files of all three. `test/fixtures/upstream-scope.json` has a `merged`
+record naming the folder and its two pinned upstreams (`cursor` and
+`mattpocock`).
+
+Drift detection: `npm run fixtures:upstream-scope -- <upstream>` already compares
+each recorded hash with the upstream at its pin. For the merged folder it also
+prints the section `merged skill with a changed or removed source (manual
+merge)` when this upstream's source of a file with more than one upstream
+source changed or vanished, names the file, and exits non-zero. A person
+merges the change by hand, then records the new hashes in `merged.json`. Run it
+for each upstream: a change to either source flags the merged file.
+`test/merged-skills.test.ts` proves it on scratch upstreams for a change and for
+a removal on either side, and that a merged file is not flagged when neither of
+its sources changed. A merged file that has a single source (Matt's
+`tests.md`) is covered by the ordinary changed-hash check.
+
+`tdd` merges Matt's red → green loop (seams agreed first, anti-patterns, rules
+of the loop, `tests.md`, `mocking.md`) with pstack's gate for when to use it or
+skip it, bug-fix workflow, impractical-test fallback, guardrails and evidence
+report. `teach` has two modes, because the two skills teach different things.
+Explain is pstack's one plain account built on `how` and `why`, and writes
+nothing. Workspace is Matt's multi-session teaching workspace with lessons,
+reference documents, learning records and four format files. Where the two
+conflict the stricter rule is in the merged text:
+
+- Seams. Matt confirms them with the user before any test; pstack proceeds on
+  an obvious cheap test path. The merged `tdd` confirms the seam in one line for
+  such a bug, counts seams confirmed in a spec or ticket, and has a delegated
+  child take them from its brief or report its proposal and write no test at a
+  guess.
+- Skipping. The use-or-skip gate runs first and a skip is told to the user
+  (before the substitution when they asked for TDD), never silent.
+- Writes. Explain mode writes nothing. Workspace mode writes only after the
+  user confirms the directory (a git repository with project code needs an
+  explicit yes), and only the named files inside it.
+- Sources and effects. Workspace mode treats web sources as data, loads no
+  remote script, stylesheet or font in lessons, opens only the lesson it wrote,
+  and suggests communities without joining or posting. Neither skill grants a
+  push, pull request or tracker write.
+- `disable-model-invocation: true` for both. pstack's `tdd` and `teach` and
+  Matt's `teach` set it. Matt's `tdd` does not, but the merged `tdd` asks the
+  user to confirm seams and its gate depends on what the user asked for, so the
+  model does not load it unprompted. `implement`, `implement-spec` and the
+  bug-fix playbook load it by path or name.
+
+`test/merged-skills.test.ts` holds the content-contract tests for both skills
+(each rule is shown to fail when its text is removed), the provenance checks
+with and without checkouts, and the loader tests. They are content and loader
+tests, not evidence that a live model follows either skill.
 
 ## Wave 1: moved role and package files
 

@@ -1,6 +1,6 @@
 # pi-herdr-pstack
 
-pstack methodology for [Pi](https://pi.dev), with Matt Pocock's repo setup, spec, ticket and triage, and gap skills: 75 skills (57 from pstack, including `poteto-mode` with its 23 playbooks and optional `statechart`, plus 18 from Matt Pocock's skills), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
+pstack methodology for [Pi](https://pi.dev), with Matt Pocock's repo setup, spec, ticket and triage, and gap skills: 75 skills (55 from pstack, including `poteto-mode` with its 23 playbooks and optional `statechart`, 18 from Matt Pocock's skills, and `tdd` and `teach`, each merged from both), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
 
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs children in. This package supplies methodology only. It has no child runner, scheduler, model store, package installer or shell-permission engine of its own, and it ships no named roles.
 
@@ -72,7 +72,7 @@ The single exception is the nested call the apply tool makes after you approve t
 
 ## Skills
 
-Skills keep unprefixed names. They are grouped in folders by upstream: `skills/pstack/` (cursor/plugins pstack and its pi-mimir port) and `skills/mattpocock/` ([mattpocock/skills](https://github.com/mattpocock/skills), MIT), each with its own pinned commit (see [provenance](docs/provenance.md)).
+Skills keep unprefixed names. They are grouped in folders by upstream: `skills/pstack/` (cursor/plugins pstack and its pi-mimir port), `skills/mattpocock/` ([mattpocock/skills](https://github.com/mattpocock/skills), MIT) and `skills/merged/` (`tdd` and `teach`, each combining a pstack skill with Matt's of the same name and recording both sources), each upstream with its own pinned commit (see [provenance](docs/provenance.md)).
 
 | Group | Skills | Purpose |
 | --- | --- | --- |
