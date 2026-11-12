@@ -19,9 +19,12 @@ type ScopeFile = {
 	destination?: string;
 	reason?: string;
 };
-// SAFETY: test-owned fixture; every field is asserted below.
-const scope = readJson<{
-	schemaVersion: number;
+/** One upstream's pin (repository, commit, root), its skills folder and its scope. */
+type UpstreamScope = {
+	/** The upstream's key in docs/skill-inventory.json `sources`. */
+	upstream: string;
+	/** The folder under skills/ that holds this upstream's skills (ADR-0003). */
+	folder: string;
 	repository: string;
 	commit: string;
 	root: string;
@@ -33,7 +36,19 @@ const scope = readJson<{
 		watch?: { sha256: string; reason: string };
 	}>;
 	files: ScopeFile[];
+};
+// SAFETY: test-owned fixture; every field is asserted below.
+const fixture = readJson<{
+	schemaVersion: number;
+	upstreams: UpstreamScope[];
 }>("test/fixtures/upstream-scope.json");
+const scopeOf = (upstream: string) => {
+	const record = fixture.upstreams.find((entry) => entry.upstream === upstream);
+	assert.ok(record, `${upstream}: no pin record in upstream-scope.json`);
+	return record;
+};
+/** The cursor/plugins pstack record (decision Q6). */
+const scope = scopeOf("cursor");
 // SAFETY: shape asserted by skill-content.test.ts.
 const inventory = readJson<{
 	sources: Record<string, { repository: string; commit: string; root: string }>;
@@ -51,19 +66,20 @@ const skillFixtures = readdirSync(
 	}>(`test/fixtures/skill-provenance/${name}`),
 );
 const skillProvenance = skillFixtures.flatMap(({ files }) => files);
-/** Every cursor path, relative to `pstack/skills`, that the inventory or a skill-provenance fixture accounts for. */
-const referencedSkillPaths = new Set([
-	...readJson<{
-		skills: Array<{ sourceFiles: { cursor?: string[] } }>;
-	}>("docs/skill-inventory.json").skills.flatMap(
-		({ sourceFiles }) => sourceFiles.cursor ?? [],
-	),
-	...skillFixtures.flatMap(({ files, planned = [], excluded = [] }) =>
-		[...files.flatMap(({ sources }) => sources), ...planned, ...excluded]
-			.filter(({ source }) => source === "cursor")
-			.map(({ path }) => path),
-	),
-]);
+/** Every path of an upstream, relative to its inventory skills root, that the inventory or a skill-provenance fixture accounts for. */
+const referencedSkillPaths = (upstream: string) =>
+	new Set([
+		...readJson<{
+			skills: Array<{ sourceFiles: Record<string, string[] | undefined> }>;
+		}>("docs/skill-inventory.json").skills.flatMap(
+			({ sourceFiles }) => sourceFiles[upstream] ?? [],
+		),
+		...skillFixtures.flatMap(({ files, planned = [], excluded = [] }) =>
+			[...files.flatMap(({ sources }) => sources), ...planned, ...excluded]
+				.filter(({ source }) => source === upstream)
+				.map(({ path }) => path),
+		),
+	]);
 
 const IN_SCOPE = ["agents", "docs", "skills"];
 const OUT_OF_SCOPE = [".cursor-plugin", "automations"];
@@ -107,15 +123,45 @@ const rowCovers = (label: string, path: string) =>
 		? `pstack/${path}`.startsWith(label.slice(0, -2))
 		: label === `pstack/${path}`;
 
-describe("upstream scope (Q6)", () => {
-	it("pins the same cursor commit and root as the skill inventory", () => {
-		assert.equal(scope.schemaVersion, 1);
-		const cursor = inventory.sources.cursor;
-		assert.equal(scope.repository, cursor.repository);
-		assert.equal(scope.commit, cursor.commit);
-		assert.equal(posix.join(scope.root, "skills"), cursor.root);
+describe("upstream pins (ADR-0003)", () => {
+	it("stores one pin record per upstream, each matching the skill inventory", () => {
+		assert.equal(fixture.schemaVersion, 2);
+		const names = fixture.upstreams.map(({ upstream }) => upstream);
+		assert.equal(new Set(names).size, names.length, "upstream listed twice");
+		for (const record of fixture.upstreams) {
+			const source = inventory.sources[record.upstream];
+			assert.ok(source, `${record.upstream}: not an inventory source`);
+			assert.equal(record.repository, source.repository, record.upstream);
+			assert.match(record.commit, /^[0-9a-f]{40}$/, record.upstream);
+			assert.equal(record.commit, source.commit, record.upstream);
+			assert.ok(
+				record.inScope.includes(posix.relative(record.root, source.root)),
+				`${record.upstream}: the inventory skills root ${source.root} is an in-scope root under ${record.root}`,
+			);
+		}
+		assert.equal(
+			posix.join(scope.root, "skills"),
+			inventory.sources.cursor.root,
+		);
 	});
 
+	it("maps every folder under skills/ to exactly one upstream pin", () => {
+		const folders = fixture.upstreams.map(({ folder }) => folder);
+		assert.equal(new Set(folders).size, folders.length, "folder pinned twice");
+		for (const folder of folders)
+			assert.match(folder, /^skills\/[a-z0-9-]+$/, folder);
+		assert.deepEqual(
+			readdirSync(join(PACK_ROOT, "skills"), { withFileTypes: true })
+				.filter((entry) => entry.isDirectory())
+				.map(({ name }) => `skills/${name}`)
+				.toSorted(),
+			folders.toSorted(),
+		);
+		assert.equal(scope.folder, "skills/pstack");
+	});
+});
+
+describe("upstream scope (Q6)", () => {
 	it("tracks agents, docs and skills and excludes automations and .cursor-plugin with reasons", () => {
 		assert.deepEqual(scope.inScope.toSorted(), IN_SCOPE);
 		assert.deepEqual(scope.outOfScope.map(({ path }) => path).toSorted(), [
@@ -230,103 +276,117 @@ describe("upstream scope (Q6)", () => {
 			"the not-yet-carried sentence matches the fixture",
 		);
 	});
-
-	const checkout = process.env.PSTACK_CURSOR_SOURCE;
-	// A partial clone must already hold the blobs; never fetch from a test.
-	const GIT_OPTIONS = {
-		maxBuffer: 64 << 20,
-		env: { ...process.env, GIT_NO_LAZY_FETCH: "1" },
-	};
-	const hasCommit =
-		checkout !== undefined &&
-		spawnSync(
-			"git",
-			["-C", checkout, "cat-file", "-e", `${scope.commit}^{commit}`],
-			GIT_OPTIONS,
-		).status === 0;
-	const git = (...args: string[]) => {
-		assert.ok(
-			hasCommit,
-			`PSTACK_CURSOR_SOURCE=${checkout} does not contain ${scope.commit}: fetch it (git -C <checkout> fetch origin ${scope.commit}) and use a full clone of ${scope.repository}`,
-		);
-		return execFileSync("git", ["-C", checkout ?? "", ...args], GIT_OPTIONS);
-	};
-	const tree = (...args: string[]) =>
-		git("ls-tree", ...args)
-			.toString("utf8")
-			.split("\n")
-			.filter(Boolean)
-			.map((path) => posix.relative(scope.root, path));
-	const upstreamHash = (path: string) =>
-		sha256(git("show", `${scope.commit}:${posix.join(scope.root, path)}`));
-	const skip =
-		checkout === undefined &&
-		"set PSTACK_CURSOR_SOURCE to a cursor/plugins checkout containing the pinned commit";
-
-	it("matches every upstream path and hash at the pinned commit", {
-		skip,
-	}, () => {
-		const problems: string[] = [];
-		const classified = [
-			...scope.inScope,
-			...scope.outOfScope.map(({ path }) => path),
-			...scope.unscoped.map(({ path }) => path),
-		];
-		const topLevel = tree("--name-only", scope.commit, `${scope.root}/`);
-		for (const path of topLevel)
-			if (!classified.includes(path))
-				problems.push(`${path}: unclassified top-level entry`);
-		for (const path of classified)
-			if (!topLevel.includes(path))
-				problems.push(`${path}: classified but missing upstream`);
-		const upstream = tree(
-			"-r",
-			"--name-only",
-			scope.commit,
-			"--",
-			...scope.inScope
-				.filter((root) => root !== "skills")
-				.map((root) => posix.join(scope.root, root)),
-		);
-		const recorded = new Map(scope.files.map((file) => [file.path, file]));
-		for (const path of upstream) {
-			const file = recorded.get(path);
-			if (!file) problems.push(`${path}: upstream but not in the fixture`);
-			else if (upstreamHash(path) !== file.sha256)
-				problems.push(`${path}: hash changed`);
-		}
-		for (const path of recorded.keys())
-			if (!upstream.includes(path))
-				problems.push(`${path}: in the fixture but not upstream`);
-		assert.deepEqual(
-			problems,
-			[],
-			"run npm run fixtures:upstream-scope -- <checkout>, then classify",
-		);
-	});
-
-	it("references every upstream pstack/skills file from the inventory or a skill-provenance fixture", {
-		skip,
-	}, () => {
-		const unreferenced = tree(
-			"-r",
-			"--name-only",
-			scope.commit,
-			"--",
-			posix.join(scope.root, "skills"),
-		)
-			.map((path) => posix.relative("skills", path))
-			.filter((path) => !referencedSkillPaths.has(path));
-		assert.deepEqual(unreferenced, []);
-	});
-
-	it("flags an upstream change to a watched unscoped file", { skip }, () => {
-		for (const { path, watch } of scope.unscoped)
-			if (watch)
-				assert.equal(
-					upstreamHash(path),
-					watch.sha256,
-					`upstream ${posix.join(scope.root, path)} at ${scope.commit} does not match the recorded hash: review THIRD_PARTY_NOTICES.md against it and call the change out in the sync PR body before moving the pin`,
-				);
-	});
 });
+
+/**
+ * The upstream-scope check against each pin, which needs a checkout of that
+ * upstream in PSTACK_<UPSTREAM>_SOURCE (PSTACK_CURSOR_SOURCE for cursor).
+ */
+for (const record of fixture.upstreams)
+	describe(`upstream scope at the ${record.upstream} pin`, () => {
+		const variable = `PSTACK_${record.upstream.toUpperCase()}_SOURCE`;
+		const checkout = process.env[variable];
+		// A partial clone must already hold the blobs; never fetch from a test.
+		const GIT_OPTIONS = {
+			maxBuffer: 64 << 20,
+			env: { ...process.env, GIT_NO_LAZY_FETCH: "1" },
+		};
+		const hasCommit =
+			checkout !== undefined &&
+			spawnSync(
+				"git",
+				["-C", checkout, "cat-file", "-e", `${record.commit}^{commit}`],
+				GIT_OPTIONS,
+			).status === 0;
+		const git = (...args: string[]) => {
+			assert.ok(
+				hasCommit,
+				`${variable}=${checkout} does not contain ${record.commit}: fetch it (git -C <checkout> fetch origin ${record.commit}) and use a full clone of ${record.repository}`,
+			);
+			return execFileSync("git", ["-C", checkout ?? "", ...args], GIT_OPTIONS);
+		};
+		const tree = (...args: string[]) =>
+			git("ls-tree", ...args)
+				.toString("utf8")
+				.split("\n")
+				.filter(Boolean)
+				.map((path) => posix.relative(record.root, path));
+		const upstreamHash = (path: string) =>
+			sha256(git("show", `${record.commit}:${posix.join(record.root, path)}`));
+		/** The in-scope root that the inventory and skill-provenance fixtures account for. */
+		const skillsRoot = posix.relative(
+			record.root,
+			inventory.sources[record.upstream].root,
+		);
+		const skip =
+			checkout === undefined &&
+			`set ${variable} to a ${record.repository} checkout containing the pinned commit`;
+
+		it("matches every upstream path and hash at the pinned commit", {
+			skip,
+		}, () => {
+			const problems: string[] = [];
+			const classified = [
+				...record.inScope,
+				...record.outOfScope.map(({ path }) => path),
+				...record.unscoped.map(({ path }) => path),
+			];
+			const topLevel = tree("--name-only", record.commit, `${record.root}/`);
+			for (const path of topLevel)
+				if (!classified.includes(path))
+					problems.push(`${path}: unclassified top-level entry`);
+			for (const path of classified)
+				if (!topLevel.includes(path))
+					problems.push(`${path}: classified but missing upstream`);
+			const upstream = tree(
+				"-r",
+				"--name-only",
+				record.commit,
+				"--",
+				...record.inScope
+					.filter((root) => root !== skillsRoot)
+					.map((root) => posix.join(record.root, root)),
+			);
+			const recorded = new Map(record.files.map((file) => [file.path, file]));
+			for (const path of upstream) {
+				const file = recorded.get(path);
+				if (!file) problems.push(`${path}: upstream but not in the fixture`);
+				else if (upstreamHash(path) !== file.sha256)
+					problems.push(`${path}: hash changed`);
+			}
+			for (const path of recorded.keys())
+				if (!upstream.includes(path))
+					problems.push(`${path}: in the fixture but not upstream`);
+			assert.deepEqual(
+				problems,
+				[],
+				`run npm run fixtures:upstream-scope -- ${record.upstream} <checkout>, then classify`,
+			);
+		});
+
+		it("references every upstream skills file from the inventory or a skill-provenance fixture", {
+			skip,
+		}, () => {
+			const referenced = referencedSkillPaths(record.upstream);
+			const unreferenced = tree(
+				"-r",
+				"--name-only",
+				record.commit,
+				"--",
+				posix.join(record.root, skillsRoot),
+			)
+				.map((path) => posix.relative(skillsRoot, path))
+				.filter((path) => !referenced.has(path));
+			assert.deepEqual(unreferenced, []);
+		});
+
+		it("flags an upstream change to a watched unscoped file", { skip }, () => {
+			for (const { path, watch } of record.unscoped)
+				if (watch)
+					assert.equal(
+						upstreamHash(path),
+						watch.sha256,
+						`upstream ${posix.join(record.root, path)} at ${record.commit} does not match the recorded hash: review THIRD_PARTY_NOTICES.md against it and call the change out in the sync PR body before moving the pin`,
+					);
+		});
+	});

@@ -1,11 +1,15 @@
 #!/usr/bin/env node
-// Regenerates test/fixtures/upstream-scope.json at the fixture's own commit.
-// Usage: npm run fixtures:upstream-scope -- <cursor/plugins checkout>
+// Regenerates one upstream's pin record in test/fixtures/upstream-scope.json
+// at that record's own commit.
+// Usage: npm run fixtures:upstream-scope -- <upstream> [<checkout>]
+// <upstream> names a record (for example cursor); <checkout> defaults to
+// PSTACK_<UPSTREAM>_SOURCE. The older single-argument form
+// `npm run fixtures:upstream-scope -- <checkout>` still means cursor.
 // The checkout must hold the commit's blobs (a full clone): lazy fetching is
 // disabled so a partial clone fails instead of reaching the network.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,10 +20,17 @@ const GIT_OPTIONS = {
 	env: { ...process.env, GIT_NO_LAZY_FETCH: "1" },
 };
 
-const checkout = process.argv[2] ?? process.env.PSTACK_CURSOR_SOURCE;
-if (!checkout) {
+const fixture = JSON.parse(readFileSync(join(PACK_ROOT, FIXTURE), "utf8"));
+const names = fixture.upstreams.map(({ upstream }) => upstream);
+const args = process.argv.slice(2);
+const [name, checkoutArg] =
+	args.length === 1 && !names.includes(args[0]) ? ["cursor", args[0]] : args;
+const scope = fixture.upstreams.find(({ upstream }) => upstream === name);
+const checkout =
+	checkoutArg ?? process.env[`PSTACK_${String(name).toUpperCase()}_SOURCE`];
+if (!scope || !checkout || !existsSync(checkout)) {
 	console.error(
-		"usage: npm run fixtures:upstream-scope -- <cursor/plugins checkout>",
+		`usage: npm run fixtures:upstream-scope -- <upstream> [<checkout>]\nupstreams: ${names.join(", ")}; <checkout> defaults to PSTACK_<UPSTREAM>_SOURCE`,
 	);
 	process.exit(2);
 }
@@ -28,8 +39,13 @@ const git = (...args) =>
 	execFileSync("git", ["-C", checkout, ...args], GIT_OPTIONS);
 const lines = (output) => output.toString("utf8").split("\n").filter(Boolean);
 
-const scope = JSON.parse(readFileSync(join(PACK_ROOT, FIXTURE), "utf8"));
 const { commit, root } = scope;
+// SAFETY: docs/skill-inventory.json is checked by test/skill-content.test.ts.
+const inventory = JSON.parse(
+	readFileSync(join(PACK_ROOT, "docs/skill-inventory.json"), "utf8"),
+);
+/** The in-scope root the inventory and skill-provenance fixtures account for. */
+const skillsRoot = posix.relative(root, inventory.sources[name].root);
 const relative = (path) => posix.relative(root, path);
 const hash = (path) =>
 	createHash("sha256")
@@ -48,8 +64,8 @@ const unclassified = topLevel.filter((path) => !classified.includes(path));
 const vanished = classified.filter((path) => !topLevel.includes(path));
 
 const roots = scope.inScope
-	.filter((name) => name !== "skills")
-	.map((name) => posix.join(root, name));
+	.filter((path) => path !== skillsRoot)
+	.map((path) => posix.join(root, path));
 const upstream = lines(
 	git("ls-tree", "-r", "--name-only", commit, "--", ...roots),
 )
@@ -82,7 +98,7 @@ const watchChanged = scope.unscoped
 
 writeFileSync(
 	join(PACK_ROOT, FIXTURE),
-	`${JSON.stringify(scope, null, "\t")}\n`,
+	`${JSON.stringify(fixture, null, "\t")}\n`,
 );
 execFileSync(
 	join(PACK_ROOT, "node_modules/.bin/biome"),
@@ -98,7 +114,7 @@ const report = [
 	["classified top-level entry missing upstream", vanished],
 	["watched file changed (hash not updated)", watchChanged],
 ];
-console.log(`${FIXTURE} at ${commit}`);
+console.log(`${FIXTURE} ${name} at ${commit}`);
 for (const [label, paths] of report)
 	console.log(
 		`${label}: ${paths.length === 0 ? "none" : `\n  ${paths.join("\n  ")}`}`,
