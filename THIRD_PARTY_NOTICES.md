@@ -119,8 +119,12 @@ SOFTWARE.
 `grill-me`, `grill-with-docs`, `grilling`, `implement`, `implement-spec`,
 `to-spec`, `to-tickets`, `triage` and `wayfinder` (#33), and `codebase-design`,
 `handoff`, `improve-codebase-architecture`, `pr`, `research`,
-`to-questionnaire` and `wizard` (#34), adapted from the same-named skills under
-`skills/engineering/` and `skills/productivity/`. The upstream `LICENSE`
+`to-questionnaire` and `wizard` (#34), and `code-review` (#37), adapted from
+the same-named skills under `skills/engineering/` and `skills/productivity/`.
+`skills/merged/` also holds material from the same commit: `tdd` and `teach`
+(#36) and `prototype` (#37) merge Matt's same-named skills, with their
+supporting files, into pstack's, and `poteto-help` (#37) carries Matt's
+`ask-matt` flow map and phase-boundaries tree in its `references/`. The upstream `LICENSE`
 (sha256 `0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5`)
 is MIT with this notice:
 
@@ -149,8 +153,9 @@ SOFTWARE.
 ```
 
 See [docs/provenance.md](docs/provenance.md) and
-`test/fixtures/skill-provenance/mattpocock.json` for each adapted file's source,
-hashes and changes.
+`test/fixtures/skill-provenance/mattpocock.json` and
+`test/fixtures/skill-provenance/merged.json` for each adapted or merged file's
+sources, hashes and changes.
 
 ### HumanLayer's `show-me`, in `pr`
 

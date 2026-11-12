@@ -88,10 +88,12 @@ The `mattpocock` record in `test/fixtures/upstream-scope.json` maps
 
 **Scope choice.** The whole upstream `skills/` tree is in scope, not only the
 skills this pack ships, so the weekly sync sees every new, changed or removed
-upstream file. All 114 files at the pin are accounted for in
-`test/fixtures/skill-provenance/mattpocock.json`: 32 shipped (28 adapted, 4
-copied byte for byte), 20 planned (owned by a later issue) and 62 excluded (with
-a reason). `files` records each shipped file's source path, git blob, SHA-256
+upstream file. All 114 files at the pin are accounted for: 33 ship in
+`skills/mattpocock/` (29 adapted, 4 copied byte for byte), 6 are planned (owned
+by a later issue) and 62 are excluded (with a reason), all in
+`test/fixtures/skill-provenance/mattpocock.json`, and 13 ship merged in
+`skills/merged/`, each the primary source of a file in
+`test/fixtures/skill-provenance/merged.json`. `files` records each shipped file's source path, git blob, SHA-256
 and what changed; `planned` and
 `excluded` record the same hashes. With a checkout, `npm test` reproduces every
 hash and blob and fails on any upstream file the fixture lacks; without one it
@@ -116,7 +118,9 @@ and stay in the mimir list, where they exist.
 | `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `grill-me`, `grilling` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #33); `ADR-FORMAT.md` and `GLOSSARY-FORMAT.md` are byte-identical copies. Each Codex-only `agents/openai.yaml` is excluded. |
 | `research`, `handoff`, `to-questionnaire`, `wizard`, `codebase-design`, `improve-codebase-architecture`, `pr` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #34); `to-questionnaire/SKILL.md` and `pr/CREDITS.md` are byte-identical copies. Each Codex-only `agents/openai.yaml` is excluded. |
 | `tdd`, `teach` | merged: `skills/merged/<name>/` with pstack's skills of the same name (issue #36); see **Merged skills**. Their Codex-only `agents/openai.yaml` files are excluded. |
-| `ask-matt`, `code-review`, `diagnosing-bugs`, `prototype`, `retro`, `writing-for-agents`, `in-progress/chief-of-staff` | planned: #37, one pair at a time |
+| `code-review` | adapted: `skills/mattpocock/code-review/` (issue #37, decision 1: kept beside pstack's `interrogate` and the playbook gates); see **Overlapping skills**. Its Codex-only `agents/openai.yaml` is excluded. |
+| `prototype`, `ask-matt` | merged: `skills/merged/prototype/` with pstack's Prototype playbook, and `skills/merged/poteto-help/` with pstack's `poteto-help` (issue #37, decisions 3 and 5); see **Overlapping skills**. Their Codex-only `agents/openai.yaml` files are excluded. |
+| `diagnosing-bugs`, `retro`, `writing-for-agents`, `in-progress/chief-of-staff` | planned: #37 batch B, one pair at a time |
 | `skills/misc`, `skills/in-progress` (all but `chief-of-staff`), `skills/deprecated` | excluded: out of scope for v2 (#28) |
 | every `agents/openai.yaml`, the bucket `README.md` files | excluded: Codex-only metadata and upstream indexes |
 | `skills/productivity/wait-what` | excluded for now: no issue names it, so it needs a decision |
@@ -169,14 +173,15 @@ says what changed. In summary:
   approves the list. A child cannot see skills that disable model invocation,
   so its task carries the absolute path of the skill it must load.
 - `implement` and `implement-spec` load the merged `tdd` (`skills/merged/tdd`,
-  issue #36). `research` ships with #34, so wayfinder resolves
-  it in this pack; `code-review` (#37) and `prototype` (#37) are not in the
-  pack yet. The skills look for each by name,
+  issue #36) and `code-review` (`skills/mattpocock/code-review`, issue #37).
+  `research` ships with #34 and `prototype` (`skills/merged/prototype`) with
+  #37, so wayfinder resolves both in this pack. The skills look for each by name,
   in this pack first, then among the user's installed skills or at a path the
   user gives (never from tracker content), and fail closed when none is found: without `code-review`, `implement` stops before its
   commit and `implement-spec` stops before any PR or ticket update; without
   `research` or `prototype`, those wayfinder tickets are reported as blocked.
-  No other skill stands in. These gaps must close before a release.
+  No other skill stands in. That wording stays for installs that filter a
+  skill out; the pack itself ships all four.
 - Pack policy added after review: the tracker doc says how to publish, never
   whether. Pushes, PR actions, issue creation, edits, comments, assignment,
   labels and label creation need the user's grant, and without it the work
@@ -274,14 +279,19 @@ These are content and loader checks (`test/mattpocock-skills.test.ts`,
 ## Merged skills: `skills/merged/` (issue #36)
 
 A skill drawn from both upstreams lives once in `skills/merged/` (ADR-0003) and
-records every source. `tdd` and `teach` are the first two. Their provenance is
+records every source. `tdd` and `teach` are the first two; `prototype` and
+`poteto-help` followed in #37 (see **Overlapping skills**). Their provenance is
 `test/fixtures/skill-provenance/merged.json`. Each file lists, per source, its
 path, SHA-256 and git blob at the pin, and what changed. A source's `use` is
 `primary` (Matt's file, the base of the merged text), `merged` (pstack's
 cursor/plugins file, whose method is merged in by hand) or `context` (the
 pi-mimir copy, which matches the cursor file for both skills; the pack's shipped
 `tdd` was byte-identical to it, but the shipped `teach` at `0b1dde5` already
-differed by one Pi sentence about the image tool). The inventory rows say
+differed by one Pi sentence about the image tool). `prototype` follows the same
+pattern, with the poteto-mode Prototype playbook as the `merged` source.
+`poteto-help` reverses it: pstack's file is `primary` and Matt's `ask-matt` is
+`merged`, while its flow map has ask-matt as `primary` and pstack's file as
+`merged`. The inventory rows say
 `skills/merged` and list the source files of all three. `test/fixtures/upstream-scope.json` has a `merged`
 record naming the folder and its two pinned upstreams (`cursor` and
 `mattpocock`).
@@ -337,6 +347,65 @@ conflict the stricter rule is in the merged text:
 (each rule is shown to fail when its text is removed), the provenance checks
 with and without checkouts, and the loader tests. They are content and loader
 tests, not evidence that a live model follows either skill.
+
+## Overlapping skills (issue #37, batch A)
+
+Issue #37 decides each pair of overlapping skills. Batch A implements decisions
+1, 3 and 5 and closes the release gate #33 left open (`implement`,
+`implement-spec` and `wayfinder` found no `code-review` or `prototype`).
+
+- **`code-review`** (decision 1: keep both). Matt's two-axis review ships as
+  `skills/mattpocock/code-review`, beside pstack's `interrogate` and
+  poteto-mode's review gates, which are unchanged. It keeps upstream's Standards
+  and Spec reviewers, smell baseline, briefs and aggregation. It is read-only:
+  it changes no file, index, branch or stash, pushes nothing and posts nothing
+  unless the user grants it. It reviews one of two targets. Committed work is
+  upstream's three-dot diff, against a named `<head>` such as `implement-spec`'s
+  integration branch, read from git without a checkout. Uncommitted work is the
+  working tree since the merge-base of the fixed point and `HEAD`: `git diff
+  <base>` covers commits plus staged and unstaged changes, and the untracked
+  files from `git ls-files --others --exclude-standard` are read in full.
+  `implement` records its starting commit and the files already uncommitted,
+  then reviews its uncommitted work before it commits; `implement-spec` records
+  the commit its integration branch starts from and reviews that branch as
+  committed work. The two reviewers are bare pi-herdr-agents subagents with
+  `task:review`, `thinking` only when that category has none, and no worktree,
+  because a worktree starts from committed state. `tdd` names it where it
+  defers refactoring.
+- **`prototype`** (decision 3: merge). `skills/merged/prototype` combines
+  Matt's prototype (primary; the logic and UI branches with `LOGIC.md` and
+  `UI.md`) with pstack's poteto-mode Prototype playbook (merged: the empirical
+  branch, references, evidence rules, reply and handoff to Feature). Scratch is
+  the default location; building inside the app needs the user's explicit
+  scope; keeping, committing, pushing or pointing at a prototype each need
+  authorization, and prototype code never reaches the main branch. The playbook
+  keeps its place in poteto-mode's routing and points at the skill
+  (`w2.json` records the change and why the file is now under half its source).
+  `wayfinder`'s Prototype tickets name the skill. The skill keeps Matt's model
+  invocation, since its default writes only to scratch.
+- **`poteto-help`** (decision 5: merge, no separate `ask-matt`). pstack's
+  `poteto-help` moved from `skills/pstack` to `skills/merged` and keeps its
+  install, `/setup-pstack`, poteto-mode and troubleshooting content and the
+  brief-reading contract `test/setup.test.ts` asserts. Matt's `ask-matt` flow
+  map became `references/flows.md` and its phase-boundaries tree
+  `references/phase-boundaries.md`, adapted to the pack: `/skill:<name>`
+  commands, Pi's `/new` and `/compact`, and only flows whose skills ship and are
+  dependency-closed. Matt's `retro`, `diagnosing-bugs`, `wait-what` and
+  `writing-for-agents` are named only as absent, with the shipped alternative.
+  Playbooks are not skills. Its provenance moved from `w3-b.json` to
+  `merged.json`.
+
+`merged.json` records both upstreams for `prototype/SKILL.md`,
+`poteto-help/SKILL.md` and `poteto-help/references/flows.md`, so
+`npm run fixtures:upstream-scope -- <upstream>` flags each for a manual merge
+when either source changes. ask-matt's `SKILL.md` is the primary source of
+`flows.md` and merged into poteto-help's `SKILL.md`; the mattpocock accounting
+counts each Matt file once, by the file it is the primary source of.
+`test/overlap-skills.test.ts` holds the content contracts (each rule is shown
+to fail when its wording is removed), the checks that the dependents find these
+skills in the pack, the flow map's dependency closure and the real-Pi loader
+test. They are content and loader tests, not evidence that a live model follows
+the skills.
 
 ## Wave 1: moved role and package files
 
@@ -474,9 +543,9 @@ source and an explanation in its fixture. `tdd` and `teach` have since moved to
 | `skills/pstack/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
 | `skills/pstack/no-comments/SKILL.md` (`teach` moved to `skills/merged/teach`, #36) | mimir, Cursor as context | adapted |
 | `skills/pstack/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
-| `skills/pstack/poteto-help/**` (3 files) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
+| `skills/pstack/poteto-help/**` (3 files; moved to `skills/merged/poteto-help`, #37) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
 
-`skills/pstack/poteto-help/SKILL.md` adapts the one-time setup nudge that landed in
+`skills/pstack/poteto-help/SKILL.md` (now `skills/merged/poteto-help/SKILL.md`) adapts the one-time setup nudge that landed in
 cursor/plugins `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d` (PR #509) and is now
 in the pin. The fixture records the Cursor blob at
 `ccb5507cec1546dc88135c1139c811e6c59115ba`. The nudge asks once, when the
