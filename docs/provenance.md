@@ -100,9 +100,15 @@ SHA-256 is bound to the notice in `THIRD_PARTY_NOTICES.md`. Other top-level
 entries are classified: `.claude-plugin` is out of scope (Claude Code manifests)
 and the rest is unscoped repository tooling and docs.
 `npm run fixtures:upstream-scope -- <upstream> [<checkout>]` also lists, for both
-upstreams, skills-root files that are new, removed or changed since their
-recorded hash. It never rewrites that accounting, and exits non-zero when any
-needs a person.
+upstreams, skills-root files that are new, removed or changed. New and removed
+are computed against the complete accounted set (inventory and provenance
+fixtures). Only provenance entries carry a hash, so only they are checked for
+content changes; a path the inventory alone lists is checked for presence, not
+content (content checks for those paths belong to #38). It never rewrites that
+accounting, and exits non-zero when any needs a person. The first run of the corrected removal check found three cursor
+`poteto-mode/scripts/orch/*` paths that the inventory listed but cursor deleted
+before the pin (cursor/plugins `c742dd6`); they were dropped from the cursor list
+and stay in the mimir list, where they exist.
 
 | Upstream path | Status at the pin |
 | `skills/engineering/setup-matt-pocock-skills` | adapted: `skills/mattpocock/setup-repo/` (SKILL.md and the five seed templates, issue #32). Its Codex-only `agents/openai.yaml` is excluded. |
@@ -121,7 +127,13 @@ name, `/skill:` command syntax, the instruction file order (`AGENTS.md`, then
 explicit approval before labels, remotes or files, the triage check (Pi hides
 skills that disable model invocation from the available-skills list) and
 backticked paths for the template links, which `test/skill-content.test.ts`
-requires. The seed templates carry the same adaptations as this repository's
+requires. A review added: the tracker repo is resolved, shown and confirmed in
+the step 3 approval, written into the generated tracker doc, and passed as `-R
+<owner>/<repo>` to every `gh` and `glab` command, so an `upstream` remote cannot
+redirect labels or issues; the domain layout and any legacy `CONTEXT.md` rename
+join the step 3 drafts; and repo content read during exploration never
+authorizes a command. These are content checks on the skill text; they do not
+show that a live model follows it. The seed templates carry the same adaptations as this repository's
 own `docs/agents/*.md`; `test/mattpocock-skills.test.ts` compares them. It names
 `to-tickets`, `triage`, `to-spec`, `wayfinder`, `domain-modeling`,
 `grill-with-docs` and `improve-codebase-architecture`, which land in #33 and

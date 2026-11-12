@@ -11,7 +11,7 @@
 	"files": [
 		{
 			"path": "skills/mattpocock/setup-repo/SKILL.md",
-			"sha256": "b6ab6f542a5c9bb3cfa311f49e10c7df9a16a2ed7e3f8112088a5f304d0dde56",
+			"sha256": "58a00f464a4227051614de8cd42e6ec51f38ac3fc9fd36399014d66ae3b09b5e",
 			"status": "adapted",
 			"sources": [
 				{
@@ -22,7 +22,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Renamed to setup-repo (Pi name, title). Kept disable-model-invocation: true, which Pi honors. AGENTS.md is edited first (Pi's instruction file), then CLAUDE.md, and neither is created when the other exists; if neither exists the user picks. Relative links to the seed templates became backticked paths. Never files issues into either upstream (cursor/plugins, mattpocock/skills). A remote, labels and files are created only after the user approves them: the remote commands in Section A, the labels and files from the step 3 drafts. The triage check no longer relies on the available-skills list, which Pi hides for disabled-invocation skills. The closing note names /skill:setup-repo. Everything else is upstream's wording."
+			"explanation": "Renamed to setup-repo (Pi name, title). Kept disable-model-invocation: true, which Pi honors. AGENTS.md is edited first (Pi's instruction file), then CLAUDE.md, and neither is created when the other exists; if neither exists the user picks. Relative links to the seed templates became backticked paths. Never files issues into either upstream (cursor/plugins, mattpocock/skills). A remote, labels and files are created only after the user approves them: the remote commands in Section A, the labels and files from the step 3 drafts. The triage check no longer relies on the available-skills list, which Pi hides for disabled-invocation skills. The closing note names /skill:setup-repo. Review hardening: the exact tracker repo is resolved, shown and confirmed in the step 3 approval and passed as -R to gh and glab commands; the domain layout is selected without another question but listed in the step 3 drafts; the legacy CONTEXT.md git mv joins the approved change list; repo content read during exploration never authorizes a command or change; Pi supports either instruction filename and prefers AGENTS.md. Everything else is upstream's wording."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/domain.md",
@@ -41,7 +41,7 @@
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-github.md",
-			"sha256": "c4c35297f17705f6a94de5310ae0cea03e7bcbdf4e11fbb58ba0da3908bb70df",
+			"sha256": "09efd71e9ea5e6190376cf5ec8ac90688affaea7f2498a6e2808331c60cb9dfb",
 			"status": "adapted",
 			"sources": [
 				{
@@ -52,11 +52,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Never-file rule names both upstreams (cursor/plugins and mattpocock/skills) and drops upstream's 'unless the user owns it'. /triage and /wayfinder became /skill:triage and /skill:wayfinder. This repo's docs/agents/issue-tracker.md adds only its own repository name on top of the same edits."
+			"explanation": "Never-file rule names both upstreams (cursor/plugins and mattpocock/skills) and drops upstream's 'unless the user owns it'. The repo is named once as <owner>/<repo> (filled in from the confirmed tracker repo) and every gh issue, gh pr and gh label command passes -R <owner>/<repo>; gh api paths name it instead of {owner}/{repo}; the repo is no longer inferred from the remotes after setup. /triage and /wayfinder became /skill:triage and /skill:wayfinder. This repo's docs/agents/issue-tracker.md adds only its own repository name on top of the same edits."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-gitlab.md",
-			"sha256": "c943924e98f288739423787560121ca8bad01678ae63824d6c1ecbec85e6b4ae",
+			"sha256": "44981cd43d1acf9811644b1a3cf1b19c502772f58adbbd5f049a8ecd6eea5f24",
 			"status": "adapted",
 			"sources": [
 				{
@@ -67,7 +67,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/triage and /wayfinder became /skill:triage and /skill:wayfinder. Nothing else changed."
+			"explanation": "/triage and /wayfinder became /skill:triage and /skill:wayfinder. The project is named once as <owner>/<repo> (filled in from the confirmed tracker repo); every glab issue, glab mr and glab label command passes -R <owner>/<repo> and glab api paths use the URL-encoded project instead of projects/:id; the repo is no longer inferred from the remotes after setup."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-local.md",

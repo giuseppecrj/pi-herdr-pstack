@@ -84,6 +84,7 @@ describe("installed pack without pi-herdr-agents", () => {
 	});
 });
 
+// Loader and expansion test with the faux provider; not evidence of live-model compliance.
 describe("setup-repo from the mattpocock folder", () => {
 	const SKILL = join(PACK_ROOT, "skills/mattpocock/setup-repo/SKILL.md");
 
