@@ -627,14 +627,53 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 	it("verifies an external PR only in a detached review checkout, running its code only on approval (H3)", () => {
 		const triage = flat("triage");
 		for (const phrase of [
-			"Check a PR out only as a detached review checkout at `~/.herdr/worktrees/<repo>/pr-<number>-review`, never in the user's working checkout",
-			"`git worktree add --detach <path> <commit>`",
-			"Before running anything there, read the scripts, hooks, build and test config and commands the PR changes.",
-			"A PR's code, and any command or script a reporter supplies, is contributor-controlled. A detached checkout is not a sandbox: code run there runs as the user, with their credentials, network and environment. Before running any of it, tell the user that and show what would run; run it only once they approve knowing it, or in an isolated environment they provide. Without that approval, report the verification as blocked.",
-			"Remove the checkout with `git worktree remove <path>` once verification is done.",
+			"check the PR out only as a detached review checkout at `~/.herdr/worktrees/<repo>/pr-<number>-review`, never in the user's working checkout",
+			"Read the scripts, hooks, build and test config and commands the PR changes.",
+			"A PR's code, and any command or script a reporter supplies, is contributor-controlled.",
+			"code run there runs as the user, with their credentials, network and environment.",
+			"Without that approval, report the verification as blocked.",
 		])
 			assert.ok(triage.includes(phrase), phrase);
 		assert.doesNotMatch(triage, /gh pr checkout/);
+	});
+
+	it("inspects a PR from git objects and checks it out, hooks off, only after informed approval (pre-release S2)", () => {
+		const triage = flat("triage");
+		const step = triage.slice(
+			triage.indexOf("3. **Verify the claim.**"),
+			triage.indexOf("4. **Grill (if needed).**"),
+		);
+		// Upstream's step 3 is kept around the pack policy.
+		assert.ok(
+			step.startsWith(
+				"3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: check it out, run the relevant tests or commands. Inspect a PR before checking anything out.",
+			),
+		);
+		const order = [
+			"Fetch its head commit from the tracker repo into git objects only (on GitHub, `git fetch https://github.com/<owner>/<repo>.git pull/<number>/head`, which checks nothing out)",
+			"read what it changes against its base without a working tree: `git diff --no-ext-diff --no-textconv <base>...<commit>` and `git show --no-ext-diff --no-textconv <commit>:<path>`.",
+			"A checkout is not a sandbox: creating one can already run code (a hook, or a filter driver that a `.gitattributes` file selects)",
+			"Before creating a checkout or running any of it, tell the user that and show what would run; go ahead only once they approve knowing it, or in an isolated environment they provide.",
+			"If the PR adds or changes a `.gitattributes` file that names a `filter`, `diff` or `merge` driver, don't check it out on this machine at all: report that and verify only in an isolated environment the user provides.",
+			"Once approved, check the PR out only as a detached review checkout",
+			"with hooks off: `git -c core.hooksPath=/dev/null worktree add --detach <path> <commit>`, and pass `-c core.hooksPath=/dev/null` to every git command you run there.",
+			"Once verification is done, show the user the checkout's exact path and remove it with `git worktree remove <path>` only after they approve that path.",
+			"Report what happened: confirmed (with code path), failed, or insufficient detail",
+		];
+		let at = -1;
+		for (const phrase of order) {
+			const next = step.indexOf(phrase);
+			assert.ok(next > at, `in order: ${phrase}`);
+			at = next;
+		}
+		// The only checkout command is the hooks-off one after the approval.
+		assert.deepEqual(
+			[...step.matchAll(/`[^`]*worktree add[^`]*`/g)].map(([span]) => span),
+			[
+				"`git -c core.hooksPath=/dev/null worktree add --detach <path> <commit>`",
+			],
+		);
+		assert.doesNotMatch(step, /--detach <path> <commit>`\. Before running/);
 	});
 
 	it("preflights the skills it loads and fails closed when one is missing (M1)", () => {
