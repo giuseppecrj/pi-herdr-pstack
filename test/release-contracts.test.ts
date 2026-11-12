@@ -197,3 +197,34 @@ describe("upgrading from 0.6.0 (C1)", () => {
 		assert.equal(files.includes("docs/release-notes-1.0.0.md"), false);
 	});
 });
+
+describe("poteto-mode's availability paragraph (C3)", () => {
+	const hub = flat("skills/pstack/poteto-mode/SKILL.md");
+
+	it("counts the skills in the tree", () => {
+		assert.equal(
+			Number(
+				/ships the full inventory: all (\d+) skills in this package/.exec(
+					hub,
+				)?.[1],
+			),
+			SKILLS.length,
+		);
+		assert.equal(new Set(SKILLS.map(({ name }) => name)).size, SKILLS.length);
+	});
+
+	it("sends skill-choice questions to poteto-help without routing Matt's flows through the playbooks", () => {
+		assert.ok(
+			hub.includes(
+				"Matt Pocock's flows are a separate methodology, not playbooks: when the user asks which skill or flow fits a task, point them to `/skill:poteto-help`, and don't route one of Matt's flows through the playbooks below.",
+			),
+		);
+		const router = hub.slice(hub.indexOf("## Playbooks"));
+		for (const flow of [
+			"/skill:to-tickets",
+			"/skill:implement-spec",
+			"/skill:wayfinder",
+		])
+			assert.equal(router.includes(flow), false, flow);
+	});
+});

@@ -18,7 +18,7 @@ Paths in this skill, its playbooks and its references are relative to this skill
 
 ## Availability in this release
 
-This release ships the full inventory: all 57 skills, including this hub, `setup-pstack`, the 24 principle leaves and every workflow skill, and all 23 playbooks with this hub's four references. Several workflows are scoped down for Pi. Their routes below name each limit in one line, and the playbook or skill states it in full.
+This release ships the full inventory: all 80 skills in this package, including this hub, `setup-pstack`, the 24 principle leaves, every workflow skill and Matt Pocock's skills, and all 23 playbooks with this hub's four references. Matt Pocock's flows are a separate methodology, not playbooks: when the user asks which skill or flow fits a task, point them to `/skill:poteto-help`, and don't route one of Matt's flows through the playbooks below. Several workflows are scoped down for Pi. Their routes below name each limit in one line, and the playbook or skill states it in full.
 
 - Fan-out, prompt placement, model seats, dropouts, writers and the watcher child follow one shared protocol, `references/fan-out.md`. Children are leaves.
 - Where a limit blocks a step (no forge access, no grant, a tool this session lacks), keep the step in your checklist as `skip: <reason>`, stop the dependent part of the workflow and report it.
