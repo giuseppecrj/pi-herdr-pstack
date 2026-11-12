@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.6.0` plus the unreleased #35 setup rewrite and #37 overlap merges (77 skills and 23 playbooks).
+Status: pi-herdr-pstack `0.6.0` plus the unreleased #35 setup rewrite and #37 overlap merges (80 skills and 23 playbooks).
 
 ## Host baseline
 

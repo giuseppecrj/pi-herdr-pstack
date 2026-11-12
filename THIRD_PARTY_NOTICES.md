@@ -119,8 +119,9 @@ SOFTWARE.
 `grill-me`, `grill-with-docs`, `grilling`, `implement`, `implement-spec`,
 `to-spec`, `to-tickets`, `triage` and `wayfinder` (#33), and `codebase-design`,
 `handoff`, `improve-codebase-architecture`, `pr`, `research`,
-`to-questionnaire` and `wizard` (#34), and `code-review` (#37), adapted from
-the same-named skills under `skills/engineering/` and `skills/productivity/`.
+`to-questionnaire` and `wizard` (#34), and `code-review`, `diagnosing-bugs`,
+`retro` and `writing-for-agents` (#37), adapted from the same-named skills
+under `skills/engineering/` and `skills/productivity/`.
 `skills/merged/` also holds material from the same commit: `tdd` and `teach`
 (#36) and `prototype` (#37) merge Matt's same-named skills, with their
 supporting files, into pstack's, and `poteto-help` (#37) carries Matt's

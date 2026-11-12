@@ -408,7 +408,8 @@ Issue #37 decides each pair of overlapping skills. Batch A implements decisions
   `references/phase-boundaries.md`, adapted to the pack: `/skill:<name>`
   commands, Pi's `/new` and `/compact`, and only flows whose skills ship and are
   dependency-closed. Matt's `retro`, `diagnosing-bugs`, `wait-what` and
-  `writing-for-agents` are named only as absent, with the shipped alternative.
+  `writing-for-agents` were named only as absent, with the shipped alternative;
+  batch B shipped all but `wait-what` and routes to them.
   Playbooks are not skills. Its provenance moved from `w3-b.json` to
   `merged.json`.
 
@@ -427,6 +428,68 @@ excluded credential path stays out of a diff), the checks that the dependents fi
 skills in the pack, the flow map's dependency closure and the real-Pi loader
 test. They are content and loader tests, not evidence that a live model follows
 the skills.
+
+## Overlapping skills (issue #37, batch B)
+
+Batch B implements decisions 2, 4, 6 and 7. The three ports keep upstream's
+wording and `disable-model-invocation` values (`diagnosing-bugs` and
+`writing-for-agents` stay model-invocable, `retro` stays user-invoked) and
+change only what Pi and pack policy require. None launches a subagent, so the
+task-category thinking rule does not apply to them. Each file's provenance
+entry in `test/fixtures/skill-provenance/mattpocock.json` says what changed.
+
+- **`diagnosing-bugs`** (decision 2: keep both). Matt's six-phase diagnosis
+  loop ships as `skills/mattpocock/diagnosing-bugs` with
+  `scripts/hitl-loop.template.sh`. Its feedback loop does not replace a
+  real-path reproduction: Phase 2 also sees the symptom through the user's
+  reported steps on the real surface, Phase 6 re-runs that reproduction as
+  well as the loop, and a caller's stricter gate wins. The human-in-the-loop
+  script follows `wizard`'s rule: the agent copies and edits it, the human runs
+  it in their own terminal and pastes the captured block back, and the agent
+  never runs it in whole or in part (`bash -n` and `shellcheck` only parse
+  it), puts no secret in it and captures none. Upstream's template had the
+  agent run it. The skill grants only local diagnosis; commits follow the
+  commit policy and pushes, PRs, deploys and production instrumentation need
+  authorization. poteto-mode's Bug fix playbook stays a playbook: a paragraph
+  points at the skill for technique and says the playbook's gates still bind
+  it (`w2.json`). The template keeps upstream's file mode, `100644`.
+- **`retro`** (decision 4: keep both). Matt's retrospective ships as
+  `skills/mattpocock/retro` and loads `writing-for-agents` by path, which
+  ships in the same batch. It proposes guardrails for the repo and its
+  environment and routes skill edits to `reflect`; `reflect` routes repo and
+  environment lessons back to `retro` (`w4-a.json`). It reads
+  `$PI_SESSION_FILE` and only this working directory's earlier sessions,
+  treats transcript content as data, keeps secrets out of what it writes or
+  shows, changes nothing until the user approves a candidate, and never
+  changes the user's global Pi configuration, credentials or installed
+  extensions.
+- **`writing-for-agents`** (decision 6: keep both). Matt's reference ships as
+  `skills/mattpocock/writing-for-agents` with `SKILL-MECHANICS.md`, which is
+  adapted to Pi's skill mechanics: Pi's frontmatter rules, `/skill:<name>`,
+  `AGENTS.md`, and a skill reaching another by path whatever its invocation
+  setting (upstream assumed only a model-invoked skill can be reached). It
+  says it serves instructions for agents; `technical-writing` gains a mirror
+  paragraph saying it serves prose for humans (`w3-b.json`, now adapted), and
+  where they conflict each says the reader's audience wins. The
+  `authoring-a-skill` playbook references both (`w4-p.json`).
+- **`chief-of-staff`** (decision 7: drop). It moves from `planned` to
+  `excluded` with the reason. **Known gap:** its dated-wiki discipline (a
+  folder of interlinked pages that outlives the session, kept by ingest, query
+  and lint, every claim dated or tied to a commit, superseded claims marked
+  rather than rewritten) has no equivalent in this pack.
+
+`poteto-help` routes to the three new skills: its flow map restores Matt's
+`retro`, `diagnosing-bugs` and `writing-for-agents` entries as `/skill:` steps
+with the pack's rules, names only `wait-what` as absent, and stays
+dependency-closed; the help adds table rows and close calls (retro or
+reflect, the skill or the Bug fix playbook, writing-for-agents or
+technical-writing) and lists both new model-invocable skills (`merged.json`).
+No Matt file remains planned. `test/overlap-skills.test.ts` holds the content
+contracts for each adaptation (each shown to fail when its wording is
+removed), a `bash -n` parse of the template, the pointer and drift checks for
+the playbooks, `reflect` and `technical-writing`, and the real-Pi loader test.
+They are content and loader tests, not evidence that a live model follows the
+skills.
 
 ## Wave 1: moved role and package files
 
