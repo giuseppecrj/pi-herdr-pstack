@@ -30,7 +30,7 @@ The right shape depends on the question:
 - **A small set of pure functions** over a plain data type. Good when there's no implicit current state, just transformations.
 - **A class or module with a clear method surface** when the logic genuinely owns ongoing internal state.
 
-Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the real build can lift the validated reducer / machine / function set into the real module on its own.
+Pick whichever shape best fits the question being asked, *not* whichever is easiest to wire to a page. Keep it pure: no DOM, no `document`, no button handlers reaching inside it. The page calls into it; nothing flows the other direction. This is what makes the prototype useful past its own lifetime: once the question's answered, the real build can lift the validated reducer / machine / function set into the real module on its own, in a separately authorized production change with its normal tests and review.
 
 ### 3. Build the shareable HTML file
 
@@ -55,7 +55,7 @@ Give the user the file's path, or open it for them. Sending it to anyone else (a
 
 ### 5. Capture the answer and the prototype
 
-Once the prototype has answered its question, capture the answer, then capture the prototype the way `SKILL.md` describes. The logic-specific mapping: the validated reducer / machine / function set is the decision the real build lifts into the real module; the HTML shell stays with the prototype (in scratch, or on a throwaway branch once the user authorized preserving it), and being one self-contained file, it stays trivially re-runnable there.
+Once the prototype has answered its question, capture the answer, then capture the prototype the way `SKILL.md` describes. The logic-specific mapping: the validated reducer / machine / function set is the decision the real build lifts into the real module, in its own authorized production change; the HTML shell stays with the prototype (in scratch, or on a throwaway branch once the user authorized preserving it), and being one self-contained file, it stays trivially re-runnable there.
 
 ## Anti-patterns
 
@@ -64,4 +64,4 @@ Once the prototype has answered its question, capture the answer, then capture t
 - **Don't generalise.** No "what if we wanted to support X later." The prototype answers one question.
 - **Don't blur the logic and the page together.** If the pure module references the DOM, `document`, or button handlers, it's no longer liftable. Keep the page as a thin shell over a pure module.
 - **Don't reach for a framework, bundler, or server.** One file the recipient double-clicks; a React app or a dev server defeats "shareable".
-- **Don't ship the HTML shell into production.** The page is optimised for being clicked through by hand. The logic module behind it is the bit worth keeping.
+- **Don't ship the HTML shell into production.** The page is optimised for being clicked through by hand. The logic module behind it is the bit worth keeping, and it reaches production only through a separately authorized change with its normal tests and review.

@@ -1,7 +1,18 @@
 import assert from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import {
+	chmodSync,
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { join, posix } from "node:path";
-import { describe, it } from "node:test";
+import { after, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { assertContract, flat, type Rule } from "./helpers/contract.ts";
 import { IsolatedPi } from "./helpers/rpc.ts";
@@ -87,26 +98,78 @@ const CODE_REVIEW_RULES: Rule[] = [
 		"reporting the axes separately, never reranked",
 		/Do \*\*not\*\* merge or rerank findings, because the two axes are deliberately separate/,
 	],
-	// The uncommitted-work adaptation (decision 1).
+	// The uncommitted-work adaptation (decision 1), with review 337e20a fixes.
 	[
 		"the committed target against a named head, read without checking it out",
-		/Capture the diff command once: `git diff <fixed-point>\.\.\.<head>` \(three-dot, so the comparison is against the merge-base\)\. .*Review a branch that isn't checked out from git \(`git show <head>:<path>`\), never by checking it out\./,
+		/Capture the diff command once: `git diff --no-ext-diff --no-textconv <fixed-point>\.\.\.<head>` \(three-dot, so the comparison is against the merge-base\)\. .*Review a branch that isn't checked out from git \(`git show --no-ext-diff --no-textconv <head>:<path>`\), never by checking it out\./,
 	],
 	[
-		"the uncommitted target: the working tree since the merge-base",
-		/\*\*Uncommitted work\*\* \(work in progress, or a caller that reviews before committing, as `implement` does\): everything in this checkout's working tree since the fixed point, committed or not\. Resolve the base once: `git merge-base <fixed-point> HEAD`\. The diff command is `git diff <base>`, which covers commits since the base plus staged and unstaged changes/,
+		"git run without configured diff or textconv helpers, not called a sandbox",
+		/\*\*Run git without helpers\.\*\* Every `git diff` and `git show` here, in your own commands and in each reviewer's brief, carries `--no-ext-diff --no-textconv`, so a diff driver or text converter configured in the repo or the user's git config never runs\. These flags stop git from running configured helpers; they are not a sandbox\./,
 	],
 	[
-		"untracked files read in full",
-		/`git diff` leaves out untracked files, so list them with `git ls-files --others --exclude-standard`; each reviewer reads every listed file in full as new code\./,
+		"the uncommitted target: three layers since the merge-base",
+		/\*\*Uncommitted work\*\* \(work in progress, or a caller that reviews before committing, as `implement` does\): everything in this checkout since the fixed point, committed or not\. Resolve the base once: `git merge-base <fixed-point> HEAD`\. Review three layers separately, because one net diff can hide a staged change that the working tree reverts:/,
 	],
 	[
-		"files already uncommitted before the caller's work being out of scope",
-		/When the caller names files that were already changed before its work began, the reviewers treat them as out of scope\./,
+		"the commits layer",
+		/\*\*Commits since the base\*\*: `git diff --no-ext-diff --no-textconv <base> HEAD`, with `git log <base>\.\.HEAD --oneline` for the list\./,
 	],
 	[
-		"failing early on a bad ref or an empty target, untracked files included",
-		/confirm the fixed point resolves .* and the target is non-empty: a non-empty diff, or for uncommitted work, a non-empty diff or untracked list\./,
+		"the staged layer, labelled as the commit candidate",
+		/\*\*Staged, the commit candidate\*\*: `git diff --no-ext-diff --no-textconv --cached`, the index against `HEAD`\. This is what a commit would record now\./,
+	],
+	[
+		"the unstaged layer",
+		/\*\*Unstaged\*\*: `git diff --no-ext-diff --no-textconv`, the working tree against the index\./,
+	],
+	[
+		"a staged change the working tree undoes still mattering",
+		/a finding in the staged layer that the unstaged layer undoes still matters, because a commit of the index would carry it\./,
+	],
+	[
+		"listing paths before reading content",
+		/\*\*Choose what the reviewers may read\.\*\* List paths before reading any content: `git diff --no-ext-diff --no-textconv --name-status` for each layer, and the untracked files with `git ls-files --others --exclude-standard`\. Check each untracked path with `ls -l` before opening it\./,
+	],
+	[
+		"never reading or handing on likely credential files",
+		/\*\*Never read or hand on likely credential files\*\*, tracked or untracked: `\.env` and `\.env\.\*`, `\*\.pem`, `\*\.key`, `id_\*`, `credentials\*`, and names containing `secret` or `token`\. Keep them out of every diff the reviewers run with an exclude pathspec \(`-- \. ':\(exclude\)<path>'`\) and name each one as skipped\./,
+	],
+	[
+		"never following a symlink out of the repository",
+		/\*\*Never follow a symlink that resolves outside the repository\*\*; review a symlink as its target path \(`readlink <path>`\), not as the contents it points at\./,
+	],
+	[
+		"reading only regular text files, bounding large ones",
+		/\*\*Read only regular, in-scope text files\.\*\* Skip binaries, and for a large file \(over 2,000 lines\) read only the parts the review needs and say so\./,
+	],
+	[
+		"handing reviewers only the allowed untracked files",
+		/Hand the reviewers the list of untracked files they may read in full as new code, and nothing else\./,
+	],
+	[
+		"telling the user what was omitted",
+		/\*\*Tell the user which files were omitted and why\*\*, in the final report\./,
+	],
+	[
+		"briefs that forbid opening skipped files",
+		/the files skipped as likely credentials, outside symlinks, binaries or too large, which it must not open\./,
+	],
+	[
+		"the report listing unread files",
+		/Then list the files no reviewer read, and why \(likely credentials, outside symlinks, binaries, or parts of large files\)\./,
+	],
+	[
+		"pre-existing changes reviewed as the delta from a baseline",
+		/\*\*Pre-existing changes\.\*\* When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create` \(it records those changes without touching the working tree or the index\)\. Review each such file as the change from that baseline to the working tree, `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, instead of its layers above\./,
+	],
+	[
+		"never dropping a file the task changed",
+		/An empty baseline delta means the task never touched the file, so it is out of scope\. A file the task changed is never dropped from the review\./,
+	],
+	[
+		"failing early on a bad ref or an empty target, every layer included",
+		/confirm the fixed point resolves .* and the target is non-empty: for committed work a non-empty diff; for uncommitted work, any non-empty layer or a non-empty untracked list\./,
 	],
 	[
 		"the calling skills naming their fixed point",
@@ -197,6 +260,163 @@ describe("code-review content contract (not behavior proof)", () => {
 	});
 });
 
+/**
+ * Runs the git commands code-review and implement document against a
+ * disposable repository. This checks git's behavior for those exact commands;
+ * it is not evidence that a model runs them.
+ */
+describe("code-review's documented git commands on a disposable repo", () => {
+	const SKILL_PATHS = [CODE_REVIEW, "skills/mattpocock/implement/SKILL.md"];
+	/**
+	 * Every backticked `git <verb> <args>` command the skills document. A bare
+	 * `git <verb>` names a command (as the read-only rule's list of forbidden
+	 * verbs does) without documenting one to run.
+	 */
+	const documented = [
+		...new Set(
+			SKILL_PATHS.flatMap((path) =>
+				[...read(path).matchAll(/`(git [a-z-]+ [^`]+)`/g)].map(
+					([, command]) => command,
+				),
+			),
+		),
+	];
+	const scratch = mkdtempSync(join(tmpdir(), "pstack-code-review-git-"));
+	after(() => rmSync(scratch, { recursive: true, force: true }));
+	const repo = join(scratch, "repo");
+	const marker = join(scratch, "helper-ran");
+	const env = {
+		...process.env,
+		GIT_CONFIG_GLOBAL: "/dev/null",
+		GIT_CONFIG_NOSYSTEM: "1",
+		GIT_AUTHOR_NAME: "t",
+		GIT_AUTHOR_EMAIL: "t@example.invalid",
+		GIT_COMMITTER_NAME: "t",
+		GIT_COMMITTER_EMAIL: "t@example.invalid",
+	};
+	const git = (...args: string[]) =>
+		execFileSync("git", args, { cwd: repo, env, encoding: "utf8" });
+	/** A documented command with its placeholders filled, split into arguments. */
+	const argv = (command: string, values: Record<string, string>) =>
+		command
+			.replace(/<([a-z-]+)>/g, (_, name: string) => {
+				assert.ok(name in values, `${command}: no value for <${name}>`);
+				return values[name];
+			})
+			.split(" ")
+			.slice(1);
+
+	mkdirSync(repo);
+	git("init", "-q");
+	writeFileSync(join(repo, "f.txt"), "one\n");
+	writeFileSync(join(repo, "g.txt"), "keep\n");
+	git("add", ".");
+	git("commit", "-qm", "fixed point");
+	const fixed = git("rev-parse", "HEAD").trim();
+	// A helper that leaves a marker whenever git runs it, as a diff driver or textconv.
+	const helper = join(scratch, "helper.sh");
+	writeFileSync(
+		helper,
+		`#!/bin/sh\nprintf ran > '${marker}'\ncat "$1" 2>/dev/null\n`,
+	);
+	chmodSync(helper, 0o700);
+	git("config", "diff.external", helper);
+	git("config", "diff.probe.textconv", helper);
+	writeFileSync(join(repo, ".git/info/attributes"), "*.txt diff=probe\n");
+
+	it("puts --no-ext-diff --no-textconv on every documented git diff and git show", () => {
+		const diffs = documented.filter((command) =>
+			/^git (?:diff|show)\b/.test(command),
+		);
+		assert.ok(diffs.length >= 6, String(diffs.length));
+		for (const command of diffs)
+			assert.match(command, /^git (?:diff|show) --no-ext-diff --no-textconv\b/);
+	});
+
+	it("never fires a configured diff driver or textconv, which plain git diff does", () => {
+		writeFileSync(join(repo, "f.txt"), "one\ntwo\n");
+		// Control: the helper is live, so a missing flag would be caught.
+		git("diff", "HEAD");
+		assert.ok(existsSync(marker), "the probe helper never ran");
+		rmSync(marker);
+		const values = {
+			"fixed-point": fixed,
+			head: "HEAD",
+			base: fixed,
+			baseline: fixed,
+			path: "f.txt",
+		};
+		for (const command of documented.filter(
+			(entry) => entry !== "git stash create",
+		)) {
+			git(...argv(command, values));
+			assert.equal(existsSync(marker), false, `${command} ran a helper`);
+		}
+		git("checkout", "-q", "--", "f.txt");
+	});
+
+	it("shows a staged change the working tree reverts, which one net diff hides", () => {
+		const layer = (name: string) => {
+			const command = documented.find((entry) => entry === name);
+			assert.ok(command, name);
+			return git(...argv(command, { base: fixed }));
+		};
+		writeFileSync(join(repo, "f.txt"), "one\nSTAGED_BUG\n");
+		git("add", "f.txt");
+		writeFileSync(join(repo, "f.txt"), "one\n");
+		// The old single diff against the base shows nothing at all.
+		assert.equal(git("diff", "--no-ext-diff", "--no-textconv", fixed), "");
+		assert.match(
+			layer("git diff --no-ext-diff --no-textconv --cached"),
+			/\+STAGED_BUG/,
+		);
+		assert.match(layer("git diff --no-ext-diff --no-textconv"), /-STAGED_BUG/);
+		git("reset", "-q");
+	});
+
+	it("reviews a task's edit to an already-dirty file as the delta from a stash-create baseline", () => {
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\n");
+		const before = git("status", "--porcelain");
+		const baseline = git("stash", "create").trim();
+		assert.match(baseline, /^[0-9a-f]{40}$/);
+		// git stash create leaves the working tree and the index as they were.
+		assert.equal(git("status", "--porcelain"), before);
+		assert.equal(git("stash", "list"), "");
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\nTASK_EDIT\n");
+		const command = documented.find((entry) => entry.includes("<baseline>"));
+		assert.ok(command);
+		const delta = git(...argv(command, { baseline, path: "f.txt" }));
+		assert.match(delta, /\+TASK_EDIT/);
+		assert.doesNotMatch(delta, /\+USER_EDIT/);
+		// An untouched pre-existing change has an empty delta: out of scope.
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\n");
+		assert.equal(git(...argv(command, { baseline, path: "f.txt" })), "");
+		git("checkout", "-q", "--", "f.txt");
+	});
+
+	it("keeps an excluded credential path out of a layer's diff", () => {
+		writeFileSync(join(repo, "g.txt"), "keep\nchanged\n");
+		writeFileSync(join(repo, ".env"), "TOKEN=SYNTHETIC\n");
+		git("add", "-N", ".env");
+		const all = git("diff", "--no-ext-diff", "--no-textconv");
+		assert.match(all, /SYNTHETIC/);
+		const kept = git(
+			"diff",
+			"--no-ext-diff",
+			"--no-textconv",
+			"--",
+			".",
+			":(exclude).env",
+		);
+		assert.doesNotMatch(kept, /SYNTHETIC/);
+		assert.match(kept, /\+changed/);
+		assert.match(
+			flat(read(CODE_REVIEW)),
+			/with an exclude pathspec \(`-- \. ':\(exclude\)<path>'`\)/,
+		);
+	});
+});
+
 describe("implement, implement-spec and tdd find code-review in the pack", () => {
 	const IMPLEMENT = "skills/mattpocock/implement/SKILL.md";
 	const SPEC = "skills/mattpocock/implement-spec/SKILL.md";
@@ -234,8 +454,20 @@ describe("implement, implement-spec and tdd find code-review in the pack", () =>
 					/Then record where the work starts, for the review: the commit you start from \(`git rev-parse HEAD`\) and any files already uncommitted \(`git status --short`\)\./,
 				],
 				[
+					"a baseline for already-changed tracked files, without touching the tree",
+					/If any tracked file is already changed, record a baseline with `git stash create`: it saves those changes as an unreferenced commit and leaves the working tree and the index untouched\./,
+				],
+				[
+					"asking before modifying an already-untracked file",
+					/A file that was already untracked has no baseline, so its pre-existing content can't be told apart from yours: stop and ask the user before modifying one\./,
+				],
+				[
+					"never leaving a changed file out of the review",
+					/Never leave a file you changed out of the review\./,
+				],
+				[
 					"reviewing the uncommitted work before committing",
-					/Once done, load the `code-review` skill you found to review the work before committing it: its uncommitted target, with the starting commit as the fixed point, this run's ticket or spec as the spec source, and the files that were already uncommitted named as out of scope\./,
+					/Once done, load the `code-review` skill you found to review the work before committing it: its uncommitted target, with the starting commit as the fixed point, this run's ticket or spec as the spec source, and the baseline for the files that were already uncommitted, so their pre-existing changes are left out and yours are reviewed\./,
 				],
 				[
 					"the fail-closed stop when no code-review is found",
@@ -401,6 +633,10 @@ const PROTOTYPE_RULES: Rule[] = [
 		/The validated decision goes to the real build, never as prototype code: hand the chosen direction to whoever builds it .*, and the real build rewrites it properly/,
 	],
 	[
+		"lifting a pure module only in a separately authorized production change",
+		/Lifting a logic prototype's pure module into production happens only in that separately authorized production change, with its normal tests and review\./,
+	],
+	[
 		"the reply with evidence, and throwaway said plainly",
 		/## Reply The variants explored, the evidence .* tradeoffs, your recommendation, and the scratch path or the list of in-app files\. Say plainly that the prototype is throwaway\./,
 	],
@@ -412,6 +648,10 @@ const LOGIC_RULES: Rule[] = [
 		/Keep it pure: no DOM, no `document`, no button handlers reaching inside it\./,
 	],
 	[
+		"the module reaching production only through an authorized change",
+		/into the real module on its own, in a separately authorized production change with its normal tests and review\..*it reaches production only through a separately authorized change with its normal tests and review\./,
+	],
+	[
 		"the HTML file written in scratch",
 		/One file, plain HTML\/CSS\/JS, written in the scratch directory/,
 	],
@@ -421,7 +661,7 @@ const LOGIC_RULES: Rule[] = [
 	],
 	[
 		"the real build lifting the module, the shell staying with the prototype",
-		/the validated reducer \/ machine \/ function set is the decision the real build lifts into the real module; the HTML shell stays with the prototype \(in scratch, or on a throwaway branch once the user authorized preserving it\)/,
+		/the validated reducer \/ machine \/ function set is the decision the real build lifts into the real module, in its own authorized production change; the HTML shell stays with the prototype \(in scratch, or on a throwaway branch once the user authorized preserving it\)/,
 	],
 	["the UI route by name", /this is the wrong branch\. Use `UI\.md`\./],
 ];

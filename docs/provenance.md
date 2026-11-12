@@ -359,13 +359,23 @@ Issue #37 decides each pair of overlapping skills. Batch A implements decisions
   poteto-mode's review gates, which are unchanged. It keeps upstream's Standards
   and Spec reviewers, smell baseline, briefs and aggregation. It is read-only:
   it changes no file, index, branch or stash, pushes nothing and posts nothing
-  unless the user grants it. It reviews one of two targets. Committed work is
-  upstream's three-dot diff, against a named `<head>` such as `implement-spec`'s
-  integration branch, read from git without a checkout. Uncommitted work is the
-  working tree since the merge-base of the fixed point and `HEAD`: `git diff
-  <base>` covers commits plus staged and unstaged changes, and the untracked
-  files from `git ls-files --others --exclude-standard` are read in full.
-  `implement` records its starting commit and the files already uncommitted,
+  unless the user grants it. Every `git diff` and `git show` it documents
+  carries `--no-ext-diff --no-textconv`, so configured diff drivers and textconv
+  helpers never run (not a sandbox). It reviews one of two targets. Committed
+  work is upstream's three-dot diff, against a named `<head>` such as
+  `implement-spec`'s integration branch, read from git without a checkout.
+  Uncommitted work since the merge-base of the fixed point and `HEAD` is
+  reviewed as three labelled layers: commits since the base, the staged commit
+  candidate (`--cached`) and unstaged changes, because one net diff can hide a
+  staged change the working tree reverts. Paths are listed before any content
+  is read: likely credential files are never read or handed on (and are
+  excluded from every diff by pathspec), symlinks that resolve outside the
+  repository are not followed, binaries are skipped and large files bounded,
+  and the report names what was omitted. `implement` records its starting
+  commit and, when tracked files are already dirty, a `git stash create`
+  baseline (the tree and index stay untouched); code-review reviews those files
+  as the delta from that baseline, so a file the task changed is never dropped,
+  and `implement` asks before modifying a file that was already untracked. It
   then reviews its uncommitted work before it commits; `implement-spec` records
   the commit its integration branch starts from and reviews that branch as
   committed work. The two reviewers are bare pi-herdr-agents subagents with
@@ -378,7 +388,9 @@ Issue #37 decides each pair of overlapping skills. Batch A implements decisions
   branch, references, evidence rules, reply and handoff to Feature). Scratch is
   the default location; building inside the app needs the user's explicit
   scope; keeping, committing, pushing or pointing at a prototype each need
-  authorization, and prototype code never reaches the main branch. The playbook
+  authorization, and prototype code never reaches the main branch. A logic
+  prototype's pure module reaches production only in a separately authorized
+  production change with its normal tests and review. The playbook
   keeps its place in poteto-mode's routing and points at the skill
   (`w2.json` records the change and why the file is now under half its source).
   `wayfinder`'s Prototype tickets name the skill. The skill keeps Matt's model
@@ -402,7 +414,11 @@ when either source changes. ask-matt's `SKILL.md` is the primary source of
 `flows.md` and merged into poteto-help's `SKILL.md`; the mattpocock accounting
 counts each Matt file once, by the file it is the primary source of.
 `test/overlap-skills.test.ts` holds the content contracts (each rule is shown
-to fail when its wording is removed), the checks that the dependents find these
+to fail when its wording is removed), a disposable-repo run of every git
+command code-review and `implement` document (no configured helper fires, the
+staged layer shows a change the working tree reverts, the baseline delta keeps
+a task's edit to an already-dirty file and drops the untouched user edit, an
+excluded credential path stays out of a diff), the checks that the dependents find these
 skills in the pack, the flow map's dependency closure and the real-Pi loader
 test. They are content and loader tests, not evidence that a live model follows
 the skills.

@@ -53,7 +53,7 @@ For a visual decision, screenshot each variant and drive the interaction with th
 
 ## Capture it when done
 
-Capture the answer: the question, the verdict and the evidence, in your reply. The validated decision goes to the real build, never as prototype code: hand the chosen direction to whoever builds it (under poteto-mode, the Feature playbook; otherwise the ticket, or `/skill:to-spec`), and the real build rewrites it properly, lifting a logic prototype's pure module if it fits.
+Capture the answer: the question, the verdict and the evidence, in your reply. The validated decision goes to the real build, never as prototype code: hand the chosen direction to whoever builds it (under poteto-mode, the Feature playbook; otherwise the ticket, or `/skill:to-spec`), and the real build rewrites it properly. Lifting a logic prototype's pure module into production happens only in that separately authorized production change, with its normal tests and review.
 
 The prototype itself is a **primary source**, so by default it stays where it was built: give the user its scratch path, or list the in-app files it added or changed and leave them uncommitted. Preserving it past the task needs the user's authorization, and each of these effects needs its own: committing it (Matt's practice is a throwaway `prototype/<name>` branch, out of main), pushing that branch, and leaving a context pointer to it on an issue or pull request, in the repo the tracker doc names. Without that, never commit prototype code, and never let it reach the main branch. Removing in-app prototype files, once the answer is captured, happens when the user agrees.
 

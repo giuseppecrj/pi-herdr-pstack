@@ -22,12 +22,29 @@ The issue tracker should have been provided to you: the `## Agent skills` sectio
 
 Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main`, `HEAD~5`, etc.). If they didn't specify one, ask for it. A skill that loads this one names its own: `implement` passes the commit it started from, and `implement-spec` passes the commit its integration branch was created from.
 
+**Run git without helpers.** Every `git diff` and `git show` here, in your own commands and in each reviewer's brief, carries `--no-ext-diff --no-textconv`, so a diff driver or text converter configured in the repo or the user's git config never runs. These flags stop git from running configured helpers; they are not a sandbox.
+
 Then pick the **target**, the work under review:
 
-- **Committed work** (a branch, a PR, "review since X"): the commits on `<head>` since the fixed point. `<head>` is `HEAD` unless the caller names a branch, as `implement-spec` names its integration branch. Capture the diff command once: `git diff <fixed-point>...<head>` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..<head> --oneline`. Review a branch that isn't checked out from git (`git show <head>:<path>`), never by checking it out. If the working tree also has uncommitted changes, say they are not part of this review.
-- **Uncommitted work** (work in progress, or a caller that reviews before committing, as `implement` does): everything in this checkout's working tree since the fixed point, committed or not. Resolve the base once: `git merge-base <fixed-point> HEAD`. The diff command is `git diff <base>`, which covers commits since the base plus staged and unstaged changes, and `git log <base>..HEAD --oneline` lists any commits. `git diff` leaves out untracked files, so list them with `git ls-files --others --exclude-standard`; each reviewer reads every listed file in full as new code. When the caller names files that were already changed before its work began, the reviewers treat them as out of scope.
+- **Committed work** (a branch, a PR, "review since X"): the commits on `<head>` since the fixed point. `<head>` is `HEAD` unless the caller names a branch, as `implement-spec` names its integration branch. Capture the diff command once: `git diff --no-ext-diff --no-textconv <fixed-point>...<head>` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..<head> --oneline`. Review a branch that isn't checked out from git (`git show --no-ext-diff --no-textconv <head>:<path>`), never by checking it out. If the working tree also has uncommitted changes, say they are not part of this review.
+- **Uncommitted work** (work in progress, or a caller that reviews before committing, as `implement` does): everything in this checkout since the fixed point, committed or not. Resolve the base once: `git merge-base <fixed-point> HEAD`. Review three layers separately, because one net diff can hide a staged change that the working tree reverts:
+  - **Commits since the base**: `git diff --no-ext-diff --no-textconv <base> HEAD`, with `git log <base>..HEAD --oneline` for the list.
+  - **Staged, the commit candidate**: `git diff --no-ext-diff --no-textconv --cached`, the index against `HEAD`. This is what a commit would record now.
+  - **Unstaged**: `git diff --no-ext-diff --no-textconv`, the working tree against the index.
 
-Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`, and `<head>` too when one is named) and the target is non-empty: a non-empty diff, or for uncommitted work, a non-empty diff or untracked list. A bad ref or empty target should fail here, not inside two parallel subagents.
+  Label each layer in the briefs. The final working tree is all three together; a finding in the staged layer that the unstaged layer undoes still matters, because a commit of the index would carry it.
+
+**Choose what the reviewers may read.** List paths before reading any content: `git diff --no-ext-diff --no-textconv --name-status` for each layer, and the untracked files with `git ls-files --others --exclude-standard`. Check each untracked path with `ls -l` before opening it. Then:
+
+- **Never read or hand on likely credential files**, tracked or untracked: `.env` and `.env.*`, `*.pem`, `*.key`, `id_*`, `credentials*`, and names containing `secret` or `token`. Keep them out of every diff the reviewers run with an exclude pathspec (`-- . ':(exclude)<path>'`) and name each one as skipped.
+- **Never follow a symlink that resolves outside the repository**; review a symlink as its target path (`readlink <path>`), not as the contents it points at.
+- **Read only regular, in-scope text files.** Skip binaries, and for a large file (over 2,000 lines) read only the parts the review needs and say so.
+- Hand the reviewers the list of untracked files they may read in full as new code, and nothing else.
+- **Tell the user which files were omitted and why**, in the final report.
+
+**Pre-existing changes.** When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create` (it records those changes without touching the working tree or the index). Review each such file as the change from that baseline to the working tree, `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, instead of its layers above. An empty baseline delta means the task never touched the file, so it is out of scope. A file the task changed is never dropped from the review.
+
+Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`, and `<head>` too when one is named) and the target is non-empty: for committed work a non-empty diff; for uncommitted work, any non-empty layer or a non-empty untracked list. A bad ref or empty target should fail here, not inside two parallel subagents.
 
 ### 2. Identify the spec source
 
@@ -69,13 +86,13 @@ Launch both in the same turn with pi-herdr-agents' `subagent` tool: `fork: false
 
 **Standards subagent prompt** should include:
 
-- The full diff command and commit list, and for uncommitted work the untracked files to read and any out-of-scope files.
+- The full diff commands (each with `--no-ext-diff --no-textconv`) and commit list; for uncommitted work, each labelled layer, the untracked files it may read, any baseline and out-of-scope files, and the files skipped as likely credentials, outside symlinks, binaries or too large, which it must not open.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the subagent has no other access to it).
 - The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
 
 **Spec subagent prompt** should include:
 
-- The diff command and commit list, and for uncommitted work the untracked files to read and any out-of-scope files.
+- The diff commands (each with `--no-ext-diff --no-textconv`) and commit list; for uncommitted work, each labelled layer, the untracked files it may read, any baseline and out-of-scope files, and the files skipped as likely credentials, outside symlinks, binaries or too large, which it must not open.
 - The path or fetched contents of the spec.
 - The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
 
@@ -85,7 +102,7 @@ If the spec is missing, skip the Spec subagent and note this in the final report
 
 Present the two reports under `## Standards` and `## Spec` headings, verbatim or lightly cleaned. Do **not** merge or rerank findings, because the two axes are deliberately separate (see _Why two axes_).
 
-End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
+Then list the files no reviewer read, and why (likely credentials, outside symlinks, binaries, or parts of large files). End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes: that's the reranking the separation exists to prevent.
 
 ## Why two axes
 
