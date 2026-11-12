@@ -216,6 +216,26 @@ describe("setup-repo content", () => {
 				/Infer the repo from `git remote -v` only when setting this file up, and have the user confirm it/,
 			);
 		}
+		// Every issue, pr/mr and label example names the repo (pre-release C5).
+		for (const [name, cli, nouns] of [
+			["github", "gh", "issue|pr|label"],
+			["gitlab", "glab", "issue|mr|label"],
+		]) {
+			const examples = [
+				...read(`${SKILL_DIR}/issue-tracker-${name}.md`).matchAll(
+					new RegExp(`\`${cli} (?:${nouns}) [a-z-]+[^\`]*\``, "g"),
+				),
+			].map(([span]) => span);
+			assert.ok(examples.length >= 20, `${name}: ${examples.length}`);
+			for (const example of examples)
+				assert.match(
+					example,
+					new RegExp(
+						`^\`${cli} (?:${nouns}) [a-z-]+ -R <owner>/<repo>(?: |\`)`,
+					),
+					`${name}: ${example}`,
+				);
+		}
 		// gh and glab reject -R on api and repo view, and glab label create takes --name.
 		for (const name of ["github", "gitlab"]) {
 			const template = read(`${SKILL_DIR}/issue-tracker-${name}.md`);

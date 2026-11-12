@@ -356,7 +356,7 @@
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-github.md",
-			"sha256": "1288d620a26ce06f75b6f3ee9a51c52089892eb9de46b088d873e5619a15ed89",
+			"sha256": "d6572ee16f2b74c1d906804a59d2938bc00aa6b539ed78abb891bde4799f10de",
 			"status": "adapted",
 			"sources": [
 				{
@@ -367,11 +367,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Never-file rule names both upstreams (cursor/plugins and mattpocock/skills) and drops upstream's 'unless the user owns it'. The repo is named once as <owner>/<repo> (filled in from the confirmed tracker repo) and every gh issue, gh pr and gh label command passes -R <owner>/<repo>; gh api paths name it instead of {owner}/{repo}; the repo is no longer inferred from the remotes after setup. /triage and /wayfinder became /skill:triage and /skill:wayfinder. This repo's docs/agents/issue-tracker.md adds only its own repository name on top of the same edits."
+			"explanation": "Never-file rule names both upstreams (cursor/plugins and mattpocock/skills) and drops upstream's 'unless the user owns it'. The repo is named once as <owner>/<repo> (filled in from the confirmed tracker repo) and every gh issue, gh pr and gh label command passes -R <owner>/<repo>; gh api paths name it instead of {owner}/{repo}; the repo is no longer inferred from the remotes after setup. /triage and /wayfinder became /skill:triage and /skill:wayfinder. This repo's docs/agents/issue-tracker.md adds only its own repository name on top of the same edits. Pre-release review C5: every gh issue/pr/label (or glab issue/mr/label) example carries -R <owner>/<repo> right after its subcommand, so a command copied from the doc never falls back to the CLI's implicit repo; nothing else changed."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-gitlab.md",
-			"sha256": "0368c6f8c9889c550bbc80532e245579fbb85d341293df979613c7d1658f2844",
+			"sha256": "bd47e149274779cf32f7fb837df7f9478a5dd4aa9db8ccee1f67597416e662d4",
 			"status": "adapted",
 			"sources": [
 				{
@@ -382,7 +382,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/triage and /wayfinder became /skill:triage and /skill:wayfinder. The project is named once as <owner>/<repo> (filled in from the confirmed tracker repo); every glab issue, glab mr and glab label command passes -R <owner>/<repo> and glab api paths use the URL-encoded project instead of projects/:id; the repo is no longer inferred from the remotes after setup."
+			"explanation": "/triage and /wayfinder became /skill:triage and /skill:wayfinder. The project is named once as <owner>/<repo> (filled in from the confirmed tracker repo); every glab issue, glab mr and glab label command passes -R <owner>/<repo> and glab api paths use the URL-encoded project instead of projects/:id; the repo is no longer inferred from the remotes after setup. Pre-release review C5: every gh issue/pr/label (or glab issue/mr/label) example carries -R <owner>/<repo> right after its subcommand, so a command copied from the doc never falls back to the CLI's implicit repo; nothing else changed."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-local.md",
