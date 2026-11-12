@@ -1526,15 +1526,25 @@ const HITL_RULES: Rule[] = [
 	],
 	// Upstream's helpers and markers, unchanged.
 	["the step helper", lit("step() {")],
-	["the capture helper", lit(`printf -v "$var" '%s' "$answer"`)],
+	[
+		"the capture helper",
+		lit(`printf -v "$_hitl_var" '%s' "$_hitl_answer"`),
+	],
 	["the edit markers", /# --- edit below -+ .* # --- edit above -+/],
 	["the captured block", lit("printf '\\n--- Captured ---\\n'")],
 	// Pack policy (#37 review): the block prints every capture, whatever its name.
-	["capture recording each name", lit('CAPTURED+=("$var")')],
 	[
-		"a footer that prints every captured name",
+		"capture recording each name and its value",
+		lit('CAPTURED+=("$_hitl_var") CAPTURED_VALUES+=("$_hitl_answer")'),
+	],
+	[
+		"capture refusing a name its own locals use",
+		lit("_hitl_* | CAPTURED | CAPTURED_VALUES |"),
+	],
+	[
+		"a footer that prints every captured name from the stored values",
 		lit(
-			`for var in \${CAPTURED[@]+"\${CAPTURED[@]}"}; do printf '%s=%s\\n' "$var" "\${!var}" done`,
+			`printf '%s=%s\\n' "\${CAPTURED[$_hitl_i]}" "\${CAPTURED_VALUES[$_hitl_i]}"`,
 		),
 	],
 	[
@@ -1634,7 +1644,9 @@ describe("diagnosing-bugs content contract (not behavior proof)", () => {
 		);
 		for (const name of expanded)
 			assert.ok(
-				["var", "question", "answer", "CAPTURED", "_"].includes(name),
+				name === "_" ||
+					name.startsWith("_hitl_") ||
+					name.startsWith("CAPTURED"),
 				`the fixed code expands ${name}`,
 			);
 		const scratch = mkdtempSync(join(tmpdir(), "pstack-hitl-"));
@@ -1670,6 +1682,37 @@ describe("diagnosing-bugs content contract (not behavior proof)", () => {
 					stdio: ["pipe", "pipe", "ignore"],
 				}),
 				/--- Captured ---\n$/,
+			);
+			// Names a helper might use for its own locals still print their values.
+			const shadow = join(scratch, "shadow.sh");
+			writeFileSync(
+				shadow,
+				customized(
+					[
+						'capture answer "What happened?"',
+						'capture var "v?"',
+						'capture question "q?"',
+					].join("\n"),
+				),
+			);
+			assert.match(
+				execFileSync("bash", [shadow], {
+					input: "crash\nV1\nQ1\n",
+					encoding: "utf8",
+					stdio: ["pipe", "pipe", "ignore"],
+				}),
+				/--- Captured ---\nanswer=crash\nvar=V1\nquestion=Q1\n$/,
+			);
+			// A name the helper reserves is refused, not silently lost.
+			const reserved = join(scratch, "reserved.sh");
+			writeFileSync(reserved, customized('capture _hitl_answer "x?"'));
+			assert.throws(
+				() =>
+					execFileSync("bash", [reserved], {
+						input: "x\n",
+						stdio: ["pipe", "pipe", "ignore"],
+					}),
+				(error: { status?: number }) => error.status === 2,
 			);
 		} finally {
 			rmSync(scratch, { recursive: true, force: true });

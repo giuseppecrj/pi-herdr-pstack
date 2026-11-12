@@ -23,8 +23,10 @@
 
 set -euo pipefail
 
-# The names `capture` filled, in order, for the Captured block.
+# The names `capture` filled and their values, in order, for the Captured block.
+# Values are kept here too, so a VAR named like a helper's local still prints.
 CAPTURED=()
+CAPTURED_VALUES=()
 
 step() {
   printf '\n>>> %s\n' "$1"
@@ -32,11 +34,18 @@ step() {
 }
 
 capture() {
-  local var="$1" question="$2" answer
-  printf '\n>>> %s\n' "$question"
-  read -r -p "    > " answer
-  printf -v "$var" '%s' "$answer"
-  CAPTURED+=("$var")
+  local _hitl_var="$1" _hitl_question="$2" _hitl_answer
+  case "$_hitl_var" in
+    _hitl_* | CAPTURED | CAPTURED_VALUES | [!A-Za-z_]* | *[!A-Za-z0-9_]*)
+      printf 'capture: %s is not a usable variable name\n' "$_hitl_var" >&2
+      exit 2
+      ;;
+  esac
+  printf '\n>>> %s\n' "$_hitl_question"
+  read -r -p "    > " _hitl_answer
+  printf -v "$_hitl_var" '%s' "$_hitl_answer"
+  CAPTURED+=("$_hitl_var")
+  CAPTURED_VALUES+=("$_hitl_answer")
 }
 
 # --- edit below ---------------------------------------------------------
@@ -51,6 +60,8 @@ capture ERROR_MSG "Paste the error message (or 'none'):"
 
 printf '\n--- Captured ---\n'
 # The +-expansion keeps an empty list safe under `set -u` in bash 3.2 (macOS).
-for var in ${CAPTURED[@]+"${CAPTURED[@]}"}; do
-  printf '%s=%s\n' "$var" "${!var}"
+_hitl_i=0
+while [ "$_hitl_i" -lt "${#CAPTURED[@]}" ]; do
+  printf '%s=%s\n' "${CAPTURED[$_hitl_i]}" "${CAPTURED_VALUES[$_hitl_i]}"
+  _hitl_i=$((_hitl_i + 1))
 done

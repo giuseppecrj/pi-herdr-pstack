@@ -86,7 +86,7 @@
 		},
 		{
 			"path": "skills/mattpocock/diagnosing-bugs/scripts/hitl-loop.template.sh",
-			"sha256": "a88155acfe88b7ce2036a11e6baafb2ff014b70c692da528d1f244d19b214b24",
+			"sha256": "ae4af81ee5207f64f336add59a1d8d3ce2ec008919bf4b323d912c2244221bb4",
 			"status": "adapted",
 			"sources": [
 				{
