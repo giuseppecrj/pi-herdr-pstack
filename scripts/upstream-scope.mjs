@@ -2,14 +2,14 @@
 // Regenerates one upstream's pin record in test/fixtures/upstream-scope.json
 // at that record's own commit.
 // Usage: npm run fixtures:upstream-scope -- <upstream> [<checkout>]
-// <upstream> names a record (for example cursor); <checkout> defaults to
+// <upstream> names a record (cursor or mattpocock); <checkout> defaults to
 // PSTACK_<UPSTREAM>_SOURCE. The older single-argument form
 // `npm run fixtures:upstream-scope -- <checkout>` still means cursor.
 // The checkout must hold the commit's blobs (a full clone): lazy fetching is
 // disabled so a partial clone fails instead of reaching the network.
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -66,11 +66,14 @@ const vanished = classified.filter((path) => !topLevel.includes(path));
 const roots = scope.inScope
 	.filter((path) => path !== skillsRoot)
 	.map((path) => posix.join(root, path));
-const upstream = lines(
-	git("ls-tree", "-r", "--name-only", commit, "--", ...roots),
-)
-	.map(relative)
-	.toSorted();
+// With no root besides skills there is nothing to list: an empty pathspec
+// would list the whole repository.
+const upstream =
+	roots.length === 0
+		? []
+		: lines(git("ls-tree", "-r", "--name-only", commit, "--", ...roots))
+				.map(relative)
+				.toSorted();
 const previous = new Map(scope.files.map((file) => [file.path, file]));
 const added = [];
 const changed = [];
@@ -85,6 +88,52 @@ scope.files = upstream.map((path) => {
 	if (old.sha256 !== sha256) changed.push(`${path} (${old.status})`);
 	return { ...old, sha256 };
 });
+
+// The skills root is accounted for by the inventory and the skill-provenance
+// fixtures, which a person maintains: report what a pin move changed there and
+// never rewrite it.
+const FIXTURES = "test/fixtures/skill-provenance";
+const recorded = new Map();
+for (const file of readdirSync(
+	join(PACK_ROOT, FIXTURE, "..", "skill-provenance"),
+)) {
+	const {
+		files,
+		planned = [],
+		excluded = [],
+	} = JSON.parse(readFileSync(join(PACK_ROOT, FIXTURES, file), "utf8"));
+	for (const use of [
+		...files.flatMap(({ sources }) => sources),
+		...planned,
+		...excluded,
+	])
+		if (use.source === name) recorded.set(use.path, use.sha256);
+}
+const accounted = new Set([
+	...recorded.keys(),
+	...inventory.skills.flatMap(({ sourceFiles }) => sourceFiles[name] ?? []),
+]);
+const skillFiles = lines(
+	git(
+		"ls-tree",
+		"-r",
+		"--name-only",
+		commit,
+		"--",
+		posix.join(root, skillsRoot),
+	),
+).map((path) => posix.relative(posix.join(root, skillsRoot), path));
+const skillsNew = skillFiles.filter((path) => !accounted.has(path));
+// Only provenance entries are hash-checked against the pin, so only they can
+// be reported as removed; a path outside the skills root (../agents/...) is
+// accounted for under files.
+const skillsRemoved = [...recorded.keys()].filter(
+	(path) => !path.startsWith("../") && !skillFiles.includes(path),
+);
+const skillsChanged = skillFiles
+	.filter((path) => recorded.has(path))
+	.filter((path) => hash(posix.join(skillsRoot, path)) !== recorded.get(path))
+	.map((path) => `${path} (recorded provenance hash differs)`);
 
 // A watched hash is never rewritten here: a person re-checks what depends on
 // it (THIRD_PARTY_NOTICES.md for LICENSE) and updates it by hand.
@@ -113,11 +162,28 @@ const report = [
 	["unclassified top-level entry", unclassified],
 	["classified top-level entry missing upstream", vanished],
 	["watched file changed (hash not updated)", watchChanged],
+	[`new ${skillsRoot}/ file with no inventory or provenance entry`, skillsNew],
+	[
+		`${skillsRoot}/ file in the inventory or provenance but removed upstream`,
+		skillsRemoved,
+	],
+	[
+		`${skillsRoot}/ file changed since its recorded provenance hash`,
+		skillsChanged,
+	],
 ];
 console.log(`${FIXTURE} ${name} at ${commit}`);
 for (const [label, paths] of report)
 	console.log(
 		`${label}: ${paths.length === 0 ? "none" : `\n  ${paths.join("\n  ")}`}`,
 	);
-if (unclassified.length + vanished.length + watchChanged.length > 0)
+if (
+	unclassified.length +
+		vanished.length +
+		watchChanged.length +
+		skillsNew.length +
+		skillsRemoved.length +
+		skillsChanged.length >
+	0
+)
 	process.exitCode = 1;
