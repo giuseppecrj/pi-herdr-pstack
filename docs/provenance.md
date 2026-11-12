@@ -89,9 +89,10 @@ The `mattpocock` record in `test/fixtures/upstream-scope.json` maps
 **Scope choice.** The whole upstream `skills/` tree is in scope, not only the
 skills this pack ships, so the weekly sync sees every new, changed or removed
 upstream file. All 114 files at the pin are accounted for in
-`test/fixtures/skill-provenance/mattpocock.json`: 6 adapted, 46 planned (owned by
-a later issue) and 62 excluded (with a reason). `files` records each adapted
-file's source path, git blob, SHA-256 and what changed; `planned` and
+`test/fixtures/skill-provenance/mattpocock.json`: 20 shipped (18 adapted, 2
+copied byte for byte), 32 planned (owned by a later issue) and 62 excluded (with
+a reason). `files` records each shipped file's source path, git blob, SHA-256
+and what changed; `planned` and
 `excluded` record the same hashes. With a checkout, `npm test` reproduces every
 hash and blob and fails on any upstream file the fixture lacks; without one it
 checks the fixtures against each other and the shipped tree. The record's root
@@ -112,7 +113,7 @@ and stay in the mimir list, where they exist.
 
 | Upstream path | Status at the pin |
 | `skills/engineering/setup-matt-pocock-skills` | adapted: `skills/mattpocock/setup-repo/` (SKILL.md and the five seed templates, issue #32). Its Codex-only `agents/openai.yaml` is excluded. |
-| `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `grill-me`, `grilling` | planned: #33 |
+| `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `grill-me`, `grilling` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #33); `ADR-FORMAT.md` and `GLOSSARY-FORMAT.md` are byte-identical copies. Each Codex-only `agents/openai.yaml` is excluded. |
 | `research`, `handoff`, `to-questionnaire`, `wizard`, `codebase-design`, `improve-codebase-architecture`, `pr` | planned: #34 |
 | `tdd`, `teach` | planned: #36, merged with pstack's skills of the same name |
 | `ask-matt`, `code-review`, `diagnosing-bugs`, `prototype`, `retro`, `writing-for-agents`, `in-progress/chief-of-staff` | planned: #37, one pair at a time |
@@ -137,8 +138,46 @@ authorizes a command. These are content checks on the skill text; they do not
 show that a live model follows it. The seed templates carry the same adaptations as this repository's
 own `docs/agents/*.md`; `test/mattpocock-skills.test.ts` compares them. It names
 `to-tickets`, `triage`, `to-spec`, `wayfinder`, `domain-modeling`,
-`grill-with-docs` and `improve-codebase-architecture`, which land in #33 and
-#34.
+`grill-with-docs` and `improve-codebase-architecture`; all but the last ship
+with #33, and `improve-codebase-architecture` lands in #34. With `triage` now in
+the pack, setup-repo's triage-label section runs.
+
+The spec, ticket and triage flow (#33) adapts ten more skills the same way:
+upstream's wording, process and `disable-model-invocation` values stay, and
+only what Pi and pi-herdr-agents require changes. Each file's provenance entry
+says what changed. In summary:
+
+- Pi has no Skill tool. A skill that loads another reads its `SKILL.md` by a
+  backticked path relative to its own directory (`../grilling/SKILL.md`,
+  `../../pstack/tdd/SKILL.md`), which `test/skill-tree.test.ts` resolves.
+  `grilling` and `domain-modeling` stay model-invocable, as upstream has them,
+  so Pi lists them for the model; the other eight load only through
+  `/skill:<name>`.
+- Slash commands use Pi's `/skill:<name>` syntax, and
+  `/setup-matt-pocock-skills` became `/skill:setup-repo`.
+- Every skill that reads or writes the tracker names the configured tracker doc
+  (`docs/agents/issue-tracker.md`, from the `## Agent skills` section) and runs
+  each command as that doc writes it, with its `-R <owner>/<repo>`, never the
+  CLI's implicit default repo. Skills that apply labels ask the user before
+  creating one the tracker lacks.
+- Sub-agents and background agents became pi-herdr-agents `subagent` launches
+  with `fork: false`, an explicit `model` (`task:recon` or `task:coding`) and
+  `thinking`, and results that arrive on their own, never polled.
+  `implement-spec` gives implementers a `worktree` based on the integration
+  branch, keeps the merger and review fixes in the current checkout one at a
+  time, and removes worktrees with `worktree_remove` only after the user
+  approves the list. A child cannot see skills that disable model invocation,
+  so its task carries the absolute path of the skill it must load.
+- `implement` and `implement-spec` load pstack's `tdd`, the pack's only `tdd`
+  until #36 merges Matt's. `code-review` (#37), `research` (#34) and
+  `prototype` (#37) are not in the pack yet: the skills look for them and, when
+  one is missing, tell the user instead of standing in for it.
+- Relative Markdown links became backticked file names or italic section names,
+  and `triage/OUT-OF-SCOPE.md`'s example fence widened to four backticks so its
+  nested code block no longer breaks the file.
+
+These are content and loader checks (`test/mattpocock-skills.test.ts`,
+`test/rpc.test.ts`); they do not show that a live model follows the skills.
 
 ## Wave 1: moved role and package files
 

@@ -115,7 +115,11 @@ SOFTWARE.
 [mattpocock/skills](https://github.com/mattpocock/skills) at commit
 `5863806dd4e15c63174bee4e7515a4256792ecfa`, path `skills`. Today that is
 `skills/mattpocock/setup-repo/`, adapted from
-`skills/engineering/setup-matt-pocock-skills/`. The upstream `LICENSE`
+`skills/engineering/setup-matt-pocock-skills/`, and `domain-modeling`,
+`grill-me`, `grill-with-docs`, `grilling`, `implement`, `implement-spec`,
+`to-spec`, `to-tickets`, `triage` and `wayfinder`, adapted from the
+same-named skills under `skills/engineering/` and `skills/productivity/`. The
+upstream `LICENSE`
 (sha256 `0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5`)
 is MIT with this notice:
 

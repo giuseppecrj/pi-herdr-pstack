@@ -1,6 +1,6 @@
 # pi-herdr-pstack
 
-pstack methodology for [Pi](https://pi.dev), with Matt Pocock's repo setup skill: 58 skills (57 from pstack, including `poteto-mode` with its 23 playbooks and optional `statechart`, plus `setup-repo`), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
+pstack methodology for [Pi](https://pi.dev), with Matt Pocock's repo setup and spec, ticket and triage skills: 68 skills (57 from pstack, including `poteto-mode` with its 23 playbooks and optional `statechart`, plus 11 from Matt Pocock's skills), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
 
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs children in. This package supplies methodology only. It has no child runner, scheduler, model store, package installer or shell-permission engine of its own, and it ships no named roles.
 
@@ -84,6 +84,7 @@ Skills keep unprefixed names. They are grouped in folders by upstream: `skills/p
 | Verification | `create-verification-skill`, `maintain-verification-skill`, `create-formal-verification-skill`, `maintain-formal-verification-skill`, `statechart` (optional; pack `tla-ts`, no Java) | Generate and maintain a project-local `.pi/skills/verify-*` harness that drives the real app, a formal-verification skill for properties tests rarely reach, or draw a Mermaid statechart from a TLA+ model. |
 | Writing | `unslop`, `technical-writing`, `no-comments`, `bro` | AI-tell cleanup, documentation standards, comment removal through a bare delegate, plain-words recap. |
 | Repo setup | `setup-repo` | `/skill:setup-repo` configures a repo's issue tracker (GitHub, GitLab, local markdown or other), triage labels and domain docs. It writes `docs/agents/*.md` and an `## Agent skills` pointer section into the existing `AGENTS.md` (or `CLAUDE.md`), never into either upstream's tracker, and asks before creating labels, remotes or files. Adapted from Matt Pocock's `setup-matt-pocock-skills`. |
+| Spec, tickets and triage | `grill-me`, `grilling`, `grill-with-docs`, `domain-modeling`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `implement`, `implement-spec` | Interview a plan into shape while the glossary and ADRs are updated, publish a spec, break it into tracer-bullet tickets with native blocking links, triage issues through the five roles, chart work too large for one session as a map of decision tickets, and implement a ticket or a whole spec through `subagent` children. They use the tracker, labels and domain docs `setup-repo` configured, and pass its `-R <owner>/<repo>` to every tracker command. `grilling` and `domain-modeling` are model-invocable, as upstream has them; the rest run through `/skill:<name>`. Adapted from Matt Pocock's skills. |
 | Tooling | `make-bot-ui` | A loopback-only local page whose server starts one `pi -p` run per request. Exposure and installs need authorization. |
 | Principles | 24 `principle-*` skills | One rule each, cited by `poteto-mode`, which keeps a summary of each. |
 
@@ -95,6 +96,7 @@ Pstack registers no role directory and depends on neither pi-herdr-roles nor ano
 
 - `poteto-mode` omits `agent` on each call and passes a bounded reference prompt (implementer, investigator, reviewer or verifier) as `systemPrompt`, with explicit `model`, `thinking`, `fork` and, for parallel writers, `worktree`.
 - `/skill:no-comments` passes its comment-sicko prompt (under `skills/pstack/no-comments/references/`) as `systemPrompt` with `tools: "read, bash, edit"`.
+- Matt Pocock's `grilling`, `wayfinder` and `implement-spec` launch bare `subagent` children with `fork: false` and an explicit `model` (`task:recon` or `task:coding`) and `thinking`; their briefs are the task itself. `implement-spec` removes implementer worktrees only after the user approves the list.
 
 ## Workflow limitations
 
@@ -106,6 +108,7 @@ Several poteto-mode workflows are scoped down for Pi:
 - Orchestrate is a depth-1 single-session coordinator with a hand-kept store, not an unattended or multi-day runner.
 - Worktree cleanup inventories with `worktree_list` and removes each path only on its own authorization.
 - Nothing in pstack pushes, opens or merges PRs, or removes worktrees without explicit authorization.
+- Matt Pocock's skills keep upstream's publishing steps, and run only when you invoke them with `/skill:<name>`: `implement-spec` opens a draft PR when the tracker closes work through PRs or you ask for one, and `wayfinder`'s research children push throwaway `research/<name>` branches without opening a PR.
 
 Runtime checks use deterministic providers; they do not establish that a live model follows the skills. These workflows have not been evaluated with live models.
 
