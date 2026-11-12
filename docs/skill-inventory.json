@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 68,
+  "expectedSkillCount": 75,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -112,6 +112,21 @@
         ],
         "cursor": [
           "bro/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "codebase-design",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/codebase-design/DEEPENING.md",
+          "engineering/codebase-design/DESIGN-IT-TWICE.md",
+          "engineering/codebase-design/SKILL.md",
+          "engineering/codebase-design/agents/openai.yaml"
         ]
       }
     },
@@ -233,6 +248,19 @@
       }
     },
     {
+      "name": "handoff",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "productivity/handoff/SKILL.md",
+          "productivity/handoff/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "how",
       "folder": "skills/pstack",
       "wave": "W4-A",
@@ -274,6 +302,20 @@
         "mattpocock": [
           "engineering/implement-spec/SKILL.md",
           "engineering/implement-spec/agents/openai.yaml"
+        ]
+      }
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/improve-codebase-architecture/HTML-REPORT.md",
+          "engineering/improve-codebase-architecture/SKILL.md",
+          "engineering/improve-codebase-architecture/agents/openai.yaml"
         ]
       }
     },
@@ -481,6 +523,20 @@
           "poteto-mode/scripts/watch-pr/types.ts",
           "poteto-mode/scripts/watch-pr/watch-pr",
           "poteto-mode/scripts/worktree-audit.sh"
+        ]
+      }
+    },
+    {
+      "name": "pr",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/pr/CREDITS.md",
+          "engineering/pr/SKILL.md",
+          "engineering/pr/agents/openai.yaml"
         ]
       }
     },
@@ -883,6 +939,19 @@
       }
     },
     {
+      "name": "research",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/research/SKILL.md",
+          "engineering/research/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "setup-pstack",
       "folder": "skills/pstack",
       "wave": "W2",
@@ -1044,6 +1113,19 @@
       }
     },
     {
+      "name": "to-questionnaire",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "productivity/to-questionnaire/SKILL.md",
+          "productivity/to-questionnaire/agents/openai.yaml"
+        ]
+      }
+    },
+    {
       "name": "to-spec",
       "folder": "skills/mattpocock",
       "wave": "V2",
@@ -1165,6 +1247,20 @@
           "why/references/sources/sentry.md",
           "why/references/sources/slack.md",
           "why/references/synthesizer-prompt.md"
+        ]
+      }
+    },
+    {
+      "name": "wizard",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/wizard/SKILL.md",
+          "engineering/wizard/agents/openai.yaml",
+          "engineering/wizard/template.sh"
         ]
       }
     }

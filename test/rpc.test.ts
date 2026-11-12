@@ -115,10 +115,95 @@ describe("setup-repo from the mattpocock folder", () => {
 	});
 });
 
-// The spec, ticket and triage flow (#33). Loader and expansion tests with the
-// faux provider; not evidence of live-model compliance.
-describe("spec, ticket and triage flow from the mattpocock folder", () => {
-	const FLOW = [
+/**
+ * Loader and expansion tests for one group of skills/mattpocock skills, with
+ * the faux provider; not evidence of live-model compliance. `modelInvoked`
+ * lists the skills upstream leaves model-invocable; the rest are /skill: only.
+ */
+function mattpocockSkills(
+	title: string,
+	group: string[],
+	modelInvoked: string[],
+) {
+	const dirOf = (name: string) => join(PACK_ROOT, "skills/mattpocock", name);
+	const skillFile = (name: string) => join(dirOf(name), "SKILL.md");
+	const shown = modelInvoked.length
+		? `showing only ${modelInvoked.join(", ")} to the model`
+		: "showing none to the model";
+
+	describe(title, () => {
+		it("loads every skill through Pi's package loader under its unprefixed name, with no diagnostics", async () => {
+			const pi = await SdkPi.start();
+			try {
+				const { skills, diagnostics } = pi.session.resourceLoader.getSkills();
+				assert.deepEqual(diagnostics, []);
+				for (const name of group) {
+					const loaded = skills.filter((skill) => skill.name === name);
+					assert.deepEqual(
+						loaded.map(({ filePath, disableModelInvocation }) => ({
+							filePath,
+							disableModelInvocation,
+						})),
+						[
+							{
+								filePath: skillFile(name),
+								disableModelInvocation: !modelInvoked.includes(name),
+							},
+						],
+						name,
+					);
+				}
+			} finally {
+				pi.dispose();
+			}
+		});
+
+		it(`lists each skill as /skill:<name> and expands it, ${shown}`, async () => {
+			const pi = new IsolatedPi({ packages: [PACK_ROOT] });
+			try {
+				const listed = (await commands(pi)).filter(({ name }) =>
+					group.some((skill) => name === `skill:${skill}`),
+				);
+				assert.deepEqual(
+					listed.toSorted((a, b) => a.name.localeCompare(b.name)),
+					group.map((name) => ({
+						name: `skill:${name}`,
+						path: skillFile(name),
+					})),
+				);
+				assert.equal(pi.stderr, "");
+
+				for (const name of group) {
+					await pi.prompt(`/skill:${name} the scratch spec`);
+					const request = pi.requests().at(-1);
+					assert.ok(request, name);
+					for (const skill of group)
+						assert.equal(
+							request.systemPrompt.includes(`<name>${skill}</name>`),
+							modelInvoked.includes(skill),
+							`${name}: ${skill} in the model's skill list`,
+						);
+					const body = readFileSync(skillFile(name), "utf8")
+						.replace(/^---\n[\s\S]*?\n---\n/, "")
+						.trim();
+					assert.equal(
+						request.user,
+						`<skill name="${name}" location="${skillFile(name)}">\nReferences are relative to ${dirOf(name)}.\n\n${body}\n</skill>\n\nthe scratch spec`,
+						name,
+					);
+				}
+				assert.equal(pi.stderr, "");
+			} finally {
+				await pi.close();
+			}
+		});
+	});
+}
+
+// The spec, ticket and triage flow (#33).
+mattpocockSkills(
+	"spec, ticket and triage flow from the mattpocock folder",
+	[
 		"domain-modeling",
 		"grill-me",
 		"grill-with-docs",
@@ -129,75 +214,24 @@ describe("spec, ticket and triage flow from the mattpocock folder", () => {
 		"to-tickets",
 		"triage",
 		"wayfinder",
-	];
-	/** Upstream leaves these model-invocable; the rest are /skill: only. */
-	const MODEL_INVOKED = ["domain-modeling", "grilling"];
-	const dirOf = (name: string) => join(PACK_ROOT, "skills/mattpocock", name);
-	const skillFile = (name: string) => join(dirOf(name), "SKILL.md");
+	],
+	["domain-modeling", "grilling"],
+);
 
-	it("loads every skill through Pi's package loader under its unprefixed name, with no diagnostics", async () => {
-		const pi = await SdkPi.start();
-		try {
-			const { skills, diagnostics } = pi.session.resourceLoader.getSkills();
-			assert.deepEqual(diagnostics, []);
-			for (const name of FLOW) {
-				const loaded = skills.filter((skill) => skill.name === name);
-				assert.deepEqual(
-					loaded.map(({ filePath, disableModelInvocation }) => ({
-						filePath,
-						disableModelInvocation,
-					})),
-					[
-						{
-							filePath: skillFile(name),
-							disableModelInvocation: !MODEL_INVOKED.includes(name),
-						},
-					],
-					name,
-				);
-			}
-		} finally {
-			pi.dispose();
-		}
-	});
-
-	it("lists each skill as /skill:<name> and expands it, showing only grilling and domain-modeling to the model", async () => {
-		const pi = new IsolatedPi({ packages: [PACK_ROOT] });
-		try {
-			const listed = (await commands(pi)).filter(({ name }) =>
-				FLOW.some((skill) => name === `skill:${skill}`),
-			);
-			assert.deepEqual(
-				listed.toSorted((a, b) => a.name.localeCompare(b.name)),
-				FLOW.map((name) => ({ name: `skill:${name}`, path: skillFile(name) })),
-			);
-			assert.equal(pi.stderr, "");
-
-			for (const name of FLOW) {
-				await pi.prompt(`/skill:${name} the scratch spec`);
-				const request = pi.requests().at(-1);
-				assert.ok(request, name);
-				for (const skill of FLOW)
-					assert.equal(
-						request.systemPrompt.includes(`<name>${skill}</name>`),
-						MODEL_INVOKED.includes(skill),
-						`${name}: ${skill} in the model's skill list`,
-					);
-				const body = readFileSync(skillFile(name), "utf8")
-					.replace(/^---\n[\s\S]*?\n---\n/, "")
-					.trim();
-				assert.equal(
-					request.user,
-					`<skill name="${name}" location="${skillFile(name)}">\nReferences are relative to ${dirOf(name)}.\n\n${body}\n</skill>\n\nthe scratch spec`,
-					name,
-				);
-			}
-			assert.equal(pi.stderr, "");
-		} finally {
-			await pi.close();
-		}
-	});
-});
+// The remaining gap skills (#34).
+mattpocockSkills(
+	"remaining gap skills from the mattpocock folder",
+	[
+		"codebase-design",
+		"handoff",
+		"improve-codebase-architecture",
+		"pr",
+		"research",
+		"to-questionnaire",
+		"wizard",
+	],
+	["codebase-design", "pr", "research", "wizard"],
+);
 
 const hostRoot = configuredHostRoot();
 const legacyHostRoot = configuredHostRoot("PI_HERDR_AGENTS_LEGACY_HOST");

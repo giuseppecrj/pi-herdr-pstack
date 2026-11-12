@@ -10,6 +10,51 @@
 	},
 	"files": [
 		{
+			"path": "skills/mattpocock/codebase-design/DEEPENING.md",
+			"sha256": "e20ad7d2e1f49518141f9e3419f23c3eacc5f80e2ade901c835a8ad754bcd790",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/codebase-design/DEEPENING.md",
+					"sha256": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+					"blob": "cd94075cfd754d147555c5d747a16431ed4c7dd8",
+					"use": "primary"
+				}
+			],
+			"explanation": "The relative Markdown link to SKILL.md became a backticked file name, as in #33. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/codebase-design/DESIGN-IT-TWICE.md",
+			"sha256": "87220e99a0e1cc3bc8a311b82b6c21c439cbee6fa153178d27f7c8abbf47967c",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/codebase-design/DESIGN-IT-TWICE.md",
+					"sha256": "c222ab5a82e0405672eb9062d62496139a08828e45d07fc5f18e4952c10fac1a",
+					"blob": "aebdc9f8c05b40d7832de38e2fd8380e1e5507ac",
+					"use": "primary"
+				}
+			],
+			"explanation": "Relative Markdown links to SKILL.md and DEEPENING.md became backticked file names, as in #33, and 'sub-agent(s)' became 'subagent(s)'. Step 2's parallel sub-agents are pi-herdr-agents `subagent` launches: fork: false, explicit model task:architecture and thinking high (design judgment, per poteto-mode's delegation.md), no worktree; bare (no agent), so the brief is the whole task and also says the subagent designs on paper, changes no file, commits and pushes nothing and launches no subagents of its own; each result arrives on its own as a new turn, never polled. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/codebase-design/SKILL.md",
+			"sha256": "b15302622be1ec84b363ec12c75b37096f2d4f3269fe9ee5b35e3a592aede34c",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/codebase-design/SKILL.md",
+					"sha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+					"blob": "3f63c8146dd2604b419c929e9876b90c30d410e9",
+					"use": "primary"
+				}
+			],
+			"explanation": "The two relative Markdown links to DEEPENING.md and DESIGN-IT-TWICE.md became backticked file names, as in #33, and 'sub-agents' became 'subagents' (pi-herdr-agents' term). Kept upstream's model invocation (no disable-model-invocation key), so Pi lists it for the model. Invoking it grants no write: it is vocabulary and principles. Everything else is upstream's wording."
+		},
+		{
 			"path": "skills/mattpocock/domain-modeling/ADR-FORMAT.md",
 			"sha256": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
 			"status": "copied",
@@ -100,6 +145,21 @@
 			"explanation": "The fact-finding sub-agent became a pi-herdr-agents `subagent` launch: a fresh context window (fork: false), an explicit model (task:recon) and thinking (low), and a task that asks for the fact and changes nothing. Its result arrives on its own as a new turn and is never polled. Upstream sets no disable-model-invocation, so Pi lists the skill for the model; kept. Everything else is upstream's wording."
 		},
 		{
+			"path": "skills/mattpocock/handoff/SKILL.md",
+			"sha256": "35299d09ed9cc1980e258d83472c8bb90a7a547547fc93cb2f2b4d349391e580",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/handoff/SKILL.md",
+					"sha256": "4cbb043950dad2ffd3662ff1a5a0b51ae676004b5cae10e3787e8ee7a4ee69d3",
+					"blob": "a224edc643a20ddb989f9bca1547440169159810",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi has no Skill tool: the suggested-skills section names each skill as the `/skill:<name>` command or the path to its SKILL.md, instead of 'which skills the next agent should call the Skill tool for'. Pack policy (#34, secrets): beyond upstream's redaction sentence, the document never holds a secret, not even in part (API keys, tokens, passwords, private keys, credentials, credentialed connection strings, values copied from .env files or the environment); it names where a secret lives instead, and the finished document is checked for secrets before its path is reported. Kept disable-model-invocation: true and the argument-hint frontmatter key (Pi ignores it). Invoking it grants writing the one handoff file in the OS temp directory, nothing else. Everything else is upstream's wording."
+		},
+		{
 			"path": "skills/mattpocock/implement-spec/SKILL.md",
 			"sha256": "89a1b3dd98123f8a1c6b95e3a6d25281a3fb44ed8e3209f47a339479e8c2d423",
 			"status": "adapted",
@@ -128,6 +188,81 @@
 				}
 			],
 			"explanation": "Fetching a ticket goes through the tracker: The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo; /skill:setup-repo when it is missing. Pi has no Skill tool: tdd loads by reading `../../pstack/tdd/SKILL.md` (pstack's tdd, the only tdd in the pack until #36 merges Matt's); code-review (#37) is looked up in this pack. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:implement invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Pack policy (M1, fail closed): a preflight checks tdd and code-review in this pack at the start; when code-review is missing the skill tells the user up front, and at the review step stops before the commit, leaving the work uncommitted; the available-skills-list lookup and the skip-and-continue wording are gone. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. The preflight and the tdd load use the found skill (this pack's tdd path named as the default)."
+		},
+		{
+			"path": "skills/mattpocock/improve-codebase-architecture/HTML-REPORT.md",
+			"sha256": "deb066baae18bfb513f42895e3a805e3937720cb7966b4f41923055f69abc6b4",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/improve-codebase-architecture/HTML-REPORT.md",
+					"sha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+					"blob": "e39e8255b8797cf8257d014fb6658fb533f3a399",
+					"use": "primary"
+				}
+			],
+			"explanation": "Three mentions of the `/codebase-design` skill became the `codebase-design` skill: Pi's command form is /skill:codebase-design, and the text means the skill, not a command. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/improve-codebase-architecture/SKILL.md",
+			"sha256": "fba2f46fc0f56c675c8b5a8b7bb2b12300ac123437cb13a76720c27b24f3eafd",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/improve-codebase-architecture/SKILL.md",
+					"sha256": "35b03a3db61e0f5aa333ea59b54963e45a3d2ace6649b2ef4f9576603e2582a6",
+					"blob": "f1eabb568464f03ae79a3346fc1918fdde6d8285",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pi has no Skill tool: codebase-design, grilling and domain-modeling load by reading `../codebase-design/SKILL.md`, `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and design-it-twice points at `../codebase-design/DESIGN-IT-TWICE.md`. The exploration sub-agent is a pi-herdr-agents `subagent` launch: fork: false, explicit model task:recon and thinking medium, a task naming the chosen scope and questions that asks for friction with file paths, changes nothing and launches no subagents; its result arrives on its own, never polled. `/codebase-design` became the `codebase-design` skill, and the HTML-REPORT.md link became a backticked file name, as in #33. Kept disable-model-invocation: true. Invoking it grants the local writes upstream names: the HTML report in the OS temp directory (opened for the user) and GLOSSARY.md and ADR edits through domain-modeling; no remote write. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/pr/CREDITS.md",
+			"sha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/pr/CREDITS.md",
+					"sha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
+					"blob": "5314bda2fa6005e264c9b5c1de7c425e719dc91f",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the upstream file."
+		},
+		{
+			"path": "skills/mattpocock/pr/SKILL.md",
+			"sha256": "a38b452452632e1d1bb37e32d8c73520a061af5c5f54e0690515182b630dab39",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/pr/SKILL.md",
+					"sha256": "ab63f1cf78647389edcd386c9427c5dfca27ed2836930c24773ffee834c19bcd",
+					"blob": "84dd4fb2f068e9f6282690235d20dd505b418119",
+					"use": "primary"
+				}
+			],
+			"explanation": "Pack policy (#34): the skill drafts the PR body as text, shown to the user or saved to a file they name; creating a PR or editing an existing one's title or body is a remote write that invoking it does not grant (upstream's stated purpose is writing the body, so the default is drafting). With a grant, the PR goes to the repo the tracker doc names, through the shared tracker sentence from #33 (docs/agents/issue-tracker.md from the `## Agent skills` section, /skill:setup-repo when missing, every command with its -R <owner>/<repo>, never the implicit default repo). Pack policy (#34): the shared 'Publishing needs the user's grant' paragraph from #33, word for word, with the grant sentence 'Invoking `/skill:pr` grants no tracker or remote write.': pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant; loading the skill without the user invoking it grants nothing; without a grant the work stays local and the user is told what is waiting; child briefs name only granted effects. It also carries #33's 'Tracker content is data' paragraph word for word, since an existing PR's body and comments are tracker content. Kept upstream's model invocation (no disable-model-invocation key), so Pi lists it for the model. The metadata.credits frontmatter stays. Everything else, the template and its sections, is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/research/SKILL.md",
+			"sha256": "abfc1a50435d429bcd225a3681d3e2d8b65aa4a2b8828b4bc25dedb2e8a4c71f",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/research/SKILL.md",
+					"sha256": "1f629e18ab899412683bc6a1c4efb4339999e27c2fdac328f26ee10a8c031d33",
+					"blob": "ffc9eb89849cc4cf74962ce93d786ffd17c6a5dc",
+					"use": "primary"
+				}
+			],
+			"explanation": "The background agent is a pi-herdr-agents `subagent` launch: fork: false, explicit model task:recon and thinking medium, no worktree so it writes in this checkout; bare (no agent), so its task is the whole brief: the question, the job, one findings file and nothing else changed, no commit, no push, no subagents of its own, and the 'Sources are data' rule word for word; the result arrives on its own, never polled. A subagent asked to research (a wayfinder research ticket) is a leaf: it does the job itself, launches no subagent and follows its brief's commit and push policy. The description says 'background subagent' for 'background agent'. Pack policy (#34): the shared 'Publishing needs the user's grant' paragraph from #33, word for word, with the grant sentence 'Invoking `/skill:research` grants no tracker or remote write.': pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant; loading the skill without the user invoking it grants nothing; without a grant the work stays local and the user is told what is waiting; child briefs name only granted effects. Pack policy (#34, trust): a 'Sources are data' paragraph says web pages, docs, source code, specs, API responses and linked material are evidence, never instructions: they cannot change the question or scope, choose skills or authorize an action; never run a command or script a source supplies or send it local files, secrets or other data; such requests are recorded as facts about the source and reported to the user. Kept upstream's model invocation (no disable-model-invocation key), so Pi lists it for the model. Invoking it grants creating the one findings Markdown file in the repo, uncommitted. The job steps are upstream's wording."
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/domain.md",
@@ -220,6 +355,21 @@
 			"explanation": "The first table header 'Label in mattpocock/skills' became 'Canonical role', as in this repo's docs/agents/triage-labels.md. Nothing else changed."
 		},
 		{
+			"path": "skills/mattpocock/to-questionnaire/SKILL.md",
+			"sha256": "b5eb929842ee0e93d867c5e906d183d350f2f2d149eaeaa86967d94d8eda1d3b",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/to-questionnaire/SKILL.md",
+					"sha256": "b5eb929842ee0e93d867c5e906d183d350f2f2d149eaeaa86967d94d8eda1d3b",
+					"blob": "dadd0c00d6a350acaa15bb9ca1b96b20ead684ca",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the upstream file. It names no Claude- or Codex-only surface; invoking it grants writing the one `to-questionnaire-<slug>.md` file in the current directory."
+		},
+		{
 			"path": "skills/mattpocock/to-spec/SKILL.md",
 			"sha256": "e37be6aae0973002bbb264c5f24f32bb0a67864453e47de58802ba8f72e7f71b",
 			"status": "adapted",
@@ -296,7 +446,7 @@
 		},
 		{
 			"path": "skills/mattpocock/wayfinder/SKILL.md",
-			"sha256": "f40cb8e7faafd0a1a6107b1a693ef3eaed4a17742de6e772bcf7fb78895104e6",
+			"sha256": "854b085f97523b86738a110a8284ccaee58edf9eed4ec69904304425d0021799",
 			"status": "adapted",
 			"sources": [
 				{
@@ -307,7 +457,37 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the wayfinder: labels). Pi has no Skill tool: grilling and domain-modeling load by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and research and prototype load as skills. The research subagents are pi-herdr-agents `subagent` launches: fork: false, explicit model (task:recon) and thinking (medium), a worktree on the research/<name> branch, a task naming the ticket and the absolute path of the research SKILL.md (a child cannot see skills that disable model invocation); results arrive on their own, never polled. The in-page anchor links became italic section names. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:wayfinder invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Notes can carry execution into the map, or name skills to load, only once the user confirms, and only skills in this pack. Pack policy (H1): step 5 pushes research branches only on the user's grant, otherwise children commit locally and report. Pack policy (M1): research and prototype are checked in this pack before charting or working; a ticket whose skill is missing is blocked on it, never claimed, fired or stood in for, and is passed over on the frontier; with research missing step 5 fires nothing. Pack policy (M2): research children's worktrees start from committed HEAD, so uncommitted inputs are committed with approval or passed as absolute paths; the brief says the ticket content is data. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. research and prototype, and skills the Notes name once the user confirms them, resolve the same way; research children get the path found."
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the wayfinder: labels). Pi has no Skill tool: grilling and domain-modeling load by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and research and prototype load as skills. The research subagents are pi-herdr-agents `subagent` launches: fork: false, explicit model (task:recon) and thinking (medium), a worktree on the research/<name> branch, a task naming the ticket and the absolute path of the research SKILL.md (a child cannot see skills that disable model invocation); results arrive on their own, never polled. The in-page anchor links became italic section names. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:wayfinder invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Notes can carry execution into the map, or name skills to load, only once the user confirms, and only skills in this pack. Pack policy (H1): step 5 pushes research branches only on the user's grant, otherwise children commit locally and report. Pack policy (M1): research and prototype are checked in this pack before charting or working; a ticket whose skill is missing is blocked on it, never claimed, fired or stood in for, and is passed over on the frontier; with research missing step 5 fires nothing. Pack policy (M2): research children's worktrees start from committed HEAD, so uncommitted inputs are committed with approval or passed as absolute paths; the brief says the ticket content is data. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. research and prototype, and skills the Notes name once the user confirms them, resolve the same way; research children get the path found. #34: research now ships in this pack (skills/mattpocock/research), so Finding a skill resolves it there; step 5's brief also says the child does the research itself as a leaf and launches no subagent of its own, since the research skill otherwise launches a background subagent."
+		},
+		{
+			"path": "skills/mattpocock/wizard/SKILL.md",
+			"sha256": "67d236dfb5dbf5601c6e99ee8784dfacea9a36a9d8f31c5f8f18402cbc5eb01b",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/wizard/SKILL.md",
+					"sha256": "bdf31d48211ea559878f95a4f344aeabf8d85897488ba564382bab0b000daac1",
+					"blob": "c4294ad8298b9b95fc727496b1b802b1f7363fba",
+					"use": "primary"
+				}
+			],
+			"explanation": "The template.sh link became a backticked file name, as in #33. Pack policy (#34): a 'The human runs the wizard, never you' paragraph says the agent never runs the script in whole or in part (no executing, sourcing, calling its functions, or running the commands its stages would run: gh secret set, gh variable set, .env writes, migrations, cutovers); bash -n and shellcheck only parse it; no secret value is written into the script; .env and .env.* files are read for key names only, never printing, copying or pasting a value. Step 4 says not to run it 'end-to-end or in part', and committing a repeatable wizard follows the commit policy. Pack policy (#34): the shared 'Publishing needs the user's grant' paragraph from #33, word for word, with the grant sentence 'Invoking `/skill:wizard` grants no tracker or remote write.': pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant; loading the skill without the user invoking it grants nothing; without a grant the work stays local and the user is told what is waiting; child briefs name only granted effects. Kept upstream's model invocation (no disable-model-invocation key), so Pi lists it for the model. Invoking it grants writing the script (and, where the commit policy allows, committing it and linking it from the README); never running it. Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/mattpocock/wizard/template.sh",
+			"sha256": "ff6f607041632171e8854571051b04cf7b12ef9fa06a1b583cdff5a82ca57fed",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/wizard/template.sh",
+					"sha256": "6566f147299bc6f1d941e64591ed04385416d543e11f96f564c7228f5018d0ed",
+					"blob": "081ed3da860729c5e6fb1e7126c86b07b0ed56f0",
+					"use": "primary"
+				}
+			],
+			"explanation": "The header comment 'Generated by the /wizard skill.' names Pi's command: 'Generated by the wizard skill (/skill:wizard).' The wizard library and the example stage are upstream's, byte for byte. Mode 100644, as upstream."
 		}
 	],
 	"planned": [
@@ -337,30 +517,6 @@
 		},
 		{
 			"source": "mattpocock",
-			"path": "engineering/codebase-design/DEEPENING.md",
-			"sha256": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
-			"blob": "cd94075cfd754d147555c5d747a16431ed4c7dd8",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/codebase-design/DESIGN-IT-TWICE.md",
-			"sha256": "c222ab5a82e0405672eb9062d62496139a08828e45d07fc5f18e4952c10fac1a",
-			"blob": "aebdc9f8c05b40d7832de38e2fd8380e1e5507ac",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/codebase-design/SKILL.md",
-			"sha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
-			"blob": "3f63c8146dd2604b419c929e9876b90c30d410e9",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
 			"path": "engineering/diagnosing-bugs/SKILL.md",
 			"sha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
 			"blob": "d039541ddd1c46e6ddbd662fe99d49b686fc5e12",
@@ -374,38 +530,6 @@
 			"blob": "243198464a8401a7ba1d63b3708fa43c3d067665",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/improve-codebase-architecture/HTML-REPORT.md",
-			"sha256": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
-			"blob": "e39e8255b8797cf8257d014fb6658fb533f3a399",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/improve-codebase-architecture/SKILL.md",
-			"sha256": "35b03a3db61e0f5aa333ea59b54963e45a3d2ace6649b2ef4f9576603e2582a6",
-			"blob": "f1eabb568464f03ae79a3346fc1918fdde6d8285",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/pr/CREDITS.md",
-			"sha256": "a7a087127665d7298a72280ef6e19c41ad8404523712a788c8dc3ab414bc2497",
-			"blob": "5314bda2fa6005e264c9b5c1de7c425e719dc91f",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/pr/SKILL.md",
-			"sha256": "ab63f1cf78647389edcd386c9427c5dfca27ed2836930c24773ffee834c19bcd",
-			"blob": "84dd4fb2f068e9f6282690235d20dd505b418119",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
 		},
 		{
 			"source": "mattpocock",
@@ -430,14 +554,6 @@
 			"blob": "3977951663490882c2632b40695d9f59a2fe2408",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/research/SKILL.md",
-			"sha256": "1f629e18ab899412683bc6a1c4efb4339999e27c2fdac328f26ee10a8c031d33",
-			"blob": "ffc9eb89849cc4cf74962ce93d786ffd17c6a5dc",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
 		},
 		{
 			"source": "mattpocock",
@@ -473,35 +589,11 @@
 		},
 		{
 			"source": "mattpocock",
-			"path": "engineering/wizard/SKILL.md",
-			"sha256": "bdf31d48211ea559878f95a4f344aeabf8d85897488ba564382bab0b000daac1",
-			"blob": "c4294ad8298b9b95fc727496b1b802b1f7363fba",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/wizard/template.sh",
-			"sha256": "6566f147299bc6f1d941e64591ed04385416d543e11f96f564c7228f5018d0ed",
-			"blob": "081ed3da860729c5e6fb1e7126c86b07b0ed56f0",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
-		},
-		{
-			"source": "mattpocock",
 			"path": "in-progress/chief-of-staff/SKILL.md",
 			"sha256": "f4c1d6533edece6b275155911cb627154a6b13e2bc19934f77330f3afdd07987",
 			"blob": "22f0b6626f07bfdfa78b70d006742dfa2260e9c4",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/handoff/SKILL.md",
-			"sha256": "4cbb043950dad2ffd3662ff1a5a0b51ae676004b5cae10e3787e8ee7a4ee69d3",
-			"blob": "a224edc643a20ddb989f9bca1547440169159810",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
 		},
 		{
 			"source": "mattpocock",
@@ -542,14 +634,6 @@
 			"blob": "493fa3bae0dada971c4dfb965790e56920b1dced",
 			"owningIssue": "#36",
 			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/to-questionnaire/SKILL.md",
-			"sha256": "b5eb929842ee0e93d867c5e906d183d350f2f2d149eaeaa86967d94d8eda1d3b",
-			"blob": "dadd0c00d6a350acaa15bb9ca1b96b20ead684ca",
-			"owningIssue": "#34",
-			"explanation": "Remaining gap skill, ported by issue #34."
 		},
 		{
 			"source": "mattpocock",

@@ -538,17 +538,26 @@ const frontmatter = (path: string) =>
 const body = (path: string) => read(path).replace(/^---\n[\s\S]*?\n---\n/, "");
 
 /**
- * The skills Pi lists for the model: setup-pstack, and Matt's grilling and
- * domain-modeling, which upstream leaves model-invocable so other skills can
- * load them. Every other skill disables model invocation.
+ * The skills Pi lists for the model: setup-pstack, and the Matt skills upstream
+ * leaves model-invocable (grilling and domain-modeling, so other skills can
+ * load them, and codebase-design, pr, research and wizard). Every other skill
+ * disables model invocation.
  */
-const MODEL_INVOKED = ["domain-modeling", "grilling", "setup-pstack"];
+const MODEL_INVOKED = [
+	"codebase-design",
+	"domain-modeling",
+	"grilling",
+	"pr",
+	"research",
+	"setup-pstack",
+	"wizard",
+];
 
 describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 68);
+		assert.equal(inventory.skills.length, 75);
 		assert.equal(pstackRows.length, 57);
 		const count = (prefix: string) =>
 			pstackRows.filter(({ wave }) => wave.startsWith(prefix)).length;
@@ -589,17 +598,24 @@ describe("shipped skill tree", () => {
 				.filter(({ folder }) => folder !== PSTACK)
 				.map(({ name, folder }) => `${folder}/${name}`),
 			[
+				"codebase-design",
 				"domain-modeling",
 				"grill-me",
 				"grill-with-docs",
 				"grilling",
+				"handoff",
 				"implement",
 				"implement-spec",
+				"improve-codebase-architecture",
+				"pr",
+				"research",
 				"setup-repo",
+				"to-questionnaire",
 				"to-spec",
 				"to-tickets",
 				"triage",
 				"wayfinder",
+				"wizard",
 			].map((name) => `skills/mattpocock/${name}`),
 		);
 		for (const name of ["poteto-mode", "setup-pstack"])
