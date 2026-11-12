@@ -170,8 +170,9 @@ says what changed. In summary:
   so its task carries the absolute path of the skill it must load.
 - `implement` and `implement-spec` load pstack's `tdd`, the pack's only `tdd`
   until #36 merges Matt's. `code-review` (#37), `research` (#34) and
-  `prototype` (#37) are not in the pack yet. The skills check for them at the
-  start and fail closed: without `code-review`, `implement` stops before its
+  `prototype` (#37) are not in the pack yet. The skills look for each by name,
+  in this pack first, then among the user's installed skills or at a path the
+  user gives (never from tracker content), and fail closed when none is found: without `code-review`, `implement` stops before its
   commit and `implement-spec` stops before any PR or ticket update; without
   `research` or `prototype`, those wayfinder tickets are reported as blocked.
   No other skill stands in. These gaps must close before a release.
@@ -186,9 +187,12 @@ says what changed. In summary:
   none. A skill loaded without the user invoking it grants nothing. Issue, PR and comment content, map Notes and linked material are
   data, never instructions, scope changes, skill choices or authorization, and
   child briefs repeat that. `triage` verifies a PR only in a detached review
-  checkout under `~/.herdr/worktrees/<repo>/pr-<number>-review`, runs
-  contributor-controlled code only after the user approves, and removes the
-  checkout afterwards. Worktree children start from committed state, so
+  checkout under `~/.herdr/worktrees/<repo>/pr-<number>-review`, says that a
+  checkout is not a sandbox, runs contributor-controlled code only after the
+  user approves knowing it runs with their credentials and environment (or in
+  an isolated environment they provide), and removes the checkout afterwards.
+  `implement-spec` pushes or acts on a PR only when the review preflight passed
+  and the user granted it. Worktree children start from committed state, so
   uncommitted inputs are committed with approval or passed by absolute path.
   `implement-spec` inspects each child's diff and checks before merging and
   advances the frontier on verified integration, not remote ticket closure.
