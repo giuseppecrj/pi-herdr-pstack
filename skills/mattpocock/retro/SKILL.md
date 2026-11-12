@@ -16,7 +16,7 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 1. Read `../writing-for-agents/SKILL.md` (the `writing-for-agents` skill) for the writing style guide.
 
-2. Read the primary sources for the session the user specifies. This may mean searching through session logs on this machine, but only this working directory's sessions, per the session directory rule in `../../pstack/poteto-mode/playbooks/session-pickup.md`: never search Pi's global session directory or another project's sessions. If the user doesn't specify a session, default to the current one: `$PI_SESSION_FILE`, set in the bash tool, or this conversation when it is unset.
+2. Read the primary sources for the session the user specifies. This may mean searching through session logs on this machine, but only this working directory's sessions, per the session directory rule in `../../pstack/poteto-mode/playbooks/session-pickup.md`: never search Pi's global session directory or another project's sessions. Before reading an earlier session's body, read only its first line, the session header, and check that its `cwd` is exactly this working directory: a session directory's encoded name can collide with another project's, and a directory can be shared. Skip any session whose header names another directory, or has none, without reading further. If the user doesn't specify a session, default to the current one: `$PI_SESSION_FILE`, set in the bash tool, or this conversation when it is unset.
 
 3. Look for candidates for improvement in these categories.
 

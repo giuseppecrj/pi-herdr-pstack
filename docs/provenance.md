@@ -452,20 +452,26 @@ entry in `test/fixtures/skill-provenance/mattpocock.json` says what changed.
   commit policy and pushes, PRs, deploys and production instrumentation need
   authorization. poteto-mode's Bug fix playbook stays a playbook: a paragraph
   points at the skill for technique and says the playbook's gates still bind
-  it (`w2.json`). The template keeps upstream's file mode, `100644`.
+  it (`w2.json`). The template keeps upstream's file mode, `100644`. After
+  review, its library changes too (pack policy): upstream's footer printed
+  only the example's two captures and failed under `set -u` for any other
+  names, so `capture` now records each name and the footer prints every
+  captured value. Cleanup removes every temporary probe, tagged or not, and
+  checks `git diff` and `git status` before reporting done.
 - **`retro`** (decision 4: keep both). Matt's retrospective ships as
   `skills/mattpocock/retro` and loads `writing-for-agents` by path, which
   ships in the same batch. It proposes guardrails for the repo and its
   environment and routes skill edits to `reflect`; `reflect` routes repo and
   environment lessons back to `retro` (`w4-a.json`). It reads
   `$PI_SESSION_FILE` and only this working directory's earlier sessions,
-  treats transcript content as data, keeps secrets out of what it writes or
+  checking each session header's `cwd` before reading its body, treats transcript content as data, keeps secrets out of what it writes or
   shows, changes nothing until the user approves a candidate, and never
   changes the user's global Pi configuration, credentials or installed
   extensions.
 - **`writing-for-agents`** (decision 6: keep both). Matt's reference ships as
   `skills/mattpocock/writing-for-agents` with `SKILL-MECHANICS.md`, which is
-  adapted to Pi's skill mechanics: Pi's frontmatter rules, `/skill:<name>`,
+  adapted to Pi's skill mechanics: Pi's frontmatter rules (a name matching
+  its directory is a convention, not a Pi requirement), `/skill:<name>`,
   `AGENTS.md`, and a skill reaching another by path whatever its invocation
   setting (upstream assumed only a model-invoked skill can be reached). It
   says it serves instructions for agents; `technical-writing` gains a mirror
@@ -486,7 +492,8 @@ reflect, the skill or the Bug fix playbook, writing-for-agents or
 technical-writing) and lists both new model-invocable skills (`merged.json`).
 No Matt file remains planned. `test/overlap-skills.test.ts` holds the content
 contracts for each adaptation (each shown to fail when its wording is
-removed), a `bash -n` parse of the template, the pointer and drift checks for
+removed), a `bash -n` parse of the template and a run of a customized copy's
+library with piped answers, the pointer and drift checks for
 the playbooks, `reflect` and `technical-writing`, and the real-Pi loader test.
 They are content and loader tests, not evidence that a live model follows the
 skills.

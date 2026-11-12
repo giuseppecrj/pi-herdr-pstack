@@ -1472,6 +1472,30 @@ const DIAGNOSING_RULES: Rule[] = [
 		),
 	],
 	[
+		"every probe temporary, tagged or not",
+		lit(
+			"Every probe is temporary, tagged or not: timing code, profiler hooks, added breakpoints, assertions and config switches go at cleanup too, so tag each one you can and keep a list of the rest.",
+		),
+	],
+	[
+		"removing untagged probes at cleanup",
+		lit(
+			"- [ ] All temporary probes and instrumentation removed: every `[DEBUG-...]` log (`grep` the prefix) and every untagged probe, such as timing code, profiler hooks, breakpoints and config switches",
+		),
+	],
+	[
+		"a diff check before reporting done",
+		lit(
+			"- [ ] Checked with `git diff` and `git status` before reporting done: what remains is the regression test, the fix and nothing temporary",
+		),
+	],
+	[
+		"capturing every observation for the Captured block",
+		lit(
+			"record every observation with `capture` (its Captured block prints each captured value, whatever its name)",
+		),
+	],
+	[
 		"deleting human-in-the-loop scripts at cleanup",
 		lit("Throwaway prototypes and human-in-the-loop scripts deleted"),
 	],
@@ -1505,6 +1529,20 @@ const HITL_RULES: Rule[] = [
 	["the capture helper", lit(`printf -v "$var" '%s' "$answer"`)],
 	["the edit markers", /# --- edit below -+ .* # --- edit above -+/],
 	["the captured block", lit("printf '\\n--- Captured ---\\n'")],
+	// Pack policy (#37 review): the block prints every capture, whatever its name.
+	["capture recording each name", lit('CAPTURED+=("$var")')],
+	[
+		"a footer that prints every captured name",
+		lit(
+			`for var in \${CAPTURED[@]+"\${CAPTURED[@]}"}; do printf '%s=%s\\n' "$var" "\${!var}" done`,
+		),
+	],
+	[
+		"authors told to capture every observation",
+		lit(
+			"# name; paste that block back to the agent. Record every observation with # `capture`, so the block carries it; edit only between the markers.",
+		),
+	],
 ];
 
 describe("diagnosing-bugs content contract (not behavior proof)", () => {
@@ -1515,6 +1553,11 @@ describe("diagnosing-bugs content contract (not behavior proof)", () => {
 				"the agent running the HITL script",
 				/The agent runs the script|Captured output feeds back to you/,
 				"The agent runs the script; the user follows prompts.",
+			],
+			[
+				"cleanup that removes only tagged logs",
+				/All `\[DEBUG-\.\.\.\]` instrumentation removed/,
+				"- [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)",
 			],
 			[
 				"an unconditional commit or PR message",
@@ -1547,12 +1590,90 @@ describe("diagnosing-bugs content contract (not behavior proof)", () => {
 				/The agent runs the script/,
 				"# The agent runs the script; the user follows prompts in their terminal.",
 			],
+			[
+				"a footer naming upstream's example captures",
+				/"\$(?:ERRORED|ERROR_MSG)"/,
+				`printf 'ERRORED=%s\\n' "$ERRORED"`,
+			],
 		]);
 	});
 
 	it("parses the HITL template with bash -n, which only parses it", () => {
 		// bash -n reads the script and runs none of it; the skill allows only this.
 		execFileSync("bash", ["-n", join(PACK_ROOT, HITL)]);
+	});
+
+	/** The template with its editable region replaced by `steps`. */
+	const customized = (steps: string) => {
+		const text = read(HITL);
+		const start = text.indexOf("\n", text.indexOf("# --- edit below"));
+		const end = text.indexOf("# --- edit above");
+		assert.ok(start > 0 && end > start);
+		return `${text.slice(0, start + 1)}\n${steps}\n\n${text.slice(end)}`;
+	};
+	const LATENCY = [
+		'step "Open the dashboard and sign in."',
+		'capture LATENCY_MS "How long did the Export take, in ms?"',
+		'capture SPINNER "Did the spinner stop? (y/n)"',
+	].join("\n");
+
+	it("keeps the code outside the markers free of capture names, so any customization fits", () => {
+		const text = read(HITL);
+		const outside =
+			text.slice(0, text.indexOf("# --- edit below")) +
+			text.slice(text.indexOf("# --- edit above"));
+		const code = outside
+			.split("\n")
+			.filter((line) => !line.trimStart().startsWith("#"))
+			.join("\n");
+		// Every variable the fixed code expands is its own: none is a capture name.
+		const expanded = new Set(
+			[...code.matchAll(/\$\{?!?([A-Za-z_][A-Za-z0-9_]*)/g)].map(
+				([, name]) => name,
+			),
+		);
+		for (const name of expanded)
+			assert.ok(
+				["var", "question", "answer", "CAPTURED", "_"].includes(name),
+				`the fixed code expands ${name}`,
+			);
+		const scratch = mkdtempSync(join(tmpdir(), "pstack-hitl-"));
+		try {
+			const path = join(scratch, "latency.sh");
+			writeFileSync(path, customized(LATENCY));
+			execFileSync("bash", ["-n", path]);
+		} finally {
+			rmSync(scratch, { recursive: true, force: true });
+		}
+	});
+
+	it("prints every captured name in the Captured block, under set -u, for a customization (library check, not agent behavior)", () => {
+		// This test drives the template's library with piped answers to show its
+		// footer works for any capture names. The skill still forbids the agent
+		// from running a generated script; a human does.
+		const scratch = mkdtempSync(join(tmpdir(), "pstack-hitl-"));
+		try {
+			const path = join(scratch, "latency.sh");
+			writeFileSync(path, customized(LATENCY));
+			const out = execFileSync("bash", [path], {
+				input: "\n412\ny\n",
+				encoding: "utf8",
+				stdio: ["pipe", "pipe", "ignore"],
+			});
+			assert.match(out, /--- Captured ---\nLATENCY_MS=412\nSPINNER=y\n$/);
+			const empty = join(scratch, "empty.sh");
+			writeFileSync(empty, customized('step "Look at the page."'));
+			assert.match(
+				execFileSync("bash", [empty], {
+					input: "\n",
+					encoding: "utf8",
+					stdio: ["pipe", "pipe", "ignore"],
+				}),
+				/--- Captured ---\n$/,
+			);
+		} finally {
+			rmSync(scratch, { recursive: true, force: true });
+		}
 	});
 
 	it("says the loop is not the reproduction before Phase 1 builds it", () => {
@@ -1676,6 +1797,18 @@ const RETRO_RULES: Rule[] = [
 		"this working directory's sessions only",
 		lit(
 			"but only this working directory's sessions, per the session directory rule in `../../pstack/poteto-mode/playbooks/session-pickup.md`: never search Pi's global session directory or another project's sessions.",
+		),
+	],
+	[
+		"checking each session header's cwd before reading its body",
+		lit(
+			"Before reading an earlier session's body, read only its first line, the session header, and check that its `cwd` is exactly this working directory: a session directory's encoded name can collide with another project's, and a directory can be shared.",
+		),
+	],
+	[
+		"skipping another directory's session unread",
+		lit(
+			"Skip any session whose header names another directory, or has none, without reading further.",
 		),
 	],
 	[
@@ -1881,7 +2014,13 @@ const MECHANICS_RULES: Rule[] = [
 	[
 		"Pi's name rule",
 		lit(
-			"`name` uses lowercase letters, digits and single hyphens, at most 64 characters, and matches the directory.",
+			"`name` uses lowercase letters, digits and single hyphens, at most 64 characters.",
+		),
+	],
+	[
+		"matching the directory as a convention, not a Pi requirement",
+		lit(
+			"Pi neither requires nor warns when it differs from the directory name; matching the two is the portable convention, and this pack follows it.",
 		),
 	],
 	[
@@ -1938,6 +2077,11 @@ describe("writing-for-agents content contract (not behavior proof)", () => {
 				"upstream's claim that only a model-invoked skill can be reached",
 				/and no other skill can|neither can fire the other|nothing but the human can reach them/,
 				"Only the human typing its name can invoke it, and no other skill can.",
+			],
+			[
+				"a directory match stated as a Pi requirement",
+				/and matches the directory\./,
+				"`name` is at most 64 characters, and matches the directory.",
 			],
 		]);
 	});

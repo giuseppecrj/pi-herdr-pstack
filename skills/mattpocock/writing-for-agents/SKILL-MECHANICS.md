@@ -4,7 +4,7 @@ The skill-specific branch of `writing-for-agents` (`SKILL.md`): what changes whe
 
 ## Frontmatter
 
-A Pi skill is a directory holding `SKILL.md`, which opens with frontmatter. `name` uses lowercase letters, digits and single hyphens, at most 64 characters, and matches the directory. `description` is required, at most 1024 characters: Pi does not load a skill without one. `disable-model-invocation: true` makes the skill user-invoked (below). Refer to bundled files by paths relative to the skill directory. Pi's skills documentation (`docs/skills.md` in the installed Pi package) is the authority, and poteto-mode's authoring playbook (`../../pstack/poteto-mode/playbooks/authoring-a-skill.md`) validates a skill against it.
+A Pi skill is a directory holding `SKILL.md`, which opens with frontmatter. `name` uses lowercase letters, digits and single hyphens, at most 64 characters. Pi neither requires nor warns when it differs from the directory name; matching the two is the portable convention, and this pack follows it. `description` is required, at most 1024 characters: Pi does not load a skill without one. `disable-model-invocation: true` makes the skill user-invoked (below). Refer to bundled files by paths relative to the skill directory. Pi's skills documentation (`docs/skills.md` in the installed Pi package) is the authority, and poteto-mode's authoring playbook (`../../pstack/poteto-mode/playbooks/authoring-a-skill.md`) validates a skill against it.
 
 ## How Pi reaches a skill
 

@@ -13,14 +13,18 @@
 #   step "<instruction>"          → show instruction, wait for Enter
 #   capture VAR "<question>"      → show question, read response into VAR
 #
-# At the end, captured values are printed as KEY=VALUE; paste that block back
-# to the agent.
+# At the end, every value `capture` read is printed as KEY=VALUE, whatever its
+# name; paste that block back to the agent. Record every observation with
+# `capture`, so the block carries it; edit only between the markers.
 #
 # `capture` prints its value back to the terminal, and the pasted block reaches
 # the agent, so capture observations, never a password, token or other secret,
 # and leave signing in to the user as a `step`.
 
 set -euo pipefail
+
+# The names `capture` filled, in order, for the Captured block.
+CAPTURED=()
 
 step() {
   printf '\n>>> %s\n' "$1"
@@ -32,6 +36,7 @@ capture() {
   printf '\n>>> %s\n' "$question"
   read -r -p "    > " answer
   printf -v "$var" '%s' "$answer"
+  CAPTURED+=("$var")
 }
 
 # --- edit below ---------------------------------------------------------
@@ -45,5 +50,7 @@ capture ERROR_MSG "Paste the error message (or 'none'):"
 # --- edit above ---------------------------------------------------------
 
 printf '\n--- Captured ---\n'
-printf 'ERRORED=%s\n' "$ERRORED"
-printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
+# The +-expansion keeps an empty list safe under `set -u` in bash 3.2 (macOS).
+for var in ${CAPTURED[@]+"${CAPTURED[@]}"}; do
+  printf '%s=%s\n' "$var" "${!var}"
+done
