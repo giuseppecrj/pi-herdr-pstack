@@ -1974,7 +1974,7 @@ describe("authorization boundaries", () => {
 		assert.match(setup, /do not call it again with the same arguments/);
 		assert.match(
 			setup,
-			/Reached any other way, such as `\/skill:setup-pstack`, there is no brief and no writer/,
+			/Reached any other way, such as `\/skill:setup-pstack`, there is no fresh command-generated brief, so the config revision, current choices and authenticated models are unknown: explain these steps, ask the user to run `\/setup-pstack`, and do not call the writer even if it is loaded\./,
 		);
 		assert.doesNotMatch(setup, /pstack_apply_task_models|writer gate/);
 		assert.doesNotMatch(

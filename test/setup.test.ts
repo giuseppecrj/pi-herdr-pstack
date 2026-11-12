@@ -562,5 +562,35 @@ describe("skills that read the setup brief", () => {
 			'"tasksMeta for this write"',
 		])
 			assert.ok(setup.includes(quoted), quoted);
+		assert.ok(
+			setup.includes(
+				'Each model is a JSON string, as in "Current choices", and the ID is that string\'s value.',
+			),
+		);
+	});
+
+	// The host writer replaces the whole task map, so a category the proposal
+	// omits is deleted (after approval). Content contract, not behavior proof.
+	it("keeps every saved category in the proposal unless the user explicitly removes it", () => {
+		const setup = readFileSync(
+			`${PACK_ROOT}/skills/pstack/setup-pstack/SKILL.md`,
+			"utf8",
+		);
+		const section = (heading: string) =>
+			setup.slice(setup.indexOf(heading)).split(/\n#{2,3} /)[0];
+		const confirm = section("**(c) Show the categories and confirm.**");
+		for (const phrase of [
+			"Every category saved now stays in the proposal, changed or not.",
+			"Removing one is an explicit user choice: do it only when the user asks to remove that category, and tell them the host's dialog will show it as removed.",
+		])
+			assert.ok(confirm.includes(phrase), phrase);
+		const write = section("### 5. Write the preferences");
+		for (const phrase of [
+			'- `tasks`: every category "Current choices" lists with models, changed or not, and each category the user added, each with its complete ordered list.',
+			"The writer replaces the whole task map, so a category left out is deleted. Leave one out only when the user chose to remove it in step 3c.",
+			"- `tasksThinking`: the thinking for every category in `tasks`, unchanged ones included.",
+		])
+			assert.ok(write.includes(phrase), phrase);
+		assert.doesNotMatch(setup, /include every category the user kept/);
 	});
 });
