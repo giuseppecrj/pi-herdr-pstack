@@ -81,8 +81,9 @@ function malformedKeys(config: JsonObject): string[] {
 		["models.tasksThinking", models?.tasksThinking, thinking],
 	];
 	return [
+		// The host reads a null container as unset.
 		...containers.flatMap(([key, value, object]) =>
-			value !== undefined && !object ? [key] : [],
+			value != null && !object ? [key] : [],
 		),
 		...TASK_CATEGORIES.flatMap((category) => [
 			...(isModelList(tasks?.[category]) ? [] : [`models.tasks.${category}`]),
