@@ -265,7 +265,11 @@ byte for byte. Each file's provenance entry says what changed. In summary:
   pass `--repo "$REPO"` and skip when it is unset, and the intro shows it and
   stops unless the human confirms, so `GH_REPO`, the directory or a fork's
   default cannot redirect a secret. This is the one change to upstream's
-  library.
+  library. A pre-release review found that capturing a value named `REPO`
+  (or `ENV_FILE`) overwrote that destination, so the confirmed repository is
+  now a separate copy that the intro makes read-only with `REPO` and
+  `ENV_FILE`, the helpers' locals carry a `_wiz_` prefix, and `ask`,
+  `ask_secret` and `write_env` refuse the library's names.
 - `handoff`: beyond upstream's redaction sentence, the document never holds a
   secret, even in part; it names where a secret lives, and the finished
   document is checked before its path is reported.

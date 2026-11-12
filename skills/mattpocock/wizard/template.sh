@@ -25,7 +25,11 @@ fi
 TOTAL_STAGES=0
 REPO=""
 
-_STAGE_INDEX=0
+# The library's own state. The intro (banner) copies REPO into _WIZ_REPO once
+# the human confirms it, then makes both, and ENV_FILE, read-only: every gh
+# write goes to _WIZ_REPO, so no stage or captured value can redirect it.
+_WIZ_REPO=""
+_WIZ_STAGE_INDEX=0
 ENV_FILE="${ENV_FILE:-.env}"
 WRITTEN_ENV=()    # KEYs written to ENV_FILE this run
 WRITTEN_SECRET=() # secret NAMEs set this run
@@ -47,23 +51,39 @@ banner() {
   printf '%s  You drive the browser; this wizard tells you exactly what to do and\n' "$DIM"
   printf '  captures the values you copy back. Stop any time with Ctrl-C and re-run\n'
   printf '  later, since it remembers values already saved.%s\n' "$RESET"
-  if _repo_ok; then
+  if _repo_ok "$REPO"; then
     printf '\n  GitHub secrets and variables go to %s%s%s.\n' "$BOLD" "$REPO" "$RESET"
     confirm "Is $REPO the right repository?" || { warn "stopped: fix REPO in this script, then re-run"; exit 1; }
+    _WIZ_REPO="$REPO"
   fi
+  readonly _WIZ_REPO REPO ENV_FILE
   pause "Ready to start?"
 }
 
-# _repo_ok: REPO names one GitHub repository (owner/name).
-_repo_ok() { [[ "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }
+# _repo_ok VALUE: VALUE names one GitHub repository (owner/name).
+_repo_ok() { [[ "$1" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }
+
+# _wiz_name KEY refuses (exit 2) a KEY bash can't assign or the library keeps
+# for itself, so a captured value never overwrites the confirmed repository,
+# the .env path or the library's state.
+_wiz_name() {
+  case "$1" in
+    '' | [!A-Za-z_]* | *[!A-Za-z0-9_]* | _wiz_* | _WIZ_* | REPO | ENV_FILE | \
+    TOTAL_STAGES | WRITTEN_ENV | WRITTEN_SECRET | SKIPPED | \
+    BOLD | DIM | RESET | BLUE | GREEN | YELLOW)
+      printf 'wizard: %s is reserved by the wizard library or not a variable name; capture it under another name\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+}
 
 # stage "Name" clears the screen, then announces a stage and shows progress.
 # Clearing keeps only the current step on screen.
 stage() {
   _clear
-  _STAGE_INDEX=$((_STAGE_INDEX + 1))
+  _WIZ_STAGE_INDEX=$((_WIZ_STAGE_INDEX + 1))
   printf '\n%s%s▸ Stage %s/%s · %s%s\n' \
-    "$BOLD" "$BLUE" "$_STAGE_INDEX" "$TOTAL_STAGES" "$1" "$RESET"
+    "$BOLD" "$BLUE" "$_WIZ_STAGE_INDEX" "$TOTAL_STAGES" "$1" "$RESET"
 }
 
 # say "..." prints a plain instruction line.
@@ -117,76 +137,81 @@ _existing() {
 # a default on re-runs (Enter keeps it). Visible input (non-secret), edited
 # with Readline. Fails at EOF with no input.
 ask() {
-  local key="$1" prompt="$2" current input s=$'\001' e=$'\002' p rc=0
-  current=$(_existing "$key" || true)
+  _wiz_name "$1"
+  local _wiz_key="$1" _wiz_prompt="$2" _wiz_current _wiz_input _wiz_s=$'\001' _wiz_e=$'\002' _wiz_p _wiz_rc=0
+  _wiz_current=$(_existing "$_wiz_key" || true)
   # Readline needs the colour codes wrapped in \001..\002 to place the cursor.
-  p="  $s$BOLD$e$prompt$s$RESET$e "
-  [[ -n "$current" ]] && p+="$s$DIM$e[Enter keeps current]$s$RESET$e "
-  read -e -r -p "$p" input || rc=1
-  if (( rc )) && [[ -z "$input" ]]; then return 1; fi
-  [[ -z "$input" && -n "$current" ]] && input="$current"
-  printf -v "$key" '%s' "$input"
+  _wiz_p="  $_wiz_s$BOLD$_wiz_e$_wiz_prompt$_wiz_s$RESET$_wiz_e "
+  [[ -n "$_wiz_current" ]] && _wiz_p+="$_wiz_s$DIM${_wiz_e}[Enter keeps current]$_wiz_s$RESET$_wiz_e "
+  read -e -r -p "$_wiz_p" _wiz_input || _wiz_rc=1
+  if (( _wiz_rc )) && [[ -z "$_wiz_input" ]]; then return 1; fi
+  [[ -z "$_wiz_input" && -n "$_wiz_current" ]] && _wiz_input="$_wiz_current"
+  printf -v "$_wiz_key" '%s' "$_wiz_input"
 }
 
 # ask_secret KEY "Prompt" is like ask, but input is hidden.
 ask_secret() {
-  local key="$1" prompt="$2" current input rc=0
-  current=$(_existing "$key" || true)
-  if [[ -n "$current" ]]; then
-    printf '  %s%s%s %s[Enter keeps current]%s ' "$BOLD" "$prompt" "$RESET" "$DIM" "$RESET"
+  _wiz_name "$1"
+  local _wiz_key="$1" _wiz_prompt="$2" _wiz_current _wiz_input _wiz_rc=0
+  _wiz_current=$(_existing "$_wiz_key" || true)
+  if [[ -n "$_wiz_current" ]]; then
+    printf '  %s%s%s %s[Enter keeps current]%s ' "$BOLD" "$_wiz_prompt" "$RESET" "$DIM" "$RESET"
   else
-    printf '  %s%s%s ' "$BOLD" "$prompt" "$RESET"
+    printf '  %s%s%s ' "$BOLD" "$_wiz_prompt" "$RESET"
   fi
-  read -rs input || rc=1
+  read -rs _wiz_input || _wiz_rc=1
   printf '\n'
-  if (( rc )) && [[ -z "$input" ]]; then return 1; fi
-  [[ -z "$input" && -n "$current" ]] && input="$current"
-  printf -v "$key" '%s' "$input"
+  if (( _wiz_rc )) && [[ -z "$_wiz_input" ]]; then return 1; fi
+  [[ -z "$_wiz_input" && -n "$_wiz_current" ]] && _wiz_input="$_wiz_current"
+  printf -v "$_wiz_key" '%s' "$_wiz_input"
 }
 
 # write_env KEY VALUE upserts KEY='VALUE' into ENV_FILE (replaces any existing
 # line) and sets $KEY. Idempotent. Creates ENV_FILE at mode 0600; writes through
 # a symlink and keeps an existing file's mode.
 write_env() {
-  local key="$1" value="$2" tmp sq="'\\''"
+  _wiz_name "$1"
+  local _wiz_key="$1" _wiz_value="$2" _wiz_tmp _wiz_sq="'\\''"
   [[ -e "$ENV_FILE" ]] || (umask 077 && : > "$ENV_FILE")
-  tmp=$(mktemp)
-  grep -vE "^${key}=" "$ENV_FILE" > "$tmp" || true
-  printf "%s='%s'\n" "$key" "${value//\'/$sq}" >> "$tmp"
-  cat "$tmp" > "$ENV_FILE"
-  rm -f "$tmp"
-  printf -v "$key" '%s' "$value"
-  WRITTEN_ENV+=("$key")
-  printf '  %s✓ wrote%s %s → %s\n' "$GREEN" "$RESET" "$key" "$ENV_FILE"
+  _wiz_tmp=$(mktemp)
+  grep -vE "^${_wiz_key}=" "$ENV_FILE" > "$_wiz_tmp" || true
+  printf "%s='%s'\n" "$_wiz_key" "${_wiz_value//\'/$_wiz_sq}" >> "$_wiz_tmp"
+  cat "$_wiz_tmp" > "$ENV_FILE"
+  rm -f "$_wiz_tmp"
+  printf -v "$_wiz_key" '%s' "$_wiz_value"
+  WRITTEN_ENV+=("$_wiz_key")
+  printf '  %s✓ wrote%s %s → %s\n' "$GREEN" "$RESET" "$_wiz_key" "$ENV_FILE"
 }
 
-# set_secret NAME VALUE sets a GitHub Actions secret in $REPO via gh, never in
-# gh's default repo. Falls back to a warning (and records it) if REPO is unset
-# or gh is unavailable or unauthenticated.
+# set_secret NAME VALUE sets a GitHub Actions secret in the repository the
+# human confirmed in the intro, via gh, never in gh's default repo. Falls back
+# to a warning (and records it) if REPO is unset or unconfirmed or gh is
+# unavailable or unauthenticated.
 set_secret() {
   local name="$1" value="$2"
-  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    if printf '%s' "$value" | gh secret set "$name" --repo "$REPO" >/dev/null 2>&1; then
+  if _repo_ok "$_WIZ_REPO" && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if printf '%s' "$value" | gh secret set "$name" --repo "$_WIZ_REPO" >/dev/null 2>&1; then
       WRITTEN_SECRET+=("$name")
       printf '  %s✓ set%s GitHub secret %s\n' "$GREEN" "$RESET" "$name"
       return
     fi
   fi
-  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${REPO:-<owner>/<repo>})")
-  warn "skipped GitHub secret $name: REPO unset or gh not ready; set it later"
+  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${_WIZ_REPO:-<owner>/<repo>})")
+  warn "skipped GitHub secret $name: REPO unset or unconfirmed, or gh not ready; set it later"
 }
 
-# set_var NAME VALUE sets a GitHub Actions variable (non-secret) in $REPO.
+# set_var NAME VALUE sets a GitHub Actions variable (non-secret) in the
+# confirmed repository.
 set_var() {
   local name="$1" value="$2"
-  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    if gh variable set "$name" --body "$value" --repo "$REPO" >/dev/null 2>&1; then
+  if _repo_ok "$_WIZ_REPO" && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if gh variable set "$name" --body "$value" --repo "$_WIZ_REPO" >/dev/null 2>&1; then
       printf '  %s✓ set%s GitHub variable %s\n' "$GREEN" "$RESET" "$name"
       return
     fi
   fi
   SKIPPED+=("GitHub variable $name")
-  warn "skipped GitHub variable $name, REPO unset or gh not ready; set it later"
+  warn "skipped GitHub variable $name, REPO unset or unconfirmed, or gh not ready; set it later"
 }
 
 # finish clears, then shows a closing summary of everything configured.
@@ -206,7 +231,9 @@ finish() {
 # STAGES: author this section. One stage() per step the human takes.
 # Replace the example below. Set TOTAL_STAGES to match the stages you write,
 # and REPO to the owner/name the human confirmed (leave it "" if no stage
-# writes a GitHub secret or variable).
+# writes a GitHub secret or variable). Capture each value under its own name:
+# ask, ask_secret and write_env refuse the library's names (REPO, ENV_FILE,
+# TOTAL_STAGES, ...) and any _wiz_ name.
 # Keep every stage inside run_wizard and the last line as is: bash then parses
 # the whole file before the first prompt, so an edit mid-run can't break it.
 # ──────────────────────────────────────────────────────────────────────────

@@ -1,7 +1,17 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+	chmodSync,
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { join, posix } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -970,13 +980,13 @@ describe("remaining gap skills content contract (not behavior proof)", () => {
 		for (const phrase of [
 			"If any value goes to a GitHub secret or variable, also show the exact repository it goes to (`<owner>/<repo>`; suggest one from `gh repo view --json nameWithOwner`, but never trust it unconfirmed, since `GH_REPO`, the directory or a fork's parent can change gh's default) and have the user confirm it.",
 			"and, when any value goes to GitHub, the user has confirmed the `<owner>/<repo>` it goes to.",
-			'and `REPO` to the `<owner>/<repo>` the user confirmed in step 1 (leave it empty when no stage writes to GitHub). The library passes `--repo "$REPO"` to every `gh secret set` and `gh variable set`, skips both when `REPO` is unset, and its intro shows the repository and asks the human to confirm it before the first stage.',
+			"and `REPO` to the `<owner>/<repo>` the user confirmed in step 1 (leave it empty when no stage writes to GitHub). Its intro (`banner`) shows the repository and asks the human to confirm it before the first stage; from then on the library keeps that confirmed repository read-only, passes it as `--repo` to every `gh secret set` and `gh variable set`, and skips both when `REPO` is unset or was never confirmed.",
 			"and `REPO` is the repository the user confirmed.",
 		])
 			assert.ok(wizard.includes(phrase), phrase);
 		const template = read(`${FOLDER}/wizard/template.sh`);
-		// Every gh secret/variable call in the library names --repo "$REPO"; the
-		// only other mention is the manual-fix hint recorded in SKIPPED.
+		// Every gh secret/variable call in the library names the confirmed copy,
+		// --repo "$_WIZ_REPO"; the only other mention is the manual-fix hint.
 		const lines = template
 			.split("\n")
 			.filter((line) => /gh (?:secret|variable) set/.test(line));
@@ -984,20 +994,116 @@ describe("remaining gap skills content contract (not behavior proof)", () => {
 		assert.deepEqual(
 			lines.filter((line) => !calls.includes(line)),
 			[
-				'  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${REPO:-<owner>/<repo>})")',
+				'  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${_WIZ_REPO:-<owner>/<repo>})")',
 			],
 		);
 		assert.equal(calls.length, 2, calls.join("\n"));
-		for (const call of calls) assert.match(call, /--repo "\$REPO"/, call);
+		for (const call of calls) assert.match(call, /--repo "\$_WIZ_REPO"/, call);
 		for (const phrase of [
 			'REPO=""\n',
-			'_repo_ok() { [[ "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }',
-			'  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if printf \'%s\' "$value" | gh secret set "$name" --repo "$REPO"',
-			'  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if gh variable set "$name" --body "$value" --repo "$REPO"',
-			'  if _repo_ok; then\n    printf \'\\n  GitHub secrets and variables go to %s%s%s.\\n\' "$BOLD" "$REPO" "$RESET"\n    confirm "Is $REPO the right repository?" || { warn "stopped: fix REPO in this script, then re-run"; exit 1; }\n  fi\n  pause "Ready to start?"',
+			'_repo_ok() { [[ "$1" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }',
+			'  if _repo_ok "$_WIZ_REPO" && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if printf \'%s\' "$value" | gh secret set "$name" --repo "$_WIZ_REPO"',
+			'  if _repo_ok "$_WIZ_REPO" && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if gh variable set "$name" --body "$value" --repo "$_WIZ_REPO"',
+			'  if _repo_ok "$REPO"; then\n    printf \'\\n  GitHub secrets and variables go to %s%s%s.\\n\' "$BOLD" "$REPO" "$RESET"\n    confirm "Is $REPO the right repository?" || { warn "stopped: fix REPO in this script, then re-run"; exit 1; }\n    _WIZ_REPO="$REPO"\n  fi\n  readonly _WIZ_REPO REPO ENV_FILE\n  pause "Ready to start?"',
 			'TOTAL_STAGES=1\nREPO="<owner>/<repo>"\n',
 		])
 			assert.ok(template.includes(phrase), phrase);
+	});
+
+	it("keeps the confirmed repository immutable: a captured REPO or ENV_FILE cannot redirect a write (pre-release S1)", () => {
+		assert.ok(
+			flat("wizard").includes(
+				"Capture each value under its own name: `ask`, `ask_secret` and `write_env` refuse the library's names (`REPO`, `ENV_FILE`, `TOTAL_STAGES` and the rest, and any `_wiz_` name) and stop the wizard, so a captured value can never redirect a write.",
+			),
+		);
+		// Drive the real library under /bin/bash (3.2 on macOS) with a stub gh
+		// that records every write: the stages below replace the example's.
+		const template = read(`${FOLDER}/wizard/template.sh`);
+		const library = template.slice(0, template.indexOf("run_wizard() {"));
+		const scratch = mkdtempSync(join(tmpdir(), "pstack-wizard-"));
+		try {
+			mkdirSync(join(scratch, "bin"));
+			const log = join(scratch, "gh.log");
+			writeFileSync(
+				join(scratch, "bin", "gh"),
+				'#!/bin/sh\n[ "$1" = auth ] && exit 0\nprintf \'%s\\n\' "$*" >> "$GH_LOG"\ncat > /dev/null\n',
+			);
+			chmodSync(join(scratch, "bin", "gh"), 0o755);
+			const run = (name: string, stages: string[], input: string) => {
+				const script = join(scratch, `${name}.sh`);
+				writeFileSync(
+					script,
+					`${library}run_wizard() {\nTOTAL_STAGES=1\nREPO="good/dest"\nbanner "Test"\nstage "One"\n${stages.join("\n")}\nfinish\n}\n\nrun_wizard "$@"; exit\n`,
+				);
+				writeFileSync(log, "");
+				const result = spawnSync("/bin/bash", [script], {
+					cwd: scratch,
+					input,
+					encoding: "utf8",
+					env: {
+						...process.env,
+						PATH: `${join(scratch, "bin")}:${process.env.PATH}`,
+						GH_LOG: log,
+						ENV_FILE: join(scratch, "app.env"),
+					},
+				});
+				return { status: result.status, gh: readFileSync(log, "utf8") };
+			};
+			// Capturing REPO or ENV_FILE is refused before any write.
+			for (const [name, capture] of [
+				["ask", 'ask REPO "Repo?"'],
+				["ask-secret", 'ask_secret REPO "Repo?"'],
+				["write-env", 'write_env REPO "attacker/sink"'],
+				["env-file", 'ask ENV_FILE "File?"'],
+				["local", 'ask _wiz_key "Key?"'],
+			]) {
+				const { status, gh } = run(
+					name,
+					[capture, 'set_secret TOKEN "secret-value"'],
+					"y\n\nattacker/sink\n",
+				);
+				assert.equal(gh, "", name);
+				assert.equal(status, 2, name);
+			}
+			// The confirmed repository receives every write, and a capture named like
+			// a helper's local still lands in its own variable.
+			assert.deepEqual(
+				run(
+					"ok",
+					[
+						'ask key "Key?"',
+						'ask_secret TOKEN "Token?"',
+						'write_env key "$key"',
+						'set_secret TOKEN "$TOKEN"',
+						'set_var key "$key"',
+					],
+					"y\n\nkv\ntv\n",
+				),
+				{
+					status: 0,
+					gh: "secret set TOKEN --repo good/dest\nvariable set key --body kv --repo good/dest\n",
+				},
+			);
+			assert.equal(
+				readFileSync(join(scratch, "app.env"), "utf8"),
+				"key='kv'\n",
+			);
+			// A stage that reassigns REPO after the intro stops the wizard.
+			const reassigned = run(
+				"reassign",
+				['REPO="attacker/sink"', 'set_secret TOKEN "secret-value"'],
+				"y\n\n",
+			);
+			assert.notEqual(reassigned.status, 0);
+			assert.equal(reassigned.gh, "");
+			// A repository the human did not confirm receives nothing.
+			assert.deepEqual(run("declined", ['set_secret TOKEN "x"'], "n\n"), {
+				status: 1,
+				gh: "",
+			});
+		} finally {
+			rmSync(scratch, { recursive: true, force: true });
+		}
 	});
 
 	it("keeps secrets and credential-bearing URLs out of research notes, in the rule the child carries (review M3)", () => {
