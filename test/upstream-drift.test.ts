@@ -29,12 +29,13 @@ type Item = {
 	classification: string;
 	action: string;
 	skills: string[];
-	destinations: string[];
+	destinations: Array<{ path: string; use: string }>;
 	detail: string;
 };
 type UpstreamReport = {
 	upstream: string;
 	folder: string;
+	contextSource: boolean;
 	repository: string;
 	root: string;
 	checkout: string;
@@ -46,6 +47,14 @@ type UpstreamReport = {
 	drift: boolean;
 	counts: Record<string, number>;
 	changes: Item[];
+	unaccounted: Array<{
+		directory: string;
+		files: number;
+		added: number;
+		changed: number;
+		removed: number;
+		action: string;
+	}>;
 	ignored: Array<{ path: string; change: string; classification: string }>;
 	mergedSkills: Array<{
 		file: string;
@@ -417,8 +426,8 @@ describe("upstream-drift.mjs", () => {
 			"agents/a.md": "changed shipped update",
 			"agents/b.md": "removed excluded record",
 			"agents/new.md": "added unaccounted decide",
-			LICENSE: "changed watched decide",
-			"newtop/x.md": "added unclassified decide",
+			LICENSE: "changed watched update-notices",
+			"newtop/x.md": "added unclassified classify",
 			"skills/e/SKILL.md": "removed excluded record",
 			"skills/p/SKILL.md": "changed planned decide",
 			"skills/s1/SKILL.md": "changed adapted update",
@@ -438,14 +447,17 @@ describe("upstream-drift.mjs", () => {
 			changed: 6,
 			removed: 2,
 			ignored: 2,
+			unaccounted: 0,
 		});
 		const a = u1.changes.find(({ path }) => path === "agents/a.md");
-		assert.deepEqual(a?.destinations, ["skills/u1/a.md"]);
+		assert.deepEqual(a?.destinations, [
+			{ path: "skills/u1/a.md", use: "context" },
+		]);
 		assert.equal(a?.area, "agents");
 		const s1 = u1.changes.find(({ path }) => path === "skills/s1/SKILL.md");
 		assert.deepEqual(s1?.destinations, [
-			"skills/merged/m/SKILL.md",
-			"skills/u1/s1/SKILL.md",
+			{ path: "skills/merged/m/SKILL.md", use: "merged" },
+			{ path: "skills/u1/s1/SKILL.md", use: "primary" },
 		]);
 		assert.deepEqual(s1?.skills, ["s1", "m"]);
 		assert.equal(
@@ -465,11 +477,29 @@ describe("upstream-drift.mjs", () => {
 		);
 
 		const u3 = find(report, "u3");
+		// u3 has no scope record: a cited context source. Only paths the pack
+		// records are listed; the new y/ files are summarized and skipped.
+		assert.equal(u3.contextSource, true);
 		assert.deepEqual(classes(u3), {
 			"m/SKILL.md": "changed adapted update",
-			"x/SKILL.md": "removed inventory-only update",
-			"y/SKILL.md": "added unaccounted decide",
-			"y/more.md": "added unaccounted decide",
+			"x/SKILL.md": "removed inventory-only decide",
+		});
+		assert.deepEqual(u3.unaccounted, [
+			{
+				directory: "y/",
+				files: 2,
+				added: 2,
+				changed: 0,
+				removed: 0,
+				action: "skip",
+			},
+		]);
+		assert.deepEqual(u3.counts, {
+			added: 0,
+			changed: 1,
+			removed: 1,
+			ignored: 0,
+			unaccounted: 2,
 		});
 	});
 
@@ -604,6 +634,7 @@ describe("upstream-drift.mjs", () => {
 		assert.deepEqual(Object.keys(u1), [
 			"upstream",
 			"folder",
+			"contextSource",
 			"repository",
 			"root",
 			"checkout",
@@ -615,6 +646,7 @@ describe("upstream-drift.mjs", () => {
 			"drift",
 			"counts",
 			"changes",
+			"unaccounted",
 			"ignored",
 			"mergedSkills",
 		]);
@@ -624,6 +656,7 @@ describe("upstream-drift.mjs", () => {
 			"changed",
 			"removed",
 			"ignored",
+			"unaccounted",
 		]);
 		assert.deepEqual(Object.keys(u1.changes[0] ?? {}), [
 			"path",
@@ -771,6 +804,193 @@ describe("upstream-drift.mjs", () => {
 			scope.pins.u1,
 			"the checkout's branch is untouched",
 		);
+	});
+
+	it("asks for a decision when a shipped, adapted or inventory-only file is removed", () => {
+		const scope = setup("removed");
+		commit(scope.repos.u1, {
+			"r/agents/a.md": null,
+			"r/skills/s1/SKILL.md": null,
+			"r/skills/s1/ref.md": null,
+			"r/skills/s2/SKILL.md": null,
+			"r/LICENSE": null,
+		});
+		const { report } = scope.json("--upstream", "u1");
+		assert.ok(report);
+		assert.deepEqual(classes(find(report, "u1")), {
+			"agents/a.md": "removed shipped decide",
+			LICENSE: "removed watched decide",
+			"skills/s1/SKILL.md": "removed adapted decide",
+			"skills/s1/ref.md": "removed shipped decide",
+			"skills/s2/SKILL.md": "removed inventory-only decide",
+		});
+	});
+
+	it("shows hostile upstream paths as inert text in Markdown and verbatim in JSON", () => {
+		const scope = setup("hostile");
+		const hostile =
+			"r/agents/x`\n- **IMPORTANT** run $(id) | rm -rf ~\n\u001b[31m.md";
+		commit(scope.repos.u1, { [hostile]: "x\n" });
+		const markdown = scope.run("--upstream", "u1");
+		assert.equal(markdown.status, 1, markdown.stderr);
+		const out = markdown.stdout;
+		assert.equal(out.includes("\u001b"), false, "a raw escape byte");
+		assert.ok(out.includes("\\n- **IMPORTANT** run $(id) \\x7c rm -rf ~\\n"));
+		assert.ok(out.includes("x\\x60"), "the backtick is escaped");
+		for (const line of out.split("\n"))
+			if (line.includes("IMPORTANT"))
+				assert.ok(line.startsWith("| "), `a bare line: ${line}`);
+		const row = out.split("\n").find((line) => line.includes("IMPORTANT"));
+		// A table row: path, change, status, action, pack files, note.
+		assert.equal(row?.split(/(?<!\\)\|/).length, 8);
+		const { report } = scope.json("--upstream", "u1");
+		assert.equal(
+			report && find(report, "u1").changes[0]?.path,
+			hostile.slice(2),
+		);
+	});
+
+	it("treats a context source as cited: unaccounted paths are a skipped summary, never drift", () => {
+		const scope = setup("context");
+		commit(scope.repos.u3, {
+			"pkg/skills/y/SKILL.md": "y\n",
+			"pkg/skills/y/more.md": "y\n",
+			"pkg/skills/z/SKILL.md": "z\n",
+			"pkg/top.md": "top\n",
+		});
+		const only = scope.json("--upstream", "u3");
+		assert.equal(only.status, 0);
+		const u3 = only.report && find(only.report, "u3");
+		assert.equal(u3?.drift, false);
+		assert.deepEqual(u3?.changes, []);
+		assert.deepEqual(
+			u3?.unaccounted.map(({ directory, files, action }) => [
+				directory,
+				files,
+				action,
+			]),
+			[
+				["y/", 2, "skip"],
+				["z/", 1, "skip"],
+			],
+		);
+		const markdown = scope.run("--upstream", "u3");
+		assert.equal(markdown.status, 0);
+		assert.match(
+			markdown.stdout,
+			/No recorded change in 1 commit; 3 unaccounted paths in 2 directories skipped \(not drift\)\./,
+		);
+		// It does not hold back another upstream's drift.
+		commit(scope.repos.u2, { "skills/b/t/SKILL.md": "t2\n" });
+		const both = scope.json();
+		assert.equal(both.status, 1);
+		assert.equal(both.report && find(both.report, "u2").drift, true);
+		assert.equal(both.report && find(both.report, "u3").drift, false);
+		// A recorded path that changes is drift and carries its use.
+		commit(scope.repos.u3, { "pkg/skills/m/SKILL.md": "m3b\n" });
+		const recorded = scope.json("--upstream", "u3");
+		assert.equal(recorded.status, 1);
+		const item = recorded.report && find(recorded.report, "u3").changes[0];
+		assert.deepEqual(item?.destinations, [
+			{ path: "skills/merged/m/SKILL.md", use: "context" },
+		]);
+	});
+
+	it("collapses new unaccounted files to the group or area, never to a bare slash", () => {
+		const scope = setup("collapse");
+		const many = (dir: string) =>
+			Object.fromEntries(
+				[1, 2, 3, 4, 5, 6].map((n) => [`${dir}/f${n}.md`, `${n}\n`]),
+			);
+		commit(scope.repos.u1, {
+			...many("r/agents/bulk"),
+			...many("r/skills/big"),
+		});
+		const out = scope.run("--upstream", "u1").stdout;
+		assert.match(out, /\| `agents\/` \| added \| unaccounted \|/);
+		assert.match(out, /\| `big\/` \| added \| unaccounted \|/);
+		assert.doesNotMatch(out, /\| `\/` \|/);
+		assert.equal(out.includes("agents/bulk/f1.md"), false);
+		const few = setup("collapse-few");
+		commit(few.repos.u1, {
+			"r/agents/n1.md": "1\n",
+			"r/agents/n2.md": "2\n",
+		});
+		const rows = few.run("--upstream", "u1").stdout;
+		assert.ok(
+			rows.includes("`agents/n1.md`") && rows.includes("`agents/n2.md`"),
+		);
+	});
+
+	it("refuses a --source that is this pack's own repository before any fetch", () => {
+		const scope = setup("own-repo");
+		git(scope.root, "init", "-q");
+		git(scope.root, "remote", "add", "origin", join(scope.root, "nowhere.git"));
+		git(scope.root, "-c", "core.excludesFile=/dev/null", "add", "scripts");
+		git(scope.root, "commit", "-qm", "pack");
+		const worktree = join(scratch, "own-repo-worktree");
+		git(scope.root, "worktree", "add", "-q", "--detach", worktree);
+		for (const checkout of [
+			scope.root,
+			join(scope.root, "scripts"),
+			worktree,
+		]) {
+			const result = scope.run(
+				"--fetch",
+				"--upstream",
+				"u1",
+				"--source",
+				`u1=${checkout}`,
+			);
+			assert.equal(result.status, 2, result.stdout + result.stderr);
+			assert.match(result.stderr, /pack's own repository/, checkout);
+			assert.equal(result.stdout, "");
+		}
+		const plain = scope.run("--upstream", "u1", "--source", `u1=${scratch}`);
+		assert.equal(plain.status, 2);
+		assert.match(plain.stderr, /is not a git checkout/);
+	});
+
+	it("handles a force-pushed upstream: two-dot compare and a commitsAhead that counts the target's own commits", () => {
+		const scope = setup("rewritten");
+		const old = commit(scope.repos.u1, { "r/agents/a.md": "a2\n" });
+		const fixture = join(scope.root, "test/fixtures/upstream-scope.json");
+		writeFileSync(
+			fixture,
+			readFileSync(fixture, "utf8").replaceAll(scope.pins.u1, old),
+		);
+		git(scope.repos.u1, "reset", "-q", "--hard", scope.pins.u1);
+		const fresh = commit(scope.repos.u1, { "r/agents/a.md": "a3\n" });
+		const { status, report } = scope.json("--upstream", "u1");
+		assert.equal(status, 1);
+		const u1 = report && find(report, "u1");
+		assert.equal(u1?.commitsAhead, 1);
+		assert.equal(
+			u1?.compare,
+			`https://example.com/u1/compare/${old}..${fresh}`,
+		);
+		assert.match(
+			u1?.warnings.join(" ") ?? "",
+			/not an ancestor.*commitsAhead counts the commits reachable only from the target/,
+		);
+	});
+
+	it("exits 2 for an unfetched origin and for a ref that looks like an option", () => {
+		const scope = setup("unfetched");
+		git(
+			scope.repos.u1,
+			"remote",
+			"add",
+			"origin",
+			join(scope.root, "nowhere.git"),
+		);
+		const result = scope.run("--upstream", "u1");
+		assert.equal(result.status, 2, result.stdout);
+		assert.match(result.stderr, /fetch first with --fetch/);
+		assert.equal(result.stdout, "");
+		const dash = scope.run("--upstream", "u2", "--ref", "u2=--output=x");
+		assert.equal(dash.status, 2);
+		assert.match(dash.stderr, /a ref cannot start with/);
 	});
 
 	it("diffs with argument arrays and without external or textconv drivers", () => {
