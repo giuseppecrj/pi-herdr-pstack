@@ -23,9 +23,12 @@ const PSTACK = "skills/pstack";
 const skillDirOf = (path: string) => path.split("/").slice(0, 3).join("/");
 const skillNameOf = (path: string) => path.split("/")[2];
 
-type SourceKey = "mimir" | "cursor";
+/** Every upstream the inventory pins: pstack's two sources and Matt Pocock's skills. */
+type SourceKey = "mimir" | "cursor" | "mattpocock";
 type InventoryRow = {
 	name: string;
+	/** The folder under skills/ that holds the skill (ADR-0003). */
+	folder: string;
 	wave: string;
 	status: "planned" | "shipped";
 	primarySource: SourceKey;
@@ -40,6 +43,10 @@ const inventory = readJson<{
 	sources: Record<SourceKey, Source>;
 	skills: InventoryRow[];
 }>("docs/skill-inventory.json");
+/** Rows of the pstack folder. */
+const pstackRows = inventory.skills.filter(({ folder }) => folder === PSTACK);
+/** A row's skill directory, from the folder its upstream maps to. */
+const rowDir = ({ folder, name }: InventoryRow) => `${folder}/${name}`;
 const rowOf = new Map(inventory.skills.map((row) => [row.name, row]));
 const waveOf = new Map(inventory.skills.map((row) => [row.name, row.wave]));
 
@@ -119,6 +126,18 @@ const provenanceFixtures = Object.entries(PROVENANCE_OWNERS).map(
 	}),
 );
 const provenanceFiles = provenanceFixtures.flatMap(({ files }) => files);
+/**
+ * The skills/mattpocock files adapted from mattpocock/skills. They are not part
+ * of the wave model above; test/mattpocock-skills.test.ts checks them against
+ * the pin, and this file counts them in the shipped tree.
+ */
+const MATTPOCOCK_FIXTURE = "mattpocock";
+const mattpocockProvenance = readJson<{
+	files: ProvenanceFile[];
+	planned: UnshippedSource[];
+	excluded: UnshippedSource[];
+}>(`test/fixtures/skill-provenance/${MATTPOCOCK_FIXTURE}.json`);
+const treeProvenance = [...provenanceFiles, ...mattpocockProvenance.files];
 const provenanceOf = (owner: string) => {
 	const fixture = provenanceFixtures.find((entry) => entry.owner === owner);
 	assert.ok(fixture, owner);
@@ -350,9 +369,7 @@ function walk(dir: string): string[] {
 const SHIPPED_FILES = walk("skills").toSorted();
 const rowNameOf = skillNameOf;
 /** Inventory rows whose skill directory exists in this tree. */
-const presentRows = inventory.skills.filter(({ name }) =>
-	exists(`skills/pstack/${name}`),
-);
+const presentRows = inventory.skills.filter((row) => exists(rowDir(row)));
 const shippedRows = inventory.skills.filter(
 	({ status }) => status === "shipped",
 );
@@ -447,7 +464,7 @@ function bannable(
 }
 
 const statusOf = (path: string) =>
-	provenanceFiles.find((file) => file.path === path)?.status;
+	treeProvenance.find((file) => file.path === path)?.status;
 const PLACEHOLDER = /\b(?:TODO|TBD|FIXME)\b/;
 
 type Reference = { sourcePath: string; targetPath: string; text: string };
@@ -462,8 +479,8 @@ function references(sourcePath: string): Reference[] {
 			),
 		]
 			.map((match) => match[1] ?? match[2] ?? match[3])
-			.filter((name) => waveOf.has(name))
-			.map((name) => `skills/pstack/${name}/SKILL.md`);
+			.filter((name) => rowOf.has(name))
+			.map((name) => `${rowDir(rowOf.get(name) as InventoryRow)}/SKILL.md`);
 		const paths = [...text.matchAll(/`([^`\s]+)`/g)]
 			.map(([, span]) => span)
 			.filter((span) =>
@@ -495,13 +512,15 @@ function expectedWave(targetPath: string): string | undefined {
 		return W4_PLAYBOOKS.includes(playbook[1])
 			? (plannedPlaybooks.get(targetPath) ?? "W4")
 			: undefined;
-	const skill = /^skills\/pstack\/([a-z0-9-]+)\/SKILL\.md$/.exec(targetPath);
+	const skill = /^skills\/[a-z0-9-]+\/([a-z0-9-]+)\/SKILL\.md$/.exec(
+		targetPath,
+	);
 	return skill ? waveOf.get(skill[1]) : undefined;
 }
 
 /** Whether a reference target belongs to a row (or W4 playbook) not yet shipped. */
 function targetPlanned(targetPath: string): boolean {
-	const skill = /^skills\/pstack\/([a-z0-9-]+)\//.exec(targetPath);
+	const skill = /^skills\/[a-z0-9-]+\/([a-z0-9-]+)\//.exec(targetPath);
 	if (targetPath.startsWith("skills/pstack/poteto-mode/playbooks/"))
 		return plannedPlaybooks.has(targetPath);
 	return skill ? rowOf.get(skill[1])?.status === "planned" : false;
@@ -522,14 +541,15 @@ describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 57);
+		assert.equal(inventory.skills.length, 58);
+		assert.equal(pstackRows.length, 57);
 		const count = (prefix: string) =>
-			inventory.skills.filter(({ wave }) => wave.startsWith(prefix)).length;
+			pstackRows.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
 			[2, 29, 9, 8, 9],
 		);
-		for (const row of inventory.skills) {
+		for (const row of pstackRows) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);
 			assert.ok(row.sourceFiles[row.primarySource]?.length, row.name);
 			for (const paths of Object.values(row.sourceFiles))
@@ -541,6 +561,28 @@ describe("shipped skill tree", () => {
 						`${row.name}: ${path}`,
 					);
 		}
+		// Each row names the upstream folder that holds it, and the folder's own
+		// upstream (test/upstream-scope.test.ts) is the row's primary source,
+		// except in pstack where cursor's pin and its mimir port share the folder.
+		const folders = readJson<{
+			upstreams: Array<{ upstream: string; folder: string }>;
+		}>("test/fixtures/upstream-scope.json").upstreams;
+		for (const row of inventory.skills) {
+			const upstreams = folders
+				.filter(({ folder }) => folder === row.folder)
+				.map(({ upstream }) => upstream);
+			assert.equal(upstreams.length, 1, `${row.name}: folder ${row.folder}`);
+			if (row.folder !== PSTACK)
+				assert.equal(row.primarySource, upstreams[0], row.name);
+			for (const source of Object.keys(row.sourceFiles))
+				assert.ok(source in inventory.sources, `${row.name}: ${source}`);
+		}
+		assert.deepEqual(
+			inventory.skills
+				.filter(({ folder }) => folder !== PSTACK)
+				.map(({ name, folder }) => `${folder}/${name}`),
+			["skills/mattpocock/setup-repo"],
+		);
 		for (const name of ["poteto-mode", "setup-pstack"])
 			assert.equal(rowOf.get(name)?.status, "shipped", name);
 	});
@@ -567,17 +609,26 @@ describe("shipped skill tree", () => {
 	});
 
 	it("has every shipped row present, and only shipped or in-progress W3 and W4 rows", () => {
-		for (const { name } of shippedRows)
-			assert.ok(exists(`skills/pstack/${name}/SKILL.md`), `${name} is shipped`);
+		for (const row of shippedRows)
+			assert.ok(exists(`${rowDir(row)}/SKILL.md`), `${row.name} is shipped`);
 		for (const { name, status, wave } of presentRows)
 			assert.ok(
 				status === "shipped" || /^W[34]-/.test(wave),
 				`${name} (${wave}) is present but ${status}`,
 			);
+		for (const folder of new Set(inventory.skills.map((row) => row.folder)))
+			assert.deepEqual(
+				readdirSync(join(PACK_ROOT, folder)).toSorted(),
+				presentRows
+					.filter((row) => row.folder === folder)
+					.map(({ name }) => name)
+					.toSorted(),
+				`every skill directory under ${folder} is an inventory row`,
+			);
 		assert.deepEqual(
-			readdirSync(join(PACK_ROOT, PSTACK)).toSorted(),
-			presentRows.map(({ name }) => name).toSorted(),
-			"every skill directory is an inventory row",
+			readdirSync(join(PACK_ROOT, "skills")).toSorted(),
+			["mattpocock", "pstack"],
+			"every folder under skills/ holds inventory rows",
 		);
 		for (const path of W4P_FILES.filter((file) => file.endsWith(".md")))
 			assert.ok(
@@ -618,10 +669,10 @@ describe("shipped skill tree", () => {
 				}))
 				.toSorted((a, b) => a.name.localeCompare(b.name)),
 			presentRows
-				.map(({ name }) => ({
-					name,
-					filePath: join(PACK_ROOT, `skills/pstack/${name}/SKILL.md`),
-					disableModelInvocation: name !== "setup-pstack",
+				.map((row) => ({
+					name: row.name,
+					filePath: join(PACK_ROOT, rowDir(row), "SKILL.md"),
+					disableModelInvocation: row.name !== "setup-pstack",
 				}))
 				.toSorted((a, b) => a.name.localeCompare(b.name)),
 		);
@@ -630,11 +681,11 @@ describe("shipped skill tree", () => {
 			[...prompt.matchAll(/<name>([^<]+)<\/name>/g)].map(([, name]) => name),
 			["setup-pstack"],
 		);
-		for (const { name } of presentRows)
+		for (const row of presentRows)
 			assert.doesNotMatch(
-				frontmatter(`skills/pstack/${name}/SKILL.md`) ?? "",
+				frontmatter(`${rowDir(row)}/SKILL.md`) ?? "",
 				/^paths\s*:/m,
-				`${name}: Pi ignores paths; drop it`,
+				`${row.name}: Pi ignores paths; drop it`,
 			);
 	});
 
@@ -1810,18 +1861,24 @@ describe("methodology provenance", () => {
 	it("splits provenance by owner and records the inventory's pinned sources", () => {
 		assert.deepEqual(
 			readdirSync(join(PACK_ROOT, "test/fixtures/skill-provenance")).toSorted(),
-			Object.keys(PROVENANCE_OWNERS)
+			[...Object.keys(PROVENANCE_OWNERS), MATTPOCOCK_FIXTURE]
 				.map((owner) => `${owner}.json`)
 				.toSorted(),
 		);
+		// Each wave fixture records the pstack upstreams' pins; the mattpocock
+		// fixture records its own (test/mattpocock-skills.test.ts).
 		for (const { owner, schemaVersion, sources } of provenanceFixtures) {
 			assert.equal(schemaVersion, 1, owner);
-			assert.deepEqual(sources, inventory.sources, owner);
+			assert.deepEqual(
+				sources,
+				{ mimir: inventory.sources.mimir, cursor: inventory.sources.cursor },
+				owner,
+			);
 		}
 	});
 
 	it("records exactly the shipped tree, each file inside its owner's skill directories", () => {
-		const paths = provenanceFiles.map(({ path }) => path);
+		const paths = treeProvenance.map(({ path }) => path);
 		assert.equal(new Set(paths).size, paths.length, "duplicate file entry");
 		assert.deepEqual(paths.toSorted(), SHIPPED_FILES);
 		for (const {
@@ -1845,7 +1902,7 @@ describe("methodology provenance", () => {
 	});
 
 	it("hashes every shipped file and classifies it as copied, adapted or new", () => {
-		for (const file of provenanceFiles) {
+		for (const file of treeProvenance) {
 			assert.equal(
 				sha256(readFileSync(join(PACK_ROOT, file.path))),
 				file.sha256,
@@ -1873,15 +1930,21 @@ describe("methodology provenance", () => {
 	});
 
 	it("accounts for each primary source file of every present row exactly once", () => {
-		const accounted = provenanceFixtures.flatMap(
-			({ owner, files, planned, excluded }) => [
+		const accounted: Array<{ source: SourceKey; path: string }> =
+			provenanceFixtures.flatMap(({ owner, files, planned, excluded }) => [
 				...files.flatMap(({ sources }) =>
 					sources.filter((use) => use.use === "primary"),
 				),
 				...[...planned, ...excluded].filter(
 					(entry) => !superseded(owner, entry),
 				),
-			],
+			]);
+		accounted.push(
+			...mattpocockProvenance.files.flatMap(({ sources }) =>
+				sources.filter((use) => use.use === "primary"),
+			),
+			...mattpocockProvenance.planned,
+			...mattpocockProvenance.excluded,
 		);
 		const keys = accounted.map(sourceKey);
 		assert.equal(new Set(keys).size, keys.length, "source accounted twice");
@@ -1927,10 +1990,7 @@ describe("methodology provenance", () => {
 	});
 
 	const checkout = (key: SourceKey) => {
-		const path =
-			process.env[
-				key === "mimir" ? "PSTACK_MIMIR_SOURCE" : "PSTACK_CURSOR_SOURCE"
-			];
+		const path = process.env[`PSTACK_${key.toUpperCase()}_SOURCE`];
 		return path &&
 			spawnSync("git", [
 				"-C",
@@ -1942,7 +2002,13 @@ describe("methodology provenance", () => {
 			? path
 			: undefined;
 	};
-	const checkouts = { mimir: checkout("mimir"), cursor: checkout("cursor") };
+	// The wave fixtures cite mimir and cursor; mattpocock's pin has its own
+	// checks in test/mattpocock-skills.test.ts.
+	const checkouts: Record<SourceKey, string | undefined> = {
+		mimir: checkout("mimir"),
+		cursor: checkout("cursor"),
+		mattpocock: checkout("mattpocock"),
+	};
 	const blob = (source: SourceKey, path: string) => {
 		const { commit, root } = inventory.sources[source];
 		return execFileSync("git", [
@@ -2190,6 +2256,7 @@ describe("methodology provenance", () => {
 		assert.match(notices, /Copyright \(c\) 2026 Lauren Tan/);
 		assert.match(notices, /Copyright \(c\) 2026 Ivan Porto Carrero/);
 		assert.match(notices, /Copyright \(c\) 2026 HazAT/);
+		assert.match(notices, /Copyright \(c\) 2026 Matt Pocock/);
 		for (const { commit } of Object.values(inventory.sources)) {
 			assert.ok(notices.includes(commit));
 			assert.ok(read("docs/provenance.md").includes(commit));

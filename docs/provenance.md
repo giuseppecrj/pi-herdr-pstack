@@ -2,7 +2,7 @@
 
 ## Upstream scope
 
-Parity reviews and the weekly upstream sync cover three cursor/plugins roots
+The mattpocock/skills upstream has its own section below. Parity reviews and the weekly upstream sync cover three cursor/plugins roots
 (decision Q6): `pstack/skills`, `pstack/agents` and `pstack/docs`. Two roots
 are out of scope:
 
@@ -77,6 +77,55 @@ are unchanged. `pstack/LICENSE` is unchanged
 `pstack/README.md` and `pstack/plugin.json`, and out-of-scope
 `pstack/.cursor-plugin/plugin.json` (0.15.29 to 0.15.30), changed and were not
 ported.
+
+## Upstream scope: mattpocock/skills
+
+The `mattpocock` record in `test/fixtures/upstream-scope.json` maps
+`skills/mattpocock/` to mattpocock/skills at
+`5863806dd4e15c63174bee4e7515a4256792ecfa` (MIT, source `mattpocock` in
+`docs/skill-inventory.json`, skills root `skills`). Its checkout goes in
+`PSTACK_MATTPOCOCK_SOURCE`.
+
+**Scope choice.** The whole upstream `skills/` tree is in scope, not only the
+skills this pack ships, so the weekly sync sees every new, changed or removed
+upstream file. All 114 files at the pin are accounted for in
+`test/fixtures/skill-provenance/mattpocock.json`: 6 adapted, 46 planned (owned by
+a later issue) and 62 excluded (with a reason). `files` records each adapted
+file's source path, git blob, SHA-256 and what changed; `planned` and
+`excluded` record the same hashes. With a checkout, `npm test` reproduces every
+hash and blob and fails on any upstream file the fixture lacks; without one it
+checks the fixtures against each other and the shipped tree. The record's root
+is `.` (the repository root) so `LICENSE` can be watched like cursor's: its
+SHA-256 is bound to the notice in `THIRD_PARTY_NOTICES.md`. Other top-level
+entries are classified: `.claude-plugin` is out of scope (Claude Code manifests)
+and the rest is unscoped repository tooling and docs.
+`npm run fixtures:upstream-scope -- <upstream> [<checkout>]` also lists, for both
+upstreams, skills-root files that are new, removed or changed since their
+recorded hash. It never rewrites that accounting, and exits non-zero when any
+needs a person.
+
+| Upstream path | Status at the pin |
+| `skills/engineering/setup-matt-pocock-skills` | adapted: `skills/mattpocock/setup-repo/` (SKILL.md and the five seed templates, issue #32). Its Codex-only `agents/openai.yaml` is excluded. |
+| `domain-modeling`, `grill-with-docs`, `implement`, `implement-spec`, `to-spec`, `to-tickets`, `triage`, `wayfinder`, `grill-me`, `grilling` | planned: #33 |
+| `research`, `handoff`, `to-questionnaire`, `wizard`, `codebase-design`, `improve-codebase-architecture`, `pr` | planned: #34 |
+| `tdd`, `teach` | planned: #36, merged with pstack's skills of the same name |
+| `ask-matt`, `code-review`, `diagnosing-bugs`, `prototype`, `retro`, `writing-for-agents`, `in-progress/chief-of-staff` | planned: #37, one pair at a time |
+| `skills/misc`, `skills/in-progress` (all but `chief-of-staff`), `skills/deprecated` | excluded: out of scope for v2 (#28) |
+| every `agents/openai.yaml`, the bucket `README.md` files | excluded: Codex-only metadata and upstream indexes |
+| `skills/productivity/wait-what` | excluded for now: no issue names it, so it needs a decision |
+
+`setup-repo` adapts Matt's `setup-matt-pocock-skills` for Pi and
+pi-herdr-agents. It keeps the upstream process and wording. It changes only the
+name, `/skill:` command syntax, the instruction file order (`AGENTS.md`, then
+`CLAUDE.md`, never a second file), a never-file-into-either-upstream rule, an
+explicit approval before labels, remotes or files, the triage check (Pi hides
+skills that disable model invocation from the available-skills list) and
+backticked paths for the template links, which `test/skill-content.test.ts`
+requires. The seed templates carry the same adaptations as this repository's
+own `docs/agents/*.md`; `test/mattpocock-skills.test.ts` compares them. It names
+`to-tickets`, `triage`, `to-spec`, `wayfinder`, `domain-modeling`,
+`grill-with-docs` and `improve-codebase-architecture`, which land in #33 and
+#34.
 
 ## Wave 1: moved role and package files
 

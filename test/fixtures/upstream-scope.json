@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 2,
-	"description": "One pin record per upstream (ADR-0003): the upstream's repository, commit and root, the skills folder it maps to, its scope, and the status of every file under the in-scope roots other than skills at that pin. Each upstream's skills are accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. The cursor record is the cursor/plugins pstack scope (decision Q6). See test/upstream-scope.test.ts and docs/provenance.md.",
+	"description": "One pin record per upstream (ADR-0003): the upstream's repository, commit and root, the skills folder it maps to, its scope, and the status of every file under the in-scope roots other than skills at that pin. Each upstream's skills are accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. The cursor record is the cursor/plugins pstack scope (decision Q6). The mattpocock record has root \".\" (the repository root, so LICENSE can be watched) and one in-scope root, skills, which is accounted for entirely by docs/skill-inventory.json and test/fixtures/skill-provenance/mattpocock.json, so it has no files of its own. See test/upstream-scope.test.ts and docs/provenance.md.",
 	"upstreams": [
 		{
 			"upstream": "cursor",
@@ -167,6 +167,95 @@
 					"reason": "Claude Code harness adapter; Cursor/Claude-Code platform-specific. This pack stays Pi/pi-herdr-agents only and does not ship harness adapters (docs/provenance.md)."
 				}
 			]
+		},
+		{
+			"upstream": "mattpocock",
+			"folder": "skills/mattpocock",
+			"repository": "https://github.com/mattpocock/skills",
+			"commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+			"root": ".",
+			"inScope": ["skills"],
+			"outOfScope": [
+				{
+					"path": ".claude-plugin",
+					"reason": "Claude Code plugin and marketplace manifests, platform-specific. This package's manifest is the pi block in package.json plus pi-extension/pstack/*.ts."
+				}
+			],
+			"unscoped": [
+				{
+					"path": ".agents",
+					"note": "Upstream's notes for maintaining its own repository (ADRs, install block, invocation and docs-writing rules); not ported."
+				},
+				{
+					"path": ".changeset",
+					"note": "Upstream release tooling (changesets); this repository keeps its own release flow."
+				},
+				{
+					"path": ".github",
+					"note": "Upstream issue templates and workflows for its own repository; not ported."
+				},
+				{
+					"path": ".gitignore",
+					"note": "Upstream packaging file; this repository keeps its own."
+				},
+				{
+					"path": ".out-of-scope",
+					"note": "Upstream's record of requests it declined; not ported."
+				},
+				{
+					"path": "AGENTS.md",
+					"note": "Upstream's contributor instructions for its own repository; not ported."
+				},
+				{
+					"path": "CHANGELOG.md",
+					"note": "Upstream's release changelog; this repository keeps its own."
+				},
+				{
+					"path": "CLAUDE.md",
+					"note": "Upstream's contributor instructions for Claude Code; not ported."
+				},
+				{
+					"path": "CONTRIBUTING.md",
+					"note": "Upstream's contribution guide for its own repository; not ported."
+				},
+				{
+					"path": "GLOSSARY.md",
+					"note": "Upstream's own domain glossary for its repository; not ported."
+				},
+				{
+					"path": "LICENSE",
+					"note": "Not ported; its MIT notice is preserved in THIRD_PARTY_NOTICES.md.",
+					"watch": {
+						"sha256": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+						"reason": "THIRD_PARTY_NOTICES.md reproduces this notice, so any upstream change is called out in the sync PR body and the notices are re-checked before the pin moves."
+					}
+				},
+				{
+					"path": "README.md",
+					"note": "Upstream's front page for its own repository; not ported."
+				},
+				{
+					"path": "SCOPE.md",
+					"note": "Upstream's statement of its own scope; not ported."
+				},
+				{
+					"path": "docs",
+					"note": "Upstream's per-skill guide pages; not ported. This pack's skills carry their own instructions."
+				},
+				{
+					"path": "package-lock.json",
+					"note": "Upstream packaging file for its release tooling; not ported."
+				},
+				{
+					"path": "package.json",
+					"note": "Upstream packaging file (private, release tooling); this repository keeps its own."
+				},
+				{
+					"path": "scripts",
+					"note": "Upstream's plugin-version sync script for its own release flow; not ported."
+				}
+			],
+			"files": []
 		}
 	]
 }

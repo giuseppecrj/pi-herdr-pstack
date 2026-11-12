@@ -20,14 +20,26 @@ export const PACK_ROOT = resolve(
 /** The pstack upstream folder (ADR-0003), relative to PACK_ROOT. */
 export const PSTACK_SKILLS = "skills/pstack";
 /**
- * Skill names in this tree's `skills/pstack/` folder. test/skill-content.test.ts
- * checks this set against the inventory, so command tests can follow it.
+ * Every skill in this tree, from each upstream folder under `skills/`, with its
+ * `SKILL.md` path relative to PACK_ROOT. test/skill-content.test.ts checks
+ * this set against the inventory, so command tests can follow it.
  */
-export const SKILL_NAMES = readdirSync(join(PACK_ROOT, PSTACK_SKILLS))
-	.filter((name) =>
-		existsSync(join(PACK_ROOT, PSTACK_SKILLS, name, "SKILL.md")),
+export const SKILLS = readdirSync(join(PACK_ROOT, "skills"), {
+	withFileTypes: true,
+})
+	.filter((folder) => folder.isDirectory())
+	.flatMap((folder) =>
+		readdirSync(join(PACK_ROOT, "skills", folder.name))
+			.filter((name) =>
+				existsSync(join(PACK_ROOT, "skills", folder.name, name, "SKILL.md")),
+			)
+			.map((name) => ({
+				name,
+				path: `skills/${folder.name}/${name}/SKILL.md`,
+			})),
 	)
-	.toSorted();
+	.toSorted((a, b) => a.name.localeCompare(b.name));
+export const SKILL_NAMES = SKILLS.map(({ name }) => name);
 export const FAUX_EXTENSION = join(
 	PACK_ROOT,
 	"test",

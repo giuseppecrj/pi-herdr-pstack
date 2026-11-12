@@ -19,7 +19,7 @@ import {
 	PACK_ROOT,
 	type RequestLogEntry,
 	type RpcRecord,
-	SKILL_NAMES,
+	SKILLS,
 } from "./helpers/rpc.ts";
 
 const HUB = join(PACK_ROOT, "skills", "pstack", "poteto-mode", "SKILL.md");
@@ -289,11 +289,7 @@ describe("/poteto-mode in the real Pi CLI", () => {
 				[
 					["poteto-mode", "extension", "pi-extension/pstack/index.ts"],
 					["setup-pstack", "extension", "pi-extension/pstack/index.ts"],
-					...SKILL_NAMES.map((name) => [
-						`skill:${name}`,
-						"skill",
-						`skills/pstack/${name}/SKILL.md`,
-					]),
+					...SKILLS.map(({ name, path }) => [`skill:${name}`, "skill", path]),
 				].toSorted(),
 			);
 		} finally {

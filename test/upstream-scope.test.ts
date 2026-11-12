@@ -161,6 +161,44 @@ describe("upstream pins (ADR-0003)", () => {
 	});
 });
 
+describe("mattpocock pin", () => {
+	const record = scopeOf("mattpocock");
+
+	it("pins mattpocock/skills at the repository root, with skills as the one in-scope root", () => {
+		assert.equal(record.folder, "skills/mattpocock");
+		assert.equal(record.repository, "https://github.com/mattpocock/skills");
+		assert.equal(record.root, ".");
+		assert.deepEqual(record.inScope, ["skills"]);
+		assert.equal(inventory.sources.mattpocock.root, "skills");
+		// skills is accounted for by the inventory and test/fixtures/skill-provenance.
+		assert.deepEqual(record.files, []);
+		assert.deepEqual(
+			record.outOfScope.map(({ path }) => path),
+			[".claude-plugin"],
+		);
+		for (const { path, reason } of record.outOfScope)
+			assert.ok(reason.length > 40, path);
+		for (const { path, note } of record.unscoped) {
+			assert.ok(note.length > 20, path);
+			assert.ok(!record.inScope.includes(path), path);
+		}
+	});
+
+	it("watches the repository LICENSE, whose notice THIRD_PARTY_NOTICES.md reproduces", () => {
+		const watched = record.unscoped.filter(({ watch }) => watch);
+		assert.deepEqual(
+			watched.map(({ path }) => path),
+			["LICENSE"],
+		);
+		assert.match(watched[0].watch?.sha256 ?? "", /^[0-9a-f]{64}$/);
+		assert.ok(watched[0].watch?.reason.includes("THIRD_PARTY_NOTICES.md"));
+		const notices = read("THIRD_PARTY_NOTICES.md");
+		assert.match(notices, /Copyright \(c\) 2026 Matt Pocock/);
+		assert.ok(notices.includes(record.commit));
+		assert.ok(read("docs/provenance.md").includes("`mattpocock`"));
+	});
+});
+
 describe("upstream scope (Q6)", () => {
 	it("tracks agents, docs and skills and excludes automations and .cursor-plugin with reasons", () => {
 		assert.deepEqual(scope.inScope.toSorted(), IN_SCOPE);
@@ -188,12 +226,13 @@ describe("upstream scope (Q6)", () => {
 		const reproduced = [
 			...read("THIRD_PARTY_NOTICES.md").matchAll(/```text\n([\s\S]*?)```/g),
 		].map(([, body]) => sha256(body));
-		for (const { path, watch } of scope.unscoped)
-			if (watch)
-				assert.ok(
-					reproduced.includes(watch.sha256),
-					`${path}: THIRD_PARTY_NOTICES.md must reproduce upstream ${path} byte for byte (sha256 ${watch.sha256}); update the notice when the watched hash moves`,
-				);
+		for (const record of fixture.upstreams)
+			for (const { path, watch } of record.unscoped)
+				if (watch)
+					assert.ok(
+						reproduced.includes(watch.sha256),
+						`${record.upstream} ${path}: THIRD_PARTY_NOTICES.md must reproduce upstream ${path} byte for byte (sha256 ${watch.sha256}); update the notice when the watched hash moves`,
+					);
 	});
 
 	it("records a status for each file under the in-scope roots other than skills", () => {
@@ -338,15 +377,14 @@ for (const record of fixture.upstreams)
 			for (const path of classified)
 				if (!topLevel.includes(path))
 					problems.push(`${path}: classified but missing upstream`);
-			const upstream = tree(
-				"-r",
-				"--name-only",
-				record.commit,
-				"--",
-				...record.inScope
-					.filter((root) => root !== skillsRoot)
-					.map((root) => posix.join(record.root, root)),
-			);
+			const otherRoots = record.inScope
+				.filter((root) => root !== skillsRoot)
+				.map((root) => posix.join(record.root, root));
+			// An empty pathspec would list the whole repository.
+			const upstream =
+				otherRoots.length === 0
+					? []
+					: tree("-r", "--name-only", record.commit, "--", ...otherRoots);
 			const recorded = new Map(record.files.map((file) => [file.path, file]));
 			for (const path of upstream) {
 				const file = recorded.get(path);

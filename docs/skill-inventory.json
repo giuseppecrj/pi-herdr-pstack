@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 57,
+  "expectedSkillCount": 58,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -11,11 +11,17 @@
       "repository": "https://github.com/cursor/plugins",
       "commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
       "root": "pstack/skills"
+    },
+    "mattpocock": {
+      "repository": "https://github.com/mattpocock/skills",
+      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "root": "skills"
     }
   },
   "skills": [
     {
       "name": "architect",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -36,6 +42,7 @@
     },
     {
       "name": "arena",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -50,6 +57,7 @@
     },
     {
       "name": "automate-me",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -64,6 +72,7 @@
     },
     {
       "name": "benchmark-checklist",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -78,6 +87,7 @@
     },
     {
       "name": "blast-radius",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -92,6 +102,7 @@
     },
     {
       "name": "bro",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -106,6 +117,7 @@
     },
     {
       "name": "correct",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -120,6 +132,7 @@
     },
     {
       "name": "create-formal-verification-skill",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -131,6 +144,7 @@
     },
     {
       "name": "create-verification-skill",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -151,6 +165,7 @@
     },
     {
       "name": "figure-it-out",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -165,6 +180,7 @@
     },
     {
       "name": "how",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -183,6 +199,7 @@
     },
     {
       "name": "in-your-own-words",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -194,6 +211,7 @@
     },
     {
       "name": "interrogate",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "cursor",
@@ -205,6 +223,7 @@
     },
     {
       "name": "ketchup",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -216,6 +235,7 @@
     },
     {
       "name": "maintain-formal-verification-skill",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -227,6 +247,7 @@
     },
     {
       "name": "maintain-verification-skill",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -241,6 +262,7 @@
     },
     {
       "name": "make-bot-ui",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -252,6 +274,7 @@
     },
     {
       "name": "no-comments",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -268,6 +291,7 @@
     },
     {
       "name": "poteto-help",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -281,6 +305,7 @@
     },
     {
       "name": "poteto-mode",
+      "folder": "skills/pstack",
       "wave": "W2",
       "status": "shipped",
       "primarySource": "mimir",
@@ -384,6 +409,7 @@
     },
     {
       "name": "principle-attack-the-premise",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -398,6 +424,7 @@
     },
     {
       "name": "principle-boundary-discipline",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -412,6 +439,7 @@
     },
     {
       "name": "principle-build-the-lever",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -426,6 +454,7 @@
     },
     {
       "name": "principle-encode-lessons-in-structure",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -440,6 +469,7 @@
     },
     {
       "name": "principle-exhaust-the-design-space",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -454,6 +484,7 @@
     },
     {
       "name": "principle-experience-first",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -468,6 +499,7 @@
     },
     {
       "name": "principle-explain-the-number",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -482,6 +514,7 @@
     },
     {
       "name": "principle-fix-root-causes",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -496,6 +529,7 @@
     },
     {
       "name": "principle-foundational-thinking",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -510,6 +544,7 @@
     },
     {
       "name": "principle-guard-the-context-window",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -524,6 +559,7 @@
     },
     {
       "name": "principle-laziness-protocol",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -538,6 +574,7 @@
     },
     {
       "name": "principle-make-operations-idempotent",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -552,6 +589,7 @@
     },
     {
       "name": "principle-migrate-callers-then-delete-legacy-apis",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -566,6 +604,7 @@
     },
     {
       "name": "principle-minimize-reader-load",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -580,6 +619,7 @@
     },
     {
       "name": "principle-model-the-domain",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -594,6 +634,7 @@
     },
     {
       "name": "principle-never-block-on-the-human",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -608,6 +649,7 @@
     },
     {
       "name": "principle-outcome-oriented-execution",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -622,6 +664,7 @@
     },
     {
       "name": "principle-prove-it-works",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -636,6 +679,7 @@
     },
     {
       "name": "principle-redesign-from-first-principles",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -650,6 +694,7 @@
     },
     {
       "name": "principle-separate-before-serializing-shared-state",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -664,6 +709,7 @@
     },
     {
       "name": "principle-sequence-verifiable-units",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -678,6 +724,7 @@
     },
     {
       "name": "principle-subtract-before-you-add",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -692,6 +739,7 @@
     },
     {
       "name": "principle-test-behavior-not-implementation",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -706,6 +754,7 @@
     },
     {
       "name": "principle-type-system-discipline",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -720,6 +769,7 @@
     },
     {
       "name": "recall",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -734,6 +784,7 @@
     },
     {
       "name": "reflect",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -756,6 +807,7 @@
     },
     {
       "name": "setup-pstack",
+      "folder": "skills/pstack",
       "wave": "W2",
       "status": "shipped",
       "primarySource": "cursor",
@@ -766,7 +818,26 @@
       }
     },
     {
+      "name": "setup-repo",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/setup-matt-pocock-skills/SKILL.md",
+          "engineering/setup-matt-pocock-skills/agents/openai.yaml",
+          "engineering/setup-matt-pocock-skills/domain.md",
+          "engineering/setup-matt-pocock-skills/issue-tracker-github.md",
+          "engineering/setup-matt-pocock-skills/issue-tracker-gitlab.md",
+          "engineering/setup-matt-pocock-skills/issue-tracker-local.md",
+          "engineering/setup-matt-pocock-skills/triage-labels.md"
+        ]
+      }
+    },
+    {
       "name": "sharpen",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -778,6 +849,7 @@
     },
     {
       "name": "show-me-your-work",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -796,6 +868,7 @@
     },
     {
       "name": "statechart",
+      "folder": "skills/pstack",
       "wave": "W4-B",
       "status": "shipped",
       "primarySource": "cursor",
@@ -835,6 +908,7 @@
     },
     {
       "name": "swarm",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -849,6 +923,7 @@
     },
     {
       "name": "tdd",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -863,6 +938,7 @@
     },
     {
       "name": "teach",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -877,6 +953,7 @@
     },
     {
       "name": "technical-writing",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -891,6 +968,7 @@
     },
     {
       "name": "typescript-best-practices",
+      "folder": "skills/pstack",
       "wave": "W3-A",
       "status": "shipped",
       "primarySource": "mimir",
@@ -907,6 +985,7 @@
     },
     {
       "name": "unslop",
+      "folder": "skills/pstack",
       "wave": "W3-B",
       "status": "shipped",
       "primarySource": "mimir",
@@ -921,6 +1000,7 @@
     },
     {
       "name": "why",
+      "folder": "skills/pstack",
       "wave": "W4-A",
       "status": "shipped",
       "primarySource": "mimir",

@@ -84,6 +84,35 @@ describe("installed pack without pi-herdr-agents", () => {
 	});
 });
 
+describe("setup-repo from the mattpocock folder", () => {
+	const SKILL = join(PACK_ROOT, "skills/mattpocock/setup-repo/SKILL.md");
+
+	it("loads under its own name, stays out of the model's skill list and expands on /skill:setup-repo", async () => {
+		const pi = new IsolatedPi({ packages: [PACK_ROOT] });
+		try {
+			const listed = (await commands(pi)).filter(
+				({ name }) => name === "skill:setup-repo",
+			);
+			assert.deepEqual(listed, [{ name: "skill:setup-repo", path: SKILL }]);
+			assert.equal(pi.stderr, "");
+
+			await pi.prompt("/skill:setup-repo the scratch repo");
+			const [request] = pi.requests();
+			assert.match(request.systemPrompt, /<name>setup-pstack<\/name>/);
+			assert.doesNotMatch(request.systemPrompt, /<name>setup-repo<\/name>/);
+			const body = readFileSync(SKILL, "utf8")
+				.replace(/^---\n[\s\S]*?\n---\n/, "")
+				.trim();
+			assert.equal(
+				request.user,
+				`<skill name="setup-repo" location="${SKILL}">\nReferences are relative to ${join(PACK_ROOT, "skills/mattpocock/setup-repo")}.\n\n${body}\n</skill>\n\nthe scratch repo`,
+			);
+		} finally {
+			await pi.close();
+		}
+	});
+});
+
 const hostRoot = configuredHostRoot();
 const legacyHostRoot = configuredHostRoot("PI_HERDR_AGENTS_LEGACY_HOST");
 const rolesPack = process.env.PI_HERDR_ROLES_PACK
