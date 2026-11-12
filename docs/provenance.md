@@ -2,6 +2,8 @@
 
 ## Upstream scope
 
+The weekly sync is run from `docs/agents/upstream-sync.md`; `npm run upstream:drift` reports how far each upstream moved past its pin.
+
 The mattpocock/skills upstream has its own section below. Parity reviews and the weekly upstream sync cover three cursor/plugins roots
 (decision Q6): `pstack/skills`, `pstack/agents` and `pstack/docs`. Two roots
 are out of scope:
@@ -108,7 +110,7 @@ upstreams, skills-root files that are new, removed or changed. New and removed
 are computed against the complete accounted set (inventory and provenance
 fixtures). Only provenance entries carry a hash, so only they are checked for
 content changes; a path the inventory alone lists is checked for presence, not
-content (content checks for those paths belong to #38). It never rewrites that
+content (`npm run upstream:drift` reports a change to any of them between the pin and the target). It never rewrites that
 accounting, and exits non-zero when any needs a person. The first run of the corrected removal check found three cursor
 `poteto-mode/scripts/orch/*` paths that the inventory listed but cursor deleted
 before the pin (cursor/plugins `c742dd6`); they were dropped from the cursor list

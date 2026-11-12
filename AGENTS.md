@@ -42,3 +42,7 @@ The five default triage labels: `needs-triage`, `needs-info`, `ready-for-agent`,
 ### Domain docs
 
 Single-context: `GLOSSARY.md` at the repo root and ADRs in `docs/adr/`. See `docs/agents/domain.md`.
+
+### Upstream sync
+
+The weekly sync of cursor/plugins, mattpocock/skills and pi-mimir: see `docs/agents/upstream-sync.md` (`npm run upstream:drift` reports the drift).
