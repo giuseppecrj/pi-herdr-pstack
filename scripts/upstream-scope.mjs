@@ -2,6 +2,8 @@
 // Regenerates one upstream's pin record in test/fixtures/upstream-scope.json
 // at that record's own commit.
 // Usage: npm run fixtures:upstream-scope -- <upstream> [<checkout>]
+// A skill in the merged folder cites files from more than one upstream; the
+// report also flags it when this upstream's source of it changed or vanished.
 // <upstream> names a record (cursor or mattpocock); <checkout> defaults to
 // PSTACK_<UPSTREAM>_SOURCE. The older single-argument form
 // `npm run fixtures:upstream-scope -- <checkout>` still means cursor.
@@ -144,6 +146,35 @@ const skillsChanged = skillFiles
 	.filter((path) => hash(posix.join(skillsRoot, path)) !== recorded.get(path))
 	.map((path) => `${path} (recorded provenance hash differs)`);
 
+// A merged skill (ADR-0003) combines files from two upstreams, so a change to
+// either source must send a person to merge it by hand. List each merged file
+// that cites a skills-root path this upstream changed or removed, naming the
+// other sources it combines.
+const mergedFiles = fixture.merged
+	? readJson(fixture.merged.provenance).files.filter(
+			({ sources }) => new Set(sources.map(({ source }) => source)).size > 1,
+		)
+	: [];
+const drifted = new Set([
+	...skillsChanged.map((entry) => entry.split(" ")[0]),
+	...skillsRemoved,
+]);
+const mergedFlagged = mergedFiles.flatMap(({ path, sources }) => {
+	const own = sources.filter(
+		(use) => use.source === name && drifted.has(use.path),
+	);
+	if (own.length === 0) return [];
+	const others = [
+		...new Set(
+			sources.filter((use) => use.source !== name).map((use) => use.source),
+		),
+	];
+	return own.map(
+		(use) =>
+			`${path}: ${name} source ${use.path} changed or was removed upstream; merge it by hand with the ${others.join(" and ")} source${others.length > 1 ? "s" : ""}, then record the new hashes in ${fixture.merged.provenance}`,
+	);
+});
+
 // A watched hash is never rewritten here: a person re-checks what depends on
 // it (THIRD_PARTY_NOTICES.md for LICENSE) and updates it by hand.
 const watchChanged = scope.unscoped
@@ -180,6 +211,10 @@ const report = [
 		`${skillsRoot}/ file changed since its recorded provenance hash (inventory-only paths are not hashed)`,
 		skillsChanged,
 	],
+	[
+		"merged skill with a changed or removed source (manual merge)",
+		mergedFlagged,
+	],
 ];
 console.log(`${FIXTURE} ${name} at ${commit}`);
 for (const [label, paths] of report)
@@ -192,7 +227,8 @@ if (
 		watchChanged.length +
 		skillsNew.length +
 		skillsRemoved.length +
-		skillsChanged.length >
+		skillsChanged.length +
+		mergedFlagged.length >
 	0
 )
 	process.exitCode = 1;
