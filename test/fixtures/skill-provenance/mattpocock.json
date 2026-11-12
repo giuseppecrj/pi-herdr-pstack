@@ -536,7 +536,7 @@
 		},
 		{
 			"path": "skills/mattpocock/wizard/template.sh",
-			"sha256": "68772df7edfbd3d2b5211a162780cfd9927d451d8f99f863b74558bb6370a52d",
+			"sha256": "d8d7c5e04777147373da6b87102d9c511c068a4c9db72150d14dcf150214c7cf",
 			"status": "adapted",
 			"sources": [
 				{

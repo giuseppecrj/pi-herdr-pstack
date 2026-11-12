@@ -1125,6 +1125,10 @@ describe("remaining gap skills content contract (not behavior proof)", () => {
 				["write-env", 'write_env REPO "attacker/sink"'],
 				["env-file", 'ask ENV_FILE "File?"'],
 				["local", 'ask _wiz_key "Key?"'],
+				// Names that change which gh, host or identity the writes use.
+				["gh-token", 'ask GH_TOKEN "Token?"'],
+				["gh-host", 'ask GH_HOST "Host?"'],
+				["path", 'ask PATH "Path?"'],
 			]) {
 				const { status, gh } = run(
 					name,

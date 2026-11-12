@@ -65,12 +65,15 @@ _repo_ok() { [[ "$1" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }
 
 # _wiz_name KEY refuses (exit 2) a KEY bash can't assign or the library keeps
 # for itself, so a captured value never overwrites the confirmed repository,
-# the .env path or the library's state.
+# the .env path or the library's state, and never changes which `gh`, host or
+# identity the writes use, or how the shell behaves.
 _wiz_name() {
   case "$1" in
     '' | [!A-Za-z_]* | *[!A-Za-z0-9_]* | _wiz_* | _WIZ_* | REPO | ENV_FILE | \
     TOTAL_STAGES | WRITTEN_ENV | WRITTEN_SECRET | SKIPPED | \
-    BOLD | DIM | RESET | BLUE | GREEN | YELLOW)
+    BOLD | DIM | RESET | BLUE | GREEN | YELLOW | \
+    GH_* | GITHUB_* | GIT_* | PATH | HOME | IFS | ENV | BASH* | SHELLOPTS | \
+    PS4 | LD_* | DYLD_*)
       printf 'wizard: %s is reserved by the wizard library or not a variable name; capture it under another name\n' "$1" >&2
       exit 2
       ;;
