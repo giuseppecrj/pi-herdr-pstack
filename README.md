@@ -15,6 +15,21 @@ pi install npm:pi-herdr-pstack
 
 Install the pack wherever pi-herdr-agents children load packages too (normally the same user settings). Requires Node.js `>=22.19.0` (Pi `1.0.3`'s own floor), Pi `^1.0.3` and a role-free host; see [compatibility](docs/compatibility.md) for the tested revisions.
 
+## Upgrading from 0.6.0
+
+1.0.0 removes 0.6.0's setup init flow and needs a newer host. Upgrade pi-herdr-agents to 3.10.0 or later in the same step as this pack, host first, then reload Pi:
+
+```bash
+pi update npm:pi-herdr-agents   # to >=3.10.0
+pi update npm:pi-herdr-pstack
+```
+
+A version pinned in your settings (for example `npm:pi-herdr-pstack@0.6.0`) does not update; install the new versions instead.
+
+- `/setup-pstack init` and the `pstack_apply_task_models` tool are removed. Use pi-herdr-agents' `/subagents-init` to draft task models from its registry, or `/setup-pstack [budget]` (for example `/setup-pstack medium`) to choose a budget and each category's models. `/setup-pstack init ...` now refuses and points here. pi-herdr-agents' own dialog approves every task-model write.
+- On a pi-herdr-agents older than 3.10.0, `/setup-pstack` refuses to start, and this pack no longer blocks task-model writes: 0.6.0's writer gate is gone, so the older host's own writer and `/subagents-init` write without pstack's approval step.
+- Skills moved into folders by upstream (`skills/pstack/`, `skills/mattpocock/`, `skills/merged/`). Their names are unchanged, so `/skill:<name>` works as before; update only a path you wrote to a skill file.
+
 ## Quick start
 
 1. Run `/setup-pstack` to choose a budget and the models for each pi-herdr-agents task category. Nothing is saved until you approve the change in pi-herdr-agents' dialog.

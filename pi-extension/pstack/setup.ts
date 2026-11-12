@@ -202,12 +202,23 @@ export function setupBrief(
 	return { brief };
 }
 
+/**
+ * The refusal for `/setup-pstack init ...`: 1.0.0 removed the init flow and
+ * pstack's apply tool, and pi-herdr-agents' own `/subagents-init` replaces it.
+ */
+export const INIT_REMOVED =
+	"`/setup-pstack init` was removed in pi-herdr-pstack 1.0.0, with `pstack_apply_task_models`. Use pi-herdr-agents' `/subagents-init` (3.10.0 or later) to draft task models from its registry, or `/setup-pstack [budget]`, for example `/setup-pstack medium`, to choose a budget and each category's models";
+
 export function registerSetup(pi: ExtensionAPI): void {
 	pi.registerCommand("setup-pstack", {
 		description:
 			"Choose the models and thinking budget pstack's delegates use, saved as pi-herdr-agents task preferences after you approve the change",
 		handler: async (args, ctx) => {
-			const problem = blocker(pi, ctx);
+			// The removed init form must not fall through as a free-text request.
+			const problem =
+				args.trim().split(/\s+/)[0] === "init"
+					? INIT_REMOVED
+					: blocker(pi, ctx);
 			const setup = problem ? { problem } : setupBrief(ctx, args.trim());
 			if ("problem" in setup) {
 				pi.sendMessage({

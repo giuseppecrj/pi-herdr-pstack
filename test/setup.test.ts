@@ -17,6 +17,7 @@ import type {
 import { Type } from "typebox";
 import {
 	BRIEF_HEADING,
+	INIT_REMOVED,
 	SETUP_MESSAGE_TYPE,
 	WRITER,
 } from "../pi-extension/pstack/setup.ts";
@@ -562,6 +563,42 @@ describe("/setup-pstack refuses to start where the host cannot ask for approval"
 				);
 			});
 		});
+});
+
+describe("/setup-pstack init, removed in 1.0.0", () => {
+	for (const args of ["init", "init large", "  init   coding=faux/faux-1"])
+		it(`refuses "/setup-pstack ${args}" with the upgrade path, even on a full host`, async () => {
+			await withPi({ ...HOSTED, choice: SAVE }, async (pi, dialogs) => {
+				pi.respond([fauxAssistantMessage("must not run")]);
+				await pi.prompt(`/setup-pstack ${args}`);
+				assert.deepEqual(setupMessages(pi), [
+					`/setup-pstack did not start: ${INIT_REMOVED}. Nothing was written.`,
+				]);
+				for (const pointer of [
+					"`/setup-pstack init` was removed in pi-herdr-pstack 1.0.0",
+					"`pstack_apply_task_models`",
+					"`/subagents-init` (3.10.0 or later)",
+					"`/setup-pstack [budget]`",
+				])
+					assert.ok(INIT_REMOVED.includes(pointer), pointer);
+				assert.deepEqual(userTexts(pi), [], "no setup prompt");
+				assert.deepEqual(dialogs, []);
+				assert.equal(pi.session.getActiveToolNames().includes(WRITER), false);
+				assert.equal(readFileSync(pi.configPath, "utf8"), BASE_TEXT);
+			});
+		});
+
+	it("matches only the exact first word init", async () => {
+		await withPi(HOSTED, async (pi) => {
+			pi.respond([fauxAssistantMessage("Which budget?")]);
+			await pi.prompt("/setup-pstack initial models for review");
+			assert.deepEqual(setupMessages(pi), []);
+			assert.match(
+				userTexts(pi)[0] ?? "",
+				/^User request: initial models for review$/m,
+			);
+		});
+	});
 });
 
 describe("skills that read the setup brief", () => {

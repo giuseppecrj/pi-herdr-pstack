@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { INIT_REMOVED } from "../pi-extension/pstack/setup.ts";
 
 // Content contracts for the 1.0.0 pre-release review fixes. They check the
 // skill text, not that a live model follows it.
@@ -85,5 +86,63 @@ describe("reflect keeps secrets out of reviewer and synthesis output (S4)", () =
 		// The synthesizer's task carries the drop rule, ahead of its leaf rule.
 		const task = skill.slice(skill.indexOf('"name": "reflect-synthesizer"'));
 		assert.ok(task.indexOf("Drop any secret") < task.indexOf("You are a leaf"));
+	});
+});
+
+describe("upgrading from 0.6.0 (C1)", () => {
+	const readme = flat("README.md");
+	const section = readme.slice(
+		readme.indexOf("## Upgrading from 0.6.0"),
+		readme.indexOf("## Quick start"),
+	);
+
+	it("README has the section before Quick start", () => {
+		assert.ok(readme.indexOf("## Upgrading from 0.6.0") > 0);
+		assert.ok(section.length > 0);
+	});
+
+	it("covers the host upgrade, the removed commands, older hosts and moved skills", () => {
+		for (const phrase of [
+			"Upgrade pi-herdr-agents to 3.10.0 or later in the same step as this pack, host first, then reload Pi",
+			"pi update npm:pi-herdr-agents # to >=3.10.0",
+			"`/setup-pstack init` and the `pstack_apply_task_models` tool are removed. Use pi-herdr-agents' `/subagents-init` to draft task models from its registry, or `/setup-pstack [budget]`",
+			"`/setup-pstack init ...` now refuses and points here.",
+			"On a pi-herdr-agents older than 3.10.0, `/setup-pstack` refuses to start, and this pack no longer blocks task-model writes",
+			"Skills moved into folders by upstream (`skills/pstack/`, `skills/mattpocock/`, `skills/merged/`). Their names are unchanged",
+		])
+			assert.ok(section.includes(phrase), phrase);
+	});
+
+	it("the command's refusal names the same replacements as the README", () => {
+		for (const pointer of [
+			"`/setup-pstack init`",
+			"`pstack_apply_task_models`",
+			"`/subagents-init`",
+			"`/setup-pstack [budget]`",
+		]) {
+			assert.ok(INIT_REMOVED.includes(pointer), pointer);
+			assert.ok(section.includes(pointer), pointer);
+		}
+	});
+
+	it("prepares hand-written 1.0.0 release notes for the changelog", () => {
+		const notes = flat("docs/release-notes-1.0.0.md");
+		assert.ok(
+			notes.includes(
+				"## [v1.0.0](https://github.com/giuseppecrj/pi-herdr-pstack/compare/v0.6.0...v1.0.0)",
+			),
+		);
+		for (const phrase of [
+			"### Breaking changes",
+			"`/setup-pstack init`",
+			"`pstack_apply_task_models`",
+			"`>=3.10.0`",
+			"### Highlights",
+		])
+			assert.ok(notes.includes(phrase), phrase);
+		// The coordinator merges it at release; the package does not ship it.
+		const files = (JSON.parse(read("package.json")) as { files: string[] })
+			.files;
+		assert.equal(files.includes("docs/release-notes-1.0.0.md"), false);
 	});
 });
