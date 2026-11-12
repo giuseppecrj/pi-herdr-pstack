@@ -14,11 +14,17 @@ import { after, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
-const LOG_SH = join(PACK_ROOT, "skills/show-me-your-work/scripts/log.sh");
-const CHECK_PLAN = join(PACK_ROOT, "skills/poteto-mode/scripts/check-plan.mjs");
+const LOG_SH = join(
+	PACK_ROOT,
+	"skills/pstack/show-me-your-work/scripts/log.sh",
+);
+const CHECK_PLAN = join(
+	PACK_ROOT,
+	"skills/pstack/poteto-mode/scripts/check-plan.mjs",
+);
 const MULTI_PHASE_PLAN = join(
 	PACK_ROOT,
-	"skills/poteto-mode/playbooks/multi-phase-plan.md",
+	"skills/pstack/poteto-mode/playbooks/multi-phase-plan.md",
 );
 
 const scratch = mkdtempSync(join(tmpdir(), "pstack-scripts-"));

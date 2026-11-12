@@ -46,7 +46,7 @@
 			"path": "agents/comment-sicko.md",
 			"sha256": "3e239e40b7b4b9beb2cf7f3ccc57f2388eb8b69bd1ba8ae888ef87ef6e0e2116",
 			"status": "carried",
-			"destination": "skills/no-comments/references/comment-sicko.md"
+			"destination": "skills/pstack/no-comments/references/comment-sicko.md"
 		},
 		{
 			"path": "agents/poteto-agent.md",

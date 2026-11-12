@@ -1,18 +1,17 @@
 import { readFileSync, realpathSync } from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
+/** The pstack upstream folder (ADR-0003), which holds this package's own skills. */
 export const SKILLS_DIR = fileURLToPath(
-	new URL("../../skills", import.meta.url),
+	new URL("../../skills/pstack", import.meta.url),
 );
 
 export type OwnedSkillName = "poteto-mode" | "setup-pstack";
 
 export function ownedSkillFile(name: OwnedSkillName): string {
-	return fileURLToPath(
-		new URL(`../../skills/${name}/SKILL.md`, import.meta.url),
-	);
+	return join(SKILLS_DIR, name, "SKILL.md");
 }
 
 /** A loaded skill as Pi reports it, from `getCommands()` or prompt options. */

@@ -15,7 +15,7 @@
 	},
 	"files": [
 		{
-			"path": "skills/benchmark-checklist/SKILL.md",
+			"path": "skills/pstack/benchmark-checklist/SKILL.md",
 			"sha256": "24c606c3c94cb0e51d64917e71feb7ad6d64273ed93c7c02c7c70f18145b22d1",
 			"status": "adapted",
 			"sources": [
@@ -29,7 +29,7 @@
 			"explanation": "Relative link to principle-explain-the-number became a backticked path; the Opening a PR and Perf issue playbooks named by title gained their backticked ../poteto-mode/playbooks paths (edit class 1); the Hillclimb playbook gained its path, a planned W4 marker and an interim rule to apply the checklist to any self-frozen harness without reporting a hillclimb loop as run (edit class 3). W4 reconcile: the Hillclimb planned W4 marker and its interim rule are retired now that the playbook ships; the playbook path stays."
 		},
 		{
-			"path": "skills/blast-radius/SKILL.md",
+			"path": "skills/pstack/blast-radius/SKILL.md",
 			"sha256": "2e10745b97f5862323dcda3b29ca60d56b5c3c98e37020085d26b48efbe0a436",
 			"status": "adapted",
 			"sources": [
@@ -49,7 +49,7 @@
 			"explanation": "how, why and arena are marked planned W4 with interim rules (read code and history yourself and say the skill was unavailable; one independent bare Reviewer per ../poteto-mode/references/delegation.md with an exact eligible model instead of a multi-model arena) (edit class 3). The cross-batch unslop reference was marked planned W3 on the W3-A batch branch only; the W3 reconcile removed the marker when unslop shipped, restoring the upstream line. W4 reconcile: the planned W4 markers and interim fallbacks for how, why and arena are retired now that they ship, restoring the upstream lines; the file is again a byte-identical copy. Pin move to cursor/plugins ccb5507: step 6 now says 'more than one model' instead of 'several models', matching the Cursor wording. The file equals that Cursor blob and is no longer a copy of the mimir primary."
 		},
 		{
-			"path": "skills/correct/SKILL.md",
+			"path": "skills/pstack/correct/SKILL.md",
 			"sha256": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
 			"status": "adapted",
 			"sources": [
@@ -69,7 +69,7 @@
 			"explanation": "Pin move to cursor/plugins f713f14: step 3 now says to fix or delete a test that still passes when the checked behavior breaks, or that fails when only the internals change, matching the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
-			"path": "skills/principle-attack-the-premise/SKILL.md",
+			"path": "skills/pstack/principle-attack-the-premise/SKILL.md",
 			"sha256": "2bbfcc5f1fdb979f2d6c1df8760990a4831207925130dd0aafcf0ae9a95f61ce",
 			"status": "adapted",
 			"sources": [
@@ -89,7 +89,7 @@
 			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1). Pin move to cursor/plugins f713f14: the census/skew pattern became write the premise down, test it directly, follow the evidence, and remove the condition instead of compensating. Cursor Markdown links stay backticked."
 		},
 		{
-			"path": "skills/principle-boundary-discipline/SKILL.md",
+			"path": "skills/pstack/principle-boundary-discipline/SKILL.md",
 			"sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28",
 			"status": "copied",
 			"sources": [
@@ -103,7 +103,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-build-the-lever/SKILL.md",
+			"path": "skills/pstack/principle-build-the-lever/SKILL.md",
 			"sha256": "c32e2875e1e21b0e03920ae80a918b9762733d01f31a5186513e2e2615751b35",
 			"status": "adapted",
 			"sources": [
@@ -117,7 +117,7 @@
 			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
 		},
 		{
-			"path": "skills/principle-encode-lessons-in-structure/SKILL.md",
+			"path": "skills/pstack/principle-encode-lessons-in-structure/SKILL.md",
 			"sha256": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863",
 			"status": "copied",
 			"sources": [
@@ -131,7 +131,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-exhaust-the-design-space/SKILL.md",
+			"path": "skills/pstack/principle-exhaust-the-design-space/SKILL.md",
 			"sha256": "8583310d7297b7823d75494faa57b003564d436807febecdecbd8321abe5cf6e",
 			"status": "copied",
 			"sources": [
@@ -145,7 +145,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-experience-first/SKILL.md",
+			"path": "skills/pstack/principle-experience-first/SKILL.md",
 			"sha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b",
 			"status": "copied",
 			"sources": [
@@ -159,7 +159,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-explain-the-number/SKILL.md",
+			"path": "skills/pstack/principle-explain-the-number/SKILL.md",
 			"sha256": "9272160f996b7c1d4f5adb9d7dbe62307013966ec33abb4314e9d5927ae7007e",
 			"status": "adapted",
 			"sources": [
@@ -173,7 +173,7 @@
 			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/principle-fix-root-causes/SKILL.md",
+			"path": "skills/pstack/principle-fix-root-causes/SKILL.md",
 			"sha256": "8df3c8c3fe57eb0055a5c8efab8ab144557fdf301da70b1cdc77a3a3ef3f3052",
 			"status": "adapted",
 			"sources": [
@@ -193,7 +193,7 @@
 			"explanation": "Pin move to cursor/plugins f713f14: restated as fix the fault, not where it surfaced; a guard is a fix only when the state it handles is legitimate; propose a cheap always-on signal after a deep dig. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
-			"path": "skills/principle-foundational-thinking/SKILL.md",
+			"path": "skills/pstack/principle-foundational-thinking/SKILL.md",
 			"sha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2",
 			"status": "copied",
 			"sources": [
@@ -207,7 +207,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-guard-the-context-window/SKILL.md",
+			"path": "skills/pstack/principle-guard-the-context-window/SKILL.md",
 			"sha256": "d2cef147862576e3d709b7afc149d85196245e8338b9c7eef337c95fba412b3e",
 			"status": "copied",
 			"sources": [
@@ -221,7 +221,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-laziness-protocol/SKILL.md",
+			"path": "skills/pstack/principle-laziness-protocol/SKILL.md",
 			"sha256": "9006579e9e3f33955d17569733db688ae65f22577dc3b21803d219a5a8445aff",
 			"status": "copied",
 			"sources": [
@@ -235,7 +235,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-make-operations-idempotent/SKILL.md",
+			"path": "skills/pstack/principle-make-operations-idempotent/SKILL.md",
 			"sha256": "7aa9327cf1f1aa057e95d47a0a78bd88a8f9d556b608866fee939d455a53a019",
 			"status": "adapted",
 			"sources": [
@@ -255,7 +255,7 @@
 			"explanation": "Pin move to cursor/plugins f713f14: derive each step from existing state, judge leftover artifacts as stale by evidence that survives a crash, and converge from where the previous run stopped. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
-			"path": "skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+			"path": "skills/pstack/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
 			"sha256": "09978915a4a11990cf0a9a02d9c08cc59e0b7a04c5c24b83aa560fbe4146f75b",
 			"status": "copied",
 			"sources": [
@@ -269,7 +269,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-minimize-reader-load/SKILL.md",
+			"path": "skills/pstack/principle-minimize-reader-load/SKILL.md",
 			"sha256": "b042f313773db2dbfc1319bac128cb02872016625f0886834885fc8eb97df2cd",
 			"status": "adapted",
 			"sources": [
@@ -283,7 +283,7 @@
 			"explanation": "Relative Markdown links became backticked skill-relative paths (edit class 1); no other change to the methodology text."
 		},
 		{
-			"path": "skills/principle-model-the-domain/SKILL.md",
+			"path": "skills/pstack/principle-model-the-domain/SKILL.md",
 			"sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
 			"status": "copied",
 			"sources": [
@@ -297,7 +297,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-never-block-on-the-human/SKILL.md",
+			"path": "skills/pstack/principle-never-block-on-the-human/SKILL.md",
 			"sha256": "f2764bb9338cbfc788c903cf4b9cd0a5f4042d3a04dd6d59cbd525d9beaadd0a",
 			"status": "copied",
 			"sources": [
@@ -311,7 +311,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-outcome-oriented-execution/SKILL.md",
+			"path": "skills/pstack/principle-outcome-oriented-execution/SKILL.md",
 			"sha256": "10eb91633aa570355ba4bb37088fcade2b22e498df7a58edc749e65bc5a78e2d",
 			"status": "copied",
 			"sources": [
@@ -325,7 +325,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-prove-it-works/SKILL.md",
+			"path": "skills/pstack/principle-prove-it-works/SKILL.md",
 			"sha256": "ec79a15025bac8d33d62011c54f3b612733fd2a024e623b531b3637aa75070e2",
 			"status": "copied",
 			"sources": [
@@ -339,7 +339,7 @@
 			"explanation": "The show-me-your-work reference is marked planned W4 with an interim rule: keep the trail as a local Markdown decision log and say the skill was unavailable (edit class 3). W4 reconcile: the show-me-your-work planned W4 marker and interim rule are retired, restoring the upstream line; the file is again a byte-identical copy."
 		},
 		{
-			"path": "skills/principle-redesign-from-first-principles/SKILL.md",
+			"path": "skills/pstack/principle-redesign-from-first-principles/SKILL.md",
 			"sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe",
 			"status": "copied",
 			"sources": [
@@ -353,7 +353,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-separate-before-serializing-shared-state/SKILL.md",
+			"path": "skills/pstack/principle-separate-before-serializing-shared-state/SKILL.md",
 			"sha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
 			"status": "copied",
 			"sources": [
@@ -367,7 +367,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-sequence-verifiable-units/SKILL.md",
+			"path": "skills/pstack/principle-sequence-verifiable-units/SKILL.md",
 			"sha256": "3d9336a0ec40edc99e20d11252fb7067a2f33cb4dcd358741c8cdca215a24e07",
 			"status": "adapted",
 			"sources": [
@@ -381,7 +381,7 @@
 			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
 		},
 		{
-			"path": "skills/principle-subtract-before-you-add/SKILL.md",
+			"path": "skills/pstack/principle-subtract-before-you-add/SKILL.md",
 			"sha256": "a983a50e732c1ed315eba7aaf47a61329e31c4794eb1ab9d25d9945265b31e03",
 			"status": "copied",
 			"sources": [
@@ -395,7 +395,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/principle-test-behavior-not-implementation/SKILL.md",
+			"path": "skills/pstack/principle-test-behavior-not-implementation/SKILL.md",
 			"sha256": "f7223698623b6a26fea49c751e466b38e6691b1f32ce841d3983e7ffbe2b74a6",
 			"status": "adapted",
 			"sources": [
@@ -415,7 +415,7 @@
 			"explanation": "Pin move to cursor/plugins f713f14: judge each test against two imagined edits (break the behavior / change the internals) instead of the undefined-import heuristic. Destination equals the Cursor blob. Primary remains the unchanged mimir copy."
 		},
 		{
-			"path": "skills/principle-type-system-discipline/SKILL.md",
+			"path": "skills/pstack/principle-type-system-discipline/SKILL.md",
 			"sha256": "dc04e55fd8056617e09cc5c140b45954a01013ef412eafc978fb919594221840",
 			"status": "adapted",
 			"sources": [
@@ -429,7 +429,7 @@
 			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
 		},
 		{
-			"path": "skills/tdd/SKILL.md",
+			"path": "skills/pstack/tdd/SKILL.md",
 			"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
 			"status": "copied",
 			"sources": [
@@ -443,7 +443,7 @@
 			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
-			"path": "skills/typescript-best-practices/references/patterns.md",
+			"path": "skills/pstack/typescript-best-practices/references/patterns.md",
 			"sha256": "c8994cfcc8d9da751128b8de06617b9ae36a678429fc93a0db59b473ff4f596a",
 			"status": "adapted",
 			"sources": [
@@ -463,7 +463,7 @@
 			"explanation": "Short principle names became full inventory names (edit class 2). The boundary section and the overly wide source bullet now follow the SKILL.md boundary row: parse where data crosses in into a named domain type, and Record<string, unknown> stops at that parse. The branded-types line says Parse once at the boundary for consistency. principle-boundary-discipline stays the full name. Upstream patterns.md is byte-identical at the mimir pin, the Cursor pin 2cbf585 and d0ef80d86795816da932a153458c5dbe192d294e, and still says Validate once and narrow it, so this alignment is a deliberate adaptation. Pin move to cursor/plugins 190d287: branded-types example uses an `isAgentId` type guard and returns the narrowed input without `as`."
 		},
 		{
-			"path": "skills/typescript-best-practices/SKILL.md",
+			"path": "skills/pstack/typescript-best-practices/SKILL.md",
 			"sha256": "c83a6f94b8f620422783472ca236b3676b61c2e7dd5c55b62f81219d0aec2812",
 			"status": "adapted",
 			"sources": [

@@ -15,7 +15,7 @@
 	},
 	"files": [
 		{
-			"path": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+			"path": "skills/pstack/poteto-mode/playbooks/authoring-a-skill.md",
 			"sha256": "70f1fcb0a0da9def47355efcbd698b0d206b10c6bf4255f11d15f2cf6343a299",
 			"status": "adapted",
 			"sources": [
@@ -35,7 +35,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook (faithful). 'The Pi Agent Skills standard' becomes Pi's skills documentation (docs/skills.md in the installed Pi package) with its name, description and disable-model-invocation rules and skill-relative paths; validation adds Pi's startup diagnostics, the /skill: command and /reload, as the installed Pi 1.0.3 docs describe. The short principle name becomes principle-encode-lessons-in-structure, and step 4 opens a PR only when the task authorizes it. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/autopilot-full.md",
+			"path": "skills/pstack/poteto-mode/playbooks/autopilot-full.md",
 			"sha256": "5e3e43e17f0f426ece166d7d429a6c8bc9d2635a33e653123d4370aa1e9e1476",
 			"status": "adapted",
 			"sources": [
@@ -55,7 +55,7 @@
 			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D1). A Scope paragraph states the root-run program: owners are roles whose rounds are fresh leaf children per the hub's Fresh-subagents rule, the root runs swarms and watchers, audits happen at each delivery, advisory or operator request with no timer, and push, PR and merge each need a grant naming them, so 'the full-autonomy grant plus the clean verdict is merge authorization' is removed and a run without a merge grant stops at merge-ready. Origin and Graphite branches, the hourly loop tick, the git show origin/main package path, owner-kept children.tsv, cloud wording and the '15 minutes' timing are removed; stuck lanes get one subagent_cancel and one fresh replacement per references/fan-out.md section 4; stop cancels every child. Step 4 marks the swarm skill planned W4 with the interim lanes rule. Short principle names, /no-comments and the ../references path are fixed. Review fix: owner-round continuation is explicit. Only the build round gets a worktree, whose branch becomes the canonical PR head; later rounds start after the previous round exits with cwd set to the retained owner worktree and no new worktree, carry the canonical branch, the trail path and the publication mapping, confirm the current branch, and push only the original PR branch. A stuck round's replacement continues in the same retained worktree after the cancel is confirmed. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the swarm lanes per references/fan-out.md. Wave 4 fix round: the stuck test exempts a watcher child inside its declared wait bound. G1 follow-up: step 5's closing sentence now says a new head voids the verdict except for lane results that stay valid under the patch-id rule in playbooks/shipping.md. Upstream cursor/plugins d0ef80d86795816da932a153458c5dbe192d294e, and the pinned cursor blob, still say a new head voids the verdict unless the patch-id is unchanged. This is a deliberate divergence so step 5 does not void the lane results that shipping.md step 3 keeps. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/autopilot-stack.md",
+			"path": "skills/pstack/poteto-mode/playbooks/autopilot-stack.md",
 			"sha256": "fe31e0721b3ed4929cc66396c956b3705ded8766ab8f5bc90bd5064c4ee9b649",
 			"status": "adapted",
 			"sources": [
@@ -76,7 +76,7 @@
 			"lengthExplanation": "Shorter than the mimir primary after the 1ba91fc pin port: Autopilot-stack collapsed to \"run Autopilot-full without merging\" (upstream tip), dropping long Graphite/Origin stack machinery while keeping Pi Scope, grants, root-run owner rounds and no-merge handoff."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/babysit.md",
+			"path": "skills/pstack/poteto-mode/playbooks/babysit.md",
 			"sha256": "f5cc5dcf9bc0ca2057a51dd56ea054fe158022736e49633a6de1be547d240ce3",
 			"status": "adapted",
 			"sources": [
@@ -96,7 +96,7 @@
 			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph states the limits: GitHub through gh only, check and threads-only unchanged, drive and background waiting through the one-shot watcher child of references/fan-out.md, and pushes, thread replies, verdict comments, CI re-runs, arming and merges each needing explicit authorization. Origin branches, the omp github tool and its run_watch and pr:// reads, and the excluded watcher script are removed; its READY, WAITING, ADVANCE and COMPLETE verdicts become stated gh pr view, gh api graphql reviewThreads and branch-rules field conditions (merge-ready, waiting on the human, waiting on checks, blocked, advanced, complete, unknown). Merge-queue mode reports merge-ready and stops. Steps 4, 5, 7 and 8 gate pushes, force-pushes, the sanctioned follow-up PR, CI re-runs and replies; the Bugbot pass count comes from gh review history; the built-in Babysit skill note becomes a same-named-skill note; repo-relative ../references paths are fixed to references/. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/eval.md",
+			"path": "skills/pstack/poteto-mode/playbooks/eval.md",
 			"sha256": "dbbfad173cb81ea72f12f2042a5aae1622011c480e35a6849d18d6382603229a",
 			"status": "adapted",
 			"sources": [
@@ -116,7 +116,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). The blinded word list is quoted instead of backticked so the bare word arena is not read as a skill reference, and child names and worktree branches join the sanitized names. Steps 4 and 5 mark the arena skill's phases planned W4 with interim rules: candidates as diversity-seat bare children per references/fan-out.md with sanitized cwd, the Implementer prompt and fork false; one blinded Reviewer judge on a family no candidate used, reporting the gate incomplete when families run short. Step 6 reads each candidate's delivered Session: path, $PI_SESSION_FILE and the per-cwd rule in playbooks/session-pickup.md instead of the recall tool. W4 reconcile: the arena planned W4 markers and interim clauses are retired; the candidate and judge launches follow the arena phases per references/fan-out.md. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/hillclimb.md",
+			"path": "skills/pstack/poteto-mode/playbooks/hillclimb.md",
 			"sha256": "be9aab1aecbaf621b27bf1ea3dae0f3758b0940a647ff4fd4d15dea3043a63d4",
 			"status": "adapted",
 			"sources": [
@@ -136,7 +136,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). Short principle names become full principle-* names. Step 1 marks the how skill planned W4 with the interim rule to investigate per playbooks/investigation.md. Step 5's 'configured hillclimb model (default inherit-parent)' becomes a bare implementer child per references/delegation.md on task:coding, stated as a leaf; parallel hypotheses launch in one turn per references/fan-out.md with their own worktrees; a child's delivered result is the wake, so no timer is needed. Commits follow the commit policy, and step 8 opens a PR only when the task authorizes it. W4 reconcile: the how planned W4 marker and its direct-investigation fallback are retired. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+			"path": "skills/pstack/poteto-mode/playbooks/multi-phase-plan.md",
 			"sha256": "2ec91768ccc180cca37e6e339401a68f157f5d6ba7b819a199d3c5ab907298d9",
 			"status": "adapted",
 			"sources": [
@@ -156,7 +156,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook (authoring the plan only) together with scripts/check-plan.mjs, so the shipped skeleton passes the shipped checker. Step 3's agent poteto-agent becomes bare task:recon investigators per references/fan-out.md; step 4 writes to docs/plans/<program-slug>.md under the commit policy instead of the agent store; step 5 uses /skill: commands; step 6 runs scripts/check-plan.mjs from the skill directory instead of a repo-root pstack path; step 7 says execution's pushes, PRs and merges need the execution playbook's grants. The Verification paragraph and skeleton replace inherit-parent lanes with task:qa and mark swarm planned W4. In the skeleton, the git show origin/main reads become installed-skill reads, the hourly loop tick becomes an audit at every child delivery, advisory or operator request with a verbatim audit prompt, stand-down uses subagent_cancel, Spawn owners becomes Launch owner rounds, Origin, built-in PR tools and gt become gh with Graphite never required, PR creation and pushes cite grants, and Appendix D names skills instead of repo-root paths. Short principle names are fixed. Review fixes: the skeleton cites bugbot triage as the poteto-mode reference references/bugbot-triage.md, the review video is recorded in a live lane's verification environment instead of a lane VM, and the skeleton names swarm, how, interrogate and show-me-your-work as <installed ... skill path> placeholders that step 4 tells the author to resolve against installed skills, recording any missing one in Appendix C. W4 reconcile: the swarm planned W4 marker and interim clause are retired; the root launches the verifier lanes per references/fan-out.md. G2 refresh: the program checklist rebase line and Verdict and merge boxes follow the pinned Cursor playbook (blob identical at 2cbf58508f40de470d7490b55c51d71241928fa2 and d0ef80d86795816da932a153458c5dbe192d294e) and autopilot-full step 4. Rebase before the code-ready report and babysit, keep that merge base in fix rounds, and rebase again only at merge prep, on a git merge-tree conflict with trunk, or on a CI failure from a trunk change. A verdict round runs at the code-ready head SHA and at each later push that changes the patch. Verifier lanes stay bare children on task:qa with the Verifier prompt. Two or more audit lanes each take one focus and use the Reviewer prompt on an exact model from a family other than the author's, per references/fan-out.md. The root audits the receipts before the verdict. A defect that a lane filed as a note is a finding. A new head gets a fresh swarm except for lane results that stay valid under the patch-id rule in playbooks/shipping.md. Not ported from that Cursor block: /loop, git show origin/main, pstack/skills paths, the swarm-workers model id, cursor-team-kit, and cloud VMs. The fixture schema has one cursor commit, so the recorded context blob stays the pin and the global pin is not moved. The per-PR Merge box defers to the patch-id rule in playbooks/shipping.md instead of requiring an unchanged patch-id, so a difference that rule still treats as the same patch does not void the verdict. shipping.md is not edited here. Upstream multi-phase-plan.md line 130 still says 'patch-id unchanged' at both 2cbf58508f40de470d7490b55c51d71241928fa2 and d0ef80d86795816da932a153458c5dbe192d294e, so our merge box departs from upstream on purpose to follow the shipping.md patch-id rule. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/orchestrate.md",
+			"path": "skills/pstack/poteto-mode/playbooks/orchestrate.md",
 			"sha256": "053627b655337461925a3308fe5ca5f8bcecd8dd483c86706a5645a782de4deb",
 			"status": "adapted",
 			"sources": [
@@ -176,7 +176,7 @@
 			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D2). A Scope paragraph tells the operator it is a depth-1, single-session coordinator and not an unattended runner: no sub-coordinators or nesting, woken only by deliveries, advisories or the operator, a hand-kept file store under show-me-your-work's append-only rules, the frontier from gh PR bases with Graphite never required and no remote workers, a session end as a pause resumed through session-pickup, and grants for every external action. Removed: the orch CLI and its lock, the agent's store, sub-coordinator roles and briefs, the depth-3 nesting claim, the cannot-be-resumed claim, the restart-kills-local-agents claim, cloud restacks, gt frontier and stacker commands, the loop-skill heartbeat and the recall tool. The store becomes .orchestrate/<slug>/ under .git/info/exclude with append-only units.tsv, frontier.tsv, ledger.tsv and inbox.tsv plus log.sh for the trail; stacker, babysitter and retro are roles run as fresh children; liveness uses side effects, worktree_list and one subagent_cancel plus one replacement. figure-it-out and arena are marked planned W4 with an interim rule for arena. W4 reconcile: the figure-it-out and arena planned W4 markers and the arena interim rule are retired. Wave 4 fix round: the advisory cancellation rule exempts a watcher child inside its declared wait bound. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/shipping.md",
+			"path": "skills/pstack/poteto-mode/playbooks/shipping.md",
 			"sha256": "be7e627e21ff8307674dad1538ccd9b5ceb1318cba1b704d4d00496489ee0a7e",
 			"status": "adapted",
 			"sources": [
@@ -196,7 +196,7 @@
 			"explanation": "Adapted and scoped down from the pinned pi-mimir playbook (D5, D6). A Scope paragraph says shipping starts only on an explicit merge, land or ship request, which authorizes merging the verified run only, and that pushes, force-pushes, retargets, verdict comments and auto-merge arming each need their own authorization. Origin commands and the excluded watcher script are removed; gh is the only forge. Per-PR verifiers are bare Verifier children launched in one turn per references/fan-out.md, and the parent posts verdicts only with authorization. Step 8 waits through a watcher child running gh pr checks --watch, keeps the upstream gh field conditions, reports and stops when checks finish with auto-merge pending or the trunk has a merge_queue rule, and never re-reads in a loop. Review fix: merge-queue detection moves to step 1, before any merge or auto-merge command; a merge_queue rule or a failed rules call reports state and stops, step 5 re-reads the rules call right before each merge or arm command, and step 8 no longer carries the queue check. G1: step 3 adapts the noise-build exception from the cursor context file (sha256 19f3f6803a7bbe9ff04f624b03e3b55f07ac0a05e991aa00d5fe51239b920b2a), which is byte-identical at cursor/plugins d0ef80d86795816da932a153458c5dbe192d294e and at the pinned cursor commit. The fixture schema records one cursor commit, so that pin and this source hash stay at 2cbf58508f40de470d7490b55c51d71241928fa2. Step 3 is adapted, not verbatim: 'each lane' is glossed as each verifier or swarm lane, because shipping step 1 never defines lanes. Red gate: an embedded commit SHA counts as noise only when the build stamps it and the source diff does not touch that line, so a source edit of a SHA does not keep the old lane PASS. npm pack is the comparison only for a lane with no build output of its own; a lane that ran tests compares that test output. Shipped product paths (skills/**, README.md, docs/compatibility.md, docs/provenance.md) are not ignorable docs. test/** paths that enforce those product paths are not ignorable tests. Lint config excludes config that selects which tests run or that changes emitted files. A patch that touches any of those is re-verified. When the recorded and current patches differ only in the remaining tests, docs, or lint config, a lane result stays valid if the comparison run twice at the verdict SHA and once at the current head shows only noise, judged per difference and reported with its files; checks and a review of the change run fresh. A dev-server lane is rerun. The cursor pin stays 2cbf58508f40de470d7490b55c51d71241928fa2. Cursor forge choice, cloud agents, control skills, watch-pr and /loop wording in the rest of that file stay out. Port-review follow-up: step 3's 'differ only in tests, docs, or lint config' denylist and its repo-specific not-ignorable path list are replaced by a generic per-repo allowlist rule. Only paths outside everything the package or build ships that enforce no behavior (no test, test fixture, CI, lint, typecheck or build config) may keep a lane result; package manifests, license and notice files, the changelog and release docs never may; any path off the allowlist is re-verified. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/visual-parity.md",
+			"path": "skills/pstack/poteto-mode/playbooks/visual-parity.md",
 			"sha256": "63f1ba36a51ef1f54b406d90da19d9fabb319b53063d5612561a111a4aa312fd",
 			"status": "adapted",
 			"sources": [
@@ -216,7 +216,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook (faithful, no timers). The short principle name becomes principle-separate-before-serializing-shared-state and parallel writers get worktree branches per references/fan-out.md. Step 4's control skill becomes the project's verification skill (create-verification-skill generates one), and the upstream loop marker becomes fresh fix rounds whose delivered results are the wake. Step 5 opens a PR only when the task authorizes it. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/playbooks/worktree-cleanup.md",
+			"path": "skills/pstack/poteto-mode/playbooks/worktree-cleanup.md",
 			"sha256": "3d44266c82a28b8db9f68a650dd400023ca2673492e21b9bd7ef5ccdbeeb5ed2",
 			"status": "adapted",
 			"sources": [
@@ -236,7 +236,7 @@
 			"explanation": "Adapted from the pinned pi-mimir playbook: faithful core with platform steps conditional. The excluded worktree-audit.sh becomes worktree_list for managed worktrees plus git worktree list --porcelain and stated per-path checks, with session lookups limited to this working directory per playbooks/session-pickup.md. Cursor-style pinned chats and the sidebar become asking the user, whose answer wins over any bucket. Every removal (worktree_remove, git worktree remove, rm -rf of a surviving directory, branches, simulators, caches) needs explicit per-path or named-set authorization under references/authorization.md, replacing 'clean and merged and not-in-use proceeds'. Simulator steps run only on macOS with xcrun present and per-item authorization; other platforms report them skipped. Principle names are bolded full names. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
 		},
 		{
-			"path": "skills/poteto-mode/scripts/check-plan.mjs",
+			"path": "skills/pstack/poteto-mode/scripts/check-plan.mjs",
 			"sha256": "cf0408b6487f1bd0ee7245f71b6e2a51fe1d2b2527e3ba514ea83d57bd814096",
 			"status": "adapted",
 			"sources": [

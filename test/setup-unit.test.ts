@@ -1342,7 +1342,9 @@ describe("config lines the poteto-help nudge matches", () => {
 		' does not exist (revision "missing"). pi-herdr-agents uses its packaged defaults and no task categories are configured.';
 	const PRESENT = / \(revision sha256:[0-9a-f]{64}\)\.$/;
 	const skill = readFileSync(
-		fileURLToPath(new URL("../skills/poteto-help/SKILL.md", import.meta.url)),
+		fileURLToPath(
+			new URL("../skills/pstack/poteto-help/SKILL.md", import.meta.url),
+		),
 		"utf8",
 	);
 	const previous = process.env.PI_CODING_AGENT_DIR;

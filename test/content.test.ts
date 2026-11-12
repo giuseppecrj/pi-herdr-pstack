@@ -233,28 +233,28 @@ describe("package manifest", () => {
 			/^docs\/plans\//,
 			/^docs\/evidence\//,
 			/^test\//,
-			/^skills\/ketchup-video\//,
+			/^skills\/(?:[^/]+\/)*ketchup-video\//,
 		];
 		for (const path of paths)
 			for (const pattern of banned) assert.doesNotMatch(path, pattern, path);
 		for (const required of [
-			"skills/statechart/SKILL.md",
-			"skills/statechart/scripts/statechart",
-			"skills/statechart/scripts/statechart.ts",
-			"skills/statechart/references/render.md",
-			"skills/in-your-own-words/SKILL.md",
-			"skills/ketchup/SKILL.md",
-			"skills/sharpen/SKILL.md",
+			"skills/pstack/statechart/SKILL.md",
+			"skills/pstack/statechart/scripts/statechart",
+			"skills/pstack/statechart/scripts/statechart.ts",
+			"skills/pstack/statechart/references/render.md",
+			"skills/pstack/in-your-own-words/SKILL.md",
+			"skills/pstack/ketchup/SKILL.md",
+			"skills/pstack/sharpen/SKILL.md",
 		])
 			assert.ok(paths.includes(required), required);
 		assert.ok(
-			!paths.includes("skills/ketchup-video/SKILL.md"),
+			!paths.includes("skills/pstack/ketchup-video/SKILL.md"),
 			"ketchup-video stays unshipped",
 		);
 	});
 
 	it("marks statechart optional with a tla-ts / no-Java note", () => {
-		const skill = read("skills/statechart/SKILL.md");
+		const skill = read("skills/pstack/statechart/SKILL.md");
 		assert.match(skill, /optional/i);
 		assert.match(skill, /tla-ts/);
 		assert.match(skill, /no Java/i);

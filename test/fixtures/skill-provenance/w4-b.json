@@ -15,7 +15,7 @@
 	},
 	"files": [
 		{
-			"path": "skills/automate-me/SKILL.md",
+			"path": "skills/pstack/automate-me/SKILL.md",
 			"sha256": "26ba9f07283a4f1e52ec5abc9fe9c5f162d3dc261f13b5818876564953cc0849",
 			"status": "adapted",
 			"sources": [
@@ -35,7 +35,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file. The Pi Agent Skills standard becomes Pi skill authoring, defined once as Pi's skills documentation plus ../poteto-mode/playbooks/authoring-a-skill.md, with Pi's name and description limits in the frontmatter step. The recall tool becomes the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, and slice miners are bare task:recon children per ../poteto-mode/references/fan-out.md reading only the session files the parent lists. The placeholder 'a user question' becomes asking in the reply and ending the turn. Placement writes the project's .pi/skills freely and ~/.pi/agent/skills only after explicit confirmation. Landing commits under the commit policy; push and PR each need explicit authorization per references/authorization.md. Cursor's AskQuestion, create-skill and ~/.cursor paths are not used."
 		},
 		{
-			"path": "skills/create-formal-verification-skill/SKILL.md",
+			"path": "skills/pstack/create-formal-verification-skill/SKILL.md",
 			"sha256": "bf989d696cf57f14c0429dac9363ce2ffc26611957dd4959f0e10ce594c9bc29",
 			"status": "adapted",
 			"sources": [
@@ -49,7 +49,7 @@
 			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Project-local skills write under .pi/skills/; a ~/.pi/agent/skills copy needs explicit confirmation. Installing a verification tool needs authorization (references/authorization.md). Generate step names the .pi/skills path. Hand-off points at /skill:maintain-formal-verification-skill. Cursor-only plugin resolution wording was not copied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
 		},
 		{
-			"path": "skills/create-verification-skill/SKILL.md",
+			"path": "skills/pstack/create-verification-skill/SKILL.md",
 			"sha256": "4e6d31d3e7d3570bd17ba229979dea15aa5fd2166241702762adc8bade28d330",
 			"status": "adapted",
 			"sources": [
@@ -69,7 +69,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file. The relative Markdown link to references/feature-map-example/ becomes a backticked skill-relative path. One sentence says project .pi/skills writes need no permission and a ~/.pi/agent/skills copy needs explicit confirmation. Step 5 adds that pstack schedules nothing, so any maintenance cadence is the user's. Cursor's .cursor paths and bare /create-verification-skill commands are not used. Pin move to cursor/plugins f713f14: Launch readiness means usable from an empty data dir (migrations and seed), not merely that a process answers; a missing seed precondition fails the journey and is recorded in Gotchas; a stand-in proof lists unverified setup steps. Cursor .cursor paths and bare slash commands stay unused."
 		},
 		{
-			"path": "skills/create-verification-skill/references/feature-map-example/README.md",
+			"path": "skills/pstack/create-verification-skill/references/feature-map-example/README.md",
 			"sha256": "1c79fd05f291a20889ed7f28395066562eeac1dfd2c440f5506e677931342f88",
 			"status": "adapted",
 			"sources": [
@@ -89,7 +89,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file, which equals Cursor. The two relative Markdown links in the Features index become bold feature names with backticked sibling file names, as the reference checker bans relative links. Nothing else changed."
 		},
 		{
-			"path": "skills/create-verification-skill/references/feature-map-example/create-note.md",
+			"path": "skills/pstack/create-verification-skill/references/feature-map-example/create-note.md",
 			"sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
 			"status": "copied",
 			"sources": [
@@ -109,7 +109,7 @@
 			"explanation": "Byte-identical copy of the pinned pi-mimir example feature file, which also equals the Cursor file."
 		},
 		{
-			"path": "skills/create-verification-skill/references/feature-map-example/search.md",
+			"path": "skills/pstack/create-verification-skill/references/feature-map-example/search.md",
 			"sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
 			"status": "copied",
 			"sources": [
@@ -129,7 +129,7 @@
 			"explanation": "Byte-identical copy of the pinned pi-mimir example feature file, which also equals the Cursor file."
 		},
 		{
-			"path": "skills/maintain-formal-verification-skill/SKILL.md",
+			"path": "skills/pstack/maintain-formal-verification-skill/SKILL.md",
 			"sha256": "2ac1e5c5e8e4d95294e75c6cc7c950a7bf4e367cd6bbff6939277797e6e714f3",
 			"status": "adapted",
 			"sources": [
@@ -143,7 +143,7 @@
 			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Find-the-checks looks under .pi/skills/. The report keeps the one-change shape but says commits follow the commit policy and that pushing and opening a PR each need explicit authorization (references/authorization.md); without it the run stops at the local diff. Cursor-only plugin resolution wording was not copied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
 		},
 		{
-			"path": "skills/maintain-verification-skill/SKILL.md",
+			"path": "skills/pstack/maintain-verification-skill/SKILL.md",
 			"sha256": "b6bb890810f7ece30e983665d07ad9deab824cc0771868e9d4e766216a3a145a",
 			"status": "adapted",
 			"sources": [
@@ -163,7 +163,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file, not copied: the contract's copy candidate needed two Pi edits. Step 2's concurrent read-only subagents become bare Investigator children with task:recon launched per ../poteto-mode/references/fan-out.md. The changed outcome and step 6 keep the one-PR shape but say commits follow the commit policy and that pushing and opening the PR each need explicit authorization (references/authorization.md); without it the run stops at the local diff. Cursor's bare slash commands and .cursor paths are not used."
 		},
 		{
-			"path": "skills/make-bot-ui/SKILL.md",
+			"path": "skills/pstack/make-bot-ui/SKILL.md",
 			"sha256": "44456050421fd3656970d04b153c6421853dc05e7011ddd7905107acadb443be",
 			"status": "adapted",
 			"sources": [
@@ -177,7 +177,7 @@
 			"explanation": "Re-authored for Pi under user decision D4 with the Cursor file as primary structure (the row has no pi-mimir source). The frontmatter name Make Bot UI becomes make-bot-ui and keeps disable-model-invocation true. The Cursor webhook routine, update_state, the secret-request card, the remote webhook URL and the chat-header shortcut panel are removed. The skill now guides a local page that POSTs to a server bound to 127.0.0.1, with Host, Origin, content-type, constant-time key, size and field validation, no CORS, one run at a time, and each accepted body written to a runs/ file and attached to a pi -p run through an argument array, with fixed instructions in --append-system-prompt and the body treated as untrusted data. The key is generated into a mode-600 local file and never printed or pasted in chat. A proof section probes loopback before calling it live. Kept from Cursor: one try with a timeout, probing with a harmless payload, never asking for Tailscale credentials, not creating a second hostname on an online node, and matching field names; installation, Tailscale exposure and any bind beyond loopback each need explicit authorization. Review fixes: the RPC alternative is removed, so every request is a fresh pi -p process with the same tool limits and a clean context. Host and any Origin are validated before every route including GET /; the served page holds no secret, the user enters the key in a memory-only password field, and the server reads the key file on each POST. The proof list adds a hostile-Host GET that returns 403 and checks that no response body contains the key."
 		},
 		{
-			"path": "skills/recall/SKILL.md",
+			"path": "skills/pstack/recall/SKILL.md",
 			"sha256": "50d70ad4681218b598362afe1a04531fb0e04d9031bd696099ac9d770bac6ea8",
 			"status": "adapted",
 			"sources": [
@@ -197,7 +197,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used. W4 reconcile: the why planned W4 markers and the until-why-ships launch rule are retired; the sweep launches investigators as why does, without a tools key so MCP stays visible (gate G5), with the source-control-only report kept for operator-restricted tools."
 		},
 		{
-			"path": "skills/show-me-your-work/SKILL.md",
+			"path": "skills/pstack/show-me-your-work/SKILL.md",
 			"sha256": "86950439a00c4d5fada31663ab09483a21bf653042a579de326560228f73f907",
 			"status": "adapted",
 			"sources": [
@@ -217,7 +217,7 @@
 			"explanation": "Adapted from the pinned pi-mimir file. The transcript audit keeps $PI_SESSION_FILE and replaces the nonexistent recall tool with the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, never another project's sessions. A start row's evidence names the run's session file instead of an agent id. Committing the log also requires the task's commit policy (references/authorization.md). The short principle name becomes principle-encode-lessons-in-structure. The cross-model trail review becomes a fan-out.md diversity seat: one schema-valid bare subagent example with the delegation.md Reviewer prompt, an exact <provider>/<model-id> from another family, tools read, bash and fork false, given the log path and the parent's session file path; with no other family it runs same-family and is labelled context-isolated in the Attention line; a child keeping a trail launches no reviewer and leaves the review to its parent. Cursor's agent-transcripts wording and missing illustration sentence are not used."
 		},
 		{
-			"path": "skills/show-me-your-work/references/decision-log-template.tsv",
+			"path": "skills/pstack/show-me-your-work/references/decision-log-template.tsv",
 			"sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
 			"status": "copied",
 			"sources": [
@@ -237,7 +237,7 @@
 			"explanation": "Byte-identical copy of the pinned pi-mimir header row, which also equals the Cursor file."
 		},
 		{
-			"path": "skills/show-me-your-work/scripts/log.sh",
+			"path": "skills/pstack/show-me-your-work/scripts/log.sh",
 			"sha256": "a65a4bc5fb7cdeadbdb7b7ff1ca4682f4d9c42420942b2977cd17b46c4ac338e",
 			"status": "copied",
 			"sources": [
@@ -257,7 +257,7 @@
 			"explanation": "Byte-identical copy of the pinned pi-mimir script (also equal to Cursor), git mode 100755 preserved; test/scripts.test.ts covers the header, tab and newline stripping and the formula prefix."
 		},
 		{
-			"path": "skills/statechart/SKILL.md",
+			"path": "skills/pstack/statechart/SKILL.md",
 			"sha256": "6439a2d60e9602d4cd74d10932534dbe0fc02e8a568386947ec6b143a93f7f3d",
 			"status": "adapted",
 			"sources": [
@@ -271,7 +271,7 @@
 			"explanation": "Optional /skill:statechart leaf. Checking uses the pack tla-ts dependency (no Java). Adapted for Pi invocation. Runtime scripts only: corpus/unit tests, package.json and tsconfig were not shipped so the npm pack stays lean."
 		},
 		{
-			"path": "skills/statechart/references/render.md",
+			"path": "skills/pstack/statechart/references/render.md",
 			"sha256": "bc29d40253f263cbeec90661375a581fdb9e38711b3a37a32dfc9b6d23a97241",
 			"status": "adapted",
 			"sources": [
@@ -285,7 +285,7 @@
 			"explanation": "Optional /skill:statechart leaf. Checking uses the pack tla-ts dependency (no Java). Adapted for Pi invocation. Runtime scripts only: corpus/unit tests, package.json and tsconfig were not shipped so the npm pack stays lean."
 		},
 		{
-			"path": "skills/statechart/scripts/backends/cfg.ts",
+			"path": "skills/pstack/statechart/scripts/backends/cfg.ts",
 			"sha256": "aea4d8766d214e7fa08f4881f1037319655e75eb56652e1b6d5d4f13a162e3e1",
 			"status": "copied",
 			"sources": [
@@ -299,7 +299,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/backends/mermaid.ts",
+			"path": "skills/pstack/statechart/scripts/backends/mermaid.ts",
 			"sha256": "75704b2704a9399a39479ff704a580d5b9a1d0fede01fe771df28bf799b434b6",
 			"status": "copied",
 			"sources": [
@@ -313,7 +313,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/backends/plain-text.ts",
+			"path": "skills/pstack/statechart/scripts/backends/plain-text.ts",
 			"sha256": "e2bedb855eb3806ec3fe7a7bfa49baa309fb4cf0da425b5fe1e0686268ce255a",
 			"status": "copied",
 			"sources": [
@@ -327,7 +327,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/backends/report.ts",
+			"path": "skills/pstack/statechart/scripts/backends/report.ts",
 			"sha256": "730b4048578ab0468e1581f16fec60b246e321161effb68e481efb373f0f2501",
 			"status": "copied",
 			"sources": [
@@ -341,7 +341,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/config.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/config.ts",
 			"sha256": "5eeab1e755f20a2c83b408c6503fdc9c6b10c971d8dedad3f912bd15f9763daf",
 			"status": "copied",
 			"sources": [
@@ -355,7 +355,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/dot.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/dot.ts",
 			"sha256": "4eef9ec848557dcd01ca8dbbec75b71c0653c1b73583108bafbb6f559f6d677b",
 			"status": "copied",
 			"sources": [
@@ -369,7 +369,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/marks.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/marks.ts",
 			"sha256": "eb0120e61a4004a435c7b7c46916da9dc8b2fa8696ed0d3eb64dc953fed3ab11",
 			"status": "copied",
 			"sources": [
@@ -383,7 +383,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/messages.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/messages.ts",
 			"sha256": "36bfc6fb3ffa86897661efb2aa67bd95b55a4da9a3e952831f6e0668826b4b92",
 			"status": "copied",
 			"sources": [
@@ -397,7 +397,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/spec.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/spec.ts",
 			"sha256": "450cdfc8d0577a96818ca3697efebbbf70b530a4ba7e3eee03cf1ba8d3f1a0fd",
 			"status": "copied",
 			"sources": [
@@ -411,7 +411,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/trace.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/trace.ts",
 			"sha256": "7d083cf89b81c41556fc3fd5f07019886e0f6783c632475e7181ac4b81887367",
 			"status": "copied",
 			"sources": [
@@ -425,7 +425,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/value.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/value.ts",
 			"sha256": "7c54be394b7a10f60591858a0f08fb1e8dc0941df1f38ede07fbe7719ff56da0",
 			"status": "copied",
 			"sources": [
@@ -439,7 +439,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/verdict.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/verdict.ts",
 			"sha256": "0d0a9d6b6d6da5a7c48851b86d9d041f22982404dda6288795a1715138d7008b",
 			"status": "copied",
 			"sources": [
@@ -453,7 +453,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/frontends/view.ts",
+			"path": "skills/pstack/statechart/scripts/frontends/view.ts",
 			"sha256": "2c0af8939321c5aaed4b6ecac8ce6a98d0e6774d8bd15d4b02fe4f406b8c9620",
 			"status": "copied",
 			"sources": [
@@ -467,7 +467,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/ir.ts",
+			"path": "skills/pstack/statechart/scripts/ir.ts",
 			"sha256": "5602beca4e4ac08421cfa07e4da989f0e75439f1d136cc923226909e771dc7ff",
 			"status": "copied",
 			"sources": [
@@ -481,7 +481,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/annotate.ts",
+			"path": "skills/pstack/statechart/scripts/passes/annotate.ts",
 			"sha256": "dc8eeee09c3a9a0c060f32fb1d554e01bd80e5265751cdeb041ef3e19561b92a",
 			"status": "copied",
 			"sources": [
@@ -495,7 +495,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/label.ts",
+			"path": "skills/pstack/statechart/scripts/passes/label.ts",
 			"sha256": "b5ef402369c5e7846be1fd39165e95cbfe715fc36eb9331a0401b26523c539c9",
 			"status": "copied",
 			"sources": [
@@ -509,7 +509,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/lift.ts",
+			"path": "skills/pstack/statechart/scripts/passes/lift.ts",
 			"sha256": "8977dddc6c93bb2e3914d5b50760eb66876107ba51e2b8cf9e18611b4c40c89c",
 			"status": "copied",
 			"sources": [
@@ -523,7 +523,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/loop-check.ts",
+			"path": "skills/pstack/statechart/scripts/passes/loop-check.ts",
 			"sha256": "07d459385849aa35834040bf34e279c39baba68244ec9da17c57703a6ee8e2d4",
 			"status": "copied",
 			"sources": [
@@ -537,7 +537,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/paths.ts",
+			"path": "skills/pstack/statechart/scripts/passes/paths.ts",
 			"sha256": "9af1066b007ef86cb05c5e278eef09f090f1e46eb91d356e5146edbd4fee4ec7",
 			"status": "copied",
 			"sources": [
@@ -551,7 +551,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/reach.ts",
+			"path": "skills/pstack/statechart/scripts/passes/reach.ts",
 			"sha256": "b52b38f926814937b733221b40bd31075a69a2fb91ecbce2164752a8684bc5d6",
 			"status": "copied",
 			"sources": [
@@ -565,7 +565,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/region-check.ts",
+			"path": "skills/pstack/statechart/scripts/passes/region-check.ts",
 			"sha256": "8a6e0618740a14bb7048f6563b4324958177f4685d4d6d90364cc6245b1498b4",
 			"status": "copied",
 			"sources": [
@@ -579,7 +579,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/passes/regions.ts",
+			"path": "skills/pstack/statechart/scripts/passes/regions.ts",
 			"sha256": "d740ebfdbb5ec7b4984412a635a596b43af7a77b8bcb49a1463c8afa75299f72",
 			"status": "copied",
 			"sources": [
@@ -593,7 +593,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/pipeline.ts",
+			"path": "skills/pstack/statechart/scripts/pipeline.ts",
 			"sha256": "8aa8d9295ab6762f7f2ffae91a0aee98b1a1314747c875edba4598fdab8ed543",
 			"status": "copied",
 			"sources": [
@@ -607,7 +607,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/run.ts",
+			"path": "skills/pstack/statechart/scripts/run.ts",
 			"sha256": "bf77f00117df14850da5b03e94fd7f2e4a2a458f0f82e8091ee55d12eef42f3b",
 			"status": "adapted",
 			"sources": [
@@ -621,7 +621,7 @@
 			"explanation": "Adapted from the pin 1ba91fc runtime script: resolves the pack tla-ts CLI and spawns process.execPath with it instead of JVM TLC via mise/TLA2TOOLS. PINNED_FLAGS, -tool parsing, XMLExporter, dump-dot and exitClass mapping stay. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/statechart",
+			"path": "skills/pstack/statechart/scripts/statechart",
 			"sha256": "aeffb7077850fd4c225e3d18049ca6ed7b988cf48e88cd8463526a7feaa74d13",
 			"status": "copied",
 			"sources": [
@@ -635,7 +635,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/statechart.ts",
+			"path": "skills/pstack/statechart/scripts/statechart.ts",
 			"sha256": "1c653f05d0cd0f3298455701f36e3d7d1f837f93e6e642f7c20afb5d613c2d12",
 			"status": "copied",
 			"sources": [
@@ -649,7 +649,7 @@
 			"explanation": "Copied runtime script for optional /skill:statechart at pin 1ba91fc. Test corpora and package tooling are not shipped."
 		},
 		{
-			"path": "skills/statechart/scripts/worker.ts",
+			"path": "skills/pstack/statechart/scripts/worker.ts",
 			"sha256": "1f18ed5ef806982e05e8a40fc217e88257700b28b63cb4acbd647872f85f782b",
 			"status": "copied",
 			"sources": [

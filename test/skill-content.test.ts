@@ -17,6 +17,11 @@ const exists = (path: string) => existsSync(join(PACK_ROOT, path));
 const sha256 = (value: string | Buffer) =>
 	createHash("sha256").update(value).digest("hex");
 const readJson = <T>(path: string): T => JSON.parse(read(path)) as T;
+/** The pstack upstream folder (ADR-0003); every inventory row is a skill in it. */
+const PSTACK = "skills/pstack";
+/** `skills/pstack/<name>` and `<name>` for a path inside a pstack skill. */
+const skillDirOf = (path: string) => path.split("/").slice(0, 3).join("/");
+const skillNameOf = (path: string) => path.split("/")[2];
 
 type SourceKey = "mimir" | "cursor";
 type InventoryRow = {
@@ -126,7 +131,7 @@ const provenanceOf = (owner: string) => {
  */
 const plannedPlaybooks = new Map(
 	provenanceOf("w2").planned.map(({ path, owningWave }) => [
-		`skills/${path}`,
+		`skills/pstack/${path}`,
 		owningWave,
 	]),
 );
@@ -159,35 +164,40 @@ const W4_PLAYBOOKS = [
 	"worktree-cleanup",
 ];
 const W4P_FILES = [
-	...W4_PLAYBOOKS.map((name) => `skills/poteto-mode/playbooks/${name}.md`),
-	"skills/poteto-mode/scripts/check-plan.mjs",
+	...W4_PLAYBOOKS.map(
+		(name) => `skills/pstack/poteto-mode/playbooks/${name}.md`,
+	),
+	"skills/pstack/poteto-mode/scripts/check-plan.mjs",
 ];
 /** The fixture wave that owns a shipped or referencing file. */
 const ownerWaveOf = (path: string) =>
-	W4P_FILES.includes(path) ? "W4-P" : waveOf.get(path.split("/")[1]);
-const FAN_OUT = "skills/poteto-mode/references/fan-out.md";
+	W4P_FILES.includes(path) ? "W4-P" : waveOf.get(skillNameOf(path));
+const FAN_OUT = "skills/pstack/poteto-mode/references/fan-out.md";
 /** Runnable shebang entrypoints under skills/.../scripts and their git modes. */
 const SCRIPT_MODES: Record<string, string> = {
-	"skills/poteto-mode/scripts/check-plan.mjs": "100644",
-	"skills/show-me-your-work/scripts/log.sh": "100755",
-	"skills/statechart/scripts/statechart": "100755",
-	"skills/statechart/scripts/statechart.ts": "100644",
+	"skills/pstack/poteto-mode/scripts/check-plan.mjs": "100644",
+	"skills/pstack/show-me-your-work/scripts/log.sh": "100755",
+	"skills/pstack/statechart/scripts/statechart": "100755",
+	"skills/pstack/statechart/scripts/statechart.ts": "100644",
 };
 const W2_FILES = [
-	"skills/poteto-mode/SKILL.md",
-	"skills/poteto-mode/references/authorization.md",
-	"skills/poteto-mode/references/bugbot-triage.md",
-	"skills/poteto-mode/references/delegation.md",
-	...BASE_PLAYBOOKS.map((name) => `skills/poteto-mode/playbooks/${name}.md`),
-	"skills/setup-pstack/SKILL.md",
+	"skills/pstack/poteto-mode/SKILL.md",
+	"skills/pstack/poteto-mode/references/authorization.md",
+	"skills/pstack/poteto-mode/references/bugbot-triage.md",
+	"skills/pstack/poteto-mode/references/delegation.md",
+	...BASE_PLAYBOOKS.map(
+		(name) => `skills/pstack/poteto-mode/playbooks/${name}.md`,
+	),
+	"skills/pstack/setup-pstack/SKILL.md",
 ].toSorted();
-const COMMENT_SICKO_PROMPT = "skills/no-comments/references/comment-sicko.md";
+const COMMENT_SICKO_PROMPT =
+	"skills/pstack/no-comments/references/comment-sicko.md";
 const COMMENT_SICKO_SYSTEM_PROMPT =
 	"<the full text of references/comment-sicko.md, verbatim>";
-/** Files outside `skills/no-comments/` that may name the delegate, on lines that also name `no-comments`. */
+/** Files outside `skills/pstack/no-comments/` that may name the delegate, on lines that also name `no-comments`. */
 const COMMENT_SICKO_DESCRIBERS = [
-	"skills/poteto-mode/SKILL.md",
-	"skills/poteto-mode/references/delegation.md",
+	"skills/pstack/poteto-mode/SKILL.md",
+	"skills/pstack/poteto-mode/references/delegation.md",
 ];
 
 // Pinned from pi-herdr-agents 7d35371 `SubagentParams`; parity is checked
@@ -259,7 +269,7 @@ const ORIGIN_FORGE = [
 		"i",
 	),
 ];
-const DELEGATION = "skills/poteto-mode/references/delegation.md";
+const DELEGATION = "skills/pstack/poteto-mode/references/delegation.md";
 
 /** Problems with one call against the pinned host schema; empty when valid. */
 function schemaProblems(call: Record<string, unknown>): string[] {
@@ -301,7 +311,7 @@ function validWorktree(value: unknown): boolean {
  */
 function promptTarget(path: string, systemPrompt: unknown): string | undefined {
 	const text = String(systemPrompt);
-	const skillDir = path.split("/").slice(0, 2).join("/");
+	const skillDir = skillDirOf(path);
 	if (
 		path === DELEGATION &&
 		/^<the (?:Implementer|Investigator|Reviewer|Verifier) prompt above, verbatim>$/.test(
@@ -320,7 +330,7 @@ function promptTarget(path: string, systemPrompt: unknown): string | undefined {
 	const fixed = /^<the full text of (\S+\.md), verbatim>$/.exec(text);
 	if (fixed) {
 		const target = posix.normalize(posix.join(skillDir, fixed[1]));
-		return /^skills\/[a-z0-9-]+\/references\//.test(target) &&
+		return /^skills\/pstack\/[a-z0-9-]+\/references\//.test(target) &&
 			target !== DELEGATION
 			? target
 			: undefined;
@@ -338,10 +348,10 @@ function walk(dir: string): string[] {
 }
 
 const SHIPPED_FILES = walk("skills").toSorted();
-const rowNameOf = (path: string) => path.split("/")[1];
+const rowNameOf = skillNameOf;
 /** Inventory rows whose skill directory exists in this tree. */
 const presentRows = inventory.skills.filter(({ name }) =>
-	exists(`skills/${name}`),
+	exists(`skills/pstack/${name}`),
 );
 const shippedRows = inventory.skills.filter(
 	({ status }) => status === "shipped",
@@ -398,7 +408,7 @@ type Quotation = { path: string; snippet: string };
 /** Placeholder markers that adapted files quote from upstream prompts. */
 const QUOTED_MARKERS: Quotation[] = [
 	{
-		path: "skills/architect/references/runner-prompt.md",
+		path: "skills/pstack/architect/references/runner-prompt.md",
 		snippet: "`// TODO` pseudocode for tricky logic",
 	},
 ];
@@ -444,7 +454,7 @@ type Reference = { sourcePath: string; targetPath: string; text: string };
 
 /** Skill and resource references, resolved to package-relative targets. */
 function references(sourcePath: string): Reference[] {
-	const skillDir = sourcePath.split("/").slice(0, 2).join("/");
+	const skillDir = skillDirOf(sourcePath);
 	return proseLines(sourcePath).flatMap(({ text }) => {
 		const skills = [
 			...text.matchAll(
@@ -453,7 +463,7 @@ function references(sourcePath: string): Reference[] {
 		]
 			.map((match) => match[1] ?? match[2] ?? match[3])
 			.filter((name) => waveOf.has(name))
-			.map((name) => `skills/${name}/SKILL.md`);
+			.map((name) => `skills/pstack/${name}/SKILL.md`);
 		const paths = [...text.matchAll(/`([^`\s]+)`/g)]
 			.map(([, span]) => span)
 			.filter((span) =>
@@ -479,21 +489,20 @@ const tupleKey = ({ sourcePath, targetPath }: ForwardReference | Reference) =>
 
 /** The wave that owns a reference target, or undefined for unowned paths. */
 function expectedWave(targetPath: string): string | undefined {
-	const playbook = /^skills\/poteto-mode\/playbooks\/([a-z-]+)\.md$/.exec(
-		targetPath,
-	);
+	const playbook =
+		/^skills\/pstack\/poteto-mode\/playbooks\/([a-z-]+)\.md$/.exec(targetPath);
 	if (playbook)
 		return W4_PLAYBOOKS.includes(playbook[1])
 			? (plannedPlaybooks.get(targetPath) ?? "W4")
 			: undefined;
-	const skill = /^skills\/([a-z0-9-]+)\/SKILL\.md$/.exec(targetPath);
+	const skill = /^skills\/pstack\/([a-z0-9-]+)\/SKILL\.md$/.exec(targetPath);
 	return skill ? waveOf.get(skill[1]) : undefined;
 }
 
 /** Whether a reference target belongs to a row (or W4 playbook) not yet shipped. */
 function targetPlanned(targetPath: string): boolean {
-	const skill = /^skills\/([a-z0-9-]+)\//.exec(targetPath);
-	if (targetPath.startsWith("skills/poteto-mode/playbooks/"))
+	const skill = /^skills\/pstack\/([a-z0-9-]+)\//.exec(targetPath);
+	if (targetPath.startsWith("skills/pstack/poteto-mode/playbooks/"))
 		return plannedPlaybooks.has(targetPath);
 	return skill ? rowOf.get(skill[1])?.status === "planned" : false;
 }
@@ -544,10 +553,10 @@ describe("shipped skill tree", () => {
 	});
 
 	it("loads make-bot-ui with zero diagnostics", {
-		skip: !exists("skills/make-bot-ui") && "make-bot-ui ships with W4-B",
+		skip: !exists("skills/pstack/make-bot-ui") && "make-bot-ui ships with W4-B",
 	}, () => {
 		const { skills, diagnostics } = loadSkillsFromDir({
-			dir: join(PACK_ROOT, "skills/make-bot-ui"),
+			dir: join(PACK_ROOT, "skills/pstack/make-bot-ui"),
 			source: "pi-herdr-pstack",
 		});
 		assert.deepEqual(diagnostics, []);
@@ -559,14 +568,14 @@ describe("shipped skill tree", () => {
 
 	it("has every shipped row present, and only shipped or in-progress W3 and W4 rows", () => {
 		for (const { name } of shippedRows)
-			assert.ok(exists(`skills/${name}/SKILL.md`), `${name} is shipped`);
+			assert.ok(exists(`skills/pstack/${name}/SKILL.md`), `${name} is shipped`);
 		for (const { name, status, wave } of presentRows)
 			assert.ok(
 				status === "shipped" || /^W[34]-/.test(wave),
 				`${name} (${wave}) is present but ${status}`,
 			);
 		assert.deepEqual(
-			readdirSync(join(PACK_ROOT, "skills")).toSorted(),
+			readdirSync(join(PACK_ROOT, PSTACK)).toSorted(),
 			presentRows.map(({ name }) => name).toSorted(),
 			"every skill directory is an inventory row",
 		);
@@ -575,12 +584,12 @@ describe("shipped skill tree", () => {
 				plannedPlaybooks.has(path) || exists(path),
 				`${path} left w2.json planned but is absent`,
 			);
-		if (exists("skills/poteto-mode/scripts"))
+		if (exists("skills/pstack/poteto-mode/scripts"))
 			assert.deepEqual(
-				readdirSync(join(PACK_ROOT, "skills/poteto-mode/scripts")),
+				readdirSync(join(PACK_ROOT, "skills/pstack/poteto-mode/scripts")),
 				["check-plan.mjs"],
 			);
-		assert.equal(exists("skills/orchestrate"), false);
+		assert.equal(exists("skills/pstack/orchestrate"), false);
 		assert.equal(exists("agents"), false);
 		for (const path of SHIPPED_FILES.filter(
 			(file) => rowNameOf(file) !== "no-comments",
@@ -611,7 +620,7 @@ describe("shipped skill tree", () => {
 			presentRows
 				.map(({ name }) => ({
 					name,
-					filePath: join(PACK_ROOT, `skills/${name}/SKILL.md`),
+					filePath: join(PACK_ROOT, `skills/pstack/${name}/SKILL.md`),
 					disableModelInvocation: name !== "setup-pstack",
 				}))
 				.toSorted((a, b) => a.name.localeCompare(b.name)),
@@ -623,7 +632,7 @@ describe("shipped skill tree", () => {
 		);
 		for (const { name } of presentRows)
 			assert.doesNotMatch(
-				frontmatter(`skills/${name}/SKILL.md`) ?? "",
+				frontmatter(`skills/pstack/${name}/SKILL.md`) ?? "",
 				/^paths\s*:/m,
 				`${name}: Pi ignores paths; drop it`,
 			);
@@ -669,8 +678,8 @@ describe("shipped skill tree", () => {
 });
 
 describe("quotation exemptions", () => {
-	const ADAPTED = "skills/poteto-mode/playbooks/hillclimb.md";
-	const RUNNER = "skills/architect/references/runner-prompt.md";
+	const ADAPTED = "skills/pstack/poteto-mode/playbooks/hillclimb.md";
+	const RUNNER = "skills/pstack/architect/references/runner-prompt.md";
 
 	it("fails an adapted file that quotes a placeholder outside the allowlist", () => {
 		const text = "# Step\n\n- `TODO`: define later\n";
@@ -705,8 +714,8 @@ describe("quotation exemptions", () => {
 
 	it("passes quotations in byte-identical copies", () => {
 		for (const [path, pattern] of [
-			["skills/why/references/sources/code-archaeology.md", PLACEHOLDER],
-			["skills/reflect/references/synthesizer.md", MODEL_SLUG],
+			["skills/pstack/why/references/sources/code-archaeology.md", PLACEHOLDER],
+			["skills/pstack/reflect/references/synthesizer.md", MODEL_SLUG],
 		] as const) {
 			assert.equal(statusOf(path), "copied", path);
 			assert.match(read(path), pattern, path);
@@ -769,7 +778,7 @@ describe("Origin forge ban", () => {
 	});
 
 	it("allows the git remote named origin and the HTTP Origin header", () => {
-		const botUi = read("skills/make-bot-ui/SKILL.md")
+		const botUi = read("skills/pstack/make-bot-ui/SKILL.md")
 			.split("\n")
 			.filter((line) => line.includes("Origin"));
 		assert.equal(botUi.length, 4);
@@ -920,7 +929,7 @@ describe("references and forward exceptions", () => {
 	});
 
 	it("keeps all 24 principle summaries in the hub, planned ones marked planned W3", () => {
-		const hub = read("skills/poteto-mode/SKILL.md").split("\n");
+		const hub = read("skills/pstack/poteto-mode/SKILL.md").split("\n");
 		const principles = inventory.skills.filter(({ name }) =>
 			name.startsWith("principle-"),
 		);
@@ -940,7 +949,7 @@ describe("references and forward exceptions", () => {
 	});
 
 	it("routes every upstream playbook from the hub, unshipped ones visibly planned", () => {
-		const hub = proseLines("skills/poteto-mode/SKILL.md");
+		const hub = proseLines("skills/pstack/poteto-mode/SKILL.md");
 		for (const name of [...BASE_PLAYBOOKS, ...W4_PLAYBOOKS]) {
 			const routes = hub.filter(
 				({ text }) =>
@@ -948,7 +957,7 @@ describe("references and forward exceptions", () => {
 			);
 			assert.equal(routes.length, 1, name);
 			const wave = plannedPlaybooks.get(
-				`skills/poteto-mode/playbooks/${name}.md`,
+				`skills/pstack/poteto-mode/playbooks/${name}.md`,
 			);
 			if (wave) assert.ok(routes[0].text.includes(`(planned ${wave})`), name);
 			else assert.doesNotMatch(routes[0].text, /\(planned W\d\)/, name);
@@ -1075,7 +1084,9 @@ describe("delegation contract", () => {
 			"read/pane/exact",
 		])
 			assert.ok(kinds.has(kind), kind);
-		const delegation = read("skills/poteto-mode/references/delegation.md");
+		const delegation = read(
+			"skills/pstack/poteto-mode/references/delegation.md",
+		);
 		for (const prompt of [
 			"Implementer",
 			"Investigator",
@@ -1089,7 +1100,7 @@ describe("delegation contract", () => {
 	});
 
 	it("launches why investigators without a tools list, so MCP servers stay visible", {
-		skip: !exists("skills/why") && "why ships with W4-A",
+		skip: !exists("skills/pstack/why") && "why ships with W4-A",
 	}, () => {
 		const investigators = examples.filter(
 			({ path, call }) =>
@@ -1104,7 +1115,8 @@ describe("delegation contract", () => {
 	});
 
 	it("launches comment-sicko as a bare comment editor from its reference prompt", {
-		skip: !exists("skills/no-comments") && "no-comments is not present yet",
+		skip:
+			!exists("skills/pstack/no-comments") && "no-comments is not present yet",
 	}, () => {
 		assert.ok(exists(COMMENT_SICKO_PROMPT));
 		assert.equal(
@@ -1492,11 +1504,11 @@ function swarmStatusProblems(swarm: string): string[] {
 }
 
 describe("swarm status mapping and boundary parse", () => {
-	const swarm = read("skills/swarm/SKILL.md");
+	const swarm = read("skills/pstack/swarm/SKILL.md");
 
 	it("maps each verifier claim onto one overall PASS, ISSUES or BLOCKED", () => {
 		assert.match(
-			read("skills/poteto-mode/references/delegation.md"),
+			read("skills/pstack/poteto-mode/references/delegation.md"),
 			/Report pass, fail or inconclusive for each claim/,
 		);
 		assert.deepEqual(swarmStatusProblems(swarm), []);
@@ -1670,9 +1682,9 @@ describe("swarm status mapping and boundary parse", () => {
 
 	it("aligns the patterns boundary lines with the skill row", () => {
 		const patterns = read(
-			"skills/typescript-best-practices/references/patterns.md",
+			"skills/pstack/typescript-best-practices/references/patterns.md",
 		);
-		const skill = read("skills/typescript-best-practices/SKILL.md");
+		const skill = read("skills/pstack/typescript-best-practices/SKILL.md");
 		const row = /\| Boundary validation \| (.*) \|/.exec(skill)?.[1] ?? "";
 		assert.match(
 			row,
@@ -1696,25 +1708,25 @@ describe("swarm status mapping and boundary parse", () => {
 describe("authorization boundaries", () => {
 	it("never lets activation, autonomy or a playbook step grant permission", () => {
 		assert.match(
-			read("skills/poteto-mode/SKILL.md"),
+			read("skills/pstack/poteto-mode/SKILL.md"),
 			/Neither path grants permission\./,
 		);
 		assert.match(
-			read("skills/poteto-mode/references/authorization.md"),
+			read("skills/pstack/poteto-mode/references/authorization.md"),
 			/never grants permission/,
 		);
 		assert.match(
-			read("skills/poteto-mode/playbooks/opening-a-pr.md"),
+			read("skills/pstack/poteto-mode/playbooks/opening-a-pr.md"),
 			/only when the task authorizes opening a pull request/,
 		);
 		assert.match(
-			read("skills/poteto-mode/references/bugbot-triage.md"),
+			read("skills/pstack/poteto-mode/references/bugbot-triage.md"),
 			/Replying to, resolving or reacting to a remote thread is an external action/,
 		);
 	});
 
 	it("leaves configuration writes to the setup extension's approved flow", () => {
-		const setup = read("skills/setup-pstack/SKILL.md");
+		const setup = read("skills/pstack/setup-pstack/SKILL.md");
 		assert.match(setup, /never authorizes a configuration write/);
 		assert.match(setup, /never call `subagents_write_task_models` yourself/);
 		assert.match(setup, /Call `pstack_apply_task_models` once/);
@@ -1736,7 +1748,7 @@ describe("authorization boundaries", () => {
 
 describe("model precedence", () => {
 	it("says an explicit model argument, including task:<category>, wins over defaults", () => {
-		const setup = read("skills/setup-pstack/SKILL.md");
+		const setup = read("skills/pstack/setup-pstack/SKILL.md");
 		assert.match(
 			setup,
 			/An explicit `model` in the `subagent` call wins, whether it is an exact `provider\/model-id` or a `task:<category>` selector/,
@@ -2031,7 +2043,7 @@ describe("methodology provenance", () => {
 	});
 
 	it("narrows the shipping noise-build exception against a stamped SHA or a pack substitute", () => {
-		const step = read("skills/poteto-mode/playbooks/shipping.md")
+		const step = read("skills/pstack/poteto-mode/playbooks/shipping.md")
 			.split("\n")
 			.find((line) => line.startsWith("3. **Re-check"));
 		assert.ok(step, "shipping step 3");
@@ -2061,14 +2073,16 @@ describe("methodology provenance", () => {
 			assert.ok(step.includes(phrase), phrase);
 		assert.doesNotMatch(step, /differ only in tests, docs, or lint config/);
 		assert.doesNotMatch(step, /are not ignorable/);
-		const autopilot = read("skills/poteto-mode/playbooks/autopilot-full.md");
+		const autopilot = read(
+			"skills/pstack/poteto-mode/playbooks/autopilot-full.md",
+		);
 		assert.match(
 			autopilot,
 			/A new head voids the verdict, except for lane results that stay valid under the patch-id rule in `playbooks\/shipping\.md`/,
 		);
 		for (const path of [
-			"skills/poteto-mode/playbooks/autopilot-full.md",
-			"skills/poteto-mode/playbooks/multi-phase-plan.md",
+			"skills/pstack/poteto-mode/playbooks/autopilot-full.md",
+			"skills/pstack/poteto-mode/playbooks/multi-phase-plan.md",
 		])
 			assert.doesNotMatch(
 				read(path),
@@ -2078,7 +2092,7 @@ describe("methodology provenance", () => {
 	});
 
 	it("requires the architecture shortlist bullet in the delegation preflight", () => {
-		const preflight = read("skills/poteto-mode/references/delegation.md")
+		const preflight = read("skills/pstack/poteto-mode/references/delegation.md")
 			.split("\n")
 			.find((line) =>
 				line.startsWith("- Before launching any recon or review seats"),
@@ -2124,7 +2138,9 @@ describe("methodology provenance", () => {
 	});
 
 	it("gates bug-fix on ownership, an existing fix and a repro observed twice", () => {
-		const steps = read("skills/poteto-mode/playbooks/bug-fix.md").split("\n");
+		const steps = read("skills/pstack/poteto-mode/playbooks/bug-fix.md").split(
+			"\n",
+		);
 		const step = (n: number) => {
 			const line = steps.find((text) => text.startsWith(`${n}. `));
 			assert.ok(line, `bug-fix step ${n}`);

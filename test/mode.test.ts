@@ -22,7 +22,7 @@ import {
 	SKILL_NAMES,
 } from "./helpers/rpc.ts";
 
-const HUB = join(PACK_ROOT, "skills", "poteto-mode", "SKILL.md");
+const HUB = join(PACK_ROOT, "skills", "pstack", "poteto-mode", "SKILL.md");
 const SECTION_TAG = `<${MODE_SECTION}>`;
 /** The canonical hub: the file without frontmatter, as every full load carries it. */
 const HUB_BODY = readFileSync(HUB, "utf8")
@@ -292,7 +292,7 @@ describe("/poteto-mode in the real Pi CLI", () => {
 					...SKILL_NAMES.map((name) => [
 						`skill:${name}`,
 						"skill",
-						`skills/${name}/SKILL.md`,
+						`skills/pstack/${name}/SKILL.md`,
 					]),
 				].toSorted(),
 			);

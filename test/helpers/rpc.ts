@@ -17,12 +17,16 @@ export const PACK_ROOT = resolve(
 	"..",
 	"..",
 );
+/** The pstack upstream folder (ADR-0003), relative to PACK_ROOT. */
+export const PSTACK_SKILLS = "skills/pstack";
 /**
- * Skill names in this tree's `skills/` directory. test/skill-content.test.ts
+ * Skill names in this tree's `skills/pstack/` folder. test/skill-content.test.ts
  * checks this set against the inventory, so command tests can follow it.
  */
-export const SKILL_NAMES = readdirSync(join(PACK_ROOT, "skills"))
-	.filter((name) => existsSync(join(PACK_ROOT, "skills", name, "SKILL.md")))
+export const SKILL_NAMES = readdirSync(join(PACK_ROOT, PSTACK_SKILLS))
+	.filter((name) =>
+		existsSync(join(PACK_ROOT, PSTACK_SKILLS, name, "SKILL.md")),
+	)
 	.toSorted();
 export const FAUX_EXTENSION = join(
 	PACK_ROOT,

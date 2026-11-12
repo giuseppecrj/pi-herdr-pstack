@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const FIXTURE = join(PACK_ROOT, "test/fixtures/statechart/Break.tla");
-const ENTRY = join(PACK_ROOT, "skills/statechart/scripts/statechart.ts");
+const ENTRY = join(PACK_ROOT, "skills/pstack/statechart/scripts/statechart.ts");
 const CHECK_NO_JAVA = join(
 	PACK_ROOT,
 	"test/fixtures/statechart/check-no-java.sh",
