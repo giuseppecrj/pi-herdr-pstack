@@ -1,6 +1,6 @@
 # pi-herdr-pstack
 
-pstack methodology for [Pi](https://pi.dev): 57 skills (including `poteto-mode` with its 23 playbooks and optional `statechart`), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
+pstack methodology for [Pi](https://pi.dev), with Matt Pocock's repo setup skill: 58 skills (57 from pstack, including `poteto-mode` with its 23 playbooks and optional `statechart`, plus `setup-repo`), two slash commands and one bare delegate prompt, running on the [pi-herdr-agents](https://github.com/giuseppecrj/pi-herdr-agents) subagent host.
 
 pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs children in. This package supplies methodology only. It has no child runner, scheduler, model store, package installer or shell-permission engine of its own, and it ships no named roles.
 
@@ -72,7 +72,7 @@ The single exception is the nested call the apply tool makes after you approve t
 
 ## Skills
 
-Pstack skills keep unprefixed names.
+Skills keep unprefixed names. They are grouped in folders by upstream: `skills/pstack/` (cursor/plugins pstack and its pi-mimir port) and `skills/mattpocock/` ([mattpocock/skills](https://github.com/mattpocock/skills), MIT), each with its own pinned commit (see [provenance](docs/provenance.md)).
 
 | Group | Skills | Purpose |
 | --- | --- | --- |
@@ -83,6 +83,7 @@ Pstack skills keep unprefixed names.
 | Process | `show-me-your-work`, `reflect`, `automate-me` | Decision trails, turning a session's lessons into approved skill edits, drafting a personal mode skill. Session reads stay in this working directory. |
 | Verification | `create-verification-skill`, `maintain-verification-skill`, `create-formal-verification-skill`, `maintain-formal-verification-skill`, `statechart` (optional; pack `tla-ts`, no Java) | Generate and maintain a project-local `.pi/skills/verify-*` harness that drives the real app, a formal-verification skill for properties tests rarely reach, or draw a Mermaid statechart from a TLA+ model. |
 | Writing | `unslop`, `technical-writing`, `no-comments`, `bro` | AI-tell cleanup, documentation standards, comment removal through a bare delegate, plain-words recap. |
+| Repo setup | `setup-repo` | `/skill:setup-repo` configures a repo's issue tracker (GitHub, GitLab, local markdown or other), triage labels and domain docs. It writes `docs/agents/*.md` and an `## Agent skills` pointer section into the existing `AGENTS.md` (or `CLAUDE.md`), never into either upstream's tracker, and asks before creating labels, remotes or files. Adapted from Matt Pocock's `setup-matt-pocock-skills`. |
 | Tooling | `make-bot-ui` | A loopback-only local page whose server starts one `pi -p` run per request. Exposure and installs need authorization. |
 | Principles | 24 `principle-*` skills | One rule each, cited by `poteto-mode`, which keeps a summary of each. |
 
@@ -125,7 +126,7 @@ The following variables configure additional checks or override test defaults. C
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Pre-extraction host root for separate legacy bundled-role characterization. |
 | `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit. |
-| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. The cursor checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. Each upstream pin in `test/fixtures/upstream-scope.json` reads its checkout from `PSTACK_<UPSTREAM>_SOURCE`. |
+| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE` | Upstream checkouts (mattpocock/skills for `skills/mattpocock/`) for skill source-hash reproduction and the upstream scope inventory. Each checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. Each upstream pin in `test/fixtures/upstream-scope.json` reads its checkout from `PSTACK_<UPSTREAM>_SOURCE`. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
 
 CI runs `npm run check` without these variables.

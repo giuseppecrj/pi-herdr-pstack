@@ -4,7 +4,7 @@ This package supplies the full unprefixed pstack skill inventory and a small Pi 
 
 ## Current scope
 
-All 57 skills and 23 playbooks ship (including optional `statechart`, which uses the pack's `tla-ts` dependency and needs no Java), and pi-herdr-agents, pi-herdr-roles and pi-herdr-pstack are published on npm via trusted publishing. Releases follow `RELEASING.md`; version bumps on `main` publish. Historical wave plans were deleted; they remain readable at commit `96910f507046285071453b660099b0c3549e6161` under `docs/plans/`.
+All 58 skills and 23 playbooks ship, and pi-herdr-agents, pi-herdr-roles and pi-herdr-pstack are published on npm via trusted publishing. The pack merges two upstreams in folders under `skills/` (ADR-0003), each with its own pin in `test/fixtures/upstream-scope.json`: `skills/pstack/` holds the 57 pstack skills (cursor/plugins, with its pi-mimir port; optional `statechart` uses the pack's `tla-ts` dependency and needs no Java) and `skills/mattpocock/` holds `setup-repo`, adapted from mattpocock/skills (MIT). More of Matt's skills land under #28; skill names are unprefixed and unique across folders. Releases follow `RELEASING.md`; version bumps on `main` publish. Historical wave plans were deleted; they remain readable at commit `96910f507046285071453b660099b0c3549e6161` under `docs/plans/`.
 
 Use `pi-herdr-agents` for the execution host; Herdr is the terminal multiplexer. Do not prefix skill names. `poteto-mode` and `/setup-pstack` are retained; pstack contributes no named roles and delegates use deliberate bare prompts. The other roles belong to the optional `pi-herdr-roles` package. `/iterate` and `/btw` are not part of this pack. The host writer gate is unconditional while pstack is loaded.
 
@@ -15,7 +15,7 @@ No pushes, PR creation, merges, package publication, release-triggering version 
 - Do not import pi-herdr-agents internals. Pstack contributes no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/pstack/no-comments/references/`. If a role is later authorized, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
 - Declare pi-herdr-agents as a peer and an explicit Pi installation prerequisite. A peer declaration is not extension activation.
 - Keep initial experimental packages private. A temporary peer range is not a published compatibility promise; record the exact candidate host SHA used in tests.
-- Preserve applicable upstream license notices and record file provenance.
+- Preserve applicable upstream license notices and record file provenance; `setup-repo` and any later `skills/mattpocock/` skill follow upstream's wording and change only what Pi requires.
 - Follow the installed Pi documentation and verify APIs against the actual tested SDK/runtime, not stale sibling node_modules.
 - Use isolated `PI_CODING_AGENT_DIR` and test-owned configuration. Never edit the user's credentials, model preferences, package settings or installed extensions.
 - New roles and skills must close their dependencies. Never replace a missing named role with an unannounced bare agent.
