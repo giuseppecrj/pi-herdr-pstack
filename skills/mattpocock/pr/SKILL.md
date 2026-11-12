@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: "Use when writing a PR body in this format (a visual summary, before-and-after evidence and merge danger): when the user invokes /skill:pr or asks for it. Not for a PR body whose format another workflow sets, such as poteto-mode's Opening a PR playbook."
 metadata:
   credits:
     skill: show-me

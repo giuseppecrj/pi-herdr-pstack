@@ -228,3 +228,33 @@ describe("poteto-mode's availability paragraph (C3)", () => {
 			assert.equal(router.includes(flow), false, flow);
 	});
 });
+
+describe("the pr skill and the Opening a PR playbook don't compete for PR bodies (C4)", () => {
+	it("the playbook's sections govern PR bodies unless the user invoked /skill:pr", () => {
+		assert.ok(
+			flat("skills/pstack/poteto-mode/playbooks/opening-a-pr.md").includes(
+				"Use these sections in order. Drop a section when it has nothing to say. These sections govern every PR body this playbook writes, even when the `pr` skill is installed; use the `pr` skill's template instead only when the user invoked `/skill:pr` for this PR.",
+			),
+		);
+	});
+
+	it("pr's description no longer fires on every PR body", () => {
+		const description = /^description: (.*)$/m.exec(
+			frontmatter("skills/mattpocock/pr/SKILL.md"),
+		)?.[1];
+		assert.equal(
+			description,
+			'"Use when writing a PR body in this format (a visual summary, before-and-after evidence and merge danger): when the user invokes /skill:pr or asks for it. Not for a PR body whose format another workflow sets, such as poteto-mode\'s Opening a PR playbook."',
+		);
+		// Still model-invocable, as upstream has it, with upstream's body.
+		assert.doesNotMatch(
+			frontmatter("skills/mattpocock/pr/SKILL.md"),
+			/disable-model-invocation/,
+		);
+		assert.ok(
+			read("skills/mattpocock/pr/SKILL.md").includes(
+				"Use this template for writing the PR body:",
+			),
+		);
+	});
+});
