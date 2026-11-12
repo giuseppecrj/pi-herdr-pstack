@@ -16,7 +16,7 @@
 	"files": [
 		{
 			"path": "skills/pstack/automate-me/SKILL.md",
-			"sha256": "26ba9f07283a4f1e52ec5abc9fe9c5f162d3dc261f13b5818876564953cc0849",
+			"sha256": "c262cd82dd518406f9204bc76b07ff8e722a3fd869ab6a544b504a739294aa8f",
 			"status": "adapted",
 			"sources": [
 				{
@@ -32,7 +32,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. The Pi Agent Skills standard becomes Pi skill authoring, defined once as Pi's skills documentation plus ../poteto-mode/playbooks/authoring-a-skill.md, with Pi's name and description limits in the frontmatter step. The recall tool becomes the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, and slice miners are bare task:recon children per ../poteto-mode/references/fan-out.md reading only the session files the parent lists. The placeholder 'a user question' becomes asking in the reply and ending the turn. Placement writes the project's .pi/skills freely and ~/.pi/agent/skills only after explicit confirmation. Landing commits under the commit policy; push and PR each need explicit authorization per references/authorization.md. Cursor's AskQuestion, create-skill and ~/.cursor paths are not used."
+			"explanation": "Adapted from the pinned pi-mimir file. The Pi Agent Skills standard becomes Pi skill authoring, defined once as Pi's skills documentation plus ../poteto-mode/playbooks/authoring-a-skill.md, with Pi's name and description limits in the frontmatter step. The recall tool becomes the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, and slice miners are bare task:recon children per ../poteto-mode/references/fan-out.md reading only the session files the parent lists. The placeholder 'a user question' becomes asking in the reply and ending the turn. Placement writes the project's .pi/skills freely and ~/.pi/agent/skills only after explicit confirmation. Landing commits under the commit policy; push and PR each need explicit authorization per references/authorization.md. Cursor's AskQuestion, create-skill and ~/.cursor paths are not used. Pre-release review S3: retro's header-cwd rule is added before any earlier session file is grepped, read or delegated: read only the first line (the session header), keep the file only when its cwd is exactly this working directory, otherwise skip it unread; child briefs list only files that passed and repeat the check."
 		},
 		{
 			"path": "skills/pstack/create-formal-verification-skill/SKILL.md",
@@ -178,7 +178,7 @@
 		},
 		{
 			"path": "skills/pstack/recall/SKILL.md",
-			"sha256": "79bf6d1c1ec943af45013994671438310e17acc68438d763c2df585baac4a0d6",
+			"sha256": "e5233313a8020e1be6aa38e32df2fff05f11023504b0d453a6ebfc2c48f1900a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -194,7 +194,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used. W4 reconcile: the why planned W4 markers and the until-why-ships launch rule are retired; the sweep launches investigators as why does, without a tools key so MCP stays visible (gate G5), with the source-control-only report kept for operator-restricted tools."
+			"explanation": "Adapted from the pinned pi-mimir file. The nonexistent recall tool is replaced by $PI_SESSION_FILE and the per-cwd session directory rule in ../poteto-mode/playbooks/session-pickup.md, with the documented <timestamp>_<session-id>.jsonl layout and its session-dir overrides; chats are cited by session file, not UUID. The session-pickup route names its playbook path. Step 3's parallel cheap-model subagents become bare task:recon investigator children launched per ../poteto-mode/references/fan-out.md, each given explicit session file paths, with the leaf rule for a child that receives this skill. Step 4 marks the why skill planned W4 and adds the interim rule: one bare Investigator child per source with no tools key so MCP servers stay visible, reporting source control only and naming gaps when MCP is not visible, with one schema-valid example. Cursor's ~/.cursor transcript path is not used. W4 reconcile: the why planned W4 markers and the until-why-ships launch rule are retired; the sweep launches investigators as why does, without a tools key so MCP stays visible (gate G5), with the source-control-only report kept for operator-restricted tools. Pre-release review S3: retro's header-cwd rule is added before any earlier session file is grepped, read or delegated: read only the first line (the session header), keep the file only when its cwd is exactly this working directory, otherwise skip it unread; child briefs list only files that passed and repeat the check."
 		},
 		{
 			"path": "skills/pstack/show-me-your-work/SKILL.md",

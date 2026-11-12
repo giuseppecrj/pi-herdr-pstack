@@ -237,7 +237,7 @@
 		},
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/session-pickup.md",
-			"sha256": "27632e2aac79cd9172832eb5f6a46bef8af64e0b7e4a8a5e9fa0725010784f75",
+			"sha256": "550bc869cb17b49ee418bb5b935973672a834abf4b9ba6190aa1b5cabcc1841b",
 			"status": "adapted",
 			"sources": [
 				{
@@ -253,7 +253,7 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Uses Pi session files ($PI_SESSION_FILE and the per-directory session store) instead of Cursor transcripts; recall planned W4; prior authority does not carry over. W3 reconcile: the two principle markers are retired now that the leaves ship. W4 reconcile: the recall planned W4 marker and interim clause are retired; the recall skill searches this working directory's sessions under the same rule. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
+			"explanation": "Uses Pi session files ($PI_SESSION_FILE and the per-directory session store) instead of Cursor transcripts; recall planned W4; prior authority does not carry over. W3 reconcile: the two principle markers are retired now that the leaves ship. W4 reconcile: the recall planned W4 marker and interim clause are retired; the recall skill searches this working directory's sessions under the same rule. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted). Pre-release review S3: retro's header-cwd rule is added before any earlier session file is grepped, read or delegated: read only the first line (the session header), keep the file only when its cwd is exactly this working directory, otherwise skip it unread; child briefs list only files that passed and repeat the check."
 		},
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/trace-forensics.md",

@@ -18,7 +18,7 @@ Invoke when the user says "reflect" or "/reflect". Skip when the conversation is
 
 ### 1. Locate the active transcript
 
-The active transcript is `$PI_SESSION_FILE`, set in the bash tool. Use it directly when present. To choose an earlier transcript for this working directory, read only this working directory's sessions, per the session directory rule in `../poteto-mode/playbooks/session-pickup.md`. Never glob Pi's global session directory. If no session file resolves, write a tight digest of the current session and pass that instead.
+The active transcript is `$PI_SESSION_FILE`, set in the bash tool. Use it directly when present. To choose an earlier transcript for this working directory, read only this working directory's sessions, per the session directory rule in `../poteto-mode/playbooks/session-pickup.md`. Never glob Pi's global session directory. Before grepping, reading or delegating an earlier session file, read only its first line, the session header, and check that its `cwd` is exactly this working directory: a session directory's encoded name can collide with another project's, and a directory can be shared. Skip any session whose header names another directory, or has none, without reading further. A child brief lists only the files that passed and tells the child to repeat this check before it greps or reads one. If no session file resolves, write a tight digest of the current session and pass that instead.
 
 ### 2. Spawn three reviewers in parallel
 
@@ -32,7 +32,7 @@ Before these launches, follow the architecture preflight in `../poteto-mode/refe
 
 Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above only when that category has no configured thinking (otherwise omit it), the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
 
-Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results.
+Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results. Each template forbids quoting a secret, token, credential or credential-bearing URL: a finding refers to one by its location and quotes only bounded excerpts. That matters most for the tooling lens, which sends the transcript to another model family.
 
 ```json subagent
 {
@@ -59,12 +59,12 @@ The divergent reviewer differs only in `name` and prompt file. The tooling revie
 
 ### 3. Synthesize
 
-After all three reviewers have delivered, one bare `subagent` call on `task:architecture` with no `tools` list. The synthesizer may use MCPs available to its Pi child process to spot-check citations. Use `references/synthesizer.md` verbatim as `systemPrompt`, with each reviewer's full output in `task` under its marker.
+After all three reviewers have delivered, one bare `subagent` call on `task:architecture` with no `tools` list. The synthesizer may use MCPs available to its Pi child process to spot-check citations. Use `references/synthesizer.md` verbatim as `systemPrompt`, with each reviewer's full output in `task` under its marker, after you remove any secret, token, credential or credential-bearing URL that slipped into it (refer to it by location instead). The `task` tells the synthesizer to drop any that remain.
 
 ```json subagent
 {
   "name": "reflect-synthesizer",
-  "task": "<JUDGMENT_OUTPUT>: <the judgment reviewer's full output>. <TOOLING_OUTPUT>: <the tooling reviewer's full output>. <DIVERGENT_OUTPUT>: <the divergent reviewer's full output>. Do not write files. You are a leaf: launch nothing.",
+  "task": "<JUDGMENT_OUTPUT>: <the judgment reviewer's full output>. <TOOLING_OUTPUT>: <the tooling reviewer's full output>. <DIVERGENT_OUTPUT>: <the divergent reviewer's full output>. Drop any secret, token, credential or credential-bearing URL a reviewer output still quotes, and refer to it by its location instead. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/synthesizer.md, verbatim>",
   "model": "task:architecture",
   "fork": false

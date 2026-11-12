@@ -686,7 +686,9 @@ ship. Each batch owns its fixtures:
 
 - W4-A (`w4-a.json`): `how`, `why`, `architect`, `arena`, `swarm`,
   `interrogate`, `reflect`, `figure-it-out`. 33 files, 21 copied and 12 adapted,
-  all from mimir. Swarm maps the Verifier prompt's per-claim pass, fail or
+  all from mimir. (The 1.0.0 pre-release review adapted reflect's three
+  reviewer prompts to never quote a secret or credential-bearing URL;
+  `w4-a.json` holds each file's current status.) Swarm maps the Verifier prompt's per-claim pass, fail or
   inconclusive onto one overall `PASS`, `ISSUES` or `BLOCKED`. Briefs list
   their claims first. A proved fail always means `ISSUES`. `PASS` needs at
   least one listed claim and a pass for each, and a claim with no result is
