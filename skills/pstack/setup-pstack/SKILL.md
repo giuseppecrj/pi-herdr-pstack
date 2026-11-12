@@ -1,57 +1,77 @@
 ---
 name: setup-pstack
-description: Report-first onboarding for pi-herdr-pstack. Explains the /setup-pstack report on the pi-herdr-agents host, pstack's own skills and commands, authenticated models and the shared pi-herdr-agents task-model preferences, and drives an explicitly approved change only inside a change flow opened by /setup-pstack <request>, /setup-pstack init or /subagents-init. Never installs packages. Use for /setup-pstack, "set up pstack", "check my pstack install" or "which models does pstack use".
+description: Configure which models pstack's delegates use per task category and at what reasoning budget. Detects your authenticated models and writes the shared pi-herdr-agents task preferences, models and thinking, after you approve the change in the host's dialog. Use for /setup-pstack, "configure pstack models", "pstack budget", or changing pstack's model choices.
 ---
 
 # Setup pstack
 
-Help the user understand and, only when they ask, change how pi-herdr-pstack's delegates pick models. The pstack extension does the checking and the writing in code. Your job is to explain its report, translate a requested change into one proposal, and report the outcome honestly.
+Write pi-herdr-agents' task preferences, `models.tasks` and `models.tasksThinking`, which set the models and the thinking level for each task category pstack's delegates launch with.
 
-Pstack keeps no model configuration of its own. There is no pstack rule file, model map, per-role budget ladder or model alias. Delegates choose models through pi-herdr-agents. An explicit `model` in the `subagent` call wins, whether it is an exact `provider/model-id` or a `task:<category>` selector that expands to the shared task preferences. Only a call without `model` falls back to role, per-agent and default models, then the parent's model. poteto-mode sets `model` on every call; see `../poteto-mode/references/delegation.md`.
+Pstack keeps no model configuration of its own. poteto-mode launches every ordinary delegate with a `task:<category>` model, and pi-herdr-agents resolves it from these shared preferences. A change affects every pi-herdr-agents workflow and role pack that uses the categories, not only pstack. The categories are `coding`, `review`, `recon`, `qa`, `architecture` and `docs`. An explicit `model` in the `subagent` call wins, whether it is an exact `provider/model-id` or a `task:<category>` selector that expands to these preferences. Only a call without `model` falls back to role, per-agent and default models, then the parent's model. Likewise an explicit `thinking` overrides a category's thinking.
 
-Paths here are relative to this skill directory.
+Run this skill through `/setup-pstack [request]`. The command appends a setup brief that starts with "/setup-pstack started the setup flow." and makes the host writer `subagents_write_task_models` callable. Reached any other way, such as `/skill:setup-pstack`, there is no brief and no writer: explain these steps and ask the user to run `/setup-pstack`. Never edit the pi-herdr-agents config with the write, edit or bash tools. Paths here are relative to this skill directory.
 
-## How setup runs
+## Steps
 
-- `/setup-pstack` (or `/setup-pstack report`) shows a report the extension builds in code and makes no change. It ends with "No changes were made."
-- `/setup-pstack <request>`, for example `/setup-pstack use <provider>/<model-id> for review`, shows the same report to you and opens a **change flow** for this one turn. The flow's message starts with "/setup-pstack opened change flow". It closes when the turn settles.
-- `/subagents-init [preferences]` or `/setup-pstack init [preferences]` opens an **init flow**: the same change flow, started by pi-herdr-agents. Its message is the host's init prompt with the complete registry brief, and it tells you to propose through `pstack_apply_task_models`. It also closes when the turn settles.
-- Any other way of reaching this skill, including `/skill:setup-pstack` or your own choice to load it, is informational. It never authorizes a configuration write. Explain the report sections below and ask the user to run `/setup-pstack` for the live report.
+### 1. Detect available models
 
-Never edit the pi-herdr-agents config with the write, edit or bash tools, and never call `subagents_write_task_models` yourself. While pstack is installed, the extension refuses every writer call except the single call it makes itself after the user approves the exact payload. That includes direct writes in any session and the writer call an older host's `/subagents-init` prompt asks for. `/setup-pstack <request>` and `/subagents-init` are the ways to change task models.
+The brief's "Authenticated models" list is the dependable source: every exact `provider/model-id` with configured authentication in this session, with the thinking levels it supports. Never write a model you have not confirmed is in that list, and never write a remembered or guessed ID. If the list is `(none)`, ask the user to authenticate a provider and run `/setup-pstack` again. There are no model aliases: a category holds exact models only.
 
-## Reading the report
+### 2. Load current state
 
-The report has these sections, in order: Session, Host, Pstack resources, Models, Shared preferences, Findings, Next steps.
+The brief's "Current choices" are the saved choices: for each category, its ordered model list and its thinking level, where `null` means not set. There are no skill defaults, so an unset category needs a choice. A saved model that is not in the authenticated list cannot be written back. Drop it.
 
-- **Session.** A pi-herdr-agents subagent (`PI_SUBAGENT_ID` set) or a session without dialogs (print or JSON mode) is report-only. Setup belongs in the user's own interactive or RPC session.
-- **Host.** pi-herdr-agents counts as loaded only when its tools are. Files on disk or in `node_modules` do not activate an extension. The writer must expose the conditional contract (`expectedConfigRevision` in its public schema) and be active. An older unconditional writer keeps setup report-only.
-- **Pstack resources.** Each skill must resolve to this package's own file. A filtered or shadowed skill is reported, never replaced. Pstack ships no named roles, and the report says so. `/skill:no-comments` launches its comment editor as a bare delegate, not a role. Child visibility is reported as not verified unless a child actually loaded the package.
-- **Models.** The exact `provider/model-id` references with configured authentication. Never invent or remember model IDs.
-- **Shared preferences.** The config file is `$PI_CODING_AGENT_DIR/herdr-agents/config.json`, or `~/.pi/agent/herdr-agents/config.json`. The report shows only the six task categories (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`), their metadata and the default model, never per-agent overrides or other settings. Setup never changes those either. A configured reference that is not one printable token is withheld. Missing, unreadable, malformed, non-object, missing-status and invalid-models files are distinct states. Only a missing or valid file can be changed. A missing file would be created from pi-herdr-agents' packaged defaults plus the approved task preferences.
-- **Findings.** Unauthenticated, aliased (`task:`) or padded references, and unset categories the methodology launches (`coding`, `recon`, `review`, `architecture`). `qa` and `docs` are reported when configured, and an unset one is not a finding.
+### 3. Budget, map, and confirm
 
-## In a change flow
+**(a) Ask for a budget.** If the user's request in the brief already names one, use it. Otherwise ask with these four options and these exact labels, as a numbered list, and wait for the answer. When every category has the same saved thinking and it is one of the four targets, name that budget as the current one; otherwise say the saved thinking is mixed or not set.
 
-1. Map the user's request onto categories. Use only exact references listed under Models. If the request is ambiguous, names a model that is not listed, or would remove a category, do not guess. Explain what is possible and stop; the user can run `/setup-pstack <request>` again.
-2. Call `pstack_apply_task_models` once, with `changes` holding only the categories to replace, each with its complete new list. Every other current category is kept as it is. W2 setup never deletes a category. In an init flow, draft every category from the brief's models as the init prompt asks; refs outside the brief are refused.
-3. Add `basis`. Use `{"kind":"registry-only"}` unless sources you consulted in this run informed the ranking. Then use `{"kind":"research","sources":[{"url":"https://...","influence":"..."}],"uncertainty":"..."}`, with one entry per http(s) source and how it changed or supported the ranking. Never list a source you did not read or that did not inform the ranking. A model name, search attempt or registry price is not research.
-4. The extension validates the proposal, builds the complete writer payload (all categories, metadata it generates from your basis, the basis itself when the writer takes it, and the file revision the proposal was read from), and shows it in an approval dialog. Metadata is never yours to choose. An init proposal is refused if the config file changed after the host read it; ask the user to run init again.
-5. Report the result as the tool states it:
-   - **No change.** The proposal equals the current tasks. Nothing was written and the metadata was not refreshed.
-   - **Declined or timed out.** Nothing was written.
-   - **Rejected or stale.** Nothing was written. Name the reason. Do not retry with the same proposal; a fresh `/setup-pstack <request>` re-reads the file and asks again.
-   - **Failed, busy or uncertain.** The extension checked the saved file after the call. Repeat exactly what it says: unchanged and nothing written, holds the approved preferences despite the error, or uncertain and needs inspection. A failed call is not proof that nothing was written. Do not retry.
-   - **Saved.** The extension verified the saved file against the approval. Tell the user to reload Pi, and that task categories are shared: the change affects every pi-herdr-agents workflow and role pack, not only pstack.
+- `unlimited — max reasoning`
+- `large — xhigh reasoning`
+- `medium — high reasoning`
+- `small — medium reasoning`
 
-## Check for a project verification skill
+**(b) Apply it.** Build the working table from the current choices. The budget changes thinking only, never models: `unlimited`, `large`, `medium` and `small` set every category's thinking to `max`, `xhigh`, `high` or `medium`. The host clamps a category's thinking to each candidate model at launch: the target when the model supports it, else the nearest supported level above it, else the highest one below. So `unlimited` runs a model that tops out at `xhigh` at `xhigh`, and a model without reasoning runs at `off`. Work out that effective level for every model from the levels the brief lists.
 
-When explaining the report, check whether the project has a way to drive the real app for proof, such as a `verify-*` skill or an existing test harness. If none exists, mention the gap once and name the **create-verification-skill** skill, which generates one when the user asks for it. Do not run it from setup.
+**(c) Show the categories and confirm.** Show every category with its models in order, each with its effective thinking, and the upstream roles it drives from the table below. Mark a category with no authenticated model as needing a choice, and list each model step 2 dropped. Ask whether to accept as-is or change specific categories, offering the authenticated models and the thinking levels. A category's list is ordered candidates: the first launches, and later ones are fallbacks when a launch fails. It is not a panel, and its length sets no fan-out count. Favor capability for `coding`, `review` and `architecture`, and efficiency for `recon` and `qa`.
 
-## Check for a project formal verification skill
+| Upstream role | Category |
+| --- | --- |
+| feature, refactoring; bug-fix; perf-issue; hillclimb | `coding` |
+| judgment and prose; hardest tasks | `architecture` |
+| how explorer; why investigators | `recon` |
+| how explainer; why synthesizer; reflect judgment, divergent, synthesizer | `architecture` |
+| swarm workers | `qa` to verify or measure, `recon` to explore, `coding` to write |
+| arena runners, arena cross-judge pool, architect runners, interrogate reviewers, reflect tooling | none: diversity seats get one exact model per family from the live catalog at launch, per `../poteto-mode/references/fan-out.md` section 3 |
+| (no upstream role) | `review` for reviewers and judges, `qa` for verifiers, `docs` for documentation workers |
 
-Also check whether the project already has a formal verification skill (a project skill under `.pi/skills/` that runs a model checker, a proof, or another verifier against the code). If not, mention the gap once and name the **create-formal-verification-skill** skill, which generates one when the user asks for it. Do not run it from setup.
+### 4. Validate
 
-## Your reply
+Every model written must be in the brief's authenticated list, every category written needs at least one model, and every thinking level is one of `off`, `minimal`, `low`, `medium`, `high`, `xhigh` or `max`. If a chosen model is not available, stop and ask again.
 
-Lead with what the user asked: the state of the install, or the outcome of the change. Give each claim its evidence, such as a report line or the tool result. Label anything not checked as not checked. Outside a successful saved change, end with "No changes were made."
+### 5. Write the preferences
+
+Call `subagents_write_task_models` once with:
+
+- `tasks`: every category that has models, each with its complete ordered list. The writer removes any category you leave out, so include every category the user kept.
+- `tasksThinking`: the thinking for each category in `tasks`.
+- `tasksMeta`: the brief's "tasksMeta for this write", exactly.
+- `basis`: `{"kind":"registry-only"}`.
+- `expectedConfigRevision`: the brief's value, exactly.
+
+The writer replaces the task models and their thinking in one atomic write, so re-runs stay idempotent. The host shows the user the exact change and asks for approval. Nothing is saved unless the user chooses to save. If the call fails, say what the host said and do not call it again with the same arguments:
+
+- Declined, cancelled or timed out: nothing was written. Ask whether they want to change something.
+- `Stale task model config revision`: the file changed after the brief was read. Ask the user to run `/setup-pstack` again.
+- Any other error: repeat it. It says whether the file is unchanged, holds the approved preferences, or needs inspection.
+
+### 6. Confirm
+
+Tell the user, from the tool result's saved `tasks` and `tasksThinking`, what was saved, that it applies after `/reload` or in a new session, and that it is shared by every pi-herdr-agents workflow. Re-running `/setup-pstack` updates it.
+
+### 7. Offer a verification skill (optional)
+
+Check whether the project has a way to drive the real app for proof (a `verify-*` skill, or an existing harness). If not, offer once: "want a project-local verification skill, so agents can drive the app the way a user does and prove changes work? I can generate one with /skill:create-verification-skill." On yes, read `../create-verification-skill/SKILL.md` and follow it. On no, move on without pushing.
+
+### 8. Offer a formal verification skill (optional)
+
+Check whether the project already has a formal verification skill (a project skill under `.pi/skills/` that runs a model checker, a proof, or another verifier against the code). If not, offer once: "want a formal verification skill, so agents can prove a key property of your code holds in every case in scope, not only the cases tests reach? I can generate one with /skill:create-formal-verification-skill." On yes, read `../create-formal-verification-skill/SKILL.md` and follow it. On no, move on without pushing.

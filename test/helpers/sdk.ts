@@ -87,6 +87,8 @@ export class SdkPi {
 			{
 				id: "faux-2",
 				name: "Faux 2",
+				// Reasoning, so setup can show supported thinking levels.
+				reasoning: true,
 				contextWindow: 100_000,
 				maxTokens: 4_000,
 			},
@@ -312,8 +314,4 @@ export class SdkPi {
 			rmSync(this.root, { recursive: true, force: true });
 		}
 	}
-}
-
-export function hostRootOrUndefined(): string | undefined {
-	return process.env.PI_HERDR_AGENTS_HOST;
 }

@@ -336,7 +336,7 @@ export function readRequestLog(path: string): RequestLogEntry[] {
 		.map((line) => JSON.parse(line));
 }
 
-/** Optional real host package root for combined-host checks. */
+/** Optional package root named by an environment variable, e.g. a roles pack. */
 export function configuredHostRoot(
 	variable = "PI_HERDR_AGENTS_HOST",
 ): string | undefined {
@@ -346,3 +346,15 @@ export function configuredHostRoot(
 		throw new Error(`${variable} has no package.json: ${root}`);
 	return resolve(root);
 }
+
+/**
+ * The real pi-herdr-agents host for combined-host checks: PI_HERDR_AGENTS_HOST
+ * when set, else the pinned `pi-herdr-agents` devDependency (the published
+ * 3.10.0 that ships category thinking and the writer's approval dialog).
+ */
+export const HOST_ROOT =
+	configuredHostRoot() ?? join(PACK_ROOT, "node_modules", "pi-herdr-agents");
+if (!existsSync(join(HOST_ROOT, "package.json")))
+	throw new Error(
+		`no pi-herdr-agents host at ${HOST_ROOT}; run npm ci or set PI_HERDR_AGENTS_HOST`,
+	);

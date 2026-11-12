@@ -5,6 +5,7 @@ import { join, resolve } from "node:path";
 import { describe, it } from "node:test";
 import {
 	configuredHostRoot,
+	HOST_ROOT,
 	IsolatedPi,
 	PACK_ROOT,
 	SKILL_NAMES,
@@ -233,7 +234,7 @@ mattpocockSkills(
 	["codebase-design", "pr", "research", "wizard"],
 );
 
-const hostRoot = configuredHostRoot();
+const hostRoot = HOST_ROOT;
 const legacyHostRoot = configuredHostRoot("PI_HERDR_AGENTS_LEGACY_HOST");
 const rolesPack = process.env.PI_HERDR_ROLES_PACK
 	? resolve(process.env.PI_HERDR_ROLES_PACK)
@@ -263,13 +264,9 @@ function assertNoCommandCollisions(listed: CommandInfo[]) {
 
 // Role-free expectations always apply to PI_HERDR_AGENTS_HOST; a legacy host
 // must fail here rather than loosen them. Legacy characterization is opt-in below.
-describe("installed pack with a real role-free pi-herdr-agents host", {
-	skip:
-		hostRoot === undefined &&
-		"set PI_HERDR_AGENTS_HOST=<host package root> to run combined-host checks",
-}, () => {
+describe("installed pack with a real role-free pi-herdr-agents host", () => {
 	it("lists no roles, since pstack contributes none, with no collisions or retired commands", async () => {
-		const pi = new IsolatedPi({ packages: [PACK_ROOT, hostRoot ?? ""] });
+		const pi = new IsolatedPi({ packages: [PACK_ROOT, hostRoot] });
 		try {
 			const listing = await listedRoles(pi);
 			assert.deepEqual(roleLines(listing), [], listing);
@@ -287,62 +284,88 @@ describe("installed pack with a real role-free pi-herdr-agents host", {
 		}
 	});
 
-	for (const confirmed of [true, false])
-		it(`applies /setup-pstack only after the RPC dialog is ${confirmed ? "accepted" : "declined"}`, async () => {
+	for (const choice of ["Yes, save", "No, keep current"])
+		it(`saves /setup-pstack models and thinking only when the host's RPC dialog answers "${choice}"`, async () => {
 			const config = `${JSON.stringify({
 				status: { enabled: false },
 				keep: { me: true },
 				models: { tasks: { coding: ["faux/faux-1"] } },
 			})}\n`;
+			const revision = `sha256:${createHash("sha256").update(config).digest("hex")}`;
 			const pi = new IsolatedPi({
-				packages: [PACK_ROOT, hostRoot ?? ""],
+				packages: [PACK_ROOT, hostRoot],
 				herdrAgentsConfig: config,
 			});
 			const path = join(pi.agentDir, "herdr-agents", "config.json");
+			const write = {
+				tasks: { coding: ["faux/faux-1"], review: ["faux/faux-2"] },
+				tasksThinking: { coding: "medium", review: "medium" },
+				tasksMeta: {
+					generatedAt: "2026-11-12T00:00:00.000Z",
+					method: "registry-only",
+				},
+				basis: { kind: "registry-only" },
+				expectedConfigRevision: revision,
+			};
 			try {
 				await pi.prompt(
-					`/test-arm-tool pstack_apply_task_models ${JSON.stringify({ changes: { review: ["faux/faux-2"] } })}`,
+					`/test-arm-tool subagents_write_task_models ${JSON.stringify(write)}`,
 				);
 				const from = pi.records.length;
-				pi.send({
-					type: "prompt",
-					message: "/setup-pstack use faux-2 for review",
-				});
+				pi.send({ type: "prompt", message: "/setup-pstack small" });
 				const dialog = await pi.waitFor(
 					(record) =>
 						record.type === "extension_ui_request" &&
-						record.method === "confirm",
+						record.method === "select",
 					from,
 				);
-				assert.equal(dialog.timeout, 120_000);
+				assert.match(String(dialog.title), /^Approve task model preferences\n/);
 				assert.match(
-					String(dialog.message),
-					new RegExp(
-						`"expectedConfigRevision": "sha256:${createHash("sha256").update(config).digest("hex")}"`,
-					),
+					String(dialog.title),
+					/review: null \/ null -> \["faux\/faux-2"\] \/ "medium"/,
+				);
+				assert.deepEqual(dialog.options, ["No, keep current", "Yes, save"]);
+				const brief = pi.requests().at(-1)?.user ?? "";
+				assert.ok(
+					brief.includes(`expectedConfigRevision: "${revision}"`),
+					"the model saw the revision it submitted",
 				);
 				assert.equal(
 					readFileSync(path, "utf8"),
 					config,
 					"nothing written before approval",
 				);
-				pi.send({ type: "extension_ui_response", id: dialog.id, confirmed });
+				pi.send({
+					type: "extension_ui_response",
+					id: dialog.id,
+					value: choice,
+				});
 				const end = await pi.waitFor(
 					(record) =>
 						record.type === "tool_execution_end" &&
-						record.toolName === "pstack_apply_task_models",
+						record.toolName === "subagents_write_task_models",
 					from,
 				);
 				await pi.waitFor((record) => record.type === "agent_settled", from);
-				const saved = JSON.parse(readFileSync(path, "utf8"));
-				if (confirmed) {
+				assert.equal(
+					pi.records
+						.slice(from)
+						.filter(
+							(record) =>
+								record.type === "extension_ui_request" &&
+								(record.method === "select" || record.method === "confirm"),
+						).length,
+					1,
+					"one approval dialog, the host's",
+				);
+				if (choice === "Yes, save") {
 					assert.equal(end.isError, false, JSON.stringify(end.result));
-					assert.deepEqual(saved.models.tasks, {
-						coding: ["faux/faux-1"],
-						review: ["faux/faux-2"],
-					});
+					const saved = JSON.parse(readFileSync(path, "utf8"));
+					assert.deepEqual(saved.models.tasks, write.tasks);
+					assert.deepEqual(saved.models.tasksThinking, write.tasksThinking);
 					assert.deepEqual(saved.keep, { me: true });
 				} else {
+					assert.equal(end.isError, true);
 					assert.equal(readFileSync(path, "utf8"), config);
 				}
 			} finally {
@@ -356,7 +379,7 @@ describe("installed pack with a real role-free pi-herdr-agents host", {
 			"set PI_HERDR_ROLES_PACK=<pi-herdr-roles package root> as well",
 	}, async () => {
 		const pi = new IsolatedPi({
-			packages: [PACK_ROOT, rolesPack ?? "", hostRoot ?? ""],
+			packages: [PACK_ROOT, rolesPack ?? "", hostRoot],
 		});
 		try {
 			const listing = await listedRoles(pi);

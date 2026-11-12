@@ -107,7 +107,6 @@ describe("Wave 2 runtime scope", () => {
 
 	it("ships the mode and setup modules only, with no role registration", () => {
 		assert.deepEqual(modules, [
-			"config.ts",
 			"index.ts",
 			"mode.ts",
 			"resources.ts",
@@ -118,13 +117,11 @@ describe("Wave 2 runtime scope", () => {
 			source,
 			/roles:discover|registerRolePack|\.\.\/\.\.\/agents/,
 		);
-		// The one event subscription answers pi-herdr-agents' task-model init.
-		assert.deepEqual(
-			[...source.matchAll(/pi\.events\.on\(\s*([^,]+),/g)].map(
-				(match) => match[1],
-			),
-			["INIT_APPROVAL_EVENT"],
-		);
+		// The host writer owns task-model approval (ADR-0002): pstack neither
+		// joins pi-herdr-agents' init events nor intercepts tool calls.
+		assert.doesNotMatch(source, /pi\.events\.(?:on|emit)\(/);
+		assert.doesNotMatch(source, /pi\.on\(\s*"tool_call"/);
+		assert.doesNotMatch(source, /registerTool\(/);
 	});
 
 	it("imports nothing private from pi-herdr-agents and writes no files itself", () => {
@@ -152,10 +149,11 @@ describe("package manifest", () => {
 		assert.equal(manifest.version, "0.6.0");
 		assert.equal(manifest.license, "MIT");
 		assert.ok(manifest.keywords.includes("pi-package"));
+		// 3.10.0 ships category thinking and the writer's approval dialog.
 		assert.deepEqual(manifest.peerDependencies, {
+			"@earendil-works/pi-ai": "^1.0.3",
 			"@earendil-works/pi-coding-agent": "^1.0.3",
-			"pi-herdr-agents": ">=3.0.0",
-			typebox: "^1.3.27",
+			"pi-herdr-agents": ">=3.10.0",
 		});
 		assert.deepEqual(manifest.dependencies, { "tla-ts": "0.0.8" });
 		assert.deepEqual(manifest.pi, {
@@ -199,7 +197,6 @@ describe("package manifest", () => {
 			"docs/compatibility.md",
 			"docs/provenance.md",
 			"package.json",
-			"pi-extension/pstack/config.ts",
 			"pi-extension/pstack/index.ts",
 			"pi-extension/pstack/mode.ts",
 			"pi-extension/pstack/resources.ts",

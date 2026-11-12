@@ -1849,19 +1849,23 @@ describe("authorization boundaries", () => {
 		);
 	});
 
-	it("leaves configuration writes to the setup extension's approved flow", () => {
+	it("leaves configuration writes to the host writer's approval", () => {
 		const setup = read("skills/pstack/setup-pstack/SKILL.md");
-		assert.match(setup, /never authorizes a configuration write/);
-		assert.match(setup, /never call `subagents_write_task_models` yourself/);
-		assert.match(setup, /Call `pstack_apply_task_models` once/);
-		assert.match(setup, /Metadata is never yours to choose/);
-		assert.match(setup, /W2 setup never deletes a category/);
-		assert.match(setup, /Do not retry/);
-		assert.match(setup, /end with "No changes were made\."/);
-		for (const line of setup
-			.split("\n")
-			.filter((text) => text.includes("subagents_write_task_models")))
-			assert.match(line, /\b(?:not|never)\b/i, line);
+		assert.match(
+			setup,
+			/Never edit the pi-herdr-agents config with the write, edit or bash tools/,
+		);
+		assert.match(setup, /Call `subagents_write_task_models` once with:/);
+		assert.match(
+			setup,
+			/The host shows the user the exact change and asks for approval\. Nothing is saved unless the user chooses to save\./,
+		);
+		assert.match(setup, /do not call it again with the same arguments/);
+		assert.match(
+			setup,
+			/Reached any other way, such as `\/skill:setup-pstack`, there is no brief and no writer/,
+		);
+		assert.doesNotMatch(setup, /pstack_apply_task_models|writer gate/);
 		assert.doesNotMatch(
 			setup,
 			/```(?:bash|sh|js)?\n/,
