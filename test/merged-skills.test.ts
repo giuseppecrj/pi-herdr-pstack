@@ -273,6 +273,10 @@ describe("implement-spec hands delegated tdd children their seams", () => {
 			"the merger never integrating a diff that never went red when tdd applied",
 			/When `tdd` applied to the ticket, never have the merger integrate a diff whose tests did not go red first\./,
 		],
+		[
+			"a disclosed impractical-test skip being mergeable only with its closest verification rerun",
+			/The one exception is a test the child skipped as impractical under `tdd`'s skip rule: merge that only when its report says why it skipped and what closest verification it ran instead, and you have rerun that verification\./,
+		],
 	];
 	const problems = (text: string) =>
 		HANDOFF.filter(([, pattern]) => !pattern.test(flat(text))).map(
