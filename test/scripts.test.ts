@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
 	existsSync,
+	mkdirSync,
 	mkdtempSync,
 	readFileSync,
 	rmSync,
@@ -268,5 +269,105 @@ describe("poteto-mode check-plan.mjs", {
 				`${marker}\n${result.stderr}`,
 			);
 		}
+	});
+});
+
+describe("move-skills.mjs", () => {
+	const MOVE_SKILLS = join(PACK_ROOT, "scripts/move-skills.mjs");
+	const git = (cwd: string, ...args: string[]) =>
+		spawnSync("git", args, { cwd, encoding: "utf8" });
+	/** A scratch repository with three skills that link to each other. */
+	const repository = (name: string) => {
+		const root = join(scratch, name);
+		const files: Record<string, string> = {
+			"skills/a/SKILL.md": "Read `../b/SKILL.md` and `../b/references/r.md`.\n",
+			"skills/a/references/r.md": "Back to `../c/SKILL.md`.\n",
+			"skills/b/SKILL.md":
+				"See `../a/references/r.md`, then `../c/SKILL.md`.\n",
+			"skills/b/references/r.md": "Own file: `references/r.md`.\n",
+			"skills/c/SKILL.md": "Prompt in ../b/SKILL.md, verbatim.\n",
+		};
+		for (const [path, text] of Object.entries(files)) {
+			mkdirSync(join(root, path, ".."), { recursive: true });
+			writeFileSync(join(root, path), text);
+		}
+		assert.equal(git(root, "init", "-q").status, 0);
+		assert.equal(git(root, "add", ".").status, 0);
+		const commit = git(
+			root,
+			"-c",
+			"user.name=test",
+			"-c",
+			"user.email=test@example.com",
+			"-c",
+			"commit.gpgsign=false",
+			"commit",
+			"-qm",
+			"skills",
+		);
+		assert.equal(commit.status, 0, commit.stderr);
+		return root;
+	};
+	const move = (cwd: string, ...args: string[]) =>
+		spawnSync(process.execPath, [MOVE_SKILLS, ...args], {
+			cwd,
+			encoding: "utf8",
+		});
+	const text = (root: string, path: string) =>
+		readFileSync(join(root, path), "utf8");
+
+	it("rewrites links into and out of a skill moved to another folder", () => {
+		const root = repository("cross-folder");
+		const result = move(root, "skills/merged", "b");
+		assert.equal(result.status, 0, result.stderr);
+		assert.match(result.stdout, /rewrote 5 link\(s\) in 3 file\(s\)/);
+		assert.equal(
+			text(root, "skills/a/SKILL.md"),
+			"Read `../merged/b/SKILL.md` and `../merged/b/references/r.md`.\n",
+		);
+		assert.equal(
+			text(root, "skills/merged/b/SKILL.md"),
+			"See `../../a/references/r.md`, then `../../c/SKILL.md`.\n",
+		);
+		assert.equal(
+			text(root, "skills/merged/b/references/r.md"),
+			"Own file: `references/r.md`.\n",
+		);
+		assert.equal(
+			text(root, "skills/c/SKILL.md"),
+			"Prompt in ../merged/b/SKILL.md, verbatim.\n",
+		);
+		assert.equal(
+			text(root, "skills/a/references/r.md"),
+			"Back to `../c/SKILL.md`.\n",
+		);
+		assert.match(
+			git(root, "status", "--short").stdout,
+			/^R {2}skills\/b\/references\/r\.md -> skills\/merged\/b\/references\/r\.md$/m,
+		);
+	});
+
+	it("leaves links unchanged when sibling skills move together", () => {
+		const root = repository("together");
+		const before = ["a", "b", "c"].map((name) =>
+			text(root, `skills/${name}/SKILL.md`),
+		);
+		const result = move(root, "skills/pstack", "a", "b", "c");
+		assert.equal(result.status, 0, result.stderr);
+		assert.match(result.stdout, /rewrote 0 link\(s\) in 0 file\(s\)/);
+		assert.deepEqual(
+			["a", "b", "c"].map((name) =>
+				text(root, `skills/pstack/${name}/SKILL.md`),
+			),
+			before,
+		);
+		assert.equal(existsSync(join(root, "skills/a")), false);
+	});
+
+	it("refuses a destination outside skills/ or an unknown skill", () => {
+		const root = repository("refusals");
+		assert.equal(move(root, "elsewhere", "a").status, 2);
+		assert.notEqual(move(root, "skills/pstack", "missing").status, 0);
+		assert.equal(existsSync(join(root, "skills/a/SKILL.md")), true);
 	});
 });
