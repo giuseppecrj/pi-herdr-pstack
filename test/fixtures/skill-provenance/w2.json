@@ -176,7 +176,7 @@
 		},
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/prototype.md",
-			"sha256": "0b0ff1341eb26ac765af0f6cb010a0e795f363a62be451a5d9711743f8acbc7f",
+			"sha256": "f9d3c8ffe5cbff31acc4bf1b7802327452b4406e09a679c8dbdf0f8dd5372f30",
 			"status": "adapted",
 			"sources": [
 				{
@@ -192,7 +192,8 @@
 					"use": "context"
 				}
 			],
-			"explanation": "Keeps the throwaway decision method; uses session-provided search and screenshot tooling with an explicit unverified label when absent; keeps scratch work out of commits and project dependencies. W3 reconcile: the principle-exhaust-the-design-space marker is retired now that the leaf ships. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted)."
+			"explanation": "Keeps the throwaway decision method; uses session-provided search and screenshot tooling with an explicit unverified label when absent; keeps scratch work out of commits and project dependencies. W3 reconcile: the principle-exhaust-the-design-space marker is retired now that the leaf ships. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: ported tip deltas (Pi-adapted). #37 decision 3: the procedure moved into the merged prototype skill (skills/merged/prototype, merged.json), which combines this playbook with Matt Pocock's prototype; the playbook keeps its title, its bold lead and the Laziness Protocol inversion line, and its steps become a pointer: load the skill and scope the decision (no decision means no prototype; route to Feature), build, verify and capture as the skill says (scratch by default, in-app only with explicit scope, keeping, committing or publishing only with authorization), and hand the direction to Feature. The Reply defers to the skill's Reply.",
+			"lengthExplanation": "Under half its primary source because the procedure moved into the merged prototype skill (#37 decision 3); the playbook keeps only its routing place in poteto-mode and a pointer."
 		},
 		{
 			"path": "skills/pstack/poteto-mode/playbooks/refactoring.md",

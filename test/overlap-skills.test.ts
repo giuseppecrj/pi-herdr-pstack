@@ -295,10 +295,305 @@ describe("implement, implement-spec and tdd find code-review in the pack", () =>
 	});
 });
 
+const PROTOTYPE = "skills/merged/prototype";
+const PLAYBOOK = "skills/pstack/poteto-mode/playbooks/prototype.md";
+
+const PROTOTYPE_RULES: Rule[] = [
+	["the name prototype", /^--- name: prototype description:/],
+	[
+		"a description that covers the empirical fork",
+		/or find out how a behavior, timing or approach actually turns out instead of guessing\./,
+	],
+	// From Matt.
+	[
+		"throwaway code that answers a question",
+		/A prototype is \*\*throwaway code that answers a question\*\*\. The question decides the shape\./,
+	],
+	[
+		"the logic branch in LOGIC.md",
+		/\*\*"Does this logic \/ state model feel right\?"\*\* → `LOGIC\.md`\./,
+	],
+	[
+		"the UI branch in UI.md",
+		/\*\*"What should this look like\?"\*\* → `UI\.md`\./,
+	],
+	[
+		"stating the assumed branch when the question is ambiguous",
+		/default to whichever branch better matches the surrounding code .* and state the assumption at the top of the prototype\./,
+	],
+	[
+		"no persistence by default, never a shared or production database",
+		/\*\*No persistence by default\.\*\* State lives in memory\..*a clear "PROTOTYPE, wipe me" name, never a shared or production one\./,
+	],
+	[
+		"skipping the polish",
+		/\*\*Skip the polish\.\*\* No tests, no error handling beyond what makes the prototype _runnable_, no abstractions\./,
+	],
+	[
+		"surfacing the state",
+		/\*\*Surface the state\.\*\* After every action \(logic\) or on every variant switch \(UI\), print or render the full relevant state/,
+	],
+	// From pstack's playbook.
+	[
+		"owning the decision, not the code",
+		/You own the decision, not the code\. The prototype is a throwaway instrument, and the real build comes after it\./,
+	],
+	[
+		"no decision, no prototype",
+		/No decision means no prototype: hand the work to the real build instead \(under poteto-mode, the Feature playbook, `\.\.\/\.\.\/pstack\/poteto-mode\/playbooks\/feature\.md`\)\./,
+	],
+	[
+		"the empirical branch",
+		/\*\*"How does this actually behave\?"\*\* \(an empirical fork: a behavior, a timing, which of two approaches works\) → \*\*Empirical\*\* below\./,
+	],
+	[
+		"observation as the test",
+		/Observe the thing you are deciding by logging the timing, printing the output, or watching the render\. The observation is the test here, not an assertion\./,
+	],
+	[
+		"references from session search tools, or saying why not",
+		/search for prior art with the search tools the session provides.*Skip this when the direction is set, or when no search tool is available, and say which\./,
+	],
+	[
+		"one labelled switcher for alternatives",
+		/\*\*Compare alternatives behind one switcher\.\*\* When there are several variants, put them behind one switcher \(buttons or a keypress\), each variant labelled\./,
+	],
+	// Location and authorization (decision 3).
+	[
+		"scratch as the default location",
+		/\*\*Scratch is the default\.\*\* Build in an isolated scratch directory outside the project's source tree: a new directory under the system temp directory \(`mktemp -d`\), or a path the user names\. Nothing there is staged or committed, and nothing is installed into the user's project/,
+	],
+	[
+		"in-app work only with explicit scope",
+		/\*\*In-app needs explicit scope\.\*\* Building the prototype inside the app .* edits the project's source, so do it only when the user asked for an in-app prototype or approved one when you asked\. When you ask, name the files it would touch and offer scratch as the alternative\./,
+	],
+	[
+		"in-app code uncommitted and listed",
+		/keep it uncommitted, and list every file it adds or changes\./,
+	],
+	[
+		"the invocation grant: scratch only",
+		/\*\*What invoking this skill grants\.\*\* Writing and running the prototype in a scratch directory, and nothing else\./,
+	],
+	[
+		"loading without invocation granting nothing",
+		/Loading the skill without the user invoking it, from another skill or as a delegated child, grants nothing beyond what that skill's or brief's own grant names\./,
+	],
+	[
+		"preserving, committing, pushing or pointing at it only with authorization",
+		/Preserving it past the task needs the user's authorization, and each of these effects needs its own: committing it \(.*\), pushing that branch, and leaving a context pointer to it on an issue or pull request, in the repo the tracker doc names\./,
+	],
+	[
+		"prototype code never reaching main",
+		/Without that, never commit prototype code, and never let it reach the main branch\./,
+	],
+	[
+		"removing in-app files only when the user agrees",
+		/Removing in-app prototype files, once the answer is captured, happens when the user agrees\./,
+	],
+	// Evidence and handoff.
+	[
+		"verifying a visual decision with session tooling, or saying it is unverified",
+		/screenshot each variant and drive the interaction with the browser or screenshot tooling the session provides\. If none is available, say the visual comparison is unverified rather than describing renders you did not see\./,
+	],
+	[
+		"the production handoff: the real build rewrites it",
+		/The validated decision goes to the real build, never as prototype code: hand the chosen direction to whoever builds it .*, and the real build rewrites it properly/,
+	],
+	[
+		"the reply with evidence, and throwaway said plainly",
+		/## Reply The variants explored, the evidence .* tradeoffs, your recommendation, and the scratch path or the list of in-app files\. Say plainly that the prototype is throwaway\./,
+	],
+];
+
+const LOGIC_RULES: Rule[] = [
+	[
+		"a pure, liftable logic module",
+		/Keep it pure: no DOM, no `document`, no button handlers reaching inside it\./,
+	],
+	[
+		"the HTML file written in scratch",
+		/One file, plain HTML\/CSS\/JS, written in the scratch directory/,
+	],
+	[
+		"sending the file to others being the user's call",
+		/Give the user the file's path, or open it for them\. Sending it to anyone else \(a designer, a PM, a domain expert\) is the user's call, not yours\./,
+	],
+	[
+		"the real build lifting the module, the shell staying with the prototype",
+		/the validated reducer \/ machine \/ function set is the decision the real build lifts into the real module; the HTML shell stays with the prototype \(in scratch, or on a throwaway branch once the user authorized preserving it\)/,
+	],
+	["the UI route by name", /this is the wrong branch\. Use `UI\.md`\./],
+];
+
+const UI_RULES: Rule[] = [
+	[
+		"in-app sub-shapes behind explicit scope",
+		/But putting variants inside the app edits the project's source, so both in-app sub-shapes below need the user's explicit in-app scope \(see \*\*Where it lives\*\* in `SKILL\.md`\)\./,
+	],
+	[
+		"a scratch page by default, saying what it approximated",
+		/### Default: a scratch page Without in-app scope, build one standalone page in the scratch directory that recreates the host page's surroundings .* Say which surroundings you approximated/,
+	],
+	[
+		"sub-shape A preferred in-app",
+		/### Sub-shape A: adjustment to an existing page \(preferred in-app\) With in-app scope, default to sub-shape A/,
+	],
+	[
+		"the switcher hidden in production builds",
+		/In-app, hidden in production builds: gate on `process\.env\.NODE_ENV !== 'production'`/,
+	],
+	[
+		"screenshots of each variant, or saying it is unverified",
+		/Screenshot each variant with the browser or screenshot tooling the session provides, and drive the interaction; with none available, say the visual comparison is unverified\./,
+	],
+	[
+		"the winner going to the real build, never to main as prototype code",
+		/The winner goes to the real build, which rewrites it properly in the real code; the prototype code never lands on main:/,
+	],
+	[
+		"keeping the variants on a branch only with authorization",
+		/Keeping it on a throwaway branch, not in the bin, needs the user's authorization \(see `SKILL\.md`\)/,
+	],
+	[
+		"radically different variants",
+		/Variants must be \*\*structurally different\*\*: different layout, different information hierarchy, different primary affordance, not just different colours\./,
+	],
+];
+
+describe("prototype content contract (not behavior proof)", () => {
+	const flatFile = (file: string) => flat(read(`${PROTOTYPE}/${file}`));
+
+	it("merges Matt's branches and pstack's empirical branch, evidence and handoff, and fails when any rule is removed", () => {
+		assertContract(read(`${PROTOTYPE}/SKILL.md`), PROTOTYPE_RULES, FORBIDDEN);
+	});
+
+	it("keeps LOGIC.md's method with scratch, handover and capture adapted", () => {
+		assertContract(read(`${PROTOTYPE}/LOGIC.md`), LOGIC_RULES, FORBIDDEN);
+	});
+
+	it("keeps UI.md's variants with in-app work behind explicit scope", () => {
+		assertContract(read(`${PROTOTYPE}/UI.md`), UI_RULES, FORBIDDEN);
+	});
+
+	it("keeps Matt's model invocation, ships its supporting files and no Codex metadata", () => {
+		const frontmatter =
+			/^---\n([\s\S]*?)\n---\n/.exec(read(`${PROTOTYPE}/SKILL.md`))?.[1] ?? "";
+		assert.doesNotMatch(frontmatter, /disable-model-invocation/);
+		assert.deepEqual(readdirSync(join(PACK_ROOT, PROTOTYPE)).toSorted(), [
+			"LOGIC.md",
+			"SKILL.md",
+			"UI.md",
+		]);
+		for (const file of ["LOGIC.md", "UI.md"])
+			assert.ok(flatFile("SKILL.md").includes(`\`${file}\``), file);
+	});
+
+	it("puts in-app work behind scope before any in-app step, in the skill and in UI.md", () => {
+		const skill = flatFile("SKILL.md");
+		assert.ok(
+			skill.indexOf("**Scratch is the default.**") <
+				skill.indexOf("## Rules that apply to every branch"),
+		);
+		const ui = flatFile("UI.md");
+		assert.ok(
+			ui.indexOf("need the user's explicit in-app scope") <
+				ui.indexOf("### Sub-shape A"),
+		);
+	});
+});
+
+describe("the Prototype playbook points at the skill", () => {
+	const PLAYBOOK_RULES: Rule[] = [
+		["the playbook's title", /^### Prototype /],
+		[
+			"the playbook's lead",
+			/\*\*You own the design decision, not the code\. The prototype is a throwaway instrument\. The real build follows Feature\.\*\*/,
+		],
+		[
+			"the pointer to the merged skill",
+			/The procedure lives in the \*\*prototype\*\* skill \(`\.\.\/\.\.\/merged\/prototype\/SKILL\.md`\), which merges this playbook's method with Matt Pocock's logic and UI prototypes\. Read it and follow it/,
+		],
+		[
+			"no decision, no prototype",
+			/No decision means no prototype\. Route to Feature\./,
+		],
+		[
+			"scratch by default and authorization to keep or publish",
+			/in scratch by default, inside the app only with the user's explicit scope, and kept, committed or published only with the user's authorization\./,
+		],
+		[
+			"the handoff to Feature",
+			/Hand the chosen direction to Feature \(`playbooks\/feature\.md`\) for the real build/,
+		],
+		["throwaway said plainly", /Say plainly that the prototype is throwaway\./],
+	];
+
+	it("keeps its routing place and defers the procedure to the skill", () => {
+		assertContract(read(PLAYBOOK), PLAYBOOK_RULES);
+		assert.ok(
+			existsSync(
+				join(
+					PACK_ROOT,
+					"skills/pstack/poteto-mode",
+					"../../merged/prototype/SKILL.md",
+				),
+			),
+		);
+		assert.match(
+			read("skills/pstack/poteto-mode/SKILL.md"),
+			/- \*\*Prototype\.\*\* .*`playbooks\/prototype\.md`\./,
+		);
+	});
+
+	it("no longer duplicates the procedure the skill owns", () => {
+		const text = flat(read(PLAYBOOK));
+		for (const duplicate of [
+			/moodboard/,
+			/vanilla HTML\/CSS\/JS/,
+			/screenshot each variant/i,
+			/smallest script that exercises the question/,
+		])
+			assert.doesNotMatch(text, duplicate);
+	});
+});
+
+describe("wayfinder finds prototype in the pack", () => {
+	const WAYFINDER = "skills/mattpocock/wayfinder/SKILL.md";
+
+	it("resolves `../../*/prototype/SKILL.md` to exactly one skill, the merged one", () => {
+		assert.deepEqual(packFolders("prototype"), ["merged"]);
+		assert.deepEqual(packFolders("research"), ["mattpocock"]);
+	});
+
+	it("names this pack's prototype for Prototype tickets and keeps the fail-closed rule", () => {
+		assertContract(read(WAYFINDER), [
+			[
+				"the Prototype ticket naming this pack's prototype",
+				/by loading the `prototype` skill \(this pack's is `\.\.\/\.\.\/merged\/prototype\/SKILL\.md`\)\. Links the prototype as an asset: its scratch path, or the branch it was preserved on once the user authorized keeping it\./,
+			],
+			[
+				"a ticket whose skill is missing being blocked",
+				/A `research` or `prototype` ticket whose skill is missing is blocked on that skill: don't claim it, fire it or stand in for it/,
+			],
+		]);
+		assert.ok(
+			existsSync(
+				join(
+					PACK_ROOT,
+					posix.dirname(WAYFINDER),
+					"../../merged/prototype/SKILL.md",
+				),
+			),
+		);
+	});
+});
+
 describe("batch A skills load", () => {
 	/** Each skill this batch adds or moves, its folder and whether the model sees it. */
 	const LOADED: Array<[name: string, folder: string, modelInvoked: boolean]> = [
 		["code-review", "skills/mattpocock", true],
+		["prototype", "skills/merged", true],
 	];
 
 	it("loads each exactly once through Pi's loader", async () => {

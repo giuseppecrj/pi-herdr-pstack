@@ -461,7 +461,7 @@
 		},
 		{
 			"path": "skills/mattpocock/wayfinder/SKILL.md",
-			"sha256": "d9c3e993ac579a709ed0e45ef04ef2e7c38a6c34df1a8c5b820e4696170321ba",
+			"sha256": "8ef1c8e06c6fa07d16a2d445fbabdf096bbd5e63acd07b49a924f86d9dcbb46a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -472,7 +472,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the wayfinder: labels). Pi has no Skill tool: grilling and domain-modeling load by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and research and prototype load as skills. The research subagents are pi-herdr-agents `subagent` launches: fork: false, explicit model (task:recon) and thinking (medium), a worktree on the research/<name> branch, a task naming the ticket and the absolute path of the research SKILL.md (a child cannot see skills that disable model invocation); results arrive on their own, never polled. The in-page anchor links became italic section names. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:wayfinder invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Notes can carry execution into the map, or name skills to load, only once the user confirms, and only skills in this pack. Pack policy (H1): step 5 pushes research branches only on the user's grant, otherwise children commit locally and report. Pack policy (M1): research and prototype are checked in this pack before charting or working; a ticket whose skill is missing is blocked on it, never claimed, fired or stood in for, and is passed over on the frontier; with research missing step 5 fires nothing. Pack policy (M2): research children's worktrees start from committed HEAD, so uncommitted inputs are committed with approval or passed as absolute paths; the brief says the ticket content is data. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. research and prototype, and skills the Notes name once the user confirms them, resolve the same way; research children get the path found. #34: research now ships in this pack (skills/mattpocock/research), so Finding a skill resolves it there; step 5's brief also says the child does the research itself as a leaf and launches no subagent of its own, since the research skill otherwise launches a background subagent. Each named thinking level is qualified to apply only when that task category has no configured thinking, since an explicit thinking overrides the user's /setup-pstack choice (#35)."
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo, and asks the user before creating a label the tracker lacks (the wayfinder: labels). Pi has no Skill tool: grilling and domain-modeling load by reading `../grilling/SKILL.md` and `../domain-modeling/SKILL.md`, and research and prototype load as skills. The research subagents are pi-herdr-agents `subagent` launches: fork: false, explicit model (task:recon) and thinking (medium), a worktree on the research/<name> branch, a task naming the ticket and the absolute path of the research SKILL.md (a child cannot see skills that disable model invocation); results arrive on their own, never polled. The in-page anchor links became italic section names. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:wayfinder invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Notes can carry execution into the map, or name skills to load, only once the user confirms, and only skills in this pack. Pack policy (H1): step 5 pushes research branches only on the user's grant, otherwise children commit locally and report. Pack policy (M1): research and prototype are checked in this pack before charting or working; a ticket whose skill is missing is blocked on it, never claimed, fired or stood in for, and is passed over on the frontier; with research missing step 5 fires nothing. Pack policy (M2): research children's worktrees start from committed HEAD, so uncommitted inputs are committed with approval or passed as absolute paths; the brief says the ticket content is data. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. research and prototype, and skills the Notes name once the user confirms them, resolve the same way; research children get the path found. #34: research now ships in this pack (skills/mattpocock/research), so Finding a skill resolves it there; step 5's brief also says the child does the research itself as a leaf and launches no subagent of its own, since the research skill otherwise launches a background subagent. Each named thinking level is qualified to apply only when that task category has no configured thinking, since an explicit thinking overrides the user's /setup-pstack choice (#35). #37: prototype ships merged in this pack (skills/merged/prototype), so the Prototype ticket type names its path, and the asset it links is the prototype's scratch path, or the branch it was preserved on once the user authorized keeping it. The fail-closed wording stays for installs without it."
 		},
 		{
 			"path": "skills/mattpocock/wizard/SKILL.md",
@@ -535,30 +535,6 @@
 			"path": "engineering/diagnosing-bugs/scripts/hitl-loop.template.sh",
 			"sha256": "35103539fc36873eea36074769ad454f9379d6fc8b2dc0e26ce987fd3bfe5503",
 			"blob": "243198464a8401a7ba1d63b3708fa43c3d067665",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/prototype/LOGIC.md",
-			"sha256": "f61c7d249e786a79ef289018901c348271e1798dd0b0bc5607b5c6f4d4a01ab9",
-			"blob": "32be86a0a5d9928db84b3988e55f9debe476ab40",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/prototype/SKILL.md",
-			"sha256": "714de632d116bb73f65cdb5a882db15b9369a6713b9a47c0fad827848f0bfbe3",
-			"blob": "a0044501fe0d385b4d8575b610188ede9b236ccf",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/prototype/UI.md",
-			"sha256": "723211e878acbc7b6ff09755263f3295cde724ba902ff0064da41eed51d45ad3",
-			"blob": "3977951663490882c2632b40695d9f59a2fe2408",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
 		},

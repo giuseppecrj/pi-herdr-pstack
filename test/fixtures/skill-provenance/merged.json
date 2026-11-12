@@ -166,6 +166,65 @@
 				}
 			],
 			"explanation": "The relative Markdown link to SKILL.md became a backticked file name, as in #33 (test/skill-content.test.ts rejects relative Markdown links). Everything else is upstream's wording."
+		},
+		{
+			"path": "skills/merged/prototype/SKILL.md",
+			"sha256": "84bb5c2a9757ab3a204cbc2ced5cbd43f5c685ad4f002b594f0ef45da65b8710",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/prototype/SKILL.md",
+					"sha256": "714de632d116bb73f65cdb5a882db15b9369a6713b9a47c0fad827848f0bfbe3",
+					"blob": "a0044501fe0d385b4d8575b610188ede9b236ccf",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "poteto-mode/playbooks/prototype.md",
+					"sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+					"blob": "18bedc7e9249d180f9198d5b4b13e3817d41d281",
+					"use": "merged"
+				},
+				{
+					"source": "mimir",
+					"path": "poteto-mode/playbooks/prototype.md",
+					"sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962",
+					"blob": "18bedc7e9249d180f9198d5b4b13e3817d41d281",
+					"use": "context"
+				}
+			],
+			"explanation": "Issue #37 decision 3: merge of Matt's prototype (primary; the question decides the shape, the logic and UI branches with their supporting files, the default-by-surrounding-code rule, the rules that apply to both, capturing the prototype as a primary source) and pstack's poteto-mode Prototype playbook (cursor/plugins pstack/skills/poteto-mode/playbooks/prototype.md, byte-identical to the pi-mimir copy, merged by hand from this pack's Pi adaptation of it: you own the decision not the code, speed over polish, propose variations, scope the decision with 'no decision means no prototype', gather references with session search tools, the empirical branch for behavior and timing forks, compare variants behind one switcher as principle-exhaust-the-design-space made cheap, verify on the matching surface with session screenshot tooling or say the visual comparison is unverified, the observation is the test, hand the direction to Feature, and the Reply). From Matt, unchanged in substance: the opening line, 'Pick a branch' with the LOGIC.md and UI.md routes and the ambiguous-question default, and the rules throwaway-and-marked, trivial to run, no persistence by default (with the 'PROTOTYPE, wipe me' scratch DB), skip the polish and surface the state. From pstack, unchanged in substance: the framing paragraph, step 1 as 'Scope the decision', step 2's references, step 3's empirical build, step 4's switcher, step 5's evidence rules and the Reply. New joining text: a third, Empirical branch beside Matt's two, and the default for an ambiguous claim about speed or behavior. Conflicts and resolutions. (1) Location: Matt locates prototype code next to where it will be used (in the app), pstack builds in an isolated scratch directory. Scratch is the default (decision 3): a directory outside the source tree (mktemp -d or a path the user names), nothing staged or committed, no installs into the project; building inside the app needs the user's explicit scope, asked for by naming the files it would touch with scratch as the alternative, and in-app code stays uncommitted with every touched file listed. (2) Capture: Matt commits the prototype to a throwaway prototype/<name> branch out of main and points at it from the implementation issue; pstack keeps it out of commits. By default the prototype stays at its scratch path (or as listed uncommitted in-app files); preserving it needs the user's authorization, with separate grants for committing it, pushing the branch and leaving a context pointer on an issue or PR in the tracker doc's repo; prototype code never reaches the main branch, and in-app files are removed when the user agrees. (3) Production handoff: Matt folds the validated decision into the real code, pstack hands the direction to Feature. The prototype never writes production code: the chosen direction goes to the real build (Feature under poteto-mode, else the ticket or /skill:to-spec), which rewrites it properly and may lift a logic prototype's pure module. (4) Invocation: Matt's skill is model-invocable and the playbook is not a skill; the merged skill keeps Matt's model invocation, since its default writes only to scratch. A 'What invoking this skill grants' paragraph says it grants writing and running the prototype in scratch and nothing else; in-app work, keeping, committing, pushing or pointing at it need more; loading it without the user invoking it grants nothing beyond the loader's grant. Pi adaptations: Matt's relative Markdown links to LOGIC.md and UI.md became backticked names (test/skill-content.test.ts rejects relative Markdown links). Matt's Codex-only agents/openai.yaml is not shipped (mattpocock.json excluded list). The playbook now points at this skill (w2.json)."
+		},
+		{
+			"path": "skills/merged/prototype/LOGIC.md",
+			"sha256": "5b51ff78446481547fb5512bb38115e64846edd8a8a4a80bc0d65731d1ee1ea8",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/prototype/LOGIC.md",
+					"sha256": "f61c7d249e786a79ef289018901c348271e1798dd0b0bc5607b5c6f4d4a01ab9",
+					"blob": "32be86a0a5d9928db84b3988e55f9debe476ab40",
+					"use": "primary"
+				}
+			],
+			"explanation": "Matt's logic prototype with its method, layout, scenarios and anti-patterns kept. Changes: the relative Markdown links to UI.md and SKILL.md became backticked names; the HTML file is written in the scratch directory; step 2's lifting of the pure module and step 5's capture name the real build as the one that lifts it, with the HTML shell staying with the prototype in scratch or, once the user authorized preserving it, on a throwaway branch; step 4 'Send them the file, or open it for them' became giving the user the file's path or opening it, with sending it to anyone else left to the user (messages to people need authorization, poteto-mode references/authorization.md)."
+		},
+		{
+			"path": "skills/merged/prototype/UI.md",
+			"sha256": "28188f395192d455228d62173d5ef75e102f5438db1849f61768ccf3bdffd343",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/prototype/UI.md",
+					"sha256": "723211e878acbc7b6ff09755263f3295cde724ba902ff0064da41eed51d45ad3",
+					"blob": "3977951663490882c2632b40695d9f59a2fe2408",
+					"use": "primary"
+				}
+			],
+			"explanation": "Matt's UI prototype with its variants, switcher, floating bar, process and anti-patterns kept. Changes (#37 decision 3, scratch by default): a new 'Where the variants live' section keeps Matt's reason a UI is easier to judge against the app, but puts both in-app sub-shapes behind the user's explicit in-app scope; the default is a standalone scratch page that recreates the host page's surroundings with sample data and says what it approximated. Sub-shape A is the preferred in-app shape and B the last resort, as upstream. The switcher wiring and the production gate apply in-app; step 5 adds screenshotting each variant with session tooling, or saying the comparison is unverified (pstack's evidence rule); step 6 hands the winner to the real build, leaves the scratch page in scratch, drops in-app variants and the switcher from the working tree once the user agrees, and keeps the full set on a throwaway branch only with the user's authorization. The relative Markdown links to LOGIC.md and SKILL.md became backticked names."
 		}
 	]
 }

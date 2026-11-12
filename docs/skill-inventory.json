@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 76,
+  "expectedSkillCount": 77,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -910,6 +910,27 @@
         ],
         "cursor": [
           "principle-type-system-discipline/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "prototype",
+      "folder": "skills/merged",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mimir": [
+          "poteto-mode/playbooks/prototype.md"
+        ],
+        "cursor": [
+          "poteto-mode/playbooks/prototype.md"
+        ],
+        "mattpocock": [
+          "engineering/prototype/LOGIC.md",
+          "engineering/prototype/SKILL.md",
+          "engineering/prototype/UI.md",
+          "engineering/prototype/agents/openai.yaml"
         ]
       }
     },
