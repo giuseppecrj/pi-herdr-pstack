@@ -316,3 +316,39 @@ describe("the local-markdown tracker and to-tickets agree on ticket lines (C6)",
 		);
 	});
 });
+
+describe("release docs describe 1.0.0 without drifting counts (C7)", () => {
+	it("compatibility.md states 1.0.0 and how it is verified, with no stale test counts", () => {
+		const doc = flat("docs/compatibility.md");
+		assert.match(
+			doc,
+			/^# Compatibility Status: pi-herdr-pstack `1\.0\.0`, on pi-herdr-agents `>=3\.10\.0`/,
+		);
+		const current = doc.slice(
+			doc.indexOf("For 1.0.0,"),
+			doc.indexOf("For 0.5.0,"),
+		);
+		assert.ok(current.length > 0);
+		for (const phrase of [
+			"the run's exact pass and skip counts belong in the release record, not in this file.",
+			"None of this shows that a live model follows the skills",
+		])
+			assert.ok(current.includes(phrase), phrase);
+		assert.doesNotMatch(current, /\b\d{2,} (?:tests|pass|skipped)\b/);
+		assert.doesNotMatch(
+			doc,
+			/\b20[57] (?:tests|with)\b|all 207|unreleased #35/,
+		);
+	});
+
+	it("RELEASING.md's current state is 1.0.0 and says how to merge the release notes", () => {
+		const guide = flat("RELEASING.md");
+		assert.match(guide, /## Current state: 1\.0\.0 /);
+		assert.doesNotMatch(guide, /## Current state: 0\./);
+		assert.ok(
+			guide.includes(
+				"Before the version commit, prepend `docs/release-notes-1.0.0.md` to `CHANGELOG.md` and delete that file.",
+			),
+		);
+	});
+});

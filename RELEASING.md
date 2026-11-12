@@ -4,15 +4,24 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 0.5.0
+## Current state: 1.0.0
 
-The `0.5.0` release syncs the cursor/plugins pin to `1ba91fc` (pstack
-`0.15.36`), ships optional `statechart` (runtime scripts only; model
-checking via the pack `tla-ts` dependency, no Java), and ships
-`in-your-own-words`, `ketchup` and `sharpen`.
-`ketchup-video` stays flagged. When its version commit reaches `main`, the detect step sees the
-previous public `0.4.0` manifest and the current `0.5.0`, sets
-`release=true`, and the workflow publishes `0.5.0`.
+The `1.0.0` release is a major version. The pi-herdr-agents peer is
+`>=3.10.0`; `/setup-pstack` saves through the host's own approval dialog;
+`/setup-pstack init` and `pstack_apply_task_models` are removed; and Matt
+Pocock's skills ship beside pstack's, in folders by upstream (see the README's
+"Upgrading from 0.6.0"). Before the version commit, prepend
+`docs/release-notes-1.0.0.md` to `CHANGELOG.md` and delete that file. When the
+version commit reaches `main`, the detect step sees the previous public
+`0.6.0` manifest and the current `1.0.0`, sets `release=true`, and the
+workflow publishes `1.0.0`.
+
+The `0.6.0` release made `statechart` check models with the pack's `tla-ts`
+dependency instead of Java.
+
+The `0.5.0` release synced the cursor/plugins pin to `1ba91fc` (pstack
+`0.15.36`), shipped optional `statechart` (runtime scripts only) and shipped
+`in-your-own-words`, `ketchup` and `sharpen`. `ketchup-video` stays flagged.
 
 The `0.4.0` release synced the cursor/plugins pin to `190d287` (pstack
 `0.15.29`) and shipped `create-formal-verification-skill` and

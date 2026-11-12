@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `0.6.0` plus the unreleased #35 setup rewrite and #37 overlap merges (80 skills and 23 playbooks).
+Status: pi-herdr-pstack `1.0.0`, on pi-herdr-agents `>=3.10.0`: pstack's skills, Matt Pocock's skills and the skills merged from both, with poteto-mode's playbooks (the README lists them).
 
 ## Host baseline
 
@@ -21,15 +21,31 @@ depend on the newer host.
 | pi-herdr-roles (coexistence) | `0.1.0` from npm (`fc3383daaa839228cc9f703c2d99728684acfe07`) |
 | Pi SDK and CLI | `1.0.3` |
 
-For the #35 setup rewrite (unreleased), `npm run check` with the pinned
-upstream sources passed 205 tests with 4 skipped; with
-`PI_HERDR_AGENTS_SOURCE` (`/path/to/pi-herdr-agents` at `cbe538e`),
-`PI_HERDR_ROLES_PACK` (npm `pi-herdr-roles@0.1.0`) and
-`PI_HERDR_AGENTS_LEGACY_HOST` (an exported copy of `c2177dff`) also set,
-`npm test` passed all 207 with none skipped. The setup checks drive
-`/setup-pstack` through the real Pi 1.0.3 SDK and RPC mode with a scripted
-provider and test-owned agent directories; they prove the flow and the
-host's approval, not that a live model follows the skill.
+For 1.0.0, the release commit must pass `npm run check` (typecheck, lint,
+format and the test suite) with every upstream checkout set
+(`PSTACK_CURSOR_SOURCE`, `PSTACK_MIMIR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE`)
+and `PI_HERDR_AGENTS_SOURCE`, so the skill source hashes, the per-upstream
+scope pins and the host file and schema pins are checked against their
+pinned commits. A check whose variable is unset (for example roles
+coexistence without `PI_HERDR_ROLES_PACK`) reports as skipped, not passed;
+the run's exact pass and skip counts belong in the release record, not in
+this file. What the suite proves:
+
+- `/setup-pstack` runs through the real Pi 1.0.3 SDK and RPC mode against the
+  published pi-herdr-agents `3.10.0`, with a scripted provider and test-owned
+  agent directories: the brief, the host's approval dialog, declines, stale
+  revisions, the refusals (older host, no dialogs, subagent, malformed
+  config, the removed `/setup-pstack init`) and the written config.
+- `/poteto-mode` state, hub loading and skill resolution run on the same SDK.
+- Content contracts check each skill's text: publishing grants, the trust
+  rules for tracker content and transcripts, fail-closed preflights, session
+  header checks, and the provenance hash of every shipped file.
+- Shipped shell libraries run with piped answers and stubs: wizard's GitHub
+  writes go only to the confirmed repository (under `/bin/bash`, 3.2 on
+  macOS), and diagnosing-bugs' capture helper prints every value.
+
+None of this shows that a live model follows the skills, and real Herdr child
+launches and worktree lifecycle are not covered here.
 
 For 0.5.0, `npm test` with the pinned upstream sources passed 162 tests with
 0 skipped at the test level: cursor/plugins
