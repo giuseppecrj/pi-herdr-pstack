@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -86,6 +86,57 @@ describe("reflect keeps secrets out of reviewer and synthesis output (S4)", () =
 		// The synthesizer's task carries the drop rule, ahead of its leaf rule.
 		const task = skill.slice(skill.indexOf('"name": "reflect-synthesizer"'));
 		assert.ok(task.indexOf("Drop any secret") < task.indexOf("You are a leaf"));
+	});
+});
+
+/** Every skill directory in the pack, as Pi discovers it. */
+const SKILLS = readdirSync(join(PACK_ROOT, "skills")).flatMap((folder) =>
+	readdirSync(join(PACK_ROOT, "skills", folder))
+		.filter((name) =>
+			existsSync(join(PACK_ROOT, "skills", folder, name, "SKILL.md")),
+		)
+		.map((name) => ({ name, path: `skills/${folder}/${name}/SKILL.md` })),
+);
+const frontmatter = (path: string) =>
+	/^---\n([\s\S]*?)\n---\n/.exec(read(path))?.[1] ?? "";
+/** Backticked names in the "can also load from ... words" sentence. */
+const listedInvocable = (text: string) =>
+	[
+		...(
+			/These can also load from (?:your|the user's) words: (.*?)\./.exec(
+				text,
+			)?.[1] ?? ""
+		).matchAll(/`([a-z0-9-]+)`/g),
+	]
+		.map(([, name]) => name)
+		.toSorted();
+
+describe("README and poteto-help list the model-invocable skills (C2)", () => {
+	const invocable = SKILLS.filter(
+		({ path }) => !/^disable-model-invocation: true$/m.test(frontmatter(path)),
+	)
+		.map(({ name }) => name)
+		.toSorted();
+
+	it("derives a non-trivial list from the frontmatter", () => {
+		assert.ok(invocable.includes("setup-pstack"));
+		assert.ok(invocable.length > 1);
+	});
+
+	it("README names exactly that list and no longer claims setup-pstack is the only one", () => {
+		const readme = flat("README.md");
+		assert.deepEqual(listedInvocable(readme), invocable);
+		assert.doesNotMatch(
+			readme,
+			/All skills except `setup-pstack` are explicit-only/,
+		);
+	});
+
+	it("poteto-help names the same list", () => {
+		assert.deepEqual(
+			listedInvocable(flat("skills/merged/poteto-help/SKILL.md")),
+			invocable,
+		);
 	});
 });
 

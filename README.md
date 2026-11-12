@@ -36,7 +36,7 @@ A version pinned in your settings (for example `npm:pi-herdr-pstack@0.6.0`) does
 2. Run `/poteto-mode <task>` to turn on the methodology and start a task, or `/skill:poteto-help` for a guide to which skill fits.
 3. Load any other skill with `/skill:<name>`, for example `/skill:how` or `/skill:tdd`.
 
-All skills except `setup-pstack` are explicit-only: they load through `/skill:<name>` or when `poteto-mode` reads them for a step.
+Most skills are explicit-only: they load through `/skill:<name>` or when `poteto-mode` reads them for a step. These can also load from your words: `setup-pstack`, and from Matt Pocock's skills `code-review`, `codebase-design`, `diagnosing-bugs`, `domain-modeling`, `grilling`, `pr`, `prototype`, `research`, `wizard` and `writing-for-agents`.
 
 ## Commands
 
