@@ -387,7 +387,23 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | `skills/pstack/poteto-mode/references/bugbot-triage.md` | mimir file of the same name | adapted |
 | `skills/pstack/poteto-mode/references/delegation.md` | derived from both hubs' Subagents sections | new |
 | `skills/pstack/poteto-mode/references/authorization.md` | derived from both hubs' Autonomy sections | new |
-| `skills/pstack/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted, substantially rewritten; revised by the runtime owner to describe the implemented change flow |
+| `skills/pstack/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted; rewritten under #35 to follow upstream's steps (below) |
+
+`setup-pstack` was rewritten under #35 to follow the Cursor skill's eight
+steps and wording where Pi allows: detect models, load current state, budget,
+map and confirm, validate, write, confirm, and offer once each the
+verification and formal verification skills. What changed from upstream: it
+writes pi-herdr-agents' `models.tasks` and `models.tasksThinking` instead of
+a Cursor rule file; the budget ladder sets every category's thinking (`max`,
+`xhigh`, `high`, `medium`), which the host clamps per candidate instead of
+Cursor's per-slug effort tokens; upstream's roles are mapped onto the six
+task categories in a table, with panel roles left as diversity seats; there
+are no `auto`-style aliases or skill defaults; the question is asked in chat;
+and the write is one `subagents_write_task_models` call approved in the
+host's dialog. The earlier report-first skill, change and init flows,
+`pstack_apply_task_models`, the writer gate and `pi-extension/pstack/config.ts`
+were deleted; `setup.ts` now only activates the host writer and briefs the
+skill. The fixture records the details.
 
 The fixture records, for every shipped file, its SHA-256, each source path and
 blob hash at the pinned commit, and what changed. The adaptations share four

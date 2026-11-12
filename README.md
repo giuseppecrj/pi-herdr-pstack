@@ -9,7 +9,7 @@ pi-herdr-agents is the execution host; Herdr is the terminal multiplexer it runs
 pi-herdr-agents is a peer dependency, and a peer declaration does not activate an extension. Install both packages through Pi:
 
 ```bash
-pi install npm:pi-herdr-agents   # >=3.0.0
+pi install npm:pi-herdr-agents   # >=3.10.0
 pi install npm:pi-herdr-pstack
 ```
 
@@ -17,7 +17,7 @@ Install the pack wherever pi-herdr-agents children load packages too (normally t
 
 ## Quick start
 
-1. Run `/setup-pstack` for a read-only report: the host, this package's skills and commands, authenticated models and the shared task-model preferences.
+1. Run `/setup-pstack` to choose a budget and the models for each pi-herdr-agents task category. Nothing is saved until you approve the change in pi-herdr-agents' dialog.
 2. Run `/poteto-mode <task>` to turn on the methodology and start a task, or `/skill:poteto-help` for a guide to which skill fits.
 3. Load any other skill with `/skill:<name>`, for example `/skill:how` or `/skill:tdd`.
 
@@ -31,9 +31,7 @@ All skills except `setup-pstack` are explicit-only: they load through `/skill:<n
 | `/poteto-mode status` | Reports on/off, whether it is persisted or memory-only, and whether the skill resolves to this package. |
 | `/poteto-mode off` | Stops future reminders and automatic hub loading. Earlier context and running subagents are unchanged. |
 | `/poteto-mode <task>` | Turns the mode on and starts the task. Includes the full hub only if it is missing from context. Refused while a turn is running; nothing is queued. |
-| `/setup-pstack` or `/setup-pstack report` | Shows the setup report. Makes no change. |
-| `/setup-pstack <request>` | Opens a one-turn change flow for shared task-model preferences. Nothing is written without your approval. |
-| `/setup-pstack init [preferences]` | Runs pi-herdr-agents' `/subagents-init` with these ranking preferences. Its draft goes through the same approval flow. |
+| `/setup-pstack [request]` | Sets the models and thinking budget for the shared task categories, following upstream's setup steps. The request can name a budget or a change, for example `/setup-pstack small`. pi-herdr-agents writes only after you approve. |
 
 ### `/poteto-mode`
 
@@ -48,27 +46,18 @@ All skills except `setup-pstack` are explicit-only: they load through `/skill:<n
 
 ### `/setup-pstack`
 
-The report is built in code and reads `$PI_CODING_AGENT_DIR/herdr-agents/config.json` (default `~/.pi/agent/herdr-agents/config.json`). It shows the shared task categories and default model only; per-agent overrides and other fields are never shown, and diagnostics never echo keys from the file.
+Setup follows upstream Cursor pstack's steps on pi-herdr-agents' shared task preferences. The command reads `$PI_CODING_AGENT_DIR/herdr-agents/config.json` (default `~/.pi/agent/herdr-agents/config.json`) and hands the `setup-pstack` skill a brief: the authenticated models with the thinking levels each supports, each category's saved models and thinking, and the file's revision. Nothing else from the file reaches the model. The skill then:
 
-A change flow works like this:
+1. Asks for a budget: `unlimited`, `large`, `medium` or `small` set every category's thinking to `max`, `xhigh`, `high` or `medium`. pi-herdr-agents clamps it to each candidate model's supported levels at launch.
+2. Shows every category (`coding`, `review`, `recon`, `qa`, `architecture`, `docs`) with its models, their effective thinking and the upstream roles it drives, and lets you change any of them.
+3. Calls pi-herdr-agents' `subagents_write_task_models` once with the models, the thinking and the brief's revision. The host shows the exact change in its own dialog (default No) and writes only after you choose to save; a stale revision, a decline or a timeout writes nothing.
+4. Offers once each to generate a verification skill and a formal verification skill if the project has none.
 
-1. The model may call the setup-only `pstack_apply_task_models` tool once with the categories to replace. The extension keeps every other category and rejects unknown categories, duplicates, `task:` aliases and unauthenticated references.
-2. A dialog (two-minute timeout) shows the complete `subagents_write_task_models` payload, including `expectedConfigRevision`.
-3. Only after you approve, and after rechecking the file, session and authentication, pstack calls the host writer and verifies the saved file before reporting success.
+The command makes the host writer callable for this flow; the host retires it again after a successful write. It does not start without pi-herdr-agents 3.10.0 or later, in a session without dialogs, in a subagent, while a turn runs, or with a config file it cannot read. Reload Pi after a saved change.
 
-`/subagents-init [preferences]` from a pi-herdr-agents host that supports its task-model init events (`>=3.1.0`), or `/setup-pstack init [preferences]`, opens the same flow with the host's research guidance and its complete registry brief. Only the exact first word `init` starts init; `/setup-pstack initialize ...` is an ordinary request. In an init flow the proposal must use models from that brief that the active registry still lists as available, and is refused if the config file changed after the host read it. A flow opens only with a selected model. If Pi rejects the prompt before starting a run, the next unrelated input or run closes the window before it can use it. The [compatibility notes](docs/compatibility.md#task-model-init-with-pi-herdr-agents) describe the remaining extension-interference limits. Without a supporting host, `/setup-pstack init` says so and writes nothing.
+`/subagents-init` is pi-herdr-agents' own drafting command and goes through the same host dialog; pstack no longer takes part in it.
 
-A proposal may carry a ranking `basis`. Without one it is `registry-only`. A `research` basis needs at least one http(s) source with a note on how it informed the ranking, plus the remaining uncertainty. The dialog shows the sources as submitted by the model, not verified. pstack sets `tasksMeta.method` from the basis. The writer receives the basis but does not save it, and an older writer without a `basis` field accepts only registry-only proposals. A proposal equal to the current task map writes nothing and leaves `tasksMeta` unchanged.
-
-Declined, rejected, stale or cancelled attempts stop before the writer runs. If the writer errors after being called, pstack rereads the file and reports it as unchanged, as holding the approved preferences, or as changed in a way it cannot attribute. Nothing is retried. Setup stays report-only in a subagent, without a dialog-capable UI, with an older or inactive writer, or with an unreadable or invalid config.
-
-Task categories are shared pi-herdr-agents preferences: a change affects every workflow and role pack that uses them. An explicit `model` argument, exact or `task:<category>`, takes precedence over role, per-agent and default models.
-
-## Shared task-model writer restriction
-
-**While pstack is loaded, it refuses every `subagents_write_task_models` call except its own approved one.** That covers any direct or relayed call in any run. A host that supports the task-model init events sends `/subagents-init` drafts to pstack's flow instead of the writer. An older host's `/subagents-init` still has the model call the writer directly, and that call is refused. The refusal names `/setup-pstack <request>` and `/subagents-init` as the ways to change task models.
-
-The single exception is the nested call the apply tool makes after you approve the exact payload. It must come directly from that apply call, match the approved arguments including `expectedConfigRevision`, and find the file unchanged. The approval lives only in memory, is used once, and ends when the dispatch returns, the turn is aborted, or the session is replaced, reloaded or shut down; after `/reload`, every writer call is refused. The host's conditional writer still rejects a file that changed after approval. Children never see the writer, so this changes nothing there. Details are in [compatibility](docs/compatibility.md#setup-writer-contract-and-the-writer-gate).
+Task categories are shared pi-herdr-agents preferences: a change affects every workflow and role pack that uses them. An explicit `model` argument, exact or `task:<category>`, takes precedence over role, per-agent and default models, and an explicit `thinking` overrides the category's thinking.
 
 ## Skills
 
@@ -95,7 +84,7 @@ Browse the [full skill collection](skills/) or the [principle summaries](skills/
 
 Pstack registers no role directory and depends on neither pi-herdr-roles nor another pack. Delegates are deliberately **bare**:
 
-- `poteto-mode` omits `agent` on each call and passes a bounded reference prompt (implementer, investigator, reviewer or verifier) as `systemPrompt`, with explicit `model`, `thinking`, `fork` and, for parallel writers, `worktree`.
+- `poteto-mode` omits `agent` on each call and passes a bounded reference prompt (implementer, investigator, reviewer or verifier) as `systemPrompt`, with explicit `model`, `fork` and, for parallel writers, `worktree`. It sets `thinking` too, except on a `task:<category>` whose category has configured thinking, so the `/setup-pstack` budget applies.
 - `/skill:no-comments` passes its comment-sicko prompt (under `skills/pstack/no-comments/references/`) as `systemPrompt` with `tools: "read, bash, edit"`.
 - Matt Pocock's `grilling`, `wayfinder`, `implement-spec`, `research`, `improve-codebase-architecture` and `codebase-design` launch bare `subagent` children with `fork: false` and an explicit `model` (`task:recon`, `task:coding` or `task:architecture`) and `thinking`; their briefs are the task itself. `implement-spec` removes implementer worktrees only after the user approves the list.
 
@@ -127,9 +116,9 @@ The following variables configure additional checks or override test defaults. C
 
 | Variable | Effect |
 | --- | --- |
-| `PI_HERDR_AGENTS_HOST` | Role-free, conditional-writer host package root for the real-writer consent, writer-gate, RPC setup and combined-host checks. |
+| `PI_HERDR_AGENTS_HOST` | Host package root for the setup, RPC and combined-host checks. Defaults to the `pi-herdr-agents` devDependency (3.10.0). |
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Pre-extraction host root for separate legacy bundled-role characterization. |
-| `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
+| `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit. |
 | `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE` | Upstream checkouts (mattpocock/skills for `skills/mattpocock/`) for skill source-hash reproduction and the upstream scope inventory. Each checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. Each upstream pin in `test/fixtures/upstream-scope.json` reads its checkout from `PSTACK_<UPSTREAM>_SOURCE`. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |

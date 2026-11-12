@@ -50,14 +50,14 @@ Do not design a release that creates a GitHub Release without a successful npm p
 
 ### Peer dependencies and `.npmrc`
 
-The peers are `"pi-herdr-agents": ">=3.0.0"`,
-`"@earendil-works/pi-coding-agent": "^1.0.3"` and `"typebox": "^1.3.27"` (the
-`typebox` version Pi 1.0.3 resolves in `package-lock.json`). The repository
+The peers are `"pi-herdr-agents": ">=3.10.0"` (the release that ships
+category thinking and the writer's approval dialog),
+`"@earendil-works/pi-ai": "^1.0.3"` and
+`"@earendil-works/pi-coding-agent": "^1.0.3"`. The repository
 `.npmrc` keeps `legacy-peer-deps=true`, so `npm install` and `npm ci` here never
-auto-install peers. Development and CI must not pull npm `pi-herdr-agents` by
-accident: host checks use an explicitly selected checkout through
-`PI_HERDR_AGENTS_HOST`, and the pinned Pi dev dependency supplies the runtime
-and `typebox`. `.npmrc` is not packed, so it does not affect consumers. Pi users
+auto-install peers. Host checks run against the exact published host pinned as
+the `pi-herdr-agents` devDependency (`3.10.0`), or a checkout selected through
+`PI_HERDR_AGENTS_HOST`; the pinned Pi dev dependency supplies the runtime. `.npmrc` is not packed, so it does not affect consumers. Pi users
 still install and enable pi-herdr-agents themselves; a peer declaration does not
 activate an extension.
 
@@ -78,7 +78,7 @@ npm run check        # typecheck, lint, format:check, unit/contract tests
 npm pack --dry-run
 ```
 
-In GitHub Actions the optional checks skip because their variables are unset and no sibling pi-herdr-agents checkout exists: the real-writer, writer-gate, RPC setup and combined-host checks (`PI_HERDR_AGENTS_HOST`), roles coexistence (`PI_HERDR_ROLES_PACK`), legacy characterization (`PI_HERDR_AGENTS_LEGACY_HOST`), W1 file provenance and schema pins (`PI_HERDR_AGENTS_SOURCE`), and the upstream skill source-hash reproduction and scope inventory (`PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE`). A green CI run therefore proves only the self-contained checks. Run the full set locally before a release (see [Development](README.md#development)).
+In GitHub Actions the setup, RPC setup and combined-host checks run against the `pi-herdr-agents` devDependency. The optional checks skip because their variables are unset and no sibling pi-herdr-agents checkout exists: roles coexistence (`PI_HERDR_ROLES_PACK`), legacy characterization (`PI_HERDR_AGENTS_LEGACY_HOST`), W1 file provenance and schema pins (`PI_HERDR_AGENTS_SOURCE`), and the upstream skill source-hash reproduction and scope inventory (`PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE`). A green CI run therefore proves only the self-contained checks. Run the full set locally before a release (see [Development](README.md#development)).
 
 ## First real release (done in 0.1.0)
 
@@ -102,7 +102,7 @@ These steps were completed on the `release/0.1.0` branch:
 5. Real-Herdr coverage: real child launches, child-scope resource visibility and worktree lifecycle are not covered by this repository's tests (see [compatibility](docs/compatibility.md)). They belong to the parent-owned sequential Herdr integration suite, run from inside Herdr with this pack installed beside the role-free host, one suite at a time. The Wave 4 gates G1 to G7 ran against host `7d35371`. Do not release from skipped Herdr tests.
 6. [x] Confirmed the `npm pack --dry-run` contents (below). The release commit reaches `main` through a reviewed PR; merging it triggers the workflow.
 
-For every release, confirm the package preview (126 files for 0.1.0) includes `package.json`, `README.md`, `CHANGELOG.md`, `RELEASING.md`, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `docs/compatibility.md`, `docs/provenance.md`, the `pi-extension/pstack/` modules (`index.ts`, `config.ts`, `mode.ts`, `resources.ts`, `setup.ts`), and every shipped skill directory under `skills/` that the README inventory lists (including `poteto-mode`, `setup-pstack` and the comment-sicko bare delegate prompt under `skills/pstack/no-comments/references/`). Confirm it ships no named roles (no `agents/` or `roles/` directory) and contains no `docs/evidence/`, `docs/research/`, `docs/skill-inventory.json`, tests or fixtures, `.github/`, sessions, `.pi/` or local configuration.
+For every release, confirm the package preview (126 files for 0.1.0) includes `package.json`, `README.md`, `CHANGELOG.md`, `RELEASING.md`, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `docs/compatibility.md`, `docs/provenance.md`, the `pi-extension/pstack/` modules (`index.ts`, `mode.ts`, `resources.ts`, `setup.ts`), and every shipped skill directory under `skills/` that the README inventory lists (including `poteto-mode`, `setup-pstack` and the comment-sicko bare delegate prompt under `skills/pstack/no-comments/references/`). Confirm it ships no named roles (no `agents/` or `roles/` directory) and contains no `docs/evidence/`, `docs/research/`, `docs/skill-inventory.json`, tests or fixtures, `.github/`, sessions, `.pi/` or local configuration.
 
 ## npm authentication
 
