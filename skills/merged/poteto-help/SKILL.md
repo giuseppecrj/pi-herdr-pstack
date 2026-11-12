@@ -1,6 +1,6 @@
 ---
 name: poteto-help
-description: Guides users through installing pi-herdr-pstack, /setup-pstack, /poteto-mode, and picking the skill, playbook, or principle for a task. Type /skill:poteto-help with a question.
+description: Guides users through installing pi-herdr-pstack, /setup-pstack, /poteto-mode, Matt Pocock's idea-to-ship flow, and picking the skill, playbook, flow, or principle for a task. Type /skill:poteto-help with a question.
 disable-model-invocation: true
 ---
 
@@ -8,13 +8,13 @@ disable-model-invocation: true
 
 Answer the user's question about pstack, hand them a prompt they can send, and name the file the answer came from. For a help question, don't start the work. The user asked how, and a pstack run spends real tokens, so let them send the prompt.
 
-A message that asks for work, such as "use pstack to fix this bug", is not a help question. Read `../poteto-mode/SKILL.md`, do the work under it, and mention once that `/poteto-mode on` keeps the mode on for the session.
+A message that asks for work, such as "use pstack to fix this bug", is not a help question. Read `../../pstack/poteto-mode/SKILL.md`, do the work under it, and mention once that `/poteto-mode on` keeps the mode on for the session.
 
-This file maps questions to the skills and files that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. Paths here are relative to this skill directory, and a path that starts with `../` names a sibling skill in the same package. Give the user the installed file's path. For anything else, the only public page to link is the package README at https://github.com/giuseppecrj/pi-herdr-pstack. Never build a link to a file inside that repository.
+This file maps questions to the skills and files that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. Paths here are relative to this skill directory. The package groups its skills in three folders, so a path that starts with `../../pstack/`, `../../mattpocock/` or `../` (this skill's own `merged` folder) names another skill in the same package. Give the user the installed file's path. For anything else, the only public page to link is the package README at https://github.com/giuseppecrj/pi-herdr-pstack. Never build a link to a file inside that repository.
 
 ## What this release ships
 
-This release ships the full inventory: all 57 skills in the tables below, and all 23 poteto-mode playbooks. Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
+This release ships 77 skills and all 23 poteto-mode playbooks: pstack's skills in the tables below, and the skills of Matt Pocock's idea-to-ship flow, mapped in `references/flows.md` (see **Matt Pocock's flows** below). Some workflows are scoped down for Pi. Their rows and phrases below give each limit in one line, and the hub (`../../pstack/poteto-mode/SKILL.md`) and the playbook or skill state it in full. Say the limit when it changes the answer.
 
 Pstack ships no named roles. Every delegate it launches is a bare pi-herdr-agents subagent that gets a reference prompt as its `systemPrompt`. `/skill:no-comments` launches its comment reviewer this way. A user who wants a named role installs a role pack and asks for that role by name.
 
@@ -25,6 +25,7 @@ Infer the need from the message and the conversation. A named situation, such as
 - Get set up
 - Start a task with `/poteto-mode`
 - Pick a skill for a situation
+- Plan, spec and build with Matt Pocock's flow
 - Fix a run that went wrong
 - Make pstack my own
 
@@ -51,7 +52,7 @@ You cannot tell whether those categories are unset on your own. No host tool rea
 2. Run `/setup-pstack`, optionally with a budget or a request, for example `/setup-pstack large` or `/setup-pstack use <provider>/<model-id> for review`. It asks for a budget (unlimited, large, medium or small, which set every category's thinking to max, xhigh, high or medium, clamped to what each model supports), shows every task category with its models and thinking and the upstream roles it drives, and lets the user change any of them. pi-herdr-agents then shows the exact change and writes it only after the user approves. Reload Pi after a saved change. Setup ends by offering once each to generate a verification skill and a formal verification skill when the project has none.
 3. Start a real task with `/poteto-mode <task>`, stating a goal and a check that can pass or fail.
 
-Installing adds two commands, `/poteto-mode` and `/setup-pstack`. Every skill except `setup-pstack` is explicit-only. It loads when the user types `/skill:<name>` or when poteto-mode reads it for a step. Only `setup-pstack` can load from the user's words. Offer to word their first prompt with them, per `references/prompting.md`.
+Installing adds two commands, `/poteto-mode` and `/setup-pstack`. Most skills are explicit-only: one loads when the user types `/skill:<name>`, or when poteto-mode or another skill reads it for a step. These can also load from the user's words: `setup-pstack`, and from Matt Pocock's skills `code-review`, `codebase-design`, `domain-modeling`, `grilling`, `pr`, `prototype`, `research` and `wizard`. Offer to word their first prompt with them, per `references/prompting.md`.
 
 pi-herdr-agents asks the user to approve every task-model write in its own dialog, whichever command or package asks for it, and refuses one in a session without dialogs. `/subagents-init` drafts from the host's registry brief through that same dialog. Task categories are shared pi-herdr-agents preferences, so a change affects every workflow and role pack that uses them, not only pstack.
 
@@ -71,7 +72,7 @@ Whether the mode stays on depends on how the user starts it:
 - `/poteto-mode status` says whether the mode is on and whether the `poteto-mode` skill resolves to this package.
 - `/poteto-mode off` stops future reminders and automatic hub loading. Earlier context and running subagents are unchanged.
 
-Mid-session, "new task" makes the mode match a fresh playbook. The mode never grants permission. Pushes, pull requests, merges, deletions, messages and configuration writes still need the user's request or the repository's instructions, per `../poteto-mode/references/authorization.md`. To launch a delegate of your own in poteto-mode's style, copy an example from `../poteto-mode/references/delegation.md`.
+Mid-session, "new task" makes the mode match a fresh playbook. The mode never grants permission. Pushes, pull requests, merges, deletions, messages and configuration writes still need the user's request or the repository's instructions, per `../../pstack/poteto-mode/references/authorization.md`. To launch a delegate of your own in poteto-mode's style, copy an example from `../../pstack/poteto-mode/references/delegation.md`.
 
 ## Pick a skill
 
@@ -92,6 +93,9 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Get several attempts at one brief, merged into the best one | `/skill:arena` |
 | Run parallel checks over slices, or race workers | `/skill:swarm` |
 | Have adversaries try to break a change, and keep only findings a run proves | `/skill:interrogate` |
+| Review a branch, a PR or uncommitted work against the repo's documented standards and the spec, read-only | `/skill:code-review` |
+| Answer a design question or an empirical fork with a throwaway prototype, in scratch by default | `/skill:prototype` |
+| Turn an idea into a spec, tickets and reviewed code, or triage incoming issues | Matt Pocock's flow: see **Matt Pocock's flows** below |
 | Fix a bug test-first when a cheap local test exists | `/skill:tdd` |
 | Apply TypeScript rules to `.ts` or `.tsx` work | `/skill:typescript-best-practices` |
 | Strip comments before review, using a reviewer that didn't write them | `/skill:no-comments` |
@@ -113,16 +117,17 @@ The default answer is `/poteto-mode`, which reads most of the others when its st
 | Build a local web page that starts a Pi run per request | `/skill:make-bot-ui`. Loopback only, a fresh `pi -p` run per request, and exposure or installs need authorization |
 | Find their way around pstack | `/skill:poteto-help` |
 
-If a skill directory next to this one is missing from the table, read its frontmatter and route by its description. The `principle-*` directories have their own table under principles below.
+If a skill in this package is missing from the table and from `references/flows.md`, read its frontmatter and route by its description. The `principle-*` directories have their own table under principles below.
 
 Close calls:
 
 - `/skill:how` explains what the code does. `/skill:why` explains the reasons. `/skill:teach` runs one or both and explains the result plainly. how and why fan out read-only children, and why's investigators launch without a tools list so they see MCP servers.
 - `/skill:arena` gives every worker the same brief and merges the best parts. `/skill:swarm` splits work into slices or a race and returns one report. Arena uses one exact model per family and discloses a same-family fallback. Swarm launches separate bare calls and gives writers worktrees.
 - `/skill:architect` implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
-- `/skill:interrogate` fans out adversaries that try to break the change, and keeps only findings a run proves. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
-- `/skill:recall` rebuilds context across recent sessions in this working directory, never another project's. Resuming one specific session or branch is the Session pickup playbook, `../poteto-mode/playbooks/session-pickup.md`.
-- `/skill:figure-it-out` designs one rigorous run and keeps its trail via `/skill:show-me-your-work`. The Orchestrate playbook (`../poteto-mode/playbooks/orchestrate.md`) runs a program of many PRs as a depth-1 single-session coordinator with a hand-kept store. It is not an unattended or multi-day runner. The Autonomous run playbook, `../poteto-mode/playbooks/autonomous-run.md`, drives one task to a finish condition.
+- `/skill:interrogate` fans out adversaries that try to break the change, and keeps only findings a run proves. `/skill:blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe. `/skill:code-review` reads the diff, committed or not, against the repo's documented standards and the spec, in two separate read-only reports. poteto-mode's own review gates are unchanged by it.
+- `/skill:prototype` is the procedure. The Prototype playbook (`../../pstack/poteto-mode/playbooks/prototype.md`) is poteto-mode's route to it, and hands the result to Feature.
+- `/skill:recall` rebuilds context across recent sessions in this working directory, never another project's. Resuming one specific session or branch is the Session pickup playbook, `../../pstack/poteto-mode/playbooks/session-pickup.md`.
+- `/skill:figure-it-out` designs one rigorous run and keeps its trail via `/skill:show-me-your-work`. The Orchestrate playbook (`../../pstack/poteto-mode/playbooks/orchestrate.md`) runs a program of many PRs as a depth-1 single-session coordinator with a hand-kept store. It is not an unattended or multi-day runner. The Autonomous run playbook, `../../pstack/poteto-mode/playbooks/autonomous-run.md`, drives one task to a finish condition.
 
 Not in pstack:
 
@@ -134,45 +139,54 @@ Not in pstack:
 
 Playbooks are step lists inside poteto-mode, not skills, so they have no `/skill:` command. Inside the mode, describing the task picks one, and these phrases name one directly:
 
-- "babysit this pr" or "check on pr 123" runs Babysit (`../poteto-mode/playbooks/babysit.md`). It drives the PR to merge-ready and stops there. It doesn't merge unless the user asks to merge, land, or ship. It uses `gh` only, a watcher child does the waiting, and every push, reply, re-run or merge needs authorization.
-- "land the stack" runs Shipping (`../poteto-mode/playbooks/shipping.md`). It lands the verified run only on that explicit request, and pushes, retargets and arming need their own grants. It uses `gh` only, waits through one-shot watcher children, and on a merge-queue base it reports and stops without merging.
+- "babysit this pr" or "check on pr 123" runs Babysit (`../../pstack/poteto-mode/playbooks/babysit.md`). It drives the PR to merge-ready and stops there. It doesn't merge unless the user asks to merge, land, or ship. It uses `gh` only, a watcher child does the waiting, and every push, reply, re-run or merge needs authorization.
+- "land the stack" runs Shipping (`../../pstack/poteto-mode/playbooks/shipping.md`). It lands the verified run only on that explicit request, and pushes, retargets and arming need their own grants. It uses `gh` only, waits through one-shot watcher children, and on a merge-queue base it reports and stops without merging.
 - "take over this branch" runs Session pickup.
 - "pause safely" runs Pause safely.
-- "full autopilot on this queue" runs Autopilot-full (`../poteto-mode/playbooks/autopilot-full.md`). "autopilot, don't merge" runs Autopilot-stack (`../poteto-mode/playbooks/autopilot-stack.md`). Both are root-run, with fresh owner rounds continuing in the retained owner checkout and audits on wake, never a timer. Autopilot-full merges only under a grant that names merging, and Autopilot-stack never merges.
-- "run the eval playbook" runs Eval (`../poteto-mode/playbooks/eval.md`).
-- "clean up worktrees" runs Worktree cleanup (`../poteto-mode/playbooks/worktree-cleanup.md`). It inventories with `worktree_list` and removes each path only on its own authorization.
+- "full autopilot on this queue" runs Autopilot-full (`../../pstack/poteto-mode/playbooks/autopilot-full.md`). "autopilot, don't merge" runs Autopilot-stack (`../../pstack/poteto-mode/playbooks/autopilot-stack.md`). Both are root-run, with fresh owner rounds continuing in the retained owner checkout and audits on wake, never a timer. Autopilot-full merges only under a grant that names merging, and Autopilot-stack never merges.
+- "run the eval playbook" runs Eval (`../../pstack/poteto-mode/playbooks/eval.md`).
+- "clean up worktrees" runs Worktree cleanup (`../../pstack/poteto-mode/playbooks/worktree-cleanup.md`). It inventories with `worktree_list` and removes each path only on its own authorization.
 
-Without poteto-mode, a phrase such as "babysit this pr" is an ordinary request, and another installed skill may answer it instead. The Playbooks section of `../poteto-mode/SKILL.md` lists every playbook, when it applies, and any scope limit. `../poteto-mode/playbooks/opening-a-pr.md` covers opening a PR, only when the task authorizes one.
+Without poteto-mode, a phrase such as "babysit this pr" is an ordinary request, and another installed skill may answer it instead. The Playbooks section of `../../pstack/poteto-mode/SKILL.md` lists every playbook, when it applies, and any scope limit. `../../pstack/poteto-mode/playbooks/opening-a-pr.md` covers opening a PR, only when the task authorizes one.
 
-pstack has no planning skill. For work that spans phases or stacked PRs, asking poteto-mode for a plan runs the Multi-phase plan playbook (`../poteto-mode/playbooks/multi-phase-plan.md`), which writes the plan, checks it with its script, and doesn't implement it. For a design question, the Prototype playbook (`../poteto-mode/playbooks/prototype.md`) settles it in code first.
+pstack has no planning skill. For work that spans phases or stacked PRs, asking poteto-mode for a plan runs the Multi-phase plan playbook (`../../pstack/poteto-mode/playbooks/multi-phase-plan.md`), which writes the plan, checks it with its script, and doesn't implement it. For a design question, the Prototype playbook (`../../pstack/poteto-mode/playbooks/prototype.md`) settles it in code first by following the **prototype** skill.
 
-Principles are one-rule skills that poteto-mode reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/skill:principle-<name>` still loads one on demand. The Principles section of `../poteto-mode/SKILL.md` lists all 24 with a summary each. To recommend one, read its file first:
+Principles are one-rule skills that poteto-mode reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/skill:principle-<name>` still loads one on demand. The Principles section of `../../pstack/poteto-mode/SKILL.md` lists all 24 with a summary each. To recommend one, read its file first:
 
 | The user wants to | Principle |
-| Refactor, size a diff, or resist an extra abstraction | `../principle-laziness-protocol/SKILL.md` |
-| Settle core types, data structures and shared state before logic | `../principle-foundational-thinking/SKILL.md` |
-| Fold a new requirement into a design as if it had been there from day one | `../principle-redesign-from-first-principles/SKILL.md` |
-| Remove dead weight before an addition, refactor or rewrite | `../principle-subtract-before-you-add/SKILL.md` |
-| Make hard-to-trace code easier to follow | `../principle-minimize-reader-load/SKILL.md` |
-| Run a planned rewrite or migration straight to the target | `../principle-outcome-oriented-execution/SKILL.md` |
-| Weigh product, UX or scope tradeoffs for the user | `../principle-experience-first/SKILL.md` |
-| Compare competing prototypes for a decision with no precedent | `../principle-exhaust-the-design-space/SKILL.md` |
-| Stop after two fixes that share one premise have failed | `../principle-attack-the-premise/SKILL.md` |
-| Build the script or codemod that does or proves the work | `../principle-build-the-lever/SKILL.md` |
-| Replace scattered conditionals with a structure that models the domain | `../principle-model-the-domain/SKILL.md` |
-| Place validation, error handling and adapters at system boundaries | `../principle-boundary-discipline/SKILL.md` |
-| Design types that make illegal states unrepresentable | `../principle-type-system-discipline/SKILL.md` |
-| Make commands and loops safe to rerun after crashes and retries | `../principle-make-operations-idempotent/SKILL.md` |
-| Replace an internal API and delete the old one in one wave | `../principle-migrate-callers-then-delete-legacy-apis/SKILL.md` |
-| Stop concurrent actors writing the same file, branch or key | `../principle-separate-before-serializing-shared-state/SKILL.md` |
-| Prove a task is done on the real artifact | `../principle-prove-it-works/SKILL.md` |
-| Trace a bug to its root cause instead of patching the symptom | `../principle-fix-root-causes/SKILL.md` |
-| Break multi-step work into small units that each end in a check | `../principle-sequence-verifiable-units/SKILL.md` |
-| Write or keep a test that checks behavior, not internals | `../principle-test-behavior-not-implementation/SKILL.md` |
-| Decide before you measure, and find what limits a measured number before trusting it | `../principle-explain-the-number/SKILL.md` |
-| Keep bulky output out of the main thread | `../principle-guard-the-context-window/SKILL.md` |
-| Proceed on reversible work instead of asking first | `../principle-never-block-on-the-human/SKILL.md` |
-| Turn a repeated instruction into a lint, check or script | `../principle-encode-lessons-in-structure/SKILL.md` |
+| Refactor, size a diff, or resist an extra abstraction | `../../pstack/principle-laziness-protocol/SKILL.md` |
+| Settle core types, data structures and shared state before logic | `../../pstack/principle-foundational-thinking/SKILL.md` |
+| Fold a new requirement into a design as if it had been there from day one | `../../pstack/principle-redesign-from-first-principles/SKILL.md` |
+| Remove dead weight before an addition, refactor or rewrite | `../../pstack/principle-subtract-before-you-add/SKILL.md` |
+| Make hard-to-trace code easier to follow | `../../pstack/principle-minimize-reader-load/SKILL.md` |
+| Run a planned rewrite or migration straight to the target | `../../pstack/principle-outcome-oriented-execution/SKILL.md` |
+| Weigh product, UX or scope tradeoffs for the user | `../../pstack/principle-experience-first/SKILL.md` |
+| Compare competing prototypes for a decision with no precedent | `../../pstack/principle-exhaust-the-design-space/SKILL.md` |
+| Stop after two fixes that share one premise have failed | `../../pstack/principle-attack-the-premise/SKILL.md` |
+| Build the script or codemod that does or proves the work | `../../pstack/principle-build-the-lever/SKILL.md` |
+| Replace scattered conditionals with a structure that models the domain | `../../pstack/principle-model-the-domain/SKILL.md` |
+| Place validation, error handling and adapters at system boundaries | `../../pstack/principle-boundary-discipline/SKILL.md` |
+| Design types that make illegal states unrepresentable | `../../pstack/principle-type-system-discipline/SKILL.md` |
+| Make commands and loops safe to rerun after crashes and retries | `../../pstack/principle-make-operations-idempotent/SKILL.md` |
+| Replace an internal API and delete the old one in one wave | `../../pstack/principle-migrate-callers-then-delete-legacy-apis/SKILL.md` |
+| Stop concurrent actors writing the same file, branch or key | `../../pstack/principle-separate-before-serializing-shared-state/SKILL.md` |
+| Prove a task is done on the real artifact | `../../pstack/principle-prove-it-works/SKILL.md` |
+| Trace a bug to its root cause instead of patching the symptom | `../../pstack/principle-fix-root-causes/SKILL.md` |
+| Break multi-step work into small units that each end in a check | `../../pstack/principle-sequence-verifiable-units/SKILL.md` |
+| Write or keep a test that checks behavior, not internals | `../../pstack/principle-test-behavior-not-implementation/SKILL.md` |
+| Decide before you measure, and find what limits a measured number before trusting it | `../../pstack/principle-explain-the-number/SKILL.md` |
+| Keep bulky output out of the main thread | `../../pstack/principle-guard-the-context-window/SKILL.md` |
+| Proceed on reversible work instead of asking first | `../../pstack/principle-never-block-on-the-human/SKILL.md` |
+| Turn a repeated instruction into a lint, check or script | `../../pstack/principle-encode-lessons-in-structure/SKILL.md` |
+
+## Matt Pocock's flows
+
+Matt Pocock's skills chain into flows: an idea is grilled, turned into a spec and tickets, built test-first and reviewed, and incoming issues are triaged into that same flow. Read `references/flows.md` before you answer a question about them. It maps the main flow, its on-ramps, codebase upkeep, the vocabulary skills and the standalone skills, each step a `/skill:<name>` command. It lists only flows whose skills ship in this package together with every skill they load. Read `references/phase-boundaries.md` when the question is whether to continue, start fresh, hand off, delegate or compact between two phases of work.
+
+- These flows need the repo configured once: `/skill:setup-repo` records the issue tracker, triage labels and domain docs the other skills read. It shows drafts and asks before it writes.
+- A flow skill grants only what it says. Invoking one never authorizes a push, a pull request or a tracker write unless that skill says so, and `/skill:implement` and `/skill:implement-spec` grant none.
+- The flows and poteto-mode are separate methodologies. Don't combine them silently on one task: say which one a recommendation follows.
+- Playbooks are not skills, so a flow never names one as a `/skill:` command.
 
 ## Fix a run that went wrong
 
@@ -185,11 +199,11 @@ Principles are one-rule skills that poteto-mode reads and cites in its replies. 
 | A new model choice had no effect | A saved `/setup-pstack` change needs a Pi reload. An explicit `model` in a `subagent` call also wins over the task categories. |
 | `/setup-pstack`, `/subagents-init` or a task-model write was refused | pi-herdr-agents writes only after the user chooses to save in its dialog, and never in a session without dialogs or in a subagent. A stale revision means the config changed after setup read it; run `/setup-pstack` again. If `/setup-pstack` did not start, its message says why (no pi-herdr-agents 3.10.0 or later, no dialogs, a busy session, or a config file it cannot read). |
 | Runs cost more than expected | See the cost paragraph under Get set up. |
-| A skill didn't load on its own | Only `setup-pstack` loads from the user's words. The others load when the user types `/skill:<name>` or when poteto-mode reads them, and it doesn't read every skill. |
-| A skill named in a reply isn't installed | Every pstack skill ships, so the package is missing, filtered or shadowed. `/poteto-mode status` says where the `poteto-mode` skill resolves. |
-| Parallel agents overwrote each other | Give each parallel writer its own `worktree` in the `subagent` call, per `../poteto-mode/references/delegation.md`. |
+| A skill didn't load on its own | Only the skills named under Get set up load from the user's words. The others load when the user types `/skill:<name>` or when poteto-mode or another skill reads them, and poteto-mode doesn't read every skill. |
+| A skill named in a reply isn't installed | Every skill in this package ships, so the package is missing, filtered or shadowed. `/poteto-mode status` says where the `poteto-mode` skill resolves. |
+| Parallel agents overwrote each other | Give each parallel writer its own `worktree` in the `subagent` call, per `../../pstack/poteto-mode/references/delegation.md`. |
 | A babysit, autopilot or orchestrate run sat idle | Nothing in pstack schedules a wake. The coordinator acts when a child delivers, on a stall or no-progress advisory, or when the user asks. During a watcher's blocking wait, one informational advisory per idle minute is expected and is not a stall. |
-| An autonomous run moved but finished nothing | Done needs a check that can pass or fail, not a duration. See `../poteto-mode/playbooks/autonomous-run.md`. |
+| An autonomous run moved but finished nothing | Done needs a check that can pass or fail, not a duration. See `../../pstack/poteto-mode/playbooks/autonomous-run.md`. |
 | The reply claims success from a green build | Ask for the real command, flow, stored value, or profile. That's Prove It Works in the hub's Principles section. |
 
 For a run that drifts, `references/prompting.md` has one-line steers, and `references/recipes.md` has prompts worth copying.
@@ -198,7 +212,7 @@ For a run that drifts, `references/prompting.md` has one-line steers, and `refer
 
 - `/skill:automate-me` drafts a personal mode skill from the user's own history, to use alongside poteto-mode.
 - `/skill:reflect` after a session turns its lessons into skill edits the user approves. It reads `$PI_SESSION_FILE` and this working directory's sessions, and files backlog items only with approval.
-- `/poteto-mode write a skill for <workflow>` runs the authoring playbook (`../poteto-mode/playbooks/authoring-a-skill.md`). The eval playbook (`../poteto-mode/playbooks/eval.md`) tests a skill change blind.
+- `/poteto-mode write a skill for <workflow>` runs the authoring playbook (`../../pstack/poteto-mode/playbooks/authoring-a-skill.md`). The eval playbook (`../../pstack/poteto-mode/playbooks/eval.md`) tests a skill change blind.
 - Fix a misbehaving skill in its own commit or PR, not inside the feature work where it went wrong.
 
 ## Reply

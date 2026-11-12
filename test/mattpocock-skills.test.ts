@@ -99,7 +99,13 @@ const pin = inventory.sources.mattpocock;
 const mergedMattpocock = readJson<{
 	files: Array<{ sources: Array<Use & { use: string }> }>;
 }>("test/fixtures/skill-provenance/merged.json").files.flatMap(({ sources }) =>
-	sources.filter(({ source }) => source === "mattpocock"),
+	// A Matt file several merged files combine (ask-matt's SKILL.md feeds
+	// poteto-help's SKILL.md and its flow map) is accounted once, by the file it
+	// is the primary source of; skill-content.test.ts counts merged files the
+	// same way. Every shipped Matt file is some merged file's primary source.
+	sources.filter(
+		({ source, use }) => source === "mattpocock" && use === "primary",
+	),
 );
 
 /** Every file under `dir`, relative to PACK_ROOT. */

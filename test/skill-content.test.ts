@@ -576,16 +576,16 @@ describe("shipped skill tree", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
 		assert.equal(inventory.skills.length, 77);
-		assert.equal(pstackRows.length, 55);
+		assert.equal(pstackRows.length, 54);
 		assert.deepEqual(
 			mergedRows.map(({ name }) => name),
-			["prototype", "tdd", "teach"],
+			["poteto-help", "prototype", "tdd", "teach"],
 		);
 		const count = (prefix: string) =>
 			pstackRows.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 28, 8, 8, 9],
+			[2, 28, 7, 8, 9],
 		);
 		for (const row of pstackRows) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);

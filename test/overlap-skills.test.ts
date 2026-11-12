@@ -589,11 +589,362 @@ describe("wayfinder finds prototype in the pack", () => {
 	});
 });
 
+const HELP = "skills/merged/poteto-help";
+const FLOWS = `${HELP}/references/flows.md`;
+const PHASES = `${HELP}/references/phase-boundaries.md`;
+/** Every skill directory in the pack, as Pi discovers it. */
+const ALL_SKILLS = readdirSync(join(PACK_ROOT, "skills")).flatMap((folder) =>
+	readdirSync(join(PACK_ROOT, "skills", folder))
+		.filter((name) =>
+			existsSync(join(PACK_ROOT, "skills", folder, name, "SKILL.md")),
+		)
+		.map((name) => ({ name, dir: `skills/${folder}/${name}` })),
+);
+/** The skills a user's words can load: no `disable-model-invocation: true`. */
+const MODEL_INVOCABLE = ALL_SKILLS.filter(
+	({ dir }) =>
+		!/^disable-model-invocation: true$/m.test(
+			/^---\n([\s\S]*?)\n---\n/.exec(read(`${dir}/SKILL.md`))?.[1] ?? "",
+		),
+).map(({ name }) => name);
+/** Matt Pocock's upstream skill names, from every provenance record of his files. */
+const MATT_NAMES = (() => {
+	// SAFETY: test-owned fixtures; test/mattpocock-skills.test.ts and
+	// test/merged-skills.test.ts assert their shapes.
+	const matt = JSON.parse(
+		read("test/fixtures/skill-provenance/mattpocock.json"),
+	) as {
+		files: Array<{ sources: Array<{ path: string }> }>;
+		planned: Array<{ path: string }>;
+		excluded: Array<{ path: string }>;
+	};
+	const merged = JSON.parse(
+		read("test/fixtures/skill-provenance/merged.json"),
+	) as { files: Array<{ sources: Array<{ source: string; path: string }> }> };
+	return new Set(
+		[
+			...matt.files.flatMap(({ sources }) => sources),
+			...matt.planned,
+			...matt.excluded,
+			...merged.files
+				.flatMap(({ sources }) => sources)
+				.filter(({ source }) => source === "mattpocock"),
+		]
+			.map(({ path }) => path.split("/"))
+			.filter((parts) => parts.length > 2)
+			.map((parts) => parts[1]),
+	);
+})();
+const UNSHIPPED_MATT = [...MATT_NAMES].filter(
+	(name) => packFolders(name).length === 0,
+);
+
+const HELP_RULES: Rule[] = [
+	["the name poteto-help", /^--- name: poteto-help description:/],
+	[
+		"explicit-only invocation",
+		/^---[^]*?\bdisable-model-invocation: true\s+---/,
+	],
+	// pstack's poteto-help, kept.
+	[
+		"answering without starting the work",
+		/For a help question, don't start the work\./,
+	],
+	[
+		"install through Pi with pi-herdr-agents as the host",
+		/1\. Install pi-herdr-agents and pi-herdr-pstack through Pi\. pi-herdr-agents is the execution host and an explicit prerequisite/,
+	],
+	[
+		"the /setup-pstack budget and the host's approval dialog",
+		/2\. Run `\/setup-pstack`, optionally with a budget or a request.*pi-herdr-agents then shows the exact change and writes it only after the user approves\./,
+	],
+	[
+		"reading the setup brief instead of the config",
+		/The only reliable signal is a setup brief already in this session: the message `\/setup-pstack` sent, after the line "\/setup-pstack started the setup flow\."\. Under its "Current choices" heading, each category's line is `- <category>: <models> \/ <thinking>`\./,
+	],
+	[
+		"poteto-mode's sticky and one-shot forms",
+		/`\/skill:poteto-mode` loads the methodology for the current request only\..*`\/poteto-mode` or `\/poteto-mode on` turns sticky mode on/,
+	],
+	[
+		"the troubleshooting table",
+		/## Fix a run that went wrong \| Symptom \| Fix \|/,
+	],
+	[
+		"playbooks not being skills",
+		/Playbooks are step lists inside poteto-mode, not skills, so they have no `\/skill:` command\./,
+	],
+	[
+		"paths across the package's three folders",
+		/a path that starts with `\.\.\/\.\.\/pstack\/`, `\.\.\/\.\.\/mattpocock\/` or `\.\.\/` \(this skill's own `merged` folder\) names another skill in the same package\./,
+	],
+	// Matt's ask-matt, merged.
+	[
+		"the flow map disclosed in references/flows.md",
+		/## Matt Pocock's flows .*Read `references\/flows\.md` before you answer a question about them\./,
+	],
+	[
+		"advertising only dependency-closed flows",
+		/It lists only flows whose skills ship in this package together with every skill they load\./,
+	],
+	[
+		"the phase-boundaries tree",
+		/Read `references\/phase-boundaries\.md` when the question is whether to continue, start fresh, hand off, delegate or compact between two phases of work\./,
+	],
+	[
+		"setup-repo before the flows",
+		/These flows need the repo configured once: `\/skill:setup-repo` records the issue tracker, triage labels and domain docs the other skills read\./,
+	],
+	[
+		"a flow skill granting only what it says",
+		/A flow skill grants only what it says\. Invoking one never authorizes a push, a pull request or a tracker write unless that skill says so, and `\/skill:implement` and `\/skill:implement-spec` grant none\./,
+	],
+	[
+		"not combining the two methodologies silently",
+		/The flows and poteto-mode are separate methodologies\. Don't combine them silently on one task: say which one a recommendation follows\./,
+	],
+	[
+		"a flow never naming a playbook as a skill",
+		/Playbooks are not skills, so a flow never names one as a `\/skill:` command\./,
+	],
+	[
+		"code-review and prototype rows",
+		/\| Review a branch, a PR or uncommitted work against the repo's documented standards and the spec, read-only \| `\/skill:code-review` \| \| Answer a design question or an empirical fork with a throwaway prototype, in scratch by default \| `\/skill:prototype` \|/,
+	],
+	[
+		"code-review beside interrogate, the playbook gates unchanged",
+		/`\/skill:code-review` reads the diff, committed or not, against the repo's documented standards and the spec, in two separate read-only reports\. poteto-mode's own review gates are unchanged by it\./,
+	],
+	[
+		"the prototype skill as the playbook's procedure",
+		/`\/skill:prototype` is the procedure\. The Prototype playbook \(`\.\.\/\.\.\/pstack\/poteto-mode\/playbooks\/prototype\.md`\) is poteto-mode's route to it/,
+	],
+	[
+		"the skills that load from the user's words",
+		/These can also load from the user's words: `setup-pstack`, and from Matt Pocock's skills `code-review`, `codebase-design`, `domain-modeling`, `grilling`, `pr`, `prototype`, `research` and `wizard`\./,
+	],
+];
+
+const FLOW_RULES: Rule[] = [
+	[
+		"reading a skill before describing it",
+		/Before stating what a skill does or recommending a step be skipped, read that skill's SKILL\.md: the summaries here are for orientation only\./,
+	],
+	[
+		"listing only shipped, dependency-closed flows",
+		/It lists only flows whose skills ship here, each together with every skill it loads, and every step is a `\/skill:<name>` command\./,
+	],
+	[
+		"naming unshipped skills only to say so",
+		/A few of his skills are not in this package; the map names them only to say so, never as a step\./,
+	],
+	[
+		"playbooks not being skills",
+		/Playbooks are not skills: they are step lists inside poteto-mode, with no `\/skill:` command, and this map names one only as poteto-mode's route\./,
+	],
+	[
+		"the main flow ending in tdd and code-review",
+		/Either way, the code gets built by driving \*\*`\/skill:tdd`\*\* \(one red-green slice at a time\) and closes out with \*\*`\/skill:code-review`\*\*, a two-axis review \(Standards \+ Spec\) of the diff\./,
+	],
+	[
+		"implement reviewing uncommitted work before committing",
+		/`implement` runs both per ticket, reviewing the uncommitted work before it commits; `implement-spec`'s implementers each drive `tdd`, and it runs one `code-review` over the integration branch\./,
+	],
+	[
+		"no step writing remotely on its own say-so",
+		/None of these steps pushes, opens a pull request or writes to the tracker on its own say-so: each skill names what invoking it grants, and `implement` and `implement-spec` grant no remote write\./,
+	],
+	[
+		"pr drafting text only",
+		/It drafts text only; opening or editing the PR needs the user's grant\./,
+	],
+	[
+		"the prototype kept in scratch, with scope and authorization",
+		/the prototype stays in scratch as a \*\*primary source\*\*\. Building it inside the app needs your explicit scope, and keeping it on a `prototype\/<name>` branch out of main, or pointing at it from the implementation issue, needs your authorization\./,
+	],
+	[
+		"triage only for issues you didn't create",
+		/Triage is only for issues \*\*you didn't create\*\*/,
+	],
+	[
+		"wayfinder handing off to to-spec",
+		/When the map clears, \*\*it hands off, it doesn't build\*\*: merge onto the main flow at \*\*`\/skill:to-spec`\*\*/,
+	],
+	[
+		"Pi's /new for Matt's /clear",
+		/\*\*`\/new`\*\*: start a new session, when nothing here matters to what's next\./,
+	],
+	[
+		"setup-repo as the precondition",
+		/\*\*`\/skill:setup-repo`\*\*: run before your first engineering flow/,
+	],
+];
+
+describe("poteto-help merges ask-matt (content contract, not behavior proof)", () => {
+	it("keeps pstack's help and adds the disclosed flow map, and fails when any rule is removed", () => {
+		assertContract(read(`${HELP}/SKILL.md`), HELP_RULES, FORBIDDEN);
+	});
+
+	it("adapts Matt's flow map to the pack, and fails when any rule is removed", () => {
+		assertContract(read(FLOWS), FLOW_RULES, FORBIDDEN);
+	});
+
+	it("adapts the phase-boundaries tree to Pi's commands", () => {
+		assertContract(
+			read(PHASES),
+			[
+				[
+					"the Pi adaptation line",
+					/his `\/clear` is Pi's `\/new`, his `\/handoff` is `\/skill:handoff`, and a subagent is a pi-herdr-agents `subagent` launch\./,
+				],
+				[
+					"the ordered tree",
+					/Work top to bottom at the boundary\. The first \*\*yes\*\* wins\./,
+				],
+				[
+					"/compact as the default, not the first reach",
+					/`\/compact` is the \*\*default, not the first reach\*\*\./,
+				],
+				[
+					"an explicit model for an AFK subagent",
+					/Give the child an explicit model, and its own worktree only when it writes in parallel with other work\./,
+				],
+			],
+			FORBIDDEN,
+		);
+	});
+
+	it("ships no separate ask-matt skill and keeps every skill name unique", () => {
+		assert.deepEqual(packFolders("ask-matt"), []);
+		assert.deepEqual(packFolders("poteto-help"), ["merged"]);
+		const names = ALL_SKILLS.map(({ name }) => name);
+		assert.equal(new Set(names).size, names.length);
+		assert.equal(
+			existsSync(join(PACK_ROOT, "skills/pstack/poteto-help")),
+			false,
+		);
+	});
+
+	it("advertises only flows whose skills ship, each once, and names the rest only as absent", () => {
+		const text = flat(read(FLOWS));
+		const advertised = new Set(
+			[...text.matchAll(/\/skill:([a-z0-9-]+)/g)].map(([, name]) => name),
+		);
+		assert.ok(advertised.size >= 20, String(advertised.size));
+		for (const name of advertised)
+			assert.equal(packFolders(name).length, 1, `/skill:${name} ships once`);
+		assert.ok(UNSHIPPED_MATT.includes("retro"));
+		for (const name of UNSHIPPED_MATT) {
+			assert.equal(advertised.has(name), false, name);
+			for (const sentence of text
+				.split(/(?<=\.) /)
+				.filter((line) => line.includes(`\`${name}\``)))
+				assert.match(
+					sentence,
+					// ask-matt is the router this map is merged from, not a missing step.
+					name === "ask-matt"
+						? /^This map is adapted from his `ask-matt` router\.$/
+						: /not in this package/,
+					`${name}: ${sentence}`,
+				);
+		}
+	});
+
+	it("advertises only dependency-closed skills: none loads a skill this pack lacks", () => {
+		const advertised = new Set(
+			[...flat(read(FLOWS)).matchAll(/\/skill:([a-z0-9-]+)/g)].map(
+				([, name]) => name,
+			),
+		);
+		for (const name of advertised) {
+			const [dir] = packFolders(name).map(
+				(folder) => `skills/${folder}/${name}`,
+			);
+			const text = readdirSync(join(PACK_ROOT, dir), { recursive: true })
+				.map(String)
+				.filter((file) => file.endsWith(".md"))
+				.map((file) => read(`${dir}/${file}`))
+				.join("\n");
+			for (const missing of UNSHIPPED_MATT)
+				assert.doesNotMatch(
+					text,
+					new RegExp(`[\`/*:]${missing}\\b`),
+					`${name} names ${missing}, which this pack lacks`,
+				);
+		}
+		// The skills each fail-closed preflight finds all ship in this pack.
+		for (const dependency of [
+			"tdd",
+			"code-review",
+			"research",
+			"prototype",
+			"grilling",
+			"domain-modeling",
+			"codebase-design",
+		])
+			assert.equal(packFolders(dependency).length, 1, dependency);
+	});
+
+	it("lists exactly the skills that load from the user's words", () => {
+		const sentence =
+			/These can also load from the user's words: (.*?)\./.exec(
+				flat(read(`${HELP}/SKILL.md`)),
+			)?.[1] ?? "";
+		assert.deepEqual(
+			[...sentence.matchAll(/`([a-z0-9-]+)`/g)]
+				.map(([, name]) => name)
+				.toSorted(),
+			MODEL_INVOCABLE.toSorted(),
+		);
+	});
+
+	it("records both sources on the merged files, so a change to either upstream flags them", () => {
+		// SAFETY: test-owned fixture; test/merged-skills.test.ts asserts its shape.
+		const merged = JSON.parse(
+			read("test/fixtures/skill-provenance/merged.json"),
+		) as {
+			files: Array<{
+				path: string;
+				sources: Array<{ source: string; path: string; use: string }>;
+			}>;
+		};
+		const sourcesOf = (path: string) =>
+			merged.files
+				.find((file) => file.path === path)
+				?.sources.map(
+					({ source, path: from, use }) => `${use} ${source}:${from}`,
+				);
+		assert.deepEqual(sourcesOf(`${HELP}/SKILL.md`), [
+			"primary cursor:poteto-help/SKILL.md",
+			"merged mattpocock:engineering/ask-matt/SKILL.md",
+		]);
+		assert.deepEqual(sourcesOf(FLOWS), [
+			"primary mattpocock:engineering/ask-matt/SKILL.md",
+			"merged cursor:poteto-help/SKILL.md",
+		]);
+		assert.deepEqual(sourcesOf(PHASES), [
+			"primary mattpocock:engineering/ask-matt/PHASE-BOUNDARIES.md",
+		]);
+		assert.deepEqual(sourcesOf(`${PROTOTYPE}/SKILL.md`), [
+			"primary mattpocock:engineering/prototype/SKILL.md",
+			"merged cursor:poteto-mode/playbooks/prototype.md",
+			"context mimir:poteto-mode/playbooks/prototype.md",
+		]);
+		// scripts/upstream-scope.mjs flags a merged file citing more than one upstream.
+		for (const path of [`${HELP}/SKILL.md`, FLOWS, `${PROTOTYPE}/SKILL.md`])
+			assert.ok(
+				new Set(sourcesOf(path)?.map((use) => use.split(/[ :]/)[1])).size > 1,
+				path,
+			);
+	});
+});
+
 describe("batch A skills load", () => {
 	/** Each skill this batch adds or moves, its folder and whether the model sees it. */
 	const LOADED: Array<[name: string, folder: string, modelInvoked: boolean]> = [
 		["code-review", "skills/mattpocock", true],
 		["prototype", "skills/merged", true],
+		["poteto-help", "skills/merged", false],
 	];
 
 	it("loads each exactly once through Pi's loader", async () => {

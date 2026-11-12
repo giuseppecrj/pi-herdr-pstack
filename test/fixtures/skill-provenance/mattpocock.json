@@ -508,22 +508,6 @@
 	"planned": [
 		{
 			"source": "mattpocock",
-			"path": "engineering/ask-matt/PHASE-BOUNDARIES.md",
-			"sha256": "a8aa20158609ef39e2b308b6ba0660c91066838d07a867202e63a7744a88a3ed",
-			"blob": "fb58ef9febcfd558cdb4517e370f19034869ba26",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/ask-matt/SKILL.md",
-			"sha256": "1371f5ce005de0992a44b137748bfb960a56948aa9871b405fe9d90b24332e3c",
-			"blob": "4bfeeb61dae548b8b7754c4fba7bd40ab3926099",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
 			"path": "engineering/diagnosing-bugs/SKILL.md",
 			"sha256": "849198df88cdb65fd0d97236604c1fca7ff2f22d2f705f9724a800d0266b118d",
 			"blob": "d039541ddd1c46e6ddbd662fe99d49b686fc5e12",

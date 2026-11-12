@@ -426,8 +426,8 @@
     },
     {
       "name": "poteto-help",
-      "folder": "skills/pstack",
-      "wave": "W3-B",
+      "folder": "skills/merged",
+      "wave": "V2",
       "status": "shipped",
       "primarySource": "cursor",
       "sourceFiles": {
@@ -435,6 +435,11 @@
           "poteto-help/SKILL.md",
           "poteto-help/references/prompting.md",
           "poteto-help/references/recipes.md"
+        ],
+        "mattpocock": [
+          "engineering/ask-matt/PHASE-BOUNDARIES.md",
+          "engineering/ask-matt/SKILL.md",
+          "engineering/ask-matt/agents/openai.yaml"
         ]
       }
     },

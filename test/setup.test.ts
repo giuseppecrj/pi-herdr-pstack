@@ -567,7 +567,7 @@ describe("/setup-pstack refuses to start where the host cannot ask for approval"
 describe("skills that read the setup brief", () => {
 	it("quote the brief's heading and line shapes as the extension writes them", () => {
 		const help = readFileSync(
-			`${PACK_ROOT}/skills/pstack/poteto-help/SKILL.md`,
+			`${PACK_ROOT}/skills/merged/poteto-help/SKILL.md`,
 			"utf8",
 		);
 		const setup = readFileSync(

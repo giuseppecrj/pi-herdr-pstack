@@ -26,8 +26,17 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 - `/poteto-mode we need <feature>. use /skill:architect first, and answer open questions with prototypes. let me review before proceeding.`
 - `/poteto-mode write a tutorial for how i would use <new package> first. then /skill:teach me why it beats the current one.`
 - `ask /skill:arena for a second opinion on this thread and our approach.`
-- `/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.` (`../poteto-mode/playbooks/multi-phase-plan.md`)
-- `/poteto-mode plan the migration of <library> to <target>. small verifiable PRs. the result must match the original exactly, bugs included.` (`../poteto-mode/playbooks/multi-phase-plan.md`)
+- `/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.` (`../../pstack/poteto-mode/playbooks/multi-phase-plan.md`)
+- `/poteto-mode plan the migration of <library> to <target>. small verifiable PRs. the result must match the original exactly, bugs included.` (`../../pstack/poteto-mode/playbooks/multi-phase-plan.md`)
+
+## Matt Pocock's flow
+
+Each step is its own command, in the order `references/flows.md` gives. These skills write nothing remote unless the user grants it.
+
+- `/skill:grill-with-docs <idea>`, then in the same session `/skill:to-spec` and `/skill:to-tickets`.
+- `/skill:implement <ticket>`, in a new session per ticket.
+- `/skill:code-review since main. the spec is <issue>.`
+- `/skill:prototype three layouts for <page>. keep it in scratch and show me screenshots.`
 
 ## Review and ship
 
@@ -35,14 +44,14 @@ Swap in the real paths, skills, and done checks. Informal wording works. Paths a
 - `/skill:create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` After merges or refactors in that code: `/skill:maintain-formal-verification-skill`.
 - `/skill:swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.` Opening a PR is an external action. Send this only when you mean it, because the request is the authorization.
-- `/poteto-mode babysit this pr. get it green.` For status only: `/poteto-mode check on pr <number>. anything outstanding?` (`../poteto-mode/playbooks/babysit.md`)
-- `/poteto-mode land the stack.` (`../poteto-mode/playbooks/shipping.md`)
+- `/poteto-mode babysit this pr. get it green.` For status only: `/poteto-mode check on pr <number>. anything outstanding?` (`../../pstack/poteto-mode/playbooks/babysit.md`)
+- `/poteto-mode land the stack.` (`../../pstack/poteto-mode/playbooks/shipping.md`)
 
 ## Away and back
 
 - `/poteto-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. keep going until done. if you're truly stuck after a few hours, stop and write up why.`
 - `/skill:show-me-your-work catch me up on what you did last night.` Read its Attention section first.
-- `/poteto-mode full autopilot on this queue. each item is independent.` (`../poteto-mode/playbooks/autopilot-full.md`) Name which of push, PR creation and merge the run may do.
-- `/poteto-mode autopilot these changes, but don't merge. i'll land them.` (`../poteto-mode/playbooks/autopilot-stack.md`)
+- `/poteto-mode full autopilot on this queue. each item is independent.` (`../../pstack/poteto-mode/playbooks/autopilot-full.md`) Name which of push, PR creation and merge the run may do.
+- `/poteto-mode autopilot these changes, but don't merge. i'll land them.` (`../../pstack/poteto-mode/playbooks/autopilot-stack.md`)
 - `/skill:reflect capture what we learned so the next run doesn't repeat it.` Approve only edits that change a future decision.
 - `/skill:bro` restates the last reply in plain words.
