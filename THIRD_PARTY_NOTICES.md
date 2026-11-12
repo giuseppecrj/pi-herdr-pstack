@@ -117,9 +117,10 @@ SOFTWARE.
 `skills/mattpocock/setup-repo/`, adapted from
 `skills/engineering/setup-matt-pocock-skills/`, and `domain-modeling`,
 `grill-me`, `grill-with-docs`, `grilling`, `implement`, `implement-spec`,
-`to-spec`, `to-tickets`, `triage` and `wayfinder`, adapted from the
-same-named skills under `skills/engineering/` and `skills/productivity/`. The
-upstream `LICENSE`
+`to-spec`, `to-tickets`, `triage` and `wayfinder` (#33), and `codebase-design`,
+`handoff`, `improve-codebase-architecture`, `pr`, `research`,
+`to-questionnaire` and `wizard` (#34), adapted from the same-named skills under
+`skills/engineering/` and `skills/productivity/`. The upstream `LICENSE`
 (sha256 `0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5`)
 is MIT with this notice:
 
@@ -150,6 +151,40 @@ SOFTWARE.
 See [docs/provenance.md](docs/provenance.md) and
 `test/fixtures/skill-provenance/mattpocock.json` for each adapted file's source,
 hashes and changes.
+
+### HumanLayer's `show-me`, in `pr`
+
+The **Summary** section of `skills/mattpocock/pr/SKILL.md`, its menu of visuals
+and their placement guidance, comes through Matt Pocock's `pr` from
+[Dex Horthy](https://github.com/dexhorthy)'s `show-me` skill, as upstream's
+`skills/mattpocock/pr/CREDITS.md` and the skill's `metadata.credits` say. The
+credited source,
+[humanlayer/skills](https://github.com/humanlayer/skills/blob/main/plugins/show-me/skills/show-me/SKILL.md),
+carried this MIT notice at commit `4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329`:
+
+```text
+MIT License
+
+Copyright (c) 2026 HumanLayer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## tla-ts
 
