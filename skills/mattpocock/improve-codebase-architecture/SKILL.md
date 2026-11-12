@@ -24,7 +24,7 @@ This command is _informed_ by the project's domain model and built on a shared d
 
 Read the project's domain glossary (`GLOSSARY.md`) and any ADRs in the area you're touching first.
 
-Then spawn a subagent with a fresh context window to walk the codebase: launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`), and a task that names the scope you chose and the questions below, and asks it to report where it felt friction, with file paths, change nothing, and launch no subagents of its own. Its result arrives on its own as a new turn; never poll for it. Don't follow rigid heuristics; explore organically and note where you experience friction:
+Then spawn a subagent with a fresh context window to walk the codebase: launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`, only when `recon` has no configured thinking), and a task that names the scope you chose and the questions below, and asks it to report where it felt friction, with file paths, change nothing, and launch no subagents of its own. Its result arrives on its own as a new turn; never poll for it. Don't follow rigid heuristics; explore organically and note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow**, with an interface nearly as complex as the implementation?

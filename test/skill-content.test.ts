@@ -1226,7 +1226,7 @@ describe("delegation contract", () => {
 			);
 	});
 
-	it("leaves thinking out of poteto-mode's task:<category> examples, so the configured category thinking applies", () => {
+	it("leaves thinking out of every skill's task:<category> examples and qualifies prose levels, so the configured category thinking applies", () => {
 		const delegation = read(DELEGATION);
 		const rule = delegation
 			.split("\n")
@@ -1240,11 +1240,29 @@ describe("delegation contract", () => {
 			"An explicit `thinking` overrides the configured level",
 		])
 			assert.ok(rule.includes(phrase), phrase);
-		const poteto = examples.filter(({ path }) =>
-			[DELEGATION, FAN_OUT].includes(path),
+		assert.ok(
+			examples.filter(({ path }) => [DELEGATION, FAN_OUT].includes(path))
+				.length >= 6,
 		);
-		assert.ok(poteto.length >= 6);
-		for (const { path, call } of poteto) {
+		// Every skill's examples, not only poteto-mode's: how, why, reflect,
+		// recall, swarm and no-comments launch task:<category> seats too.
+		for (const path of [
+			"skills/pstack/how/SKILL.md",
+			"skills/pstack/why/SKILL.md",
+			"skills/pstack/reflect/SKILL.md",
+			"skills/pstack/recall/SKILL.md",
+			"skills/pstack/swarm/SKILL.md",
+			"skills/pstack/no-comments/SKILL.md",
+		])
+			assert.ok(
+				examples.some(
+					(example) =>
+						example.path === path &&
+						String(example.call.model).startsWith("task:"),
+				),
+				path,
+			);
+		for (const { path, call } of examples) {
 			const label = `${path}: ${String(call.name)}`;
 			if (call.model === MODEL_PLACEHOLDER)
 				assert.ok("thinking" in call, `${label}: an exact model sets thinking`);
@@ -1260,6 +1278,60 @@ describe("delegation contract", () => {
 			read("skills/pstack/poteto-mode/SKILL.md"),
 			/except on a `task:<category>` whose category has configured thinking, where omitting it applies the user's `\/setup-pstack` budget/,
 		);
+		// Prose that names a level for a task:<category> seat says the level
+		// applies only when that category has no configured thinking.
+		const level = `(?:${THINKING.join("|")})`;
+		const paired = new RegExp(
+			`task:[a-z]+.{0,40}?(?:\`?thinking\`?[":( ]+\`?"?${level}\\b|\\b${level} thinking)`,
+		);
+		const prose = MARKDOWN_FILES.flatMap((path) =>
+			read(path)
+				.split("\n")
+				.filter((line) => paired.test(line))
+				.map((line) => ({ path, line })),
+		);
+		for (const path of [
+			"skills/pstack/recall/SKILL.md",
+			"skills/mattpocock/research/SKILL.md",
+			"skills/mattpocock/implement-spec/SKILL.md",
+			"skills/mattpocock/grilling/SKILL.md",
+			"skills/mattpocock/wayfinder/SKILL.md",
+			"skills/mattpocock/improve-codebase-architecture/SKILL.md",
+			"skills/mattpocock/codebase-design/DESIGN-IT-TWICE.md",
+		])
+			assert.ok(
+				prose.some((entry) => entry.path === path),
+				`${path}: the scan finds its task:<category> level`,
+			);
+		for (const { path, line } of prose)
+			assert.match(
+				line,
+				/only when `?[a-z]+`? has no configured thinking|when that category has no configured thinking|has configured thinking|An explicit `thinking` overrides|deliberate override/,
+				`${path}: ${line.slice(0, 200)}`,
+			);
+		for (const [path, phrase] of [
+			[
+				"skills/pstack/how/SKILL.md",
+				"- `thinking`: omit it when `architecture` has configured thinking; otherwise `high` or above",
+			],
+			[
+				"skills/pstack/why/SKILL.md",
+				"- `thinking`: omit it when `architecture` has configured thinking; otherwise `high` or above",
+			],
+			[
+				"skills/pstack/reflect/SKILL.md",
+				"`thinking` is `high` or above only when that category has no configured thinking (otherwise omit it)",
+			],
+			[
+				"skills/pstack/no-comments/SKILL.md",
+				"on `task:review` set it only when that category has no configured thinking",
+			],
+			[
+				"skills/pstack/poteto-mode/playbooks/hillclimb.md",
+				'`model: "task:coding"`, thinking per that file (omitted when `coding` has configured thinking)',
+			],
+		])
+			assert.ok(read(path).includes(phrase), `${path}: ${phrase}`);
 	});
 
 	it("launches why investigators without a tools list, so MCP servers stay visible", {

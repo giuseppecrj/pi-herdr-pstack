@@ -88,7 +88,6 @@ Subagent config (each):
   "task": "<references/investigator-prompt.md filled in, with the category playbook, the code anchor and the user's question>. Read-only: do not write files, commit or modify external state. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:recon",
-  "thinking": "medium",
   "fork": false
 }
 ```
@@ -135,7 +134,7 @@ Spawn one synthesizer subagent. Investigators stay on `task:recon`. The synthesi
 
 - bare, with the delegation Investigator prompt as `systemPrompt` and `fork: false`
 - `model`: `task:architecture`
-- `thinking`: `high` or above
+- `thinking`: omit it when `architecture` has configured thinking; otherwise `high` or above
 - use a normal Pi child process with no `tools` list. The synthesizer's quality check spot-verifies citations, which can require MCP access. Tool availability varies by Pi configuration.
 
 ```json subagent
@@ -144,7 +143,6 @@ Spawn one synthesizer subagent. Investigators stay on `task:recon`. The synthesi
   "task": "<references/synthesizer-prompt.md filled in with the investigator findings, skipped sources, code anchor and question; follow references/epistemics.md>. Read-only: do not write files, commit or modify external state. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:architecture",
-  "thinking": "high",
   "fork": false
 }
 ```

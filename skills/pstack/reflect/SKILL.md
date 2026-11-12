@@ -28,7 +28,7 @@ Before these launches, follow the architecture preflight in `../poteto-mode/refe
 | Tooling | exact model from another family | `references/tooling-reviewer.md` |
 | Divergent | `task:architecture` | `references/divergent-reviewer.md` |
 
-Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above, the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
+Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above only when that category has no configured thinking (otherwise omit it), the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
 
 Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results.
 
@@ -38,7 +38,6 @@ Pass each template verbatim as `systemPrompt`, and put the transcript path for `
   "task": "<ABSOLUTE_PATH> is <the transcript path>. <Or: no path; the digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/judgment-reviewer.md, verbatim>",
   "model": "task:architecture",
-  "thinking": "high",
   "fork": false
 }
 ```
@@ -66,7 +65,6 @@ After all three reviewers have delivered, one bare `subagent` call on `task:arch
   "task": "<JUDGMENT_OUTPUT>: <the judgment reviewer's full output>. <TOOLING_OUTPUT>: <the tooling reviewer's full output>. <DIVERGENT_OUTPUT>: <the divergent reviewer's full output>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/synthesizer.md, verbatim>",
   "model": "task:architecture",
-  "thinking": "high",
   "fork": false
 }
 ```

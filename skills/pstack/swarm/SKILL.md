@@ -39,7 +39,6 @@ When a writer must start from another committed revision, set `base` in its `wor
   "task": "<goal>. Slice: <exact slice or race arm>. Verify at <exact SHAs> with <method>. Claims: <each claim to verify, one per item>. Report every listed claim as pass, fail or inconclusive before the overall status. A listed claim with no result counts as inconclusive. Then give one overall status, in this order. A proved fail always means ISSUES, even when other checks could not run: list every proved issue, not only the first, and inconclusive claims stay inconclusive. Otherwise PASS only when at least one claim is listed, every listed claim passes, and the worker proves no other defect. Otherwise BLOCKED, and state why: zero listed claims, an inconclusive claim, or no check could run. Record the SHAs and method. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Verifier prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:qa",
-  "thinking": "medium",
   "tools": "read, bash",
   "fork": false
 }

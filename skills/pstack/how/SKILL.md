@@ -32,7 +32,6 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
   "task": "<references/explorer-prompt.md with the question and this explorer's angle filled in>. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:recon",
-  "thinking": "medium",
   "tools": "read, bash",
   "fork": false
 }
@@ -43,7 +42,7 @@ Each explorer gets the prompt in `references/explorer-prompt.md` with its angle 
 Spawn one bare subagent that explores and explains in one pass. The explainer is judgment and prose synthesis, so it does not use the explorers' category. Follow the architecture preflight in `../poteto-mode/references/delegation.md` before this launch:
 
 - `model`: `task:architecture`
-- `thinking`: `high` or above
+- `thinking`: omit it when `architecture` has configured thinking; otherwise `high` or above
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
@@ -53,7 +52,7 @@ Build its prompt from `references/explainer-prompt.md` without the explorer-find
 Once all explorers have returned, spawn one bare subagent to synthesize their findings into one explanation. This is the same judgment seat as Step 2b:
 
 - `model`: `task:architecture`
-- `thinking`: `high` or above
+- `thinking`: omit it when `architecture` has configured thinking; otherwise `high` or above
 - do not grant write/edit tools
 
 Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
@@ -64,7 +63,6 @@ Build its prompt from `references/explainer-prompt.md` with every explorer's fin
   "task": "<references/explainer-prompt.md with the question and every explorer's findings filled in>. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in ../poteto-mode/references/delegation.md, verbatim>",
   "model": "task:architecture",
-  "thinking": "high",
   "tools": "read, bash",
   "fork": false
 }

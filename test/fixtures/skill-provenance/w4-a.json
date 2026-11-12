@@ -134,7 +134,7 @@
 		},
 		{
 			"path": "skills/pstack/how/SKILL.md",
-			"sha256": "23a257e81244636464d1dbf61f9bc67039a9ff9d05704fd76e17f308250faf3a",
+			"sha256": "20945da7993c848aaac86ba45d931cc76b800c8b039e1ce8f93ca605e2d57685",
 			"status": "adapted",
 			"sources": [
 				{
@@ -218,7 +218,7 @@
 		},
 		{
 			"path": "skills/pstack/reflect/SKILL.md",
-			"sha256": "08e7253c46a9929958b7ace278b9528e5a1609dc2db555c6449687093106159f",
+			"sha256": "e7e3ad84f709ebb5a84dcfd43a8b0529c28810fc882f29f80e8911a19cbfa15a",
 			"status": "adapted",
 			"sources": [
 				{
@@ -232,7 +232,7 @@
 		},
 		{
 			"path": "skills/pstack/swarm/SKILL.md",
-			"sha256": "632c72f4b0b0d67502edd6299ff6b7421132d22f88dc0f912943f84f426cb8bc",
+			"sha256": "f7e94d55ee3c5a91d2bae8457f0e5e741e477ec6ed5c56398b47c555018074c0",
 			"status": "adapted",
 			"sources": [
 				{
@@ -420,7 +420,7 @@
 		},
 		{
 			"path": "skills/pstack/why/SKILL.md",
-			"sha256": "fb2348548a356cb118bc73e69e68f9130cd1208b663fb4dc371e05d8d0c47ee5",
+			"sha256": "01fb964536e88af7205ab20effefd4034e2fc611bdf940ff8750dae002f97a3a",
 			"status": "adapted",
 			"sources": [
 				{

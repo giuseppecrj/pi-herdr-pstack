@@ -18,7 +18,7 @@ Show this to the user, then immediately proceed to Step 2. The user reads and th
 
 ### 2. Spawn subagents
 
-Spawn 3+ subagents in parallel, each with a fresh context window. Each must produce a **radically different** interface for the deepened module. Launch each with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:architecture`) and `thinking` (`high`), and no `worktree`. They are bare subagents (no `agent`), so the brief is the whole task: it also says the subagent designs on paper, changes no file, commits and pushes nothing, and launches no subagents of its own. Each result arrives on its own as a new turn; never poll for one.
+Spawn 3+ subagents in parallel, each with a fresh context window. Each must produce a **radically different** interface for the deepened module. Launch each with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:architecture`) and `thinking` (`high`, only when `architecture` has no configured thinking), and no `worktree`. They are bare subagents (no `agent`), so the brief is the whole task: it also says the subagent designs on paper, changes no file, commits and pushes nothing, and launches no subagents of its own. Each result arrives on its own as a new turn; never poll for one.
 
 Prompt each subagent with a separate technical brief (file paths, coupling details, dependency category from `DEEPENING.md`, what sits behind the seam). The brief is independent of the user-facing problem-space explanation in Step 1. Give each agent a different design constraint:
 

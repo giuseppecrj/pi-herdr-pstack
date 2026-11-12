@@ -482,10 +482,10 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 		// Each kind of subagent names its model and thinking where it is introduced.
 		const spec = flat("implement-spec");
 		for (const kind of [
-			'**exploration subagent** (`model: "task:recon"`, `thinking: "low"`)',
-			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"`) for each ticket, each in its own worktree on its own branch (`worktree: { branch: "<ticket-branch>", base: "<integration-branch>" }`)',
-			'**merger subagent** (`model: "task:coding"`, `thinking: "low"`, no `worktree`, so it works in this checkout on the integration branch; run one merger at a time)',
-			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"`, no `worktree`, working in this checkout on the integration branch)',
+			'**exploration subagent** (`model: "task:recon"`, `thinking: "low"` only when `recon` has no configured thinking)',
+			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"` only when `coding` has no configured thinking) for each ticket, each in its own worktree on its own branch (`worktree: { branch: "<ticket-branch>", base: "<integration-branch>" }`)',
+			'**merger subagent** (`model: "task:coding"`, `thinking: "low"` only when `coding` has no configured thinking, no `worktree`, so it works in this checkout on the integration branch; run one merger at a time)',
+			'**implementer subagent** (`model: "task:coding"`, `thinking: "medium"` only when `coding` has no configured thinking, no `worktree`, working in this checkout on the integration branch)',
 		])
 			assert.ok(spec.includes(kind), kind);
 		for (const phrase of [
@@ -498,13 +498,13 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 			assert.ok(spec.includes(phrase), phrase);
 		assert.ok(
 			flat("grilling").includes(
-				"launch a `subagent` with a fresh context window (`fork: false`), an explicit `model` (`task:recon`) and `thinking` (`low`), and a task that asks for that fact and changes nothing",
+				"launch a `subagent` with a fresh context window (`fork: false`), an explicit `model` (`task:recon`) and `thinking` (`low`, only when `recon` has no configured thinking), and a task that asks for that fact and changes nothing",
 			),
 		);
 		assert.ok(flat("grilling").includes("never poll for it"));
 		const wayfinder = flat("wayfinder");
 		for (const phrase of [
-			"Launch each with `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`), and its own worktree on that branch",
+			"Launch each with `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`, only when `recon` has no configured thinking), and its own worktree on that branch",
 			"the absolute path of the `research` skill's `SKILL.md`",
 			"never poll for it.",
 		])
@@ -825,22 +825,26 @@ describe("remaining gap skills content contract (not behavior proof)", () => {
 			assert.ok(categories.length > 0, `${path}: no explicit model: ${line}`);
 			for (const category of categories)
 				assert.ok(CATEGORIES.includes(category), `${path}: ${category}`);
-			assert.match(line, /`thinking` \(`[a-z]+`\)/, `${path}: ${line}`);
+			assert.match(
+				line,
+				/`thinking` \(`[a-z]+`, only when `([a-z]+)` has no configured thinking\)/,
+				`${path}: ${line}`,
+			);
 			assert.match(line, /`fork: false`/, `${path}: ${line}`);
 			assert.match(line, /never poll for (?:it|one)\./, `${path}: ${line}`);
 		}
 		for (const [file, phrase] of [
 			[
 				"research/SKILL.md",
-				"launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`), and no `worktree`, so it writes in this checkout.",
+				"launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`, only when `recon` has no configured thinking), and no `worktree`, so it writes in this checkout.",
 			],
 			[
 				"codebase-design/DESIGN-IT-TWICE.md",
-				"Launch each with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:architecture`) and `thinking` (`high`), and no `worktree`. They are bare subagents (no `agent`), so the brief is the whole task: it also says the subagent designs on paper, changes no file, commits and pushes nothing, and launches no subagents of its own.",
+				"Launch each with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:architecture`) and `thinking` (`high`, only when `architecture` has no configured thinking), and no `worktree`. They are bare subagents (no `agent`), so the brief is the whole task: it also says the subagent designs on paper, changes no file, commits and pushes nothing, and launches no subagents of its own.",
 			],
 			[
 				"improve-codebase-architecture/SKILL.md",
-				"launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`), and a task that names the scope you chose and the questions below, and asks it to report where it felt friction, with file paths, change nothing, and launch no subagents of its own.",
+				"launch it with pi-herdr-agents' `subagent` tool, `fork: false`, an explicit `model` (`task:recon`) and `thinking` (`medium`, only when `recon` has no configured thinking), and a task that names the scope you chose and the questions below, and asks it to report where it felt friction, with file paths, change nothing, and launch no subagents of its own.",
 			],
 		])
 			assert.ok(
