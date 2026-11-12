@@ -352,3 +352,12 @@ describe("release docs describe 1.0.0 without drifting counts (C7)", () => {
 		);
 	});
 });
+
+describe("package description (C8)", () => {
+	it("mentions Matt Pocock's skills", () => {
+		const { description } = JSON.parse(read("package.json")) as {
+			description: string;
+		};
+		assert.match(description, /Matt Pocock's skills/);
+	});
+});

@@ -501,7 +501,7 @@ describe("implement, implement-spec and tdd find code-review in the pack", () =>
 			[
 				[
 					"the preflight naming this pack's code-review",
-					/find the skills this run loads \(see \*\*Finding a skill\*\*\): `tdd` \(this pack's is `\.\.\/\.\.\/merged\/tdd\/SKILL\.md`\) and `code-review` \(this pack's is `\.\.\/code-review\/SKILL\.md`\)\. If `code-review` is missing, tell the user now that review is unavailable\./,
+					/find the skills this run loads \(see \*\*Finding a skill\*\*\): `tdd` \(this pack's is `\.\.\/\.\.\/merged\/tdd\/SKILL\.md`\) and `code-review` \(this pack's is `\.\.\/code-review\/SKILL\.md`\)\. If `tdd` is missing, stop before changing any file: tell the user `tdd` is unavailable, and don't stand in for it with another skill\. If `code-review` is missing, tell the user now that review is unavailable\./,
 				],
 				[
 					"recording the starting commit and the files already uncommitted",

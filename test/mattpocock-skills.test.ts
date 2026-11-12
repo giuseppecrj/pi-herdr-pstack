@@ -699,7 +699,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 	it("preflights the skills it loads and fails closed when one is missing (M1)", () => {
 		assert.ok(
 			flat("implement").includes(
-				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `code-review` is missing, tell the user now that review is unavailable.",
+				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `tdd` is missing, stop before changing any file: tell the user `tdd` is unavailable, and don't stand in for it with another skill. If `code-review` is missing, tell the user now that review is unavailable.",
 			),
 		);
 		assert.ok(
@@ -707,8 +707,18 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 				"If no `code-review` was found, stop here: leave the work uncommitted, tell the user review is unavailable, and don't stand in for it with another skill.",
 			),
 		);
+		// implement fails closed on a missing tdd, as implement-spec does (C8).
+		assert.ok(
+			flat("implement").includes(
+				"If `tdd` is missing, stop before changing any file: tell the user `tdd` is unavailable, and don't stand in for it with another skill.",
+			),
+		);
 		// The review gate sits before the commit.
 		const implement = flat("implement");
+		assert.ok(
+			implement.indexOf("If `tdd` is missing, stop") <
+				implement.indexOf("Then record where the work starts"),
+		);
 		assert.ok(
 			implement.indexOf("stop here: leave the work uncommitted") <
 				implement.indexOf("Commit your work to the current branch."),
