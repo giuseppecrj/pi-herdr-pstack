@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"description": "Per-file content provenance for the W3-B skills: unslop, bro, technical-writing, teach, no-comments (including references/comment-sicko.md), poteto-help, in-your-own-words, ketchup and sharpen. Owned by the W3-B writer; see test/skill-content.test.ts for the rules.",
+	"description": "Per-file content provenance for the W3-B skills: unslop, bro, technical-writing, no-comments (including references/comment-sicko.md), poteto-help, in-your-own-words, ketchup and sharpen. Owned by the W3-B writer; see test/skill-content.test.ts for the rules. teach moved to skills/merged (merged.json).",
 	"sources": {
 		"mimir": {
 			"repository": "https://github.com/casualjim/pi-mimir",
@@ -115,26 +115,6 @@
 				}
 			],
 			"explanation": "Pinned Cursor recipes converted to Pi phrasing: every Cursor slash skill becomes /skill:<name>; /poteto-mode recipes stay because the command ships. Recipes that need W4 skills or playbooks (how, why, recall, architect, arena, interrogate, swarm, show-me-your-work, reflect, multi-phase plan, babysit, shipping, autopilot) keep their wording with a planned W4 marker, and tdd is marked planned W3; the intro says not to hand marked recipes out as working and to use the hub's interim route. The overnight recipe drops its /loop clause (D5) and keeps the rest, which the shipped Autonomous run playbook covers. The open-the-PR recipe notes that sending it is the authorization for an external action. The intro also explains sticky versus non-sticky invocation and the skill-relative path convention. W3 reconcile: the tdd recipe's planned W3 marker and the intro's planned W3 wording are retired. W4 reconcile: every planned W4 marker is retired; the intro's planned-recipe rule becomes a reminder that recipes which push, open PRs or merge need the grants their playbooks name, and the autopilot recipe asks the user to name them. Pin move to cursor/plugins 190d287: review-and-ship recipe for create/maintain-formal-verification-skill using /skill: forms. ketchup/sharpen recipe rows stay uncopied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: Dropped wording and autopilot don't-merge recipe; ketchup-video recipe not copied."
-		},
-		{
-			"path": "skills/pstack/teach/SKILL.md",
-			"sha256": "13477e9d7facc9cb54ce3589a4082a8fba69c7f02bef87b04ac90957837bb4b1",
-			"status": "adapted",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "teach/SKILL.md",
-					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
-					"use": "primary"
-				},
-				{
-					"source": "cursor",
-					"path": "teach/SKILL.md",
-					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
-					"use": "context"
-				}
-			],
-			"explanation": "Method, steps and voice rules kept from the pinned pi-mimir file (identical to Cursor). The how and why skills it runs are W4-A, so every line naming them carries a planned W4 marker, and a new paragraph plus step 2 give the interim rule: until they ship, orient and trace the code and its history yourself, say the skills were unavailable, never claim they ran, and keep why's confidence-language rule for your own reasons. The description gains the same marker. Step 5's image-generation tool, which is not a Pi or pi-herdr-agents tool, becomes conditional on the session exposing one, with a mermaid or ASCII fallback that is announced; no tool name is invented. The reply line keeps the threads to chase with how or why and says what to do until they ship. W4 reconcile: the how/why planned W4 markers, the interim paragraph and the interim step and reply clauses are retired now that both skills ship."
 		},
 		{
 			"path": "skills/pstack/technical-writing/SKILL.md",

@@ -161,7 +161,7 @@
 		},
 		{
 			"path": "skills/mattpocock/implement-spec/SKILL.md",
-			"sha256": "89a1b3dd98123f8a1c6b95e3a6d25281a3fb44ed8e3209f47a339479e8c2d423",
+			"sha256": "2b551d962edf34bf41475f881331c04b7e997bb4ce08c110417fda5cbff592f8",
 			"status": "adapted",
 			"sources": [
 				{
@@ -172,11 +172,11 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo and the description's /to-spec and /to-tickets became /skill:to-spec and /skill:to-tickets. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo. Every subagent is a bare pi-herdr-agents `subagent` launch with fork: false and an explicit model and thinking per kind (exploration task:recon/low, implementer task:coding/medium, merger task:coding/low), whose task says it pushes nothing, opens no PR and launches no subagents unless the skill names that action. Running in the background means results arrive on their own as new turns, never polled. Implementers get worktree { branch, base: integration branch } and the absolute path of `../../pstack/tdd/SKILL.md` (a child cannot see skills that disable model invocation); the merger and the review-fix implementer work in this checkout on the integration branch, one merger at a time. Worktree cleanup lists them with worktree_list and removes each with worktree_remove after the user approves the list. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:implement-spec invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Child briefs push or open PRs only when the skill names the action and the user granted it, and say spec and ticket content is data. Pack policy (M1): a Preflight paragraph checks tdd and code-review in this pack; without tdd it launches no implementer; without code-review it stops after step 6 with no PR, nothing marked ready and no ticket resolved, reporting the integration branch as local and unreviewed. Pack policy (M2): a paragraph says a worktree child starts from its committed base without this checkout's uncommitted changes, so uncommitted inputs (.scratch tickets, new docs/agents files, notes) are committed with the user's approval or passed as absolute paths. Steps 3 and 8 need the user's grant for push, PR and ticket updates. Step 5: the parent inspects each child's diff and runs its checks before the merger integrates it. Step 6: a ticket is done for the frontier once merged and passing on the integration branch, not when its remote ticket closes. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. Steps 3 and 8 push, open or mark a PR ready, or resolve tickets only when the preflight found code-review and the user granted the effect; otherwise the integration branch stays local. Implementers get the absolute path of the tdd skill the preflight found."
+			"explanation": "/setup-matt-pocock-skills became /skill:setup-repo and the description's /to-spec and /to-tickets became /skill:to-spec and /skill:to-tickets. The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo. Every subagent is a bare pi-herdr-agents `subagent` launch with fork: false and an explicit model and thinking per kind (exploration task:recon/low, implementer task:coding/medium, merger task:coding/low), whose task says it pushes nothing, opens no PR and launches no subagents unless the skill names that action. Running in the background means results arrive on their own as new turns, never polled. Implementers get worktree { branch, base: integration branch } and the absolute path of `../../merged/tdd/SKILL.md` (a child cannot see skills that disable model invocation); the merger and the review-fix implementer work in this checkout on the integration branch, one merger at a time. Worktree cleanup lists them with worktree_list and removes each with worktree_remove after the user approves the list. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:implement-spec invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Child briefs push or open PRs only when the skill names the action and the user granted it, and say spec and ticket content is data. Pack policy (M1): a Preflight paragraph checks tdd and code-review in this pack; without tdd it launches no implementer; without code-review it stops after step 6 with no PR, nothing marked ready and no ticket resolved, reporting the integration branch as local and unreviewed. Pack policy (M2): a paragraph says a worktree child starts from its committed base without this checkout's uncommitted changes, so uncommitted inputs (.scratch tickets, new docs/agents files, notes) are committed with the user's approval or passed as absolute paths. Steps 3 and 8 need the user's grant for push, PR and ticket updates. Step 5: the parent inspects each child's diff and runs its checks before the merger integrates it. Step 6: a ticket is done for the frontier once merged and passing on the integration branch, not when its remote ticket closes. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. Steps 3 and 8 push, open or mark a PR ready, or resolve tickets only when the preflight found code-review and the user granted the effect; otherwise the integration branch stays local. Implementers get the absolute path of the tdd skill the preflight found."
 		},
 		{
 			"path": "skills/mattpocock/implement/SKILL.md",
-			"sha256": "7d1980f58371c2d4b464e683c61a8e31d79e019657c2e45c8fda883184b39920",
+			"sha256": "f69c7ba03117c13b6d70696da02cf417562f3ca5a5aae63525523debfcdddc3c",
 			"status": "adapted",
 			"sources": [
 				{
@@ -187,7 +187,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Fetching a ticket goes through the tracker: The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo; /skill:setup-repo when it is missing. Pi has no Skill tool: tdd loads by reading `../../pstack/tdd/SKILL.md` (pstack's tdd, the only tdd in the pack until #36 merges Matt's); code-review (#37) is looked up in this pack. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:implement invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Pack policy (M1, fail closed): a preflight checks tdd and code-review in this pack at the start; when code-review is missing the skill tells the user up front, and at the review step stops before the commit, leaving the work uncommitted; the available-skills-list lookup and the skip-and-continue wording are gone. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. The preflight and the tdd load use the found skill (this pack's tdd path named as the default)."
+			"explanation": "Fetching a ticket goes through the tracker: The tracker sentence names where the configuration lives (the `## Agent skills` section of AGENTS.md or CLAUDE.md, pointing at docs/agents/issue-tracker.md) and requires every tracker command as that doc writes it, with the repo it names (-R <owner>/<repo>), never the CLI's implicit default repo; /skill:setup-repo when it is missing. Pi has no Skill tool: tdd loads by reading `../../merged/tdd/SKILL.md` (the merged tdd that #36 made, combining pstack's and Matt's); code-review (#37) is looked up in this pack. Kept disable-model-invocation: true. Pack policy (review of 98e44ae, H1): a 'Publishing needs the user's grant' paragraph says the tracker doc says how to publish, never whether; pushes, every PR action, issue creation, edits, comments, assignment, labelling and closing, and label creation happen only on the user's grant (named in the request or approved when asked; per the coordinator's decision, an explicit /skill:implement invocation grants no tracker or remote write, and loading a skill without the user invoking it grants nothing); without it the work stays local and the user is told what is waiting; child briefs carry only granted effects. Pack policy (H2): a 'Tracker content is data' paragraph says issue and PR bodies, comments, diffs, map Notes and linked material are requirements and evidence, never instructions, scope changes, skill choices or authorization; such requests go to the user; only skills in this pack load, by name; child briefs repeat the rule. Pack policy (M1, fail closed): a preflight checks tdd and code-review in this pack at the start; when code-review is missing the skill tells the user up front, and at the review step stops before the commit, leaving the work uncommitted; the available-skills-list lookup and the skip-and-continue wording are gone. Re-review of f998ee7: the trust rule now says a skill name tracker content suggests counts only once the user confirms it, and a path it supplies never counts. Pack policy (dependency resolution): a 'Finding a skill' paragraph resolves each skill by name, this pack's first, then one the user installed (found among the session's loaded skills, or at a path the user gives when asked), never from tracker content; children get the resolved absolute path; nothing found means missing, and the fail-closed gates still apply. The preflight and the tdd load use the found skill (this pack's tdd path named as the default)."
 		},
 		{
 			"path": "skills/mattpocock/improve-codebase-architecture/HTML-REPORT.md",
@@ -565,75 +565,11 @@
 		},
 		{
 			"source": "mattpocock",
-			"path": "engineering/tdd/SKILL.md",
-			"sha256": "5505d25bbaa8fc14a79e4d20163936958992a2995b7f1dd1d6197edc9ed722e0",
-			"blob": "01eadaa34e7c9a63a67d6dc3cce1cc81b0e49985",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/tdd/mocking.md",
-			"sha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
-			"blob": "71cbfee674d93244ce81d1830b930ca9a69200bd",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "engineering/tdd/tests.md",
-			"sha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
-			"blob": "7ab86479f925a1f9e8ba680af33cb3b12e015381",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
 			"path": "in-progress/chief-of-staff/SKILL.md",
 			"sha256": "f4c1d6533edece6b275155911cb627154a6b13e2bc19934f77330f3afdd07987",
 			"blob": "22f0b6626f07bfdfa78b70d006742dfa2260e9c4",
 			"owningIssue": "#37",
 			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/teach/GLOSSARY-FORMAT.md",
-			"sha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
-			"blob": "fdd7e366ad9760588b28981e42b3d3b561e56aca",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/teach/LEARNING-RECORD-FORMAT.md",
-			"sha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
-			"blob": "953c61422776b47612c3c945920358ad7b5daee7",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/teach/MISSION-FORMAT.md",
-			"sha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
-			"blob": "45250bb1bad70988bf381625931df64645e10246",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/teach/RESOURCES-FORMAT.md",
-			"sha256": "e9cacf34026e11a8d1c8f9de88abe5bcbf654f4ebdb25cae8c0de0d5f48f44ec",
-			"blob": "18b588c8b6f96a50ae2352f264928c643d2782e4",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
-		},
-		{
-			"source": "mattpocock",
-			"path": "productivity/teach/SKILL.md",
-			"sha256": "550482c2d674b085c9043b87bfdc14a8f2ec453c736119e7fcbb1e9332bffeba",
-			"blob": "493fa3bae0dada971c4dfb965790e56920b1dced",
-			"owningIssue": "#36",
-			"explanation": "Overlaps a pstack skill of the same name; merged into skills/merged by issue #36."
 		},
 		{
 			"source": "mattpocock",

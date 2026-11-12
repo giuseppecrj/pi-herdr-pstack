@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"description": "Per-file content provenance for the W3-A skills: the 24 principle-* skills, tdd, correct, benchmark-checklist, blast-radius and typescript-best-practices. Owned by the W3-A writer; see test/skill-content.test.ts for the rules.",
+	"description": "Per-file content provenance for the W3-A skills: the 24 principle-* skills, correct, benchmark-checklist, blast-radius and typescript-best-practices. Owned by the W3-A writer; see test/skill-content.test.ts for the rules. tdd moved to skills/merged (merged.json).",
 	"sources": {
 		"mimir": {
 			"repository": "https://github.com/casualjim/pi-mimir",
@@ -427,20 +427,6 @@
 				}
 			],
 			"explanation": "Short principle names became full inventory names (edit class 2); no other change to the methodology text."
-		},
-		{
-			"path": "skills/pstack/tdd/SKILL.md",
-			"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
-			"status": "copied",
-			"sources": [
-				{
-					"source": "mimir",
-					"path": "tdd/SKILL.md",
-					"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
-					"use": "primary"
-				}
-			],
-			"explanation": "Byte-identical copy of the pinned Mimir source; it needs no Pi adaptation."
 		},
 		{
 			"path": "skills/pstack/typescript-best-practices/references/patterns.md",

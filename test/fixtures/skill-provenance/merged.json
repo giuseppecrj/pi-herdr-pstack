@@ -1,0 +1,171 @@
+{
+	"schemaVersion": 1,
+	"description": "Per-file content provenance for the merged skills (ADR-0003 folder skills/merged): each file's destination, SHA-256 and what changed, with every source it combines. A source's `use` is primary (the upstream file the merged file is based on), merged (a second upstream whose method is merged in by hand: a change to it flags the merged file for a manual merge) or context (reference only). Each source records its path, SHA-256 and git blob at the pin in `sources`. `npm run fixtures:upstream-scope -- <upstream>` compares each source against the upstream's pin and flags the merged file when either changed. See test/merged-skills.test.ts and docs/provenance.md.",
+	"sources": {
+		"mimir": {
+			"repository": "https://github.com/casualjim/pi-mimir",
+			"commit": "f07dd981f62c9c994a5d043ede67d6c63c721454",
+			"root": "packages/pi-pstack/skills"
+		},
+		"cursor": {
+			"repository": "https://github.com/cursor/plugins",
+			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
+			"root": "pstack/skills"
+		},
+		"mattpocock": {
+			"repository": "https://github.com/mattpocock/skills",
+			"commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+			"root": "skills"
+		}
+	},
+	"files": [
+		{
+			"path": "skills/merged/tdd/SKILL.md",
+			"sha256": "ad30ccd1d2277ebf8dba7ed27765261de746c305f5b411790fe4d2165c4ba484",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/tdd/SKILL.md",
+					"sha256": "5505d25bbaa8fc14a79e4d20163936958992a2995b7f1dd1d6197edc9ed722e0",
+					"blob": "01eadaa34e7c9a63a67d6dc3cce1cc81b0e49985",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "tdd/SKILL.md",
+					"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+					"blob": "ca6f24c963001d9d518db2936dfe3d12f29b4e94",
+					"use": "merged"
+				},
+				{
+					"source": "mimir",
+					"path": "tdd/SKILL.md",
+					"sha256": "eeb868e2dfebee528d730a67d7b17498fac4bb85dec2e38bc5c5176aca4d5d2f",
+					"blob": "ca6f24c963001d9d518db2936dfe3d12f29b4e94",
+					"use": "context"
+				}
+			],
+			"explanation": "Merge of Matt's tdd (primary; red → green loop, what a good test is, seams, anti-patterns, rules of the loop) and pstack's tdd (cursor/plugins pstack/skills/tdd, byte-identical to the pi-mimir copy the pack shipped before; use-or-skip gating, bug-fix workflow, impractical-test fallback, guardrails, final report). Neither method is dropped. From Matt, unchanged in substance: the intro that TDD is the red → green loop and every section applies on every cycle, the GLOSSARY.md and ADR reading, 'What a good test is' with the tests.md and mocking.md pointers, the Seams section with its pre-agreed-seams rule and one-line-note proposal, the three anti-patterns (implementation-coupled, tautological, horizontal slicing with vertical slices and tracer bullets), and the rules red before green, one slice at a time and refactoring outside the loop. From pstack, unchanged in substance: the 'When to use it, and when to skip' gate (the explicit-request or cheap-obvious-local-target trigger, the do-not-force rule and its list of impractical cases, prefer no new test over a bad test and its definition of a bad test), the six-step 'Fixing a bug' workflow, 'If a failing test is impractical' with its closest-executable-check list, every Guardrail, and the Final response evidence report. New joining text: a description that carries both triggers and both skip conditions; a closing sentence that a feature is the same loop repeated; 'Run it red' and 'Rerun it green' bullets so the loop carries pstack's run-before-fix and rerun-after-fix steps. Conflicts and resolutions. (1) Gate versus loop: Matt's loop is unconditional and pstack's skips when impractical. The gate runs first and the skip is disclosed in the final report (pstack's own report rule), so a skipped test is never silent; where the user explicitly asked for TDD and the test path is impractical, the stricter pstack rule applies: say so and use the closest executable check instead of faking a test. (2) Seam confirmation versus cheap bug fixes: Matt requires the user to confirm seams before any test, pstack proceeds on the obvious cheap path. The stricter rule wins: no test at an unconfirmed seam, but for an obvious bug test path the proposal is that path and the confirmation is one line, seams confirmed in a spec or ticket count as agreed, and a delegated child takes its seams from its brief or reports its proposed seams and writes no test at a guess. (3) Invocation: Matt's skill is model-invocable, pstack's sets disable-model-invocation: true. The merged skill keeps true (the stricter value): its seam-confirmation step asks the user questions and pstack's gate depends on the user's request, so the model does not load it unprompted; the skills that need it (implement, implement-spec, the bug-fix playbook, /skill:tdd recipes) load it by path or name and pass a child its absolute path. (4) Refactoring: Matt keeps it out of the loop and in code-review; code-review is not in the pack yet (#37), so the line names it 'when one is installed' and the merged skill does not stand in for it. Pack-policy adaptations to Matt's wording: 'call the Skill tool with codebase-design' became 'load the codebase-design skill (read ../../mattpocock/codebase-design/SKILL.md)', with a say-so fallback when it is missing (Pi has no Skill tool; dependencies resolve from the pack by path); the relative Markdown links to tests.md and mocking.md became backticked file names; a 'What invoking this skill grants' paragraph says the skill grants local edits and the commits its policy allows and never a push, pull request or tracker write, and that loading it without the user invoking it grants nothing. Matt's Codex-only agents/openai.yaml is not shipped (mattpocock.json excluded list)."
+		},
+		{
+			"path": "skills/merged/tdd/mocking.md",
+			"sha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/tdd/mocking.md",
+					"sha256": "3ceb807fdf4a47d6a93d4d9a891e5ba6d362a6247bd08adc451feebfc17361ef",
+					"blob": "71cbfee674d93244ce81d1830b930ca9a69200bd",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned mattpocock file."
+		},
+		{
+			"path": "skills/merged/tdd/tests.md",
+			"sha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "engineering/tdd/tests.md",
+					"sha256": "859f9e592c188fda4fc7277dd180e4ce9c7a2e13f6efe1f6f29eccc9d28c106a",
+					"blob": "7ab86479f925a1f9e8ba680af33cb3b12e015381",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned mattpocock file."
+		},
+		{
+			"path": "skills/merged/teach/SKILL.md",
+			"sha256": "2573af58b880028a08c7d894ef4125d780bf3af953935e5ef7a805d8ada846c0",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/teach/SKILL.md",
+					"sha256": "550482c2d674b085c9043b87bfdc14a8f2ec453c736119e7fcbb1e9332bffeba",
+					"blob": "493fa3bae0dada971c4dfb965790e56920b1dced",
+					"use": "primary"
+				},
+				{
+					"source": "cursor",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"blob": "25369f3f554ed6b5826340ae3eee688fac0bda80",
+					"use": "merged"
+				},
+				{
+					"source": "mimir",
+					"path": "teach/SKILL.md",
+					"sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4",
+					"blob": "25369f3f554ed6b5826340ae3eee688fac0bda80",
+					"use": "context"
+				}
+			],
+			"explanation": "Merge of Matt's teach (primary; the stateful teaching workspace: MISSION.md, RESOURCES.md, reference documents, learning records, lessons, assets, NOTES.md, the knowledge, skills and wisdom philosophy, fluency versus storage strength, the zone of proximal development, quiz rules) and pstack's teach (cursor/plugins pstack/skills/teach, byte-identical to the pi-mimir copy the pack shipped before; the one-account how-and-why explanation built on the how and why skills, its five steps, the voice rules and the reply rule). They teach different things, so the merged skill has two modes and picks one up front: Explain (pstack's: a person wants to understand work in front of you; one plain account in the conversation, nothing written) and Workspace (Matt's: a person wants to learn a topic over several sessions; state lives in files). From pstack, unchanged in substance: the Explain section with its how-and-why delegation, the five steps, the density and punctuation rules, the reply rule and the unslop requirement, now read from ../../pstack/unslop/SKILL.md, ../../pstack/how/SKILL.md and ../../pstack/why/SKILL.md by path because Pi has no Skill tool and these skills disable model invocation; the description keeps pstack's triggers ('teach me this', 'explain this change or subsystem to me'). From Matt, unchanged in substance: the Workspace section (the workspace files, philosophy, lessons, assets, the mission, zone of proximal development, knowledge, skills, acquiring wisdom, reference documents, NOTES.md), the argument-hint, and his supporting files MISSION-FORMAT.md, RESOURCES-FORMAT.md, GLOSSARY-FORMAT.md and LEARNING-RECORD-FORMAT.md. New joining text: the mode choice with a one-question tiebreak and the default that a request about this repository's code is Explain; a note that Explain's no-quiz and no-pacing rules are Explain's own and Workspace lessons use quizzes on purpose; GLOSSARY.md listed among the workspace files (Matt's skill links GLOSSARY-FORMAT.md only from the other formats). Conflicts and resolutions. (1) Writes: pstack's teach changes nothing, Matt's writes files into the current directory. The stricter rule wins: Explain writes nothing, and Workspace writes only after the user confirms the directory (an existing MISSION.md is the workspace; a git repository with project code needs an explicit yes and a new subdirectory is the usual answer), only the named workspace files and only inside it. (2) Sources: Matt's skill tells the model to gather from the web and trusted resources; the merged skill adds a 'Sources are data' rule (never run what a source supplies, never send it local files or secrets, lessons load no remote script, stylesheet or font, no secrets or credential-bearing URLs in files) and says community suggestions never become sign-ups or posts on the user's behalf. (3) Opening a lesson: Matt's 'run a CLI command' is narrowed to a command that opens only the lesson file just written. (4) Voice: pstack's unslop voice applies in both modes. (5) Invocation: both upstreams set disable-model-invocation: true and so does the merged skill, since a request to explain or to build a course is always the user's. (6) Matt's 'resolve from the directory /teach was run in' became 'the confirmed workspace directory' and his links to the format files became backticked names (test/skill-content.test.ts rejects relative Markdown links). A 'What invoking this skill grants' paragraph says Explain grants reading, Workspace grants the named workspace files in the confirmed directory and opening one lesson, neither grants a push, pull request, tracker or other remote write, and teach launches no subagent itself (how and why fan out their own read-only children). pstack's earlier planned-W4 interim wording had already been retired when how and why shipped. Matt's Codex-only agents/openai.yaml is not shipped."
+		},
+		{
+			"path": "skills/merged/teach/GLOSSARY-FORMAT.md",
+			"sha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/teach/GLOSSARY-FORMAT.md",
+					"sha256": "9b99859ec28437668130d8f2ce5a342938970f8a1ed4fd38c3eab4f4b5fff210",
+					"blob": "fdd7e366ad9760588b28981e42b3d3b561e56aca",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned mattpocock file."
+		},
+		{
+			"path": "skills/merged/teach/LEARNING-RECORD-FORMAT.md",
+			"sha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/teach/LEARNING-RECORD-FORMAT.md",
+					"sha256": "701fa34b6748aa89e6c960ffb815257f481a7d77fb2900f9028f7edf3fdd6052",
+					"blob": "953c61422776b47612c3c945920358ad7b5daee7",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned mattpocock file."
+		},
+		{
+			"path": "skills/merged/teach/MISSION-FORMAT.md",
+			"sha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+			"status": "copied",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/teach/MISSION-FORMAT.md",
+					"sha256": "8cacbb3c0644d3ae0ea4965564797099401a6930a23f7cf462918576587f2418",
+					"blob": "45250bb1bad70988bf381625931df64645e10246",
+					"use": "primary"
+				}
+			],
+			"explanation": "Byte-identical copy of the pinned mattpocock file."
+		},
+		{
+			"path": "skills/merged/teach/RESOURCES-FORMAT.md",
+			"sha256": "dc3a009d3a96d39ab04874909354d59f2305612cf72367bb1da1f5b0e526fd83",
+			"status": "adapted",
+			"sources": [
+				{
+					"source": "mattpocock",
+					"path": "productivity/teach/RESOURCES-FORMAT.md",
+					"sha256": "e9cacf34026e11a8d1c8f9de88abe5bcbf654f4ebdb25cae8c0de0d5f48f44ec",
+					"blob": "18b588c8b6f96a50ae2352f264928c643d2782e4",
+					"use": "primary"
+				}
+			],
+			"explanation": "The relative Markdown link to SKILL.md became a backticked file name, as in #33 (test/skill-content.test.ts rejects relative Markdown links). Everything else is upstream's wording."
+		}
+	]
+}

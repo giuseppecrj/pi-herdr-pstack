@@ -1,6 +1,12 @@
 {
 	"schemaVersion": 2,
 	"description": "One pin record per upstream (ADR-0003): the upstream's repository, commit and root, the skills folder it maps to, its scope, and the status of every file under the in-scope roots other than skills at that pin. Each upstream's skills are accounted for by docs/skill-inventory.json and test/fixtures/skill-provenance/. The cursor record is the cursor/plugins pstack scope (decision Q6). The mattpocock record has root \".\" (the repository root, so LICENSE can be watched) and one in-scope root, skills, which is accounted for entirely by docs/skill-inventory.json and test/fixtures/skill-provenance/mattpocock.json, so it has no files of its own. See test/upstream-scope.test.ts and docs/provenance.md.",
+	"merged": {
+		"folder": "skills/merged",
+		"upstreams": ["cursor", "mattpocock"],
+		"provenance": "test/fixtures/skill-provenance/merged.json",
+		"note": "Skills drawn from both upstreams live once here (ADR-0003). Each merged file records every source in the provenance fixture, and fixtures:upstream-scope flags the file when either upstream's source changes at a pin move."
+	},
 	"upstreams": [
 		{
 			"upstream": "cursor",

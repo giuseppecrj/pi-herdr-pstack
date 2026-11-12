@@ -94,6 +94,12 @@ const inventory = readJson<{
 	}>;
 }>("docs/skill-inventory.json");
 const pin = inventory.sources.mattpocock;
+// SAFETY: test-owned fixture; test/merged-skills.test.ts asserts its shape.
+const mergedMattpocock = readJson<{
+	files: Array<{ sources: Array<Use & { use: string }> }>;
+}>("test/fixtures/skill-provenance/merged.json").files.flatMap(({ sources }) =>
+	sources.filter(({ source }) => source === "mattpocock"),
+);
 
 /** Every file under `dir`, relative to PACK_ROOT. */
 const files = (dir: string): string[] =>
@@ -407,7 +413,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 			);
 		assert.ok(
 			flat("implement").includes(
-				"Load the `tdd` skill you found (this pack's is `../../pstack/tdd/SKILL.md`)",
+				"Load the `tdd` skill you found (this pack's is `../../merged/tdd/SKILL.md`)",
 			),
 		);
 	});
@@ -614,7 +620,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 	it("preflights the skills it loads and fails closed when one is missing (M1)", () => {
 		assert.ok(
 			flat("implement").includes(
-				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../pstack/tdd/SKILL.md`) and `code-review`. If `code-review` is missing, tell the user now that review is unavailable.",
+				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `code-review` is missing, tell the user now that review is unavailable.",
 			),
 		);
 		assert.ok(
@@ -630,7 +636,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 		);
 		assert.ok(
 			flat("implement-spec").includes(
-				"**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../pstack/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.",
+				"**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.",
 			),
 		);
 		const wayfinder = flat("wayfinder");
@@ -1077,8 +1083,10 @@ describe("mattpocock provenance", () => {
 	});
 
 	it("accounts for every other upstream file exactly once, with an owning issue or a reason", () => {
+		// Matt's tdd and teach files ship merged (skills/merged, issue #36).
 		const accounted = [
 			...provenance.files.flatMap(({ sources }) => sources),
+			...mergedMattpocock,
 			...provenance.planned,
 			...provenance.excluded,
 		].map(({ path }) => path);
@@ -1178,6 +1186,7 @@ describe("mattpocock provenance at the pin", () => {
 	const spec = (path: string) => `${pin.commit}:${posix.join(pin.root, path)}`;
 	const recorded = () => [
 		...provenance.files.flatMap(({ sources }) => sources),
+		...mergedMattpocock,
 		...provenance.planned,
 		...provenance.excluded,
 	];

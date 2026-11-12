@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const PACK_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const read = (path: string) => readFileSync(join(PACK_ROOT, path), "utf8");
+const exists = (path: string) => existsSync(join(PACK_ROOT, path));
 const readJson = <T>(path: string): T => JSON.parse(read(path)) as T;
 const sha256 = (value: string | Buffer) =>
 	createHash("sha256").update(value).digest("hex");
@@ -40,6 +41,13 @@ type UpstreamScope = {
 // SAFETY: test-owned fixture; every field is asserted below.
 const fixture = readJson<{
 	schemaVersion: number;
+	/** The folder for skills drawn from more than one upstream (ADR-0003). */
+	merged: {
+		folder: string;
+		upstreams: string[];
+		provenance: string;
+		note: string;
+	};
 	upstreams: UpstreamScope[];
 }>("test/fixtures/upstream-scope.json");
 const scopeOf = (upstream: string) => {
@@ -145,8 +153,11 @@ describe("upstream pins (ADR-0003)", () => {
 		);
 	});
 
-	it("maps every folder under skills/ to exactly one upstream pin", () => {
-		const folders = fixture.upstreams.map(({ folder }) => folder);
+	it("maps every folder under skills/ to exactly one upstream pin, or to the merged folder", () => {
+		const folders = [
+			...fixture.upstreams.map(({ folder }) => folder),
+			fixture.merged.folder,
+		];
 		assert.equal(new Set(folders).size, folders.length, "folder pinned twice");
 		for (const folder of folders)
 			assert.match(folder, /^skills\/[a-z0-9-]+$/, folder);
@@ -158,6 +169,15 @@ describe("upstream pins (ADR-0003)", () => {
 			folders.toSorted(),
 		);
 		assert.equal(scope.folder, "skills/pstack");
+		assert.equal(fixture.merged.folder, "skills/merged");
+		// The merged folder combines pinned upstreams and has no pin of its own.
+		for (const upstream of fixture.merged.upstreams)
+			assert.ok(scopeOf(upstream), upstream);
+		assert.ok(fixture.merged.note.length > 40);
+		assert.ok(
+			exists(fixture.merged.provenance),
+			`${fixture.merged.provenance} is the merged files' provenance`,
+		);
 	});
 });
 

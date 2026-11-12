@@ -19,6 +19,8 @@ const sha256 = (value: string | Buffer) =>
 const readJson = <T>(path: string): T => JSON.parse(read(path)) as T;
 /** The pstack upstream folder (ADR-0003); every inventory row is a skill in it. */
 const PSTACK = "skills/pstack";
+/** The folder for skills combining both upstreams (ADR-0003, issue #36). */
+const MERGED = "skills/merged";
 /** `skills/pstack/<name>` and `<name>` for a path inside a pstack skill. */
 const skillDirOf = (path: string) => path.split("/").slice(0, 3).join("/");
 const skillNameOf = (path: string) => path.split("/")[2];
@@ -45,6 +47,7 @@ const inventory = readJson<{
 }>("docs/skill-inventory.json");
 /** Rows of the pstack folder. */
 const pstackRows = inventory.skills.filter(({ folder }) => folder === PSTACK);
+const mergedRows = inventory.skills.filter(({ folder }) => folder === MERGED);
 /** A row's skill directory, from the folder its upstream maps to. */
 const rowDir = ({ folder, name }: InventoryRow) => `${folder}/${name}`;
 const rowOf = new Map(inventory.skills.map((row) => [row.name, row]));
@@ -91,7 +94,8 @@ type SourceUse = {
 	source: SourceKey;
 	path: string;
 	sha256: string;
-	use: "primary" | "context" | "derived";
+	/** merged: a second upstream combined into the file by hand (skills/merged). */
+	use: "primary" | "context" | "derived" | "merged";
 };
 type ProvenanceFile = {
 	path: string;
@@ -137,7 +141,18 @@ const mattpocockProvenance = readJson<{
 	planned: UnshippedSource[];
 	excluded: UnshippedSource[];
 }>(`test/fixtures/skill-provenance/${MATTPOCOCK_FIXTURE}.json`);
-const treeProvenance = [...provenanceFiles, ...mattpocockProvenance.files];
+/**
+ * The skills/merged files (ADR-0003, issue #36): each cites every upstream it
+ * combines. test/merged-skills.test.ts checks them against the pins.
+ */
+const mergedProvenance = readJson<{ files: ProvenanceFile[] }>(
+	"test/fixtures/skill-provenance/merged.json",
+);
+const treeProvenance = [
+	...provenanceFiles,
+	...mattpocockProvenance.files,
+	...mergedProvenance.files,
+];
 const provenanceOf = (owner: string) => {
 	const fixture = provenanceFixtures.find((entry) => entry.owner === owner);
 	assert.ok(fixture, owner);
@@ -558,12 +573,16 @@ describe("shipped skill tree", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
 		assert.equal(inventory.skills.length, 75);
-		assert.equal(pstackRows.length, 57);
+		assert.equal(pstackRows.length, 55);
+		assert.deepEqual(
+			mergedRows.map(({ name }) => name),
+			["tdd", "teach"],
+		);
 		const count = (prefix: string) =>
 			pstackRows.filter(({ wave }) => wave.startsWith(prefix)).length;
 		assert.deepEqual(
 			["W2", "W3-A", "W3-B", "W4-A", "W4-B"].map(count),
-			[2, 29, 9, 8, 9],
+			[2, 28, 8, 8, 9],
 		);
 		for (const row of pstackRows) {
 			assert.ok(["planned", "shipped"].includes(row.status), row.name);
@@ -580,10 +599,27 @@ describe("shipped skill tree", () => {
 		// Each row names the upstream folder that holds it, and the folder's own
 		// upstream (test/upstream-scope.test.ts) is the row's primary source,
 		// except in pstack where cursor's pin and its mimir port share the folder.
-		const folders = readJson<{
+		// A merged row's folder has no pin of its own: it cites the upstreams the
+		// fixture's `merged` record lists, and its primary source is one of them.
+		const scope = readJson<{
+			merged: { folder: string; upstreams: SourceKey[] };
 			upstreams: Array<{ upstream: string; folder: string }>;
-		}>("test/fixtures/upstream-scope.json").upstreams;
+		}>("test/fixtures/upstream-scope.json");
+		const folders = scope.upstreams;
+		assert.equal(scope.merged.folder, MERGED);
 		for (const row of inventory.skills) {
+			if (row.folder === MERGED) {
+				assert.ok(
+					scope.merged.upstreams.includes(row.primarySource),
+					`${row.name}: primary source ${row.primarySource}`,
+				);
+				for (const upstream of scope.merged.upstreams)
+					assert.ok(
+						row.sourceFiles[upstream]?.length,
+						`${row.name}: a merged skill cites ${upstream}`,
+					);
+				continue;
+			}
 			const upstreams = folders
 				.filter(({ folder }) => folder === row.folder)
 				.map(({ upstream }) => upstream);
@@ -595,7 +631,7 @@ describe("shipped skill tree", () => {
 		}
 		assert.deepEqual(
 			inventory.skills
-				.filter(({ folder }) => folder !== PSTACK)
+				.filter(({ folder }) => folder === "skills/mattpocock")
 				.map(({ name, folder }) => `${folder}/${name}`),
 			[
 				"codebase-design",
@@ -662,7 +698,7 @@ describe("shipped skill tree", () => {
 			);
 		assert.deepEqual(
 			readdirSync(join(PACK_ROOT, "skills")).toSorted(),
-			["mattpocock", "pstack"],
+			["mattpocock", "merged", "pstack"],
 			"every folder under skills/ holds inventory rows",
 		);
 		for (const path of W4P_FILES.filter((file) => file.endsWith(".md")))
@@ -1898,7 +1934,7 @@ describe("methodology provenance", () => {
 	it("splits provenance by owner and records the inventory's pinned sources", () => {
 		assert.deepEqual(
 			readdirSync(join(PACK_ROOT, "test/fixtures/skill-provenance")).toSorted(),
-			[...Object.keys(PROVENANCE_OWNERS), MATTPOCOCK_FIXTURE]
+			[...Object.keys(PROVENANCE_OWNERS), MATTPOCOCK_FIXTURE, "merged"]
 				.map((owner) => `${owner}.json`)
 				.toSorted(),
 		);
@@ -1982,6 +2018,9 @@ describe("methodology provenance", () => {
 			),
 			...mattpocockProvenance.planned,
 			...mattpocockProvenance.excluded,
+			...mergedProvenance.files.flatMap(({ sources }) =>
+				sources.filter((use) => use.use === "primary"),
+			),
 		);
 		const keys = accounted.map(sourceKey);
 		assert.equal(new Set(keys).size, keys.length, "source accounted twice");

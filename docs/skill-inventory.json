@@ -1069,31 +1069,45 @@
     },
     {
       "name": "tdd",
-      "folder": "skills/pstack",
-      "wave": "W3-A",
+      "folder": "skills/merged",
+      "wave": "V2",
       "status": "shipped",
-      "primarySource": "mimir",
+      "primarySource": "mattpocock",
       "sourceFiles": {
         "mimir": [
           "tdd/SKILL.md"
         ],
         "cursor": [
           "tdd/SKILL.md"
+        ],
+        "mattpocock": [
+          "engineering/tdd/SKILL.md",
+          "engineering/tdd/agents/openai.yaml",
+          "engineering/tdd/mocking.md",
+          "engineering/tdd/tests.md"
         ]
       }
     },
     {
       "name": "teach",
-      "folder": "skills/pstack",
-      "wave": "W3-B",
+      "folder": "skills/merged",
+      "wave": "V2",
       "status": "shipped",
-      "primarySource": "mimir",
+      "primarySource": "mattpocock",
       "sourceFiles": {
         "mimir": [
           "teach/SKILL.md"
         ],
         "cursor": [
           "teach/SKILL.md"
+        ],
+        "mattpocock": [
+          "productivity/teach/GLOSSARY-FORMAT.md",
+          "productivity/teach/LEARNING-RECORD-FORMAT.md",
+          "productivity/teach/MISSION-FORMAT.md",
+          "productivity/teach/RESOURCES-FORMAT.md",
+          "productivity/teach/SKILL.md",
+          "productivity/teach/agents/openai.yaml"
         ]
       }
     },
