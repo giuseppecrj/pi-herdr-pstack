@@ -187,8 +187,12 @@ init (`pi-extension/pstack/setup.ts`):
 - **Brief the skill.** The skill's steps need the authenticated models with
   the thinking levels each supports (Pi's `getSupportedThinkingLevels`), the
   saved `models.tasks` and `models.tasksThinking`, and the config revision.
-  The command reads them in code and sends only those, JSON-escaped, so the
-  model never reads other settings from the file.
+  The command reads them in code and sends only those. Every config value
+  and every model ID goes out as one line of JSON with controls, format
+  characters and line separators escaped, so neither can add brief lines.
+  A category value that is not a list of model strings, or a thinking value
+  that is not a known level, refuses setup naming only its key, so the model
+  never reads other settings or malformed values from the file.
 - **Refuse early.** It does not start when the loaded writer lacks
   `tasksThinking` (a host before 3.10.0, whose writer also has no approval
   dialog), without dialogs, in a subagent, while a turn runs, or with a config
@@ -223,9 +227,11 @@ finding remains a host/Pi observation for any role pack that declares skills.
 Real Herdr child launches, child-scope resource visibility, worktree lifecycle,
 the interactive TUI dialog itself, TUI `/new` and quit during a dialog, and
 live-model behavior. These belong to the parent-owned sequential integration
-suite or later approved evaluations. The RPC and SDK checks exercise the same
-confirm API with scripted responses; session replacement and shutdown during a
-pending approval use the SDK's `AgentSessionRuntime`, not the TUI.
+suite or later approved evaluations. This package's RPC and SDK checks answer
+the host's approval `select` dialog with scripted choices. The writer's own
+lifecycle (timeout, cancellation, shutdown or session replacement while an
+approval is pending, and concurrent calls) is covered by pi-herdr-agents' tests
+(`test/maestro/task-model-approval.test.ts` at `cbe538e`), not by this package.
 
 Whether a live model follows the Wave 4 fan-out, seat-picking, babysit,
 shipping, autopilot, orchestrate and `make-bot-ui` prose was not evaluated; no

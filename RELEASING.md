@@ -28,16 +28,12 @@ realtime voice does. Pi 1.2.0 fires `before_agent_start` for those runs with no
 `prompt`.
 
 The `0.3.0` release added `/setup-pstack init [preferences]` and routed
-`/subagents-init` drafts through pstack's exact-payload approval flow.
-
-The peer range stays `"pi-herdr-agents": ">=3.0.0"` so the report and explicit
-change flows keep working on published hosts 3.0.x. The new init flow needs
-pi-herdr-agents `>=3.1.0` (the host release that adds the task-model init
-events); on an older host `/setup-pstack init` reports it is unsupported and
-writes nothing. The feature was tested against host feature commit
-`1b6bacd0b5eecb6f83ffba1d5a5ee57a8b0fa944` (host release candidate 3.1.0,
-see [compatibility](docs/compatibility.md)); publish pi-herdr-agents `3.1.0`
-before or together with this release.
+`/subagents-init` drafts through pstack's exact-payload approval flow. The
+`/setup-pstack` rewrite (#35) removed both: pi-herdr-agents 3.10.0's writer
+now approves every write itself (ADR-0002), so pstack has no init flow,
+writer gate or apply tool, and the peer range is `>=3.10.0` (below). Loading
+pstack on an older host adds no protection: `/setup-pstack` refuses to start
+there, and the older host's own writer and `/subagents-init` are unchanged.
 
 Before 0.1.0 the package was private with a prerelease version. While a
 package is private or its version is not a strict `major.minor.patch`, the
