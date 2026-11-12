@@ -20,7 +20,17 @@ const GIT_OPTIONS = {
 	env: { ...process.env, GIT_NO_LAZY_FETCH: "1" },
 };
 
-const fixture = JSON.parse(readFileSync(join(PACK_ROOT, FIXTURE), "utf8"));
+/** Parses a repository JSON file, naming it when it is missing or invalid. */
+function readJson(path) {
+	try {
+		return JSON.parse(readFileSync(join(PACK_ROOT, path), "utf8"));
+	} catch (error) {
+		console.error(`cannot read ${path}: ${error.message}`);
+		process.exit(2);
+	}
+}
+
+const fixture = readJson(FIXTURE);
 const names = fixture.upstreams.map(({ upstream }) => upstream);
 const args = process.argv.slice(2);
 const [name, checkoutArg] =
@@ -41,9 +51,7 @@ const lines = (output) => output.toString("utf8").split("\n").filter(Boolean);
 
 const { commit, root } = scope;
 // SAFETY: docs/skill-inventory.json is checked by test/skill-content.test.ts.
-const inventory = JSON.parse(
-	readFileSync(join(PACK_ROOT, "docs/skill-inventory.json"), "utf8"),
-);
+const inventory = readJson("docs/skill-inventory.json");
 /** The in-scope root the inventory and skill-provenance fixtures account for. */
 const skillsRoot = posix.relative(root, inventory.sources[name].root);
 const relative = (path) => posix.relative(root, path);
@@ -101,7 +109,7 @@ for (const file of readdirSync(
 		files,
 		planned = [],
 		excluded = [],
-	} = JSON.parse(readFileSync(join(PACK_ROOT, FIXTURES, file), "utf8"));
+	} = readJson(posix.join(FIXTURES, file));
 	for (const use of [
 		...files.flatMap(({ sources }) => sources),
 		...planned,
@@ -124,10 +132,11 @@ const skillFiles = lines(
 	),
 ).map((path) => posix.relative(posix.join(root, skillsRoot), path));
 const skillsNew = skillFiles.filter((path) => !accounted.has(path));
-// Only provenance entries are hash-checked against the pin, so only they can
-// be reported as removed; a path outside the skills root (../agents/...) is
-// accounted for under files.
-const skillsRemoved = [...recorded.keys()].filter(
+// Removals come from the complete accounted set (inventory and provenance). A
+// path outside the skills root (../agents/...) is accounted for under files.
+// Only provenance entries carry a hash: an inventory-only path is checked for
+// presence here, not content.
+const skillsRemoved = [...accounted].filter(
 	(path) => !path.startsWith("../") && !skillFiles.includes(path),
 );
 const skillsChanged = skillFiles
@@ -164,11 +173,11 @@ const report = [
 	["watched file changed (hash not updated)", watchChanged],
 	[`new ${skillsRoot}/ file with no inventory or provenance entry`, skillsNew],
 	[
-		`${skillsRoot}/ file in the inventory or provenance but removed upstream`,
+		`${skillsRoot}/ file in the inventory or provenance but removed upstream (inventory-only paths are checked for presence, not content)`,
 		skillsRemoved,
 	],
 	[
-		`${skillsRoot}/ file changed since its recorded provenance hash`,
+		`${skillsRoot}/ file changed since its recorded provenance hash (inventory-only paths are not hashed)`,
 		skillsChanged,
 	],
 ];

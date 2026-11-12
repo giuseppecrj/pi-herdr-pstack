@@ -6,6 +6,7 @@ import {
 	mkdtempSync,
 	readFileSync,
 	rmSync,
+	symlinkSync,
 	writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -375,5 +376,100 @@ describe("move-skills.mjs", () => {
 		assert.equal(move(root, "elsewhere", "a").status, 2);
 		assert.notEqual(move(root, "skills/pstack", "missing").status, 0);
 		assert.equal(existsSync(join(root, "skills/a/SKILL.md")), true);
+	});
+});
+
+describe("upstream-scope.mjs skills-root drift", () => {
+	const SCRIPT = join(PACK_ROOT, "scripts/upstream-scope.mjs");
+	const git = (cwd: string, ...args: string[]) =>
+		spawnSync("git", args, { cwd, encoding: "utf8" });
+	/**
+	 * A scratch pack with its own copy of the script, one pin record `up` whose
+	 * inventory lists `listed` under its skills root, and a scratch upstream
+	 * checkout holding only `a/SKILL.md` there.
+	 */
+	const pack = (name: string, listed: string[]) => {
+		const root = join(scratch, name);
+		const upstream = join(root, "upstream");
+		const put = (path: string, text: string) => {
+			mkdirSync(join(path, ".."), { recursive: true });
+			writeFileSync(path, text);
+		};
+		put(join(upstream, "skills/a/SKILL.md"), "a\n");
+		assert.equal(git(upstream, "init", "-q").status, 0);
+		assert.equal(git(upstream, "add", "-A").status, 0);
+		assert.equal(
+			git(
+				upstream,
+				"-c",
+				"user.name=t",
+				"-c",
+				"user.email=t@example.com",
+				"commit",
+				"-qm",
+				"pin",
+			).status,
+			0,
+		);
+		const commit = git(upstream, "rev-parse", "HEAD").stdout.trim();
+		put(join(root, "scripts/upstream-scope.mjs"), readFileSync(SCRIPT, "utf8"));
+		put(
+			join(root, "test/fixtures/upstream-scope.json"),
+			JSON.stringify({
+				schemaVersion: 2,
+				upstreams: [
+					{
+						upstream: "up",
+						folder: "skills/up",
+						repository: "https://example.com/up",
+						commit,
+						root: ".",
+						inScope: ["skills"],
+						outOfScope: [],
+						unscoped: [],
+						files: [],
+					},
+				],
+			}),
+		);
+		put(
+			join(root, "docs/skill-inventory.json"),
+			JSON.stringify({
+				sources: { up: { root: "skills" } },
+				skills: [{ name: "a", sourceFiles: { up: listed } }],
+			}),
+		);
+		mkdirSync(join(root, "test/fixtures/skill-provenance"), {
+			recursive: true,
+		});
+		symlinkSync(join(PACK_ROOT, "node_modules"), join(root, "node_modules"));
+		return spawnSync(
+			process.execPath,
+			[join(root, "scripts/upstream-scope.mjs"), "up", upstream],
+			{ encoding: "utf8" },
+		);
+	};
+
+	it("passes when every inventory path is still upstream", () => {
+		const result = pack("drift-ok", ["a/SKILL.md"]);
+		assert.equal(result.status, 0, result.stdout + result.stderr);
+	});
+
+	it("fails on an inventory-only path removed upstream, and says it checks presence only", () => {
+		const result = pack("drift-removed", ["a/SKILL.md", "b/SKILL.md"]);
+		assert.equal(result.status, 1, result.stdout);
+		assert.match(
+			result.stdout,
+			/removed upstream \(inventory-only paths are checked for presence, not content\): *\n {2}b\/SKILL\.md\n/,
+		);
+	});
+
+	it("fails on a new upstream file the inventory does not list", () => {
+		const result = pack("drift-new", []);
+		assert.equal(result.status, 1, result.stdout);
+		assert.match(
+			result.stdout,
+			/no inventory or provenance entry: *\n {2}a\/SKILL\.md\n/,
+		);
 	});
 });
