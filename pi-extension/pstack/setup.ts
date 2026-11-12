@@ -26,6 +26,16 @@ export const TASK_CATEGORIES = [
 	"architecture",
 	"docs",
 ] as const;
+/** The thinking levels the host accepts for a category. */
+export const THINKING_LEVELS = [
+	"off",
+	"minimal",
+	"low",
+	"medium",
+	"high",
+	"xhigh",
+	"max",
+] as const;
 
 /**
  * One line of JSON for a value read from the config file, with controls,
@@ -50,11 +60,45 @@ function asObject(value: unknown): JsonObject | undefined {
 		: undefined;
 }
 
+const isModelList = (value: unknown) =>
+	value === undefined ||
+	(Array.isArray(value) && value.every((ref) => typeof ref === "string"));
+const isLevel = (value: unknown) =>
+	value === undefined ||
+	(THINKING_LEVELS as readonly unknown[]).includes(value);
+
+/**
+ * The keys the brief would show whose values are not a category's model list
+ * or thinking level. Categories outside TASK_CATEGORIES are never read.
+ */
+function malformedKeys(config: JsonObject): string[] {
+	const models = asObject(config.models);
+	const tasks = asObject(models?.tasks);
+	const thinking = asObject(models?.tasksThinking);
+	const containers: Array<[string, unknown, JsonObject | undefined]> = [
+		["models", config.models, models],
+		["models.tasks", models?.tasks, tasks],
+		["models.tasksThinking", models?.tasksThinking, thinking],
+	];
+	return [
+		...containers.flatMap(([key, value, object]) =>
+			value !== undefined && !object ? [key] : [],
+		),
+		...TASK_CATEGORIES.flatMap((category) => [
+			...(isModelList(tasks?.[category]) ? [] : [`models.tasks.${category}`]),
+			...(isLevel(thinking?.[category])
+				? []
+				: [`models.tasksThinking.${category}`]),
+		]),
+	];
+}
+
 /**
  * The saved task choices and the revision the writer's
  * `expectedConfigRevision` takes: `sha256:` over the exact file bytes, or
- * `missing`. Only `models.tasks` and `models.tasksThinking` leave this
- * function; other settings, which may hold secrets, never reach the model.
+ * `missing`. Only the six categories' model lists and thinking levels leave
+ * this function, and only in those shapes; anything else in the file, which
+ * may hold secrets, never reaches the model, not even in a refusal.
  */
 export function readTaskChoices():
 	| { path: string; revision: string; lines: string[] }
@@ -82,9 +126,15 @@ export function readTaskChoices():
 	const config = asObject(root);
 	if (config?.status === undefined)
 		return { path, problem: "is not a pi-herdr-agents config object" };
-	const models = asObject(config.models);
-	const tasks = asObject(models?.tasks);
-	const thinking = asObject(models?.tasksThinking);
+	const malformed = malformedKeys(config);
+	// Name the keys only: a malformed value may be a secret.
+	if (malformed.length > 0)
+		return {
+			path,
+			problem: `has malformed ${malformed.join(", ")} (each category takes a list of model strings and one of the thinking levels ${THINKING_LEVELS.join(", ")})`,
+		};
+	const tasks = asObject(asObject(config.models)?.tasks);
+	const thinking = asObject(asObject(config.models)?.tasksThinking);
 	return {
 		path,
 		revision: `sha256:${createHash("sha256").update(bytes).digest("hex")}`,
@@ -130,7 +180,7 @@ export function setupBrief(
 		.getAvailable()
 		.map(
 			(model) =>
-				`- ${model.provider}/${model.id}: ${getSupportedThinkingLevels(model).join(", ")}`,
+				`- ${json(`${model.provider}/${model.id}`)}: ${getSupportedThinkingLevels(model).join(", ")}`,
 		);
 	const brief = [
 		BRIEF_HEADING,
