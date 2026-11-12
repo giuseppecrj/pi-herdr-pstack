@@ -4,7 +4,7 @@ The shared protocol for any skill or playbook step that launches more than one c
 
 Pstack uses only the public pi-herdr-agents surface:
 
-- **Launch.** A bare `subagent` call with `name`, `task`, `systemPrompt`, `model`, `thinking`, `tools`, `cwd`, `fork: false` and an optional `worktree`. Never `agent`, and never `persistent`.
+- **Launch.** A bare `subagent` call with `name`, `task`, `systemPrompt`, `model`, `thinking` (omitted on a `task:<category>` with configured thinking, per `references/delegation.md`), `tools`, `cwd`, `fork: false` and an optional `worktree`. Never `agent`, and never `persistent`.
 - **Results.** Delivered automatically as a new turn, including the child's `Session:` path.
 - **Liveness.** Host stall and no-progress advisory wakes.
 - **Control.** `subagent_cancel` and `subagent_interrupt` from the parent, and `caller_ping` from a child.
@@ -29,10 +29,10 @@ There is no scheduler, timer, durable ledger, remote worker, parallel task array
 
 ## 3. Models
 
-- **Ordinary seats** use a task category as the entire `model` value: explorers and investigators `task:recon`, reviewers and judges `task:review`, design runners and judgment or prose synthesis `task:architecture`, code candidates `task:coding`, verifiers `task:qa`. Judgment or prose synthesis is the how explainer, the why synthesizer, and reflect's judgment, divergent and synthesizer lenses, each with `thinking` at `high` or above. `references/delegation.md` says why that work uses `task:architecture`, and its preflight runs before any recon or review seats in a flow that will need an architecture seat.
+- **Ordinary seats** use a task category as the entire `model` value: explorers and investigators `task:recon`, reviewers and judges `task:review`, design runners and judgment or prose synthesis `task:architecture`, code candidates `task:coding`, verifiers `task:qa`. Judgment or prose synthesis is the how explainer, the why synthesizer, and reflect's judgment, divergent and synthesizer lenses, each with `thinking` at `high` or above when `task:architecture` has no configured thinking. `references/delegation.md` says why that work uses `task:architecture`, and its preflight runs before any recon or review seats in a flow that will need an architecture seat.
 - **Diversity seats** are seats whose value is that they think differently: arena and architect runners, interrogate adversaries, a cross-judge, the show-me-your-work trail reviewer, and reflect's tooling lens. Each gets an exact authenticated `provider/model-id` from the live catalog in your system prompt, one model family per seat, and none from the author's family when the seat judges the author. The tooling lens's family differs from the first model listed for architecture under Task-category shortlists. If that launch falls back to a later candidate whose family matches the tooling lens, relabel the lens as context-isolated.
 - **Too few families.** With fewer authenticated families than seats, run fewer seats, or run same-family seats and say they are context-isolated, not cross-family. A gate that requires cross-family judgment then reports itself incomplete.
-- Never inherit the parent's model implicitly, never guess a family from a model-name prefix, and never cite a per-skill "configured" model. `/setup-pstack` writes only the task categories. Model defaults change through `/setup-pstack`, not through a pull request.
+- Never inherit the parent's model implicitly, never guess a family from a model-name prefix, and never cite a per-skill "configured" model. `/setup-pstack` writes only the task categories and their thinking. Model defaults change through `/setup-pstack`, not through a pull request.
 
 ## 4. Dropouts and stalls
 
@@ -72,7 +72,6 @@ A template seat: a filled-in explorer brief with the delegation Investigator pro
   "task": "<the filled-in explorer template>. Read-only. You are a leaf: launch nothing.",
   "systemPrompt": "<the Investigator prompt in references/delegation.md, verbatim>",
   "model": "task:recon",
-  "thinking": "low",
   "tools": "read, bash",
   "fork": false
 }
@@ -92,7 +91,7 @@ A diversity seat: an exact model from a family no other seat uses.
 }
 ```
 
-A one-shot watcher child:
+A one-shot watcher child. It keeps `thinking: minimal` as a deliberate override of any configured `recon` thinking, because a bounded wait needs no reasoning:
 
 ```json subagent
 {

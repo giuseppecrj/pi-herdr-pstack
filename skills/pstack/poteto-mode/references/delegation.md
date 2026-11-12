@@ -31,15 +31,16 @@ Every child gets a self-contained brief. A standalone child cannot see your conv
 
 ## Model and thinking
 
-- Set `model` and `thinking` explicitly for every child. Omitting them inherits the parent runtime, which is a discouraged fallback.
-- Ordinary work uses a task category as the entire `model` value: `task:coding`, `task:review`, `task:recon`, `task:qa`, `task:architecture` or `task:docs`. A category expands to the shared pi-herdr-agents preferences that `/setup-pstack` reports. pi-herdr-agents describes the categories as kinds of work: `recon` is reconnaissance, `review` is code review, and `architecture` is planning and diagnosis.
-- Judgment and prose synthesis uses `task:architecture` with `thinking` at `high` or above. That covers the how explainer, the why synthesizer, and reflect's judgment, divergent and synthesizer lenses. Explorers and investigators stay on `task:recon`. The host describes architecture as planning and diagnosis, and its tier guidance puts architecture work in the frontier tier. Categories are kinds of work, not complexity tiers, so the saved shortlist is whatever `/setup-pstack` stored.
+- Set `model` explicitly for every child, and set `thinking` unless a configured category supplies it (below). Omitting them otherwise inherits the parent runtime, which is a discouraged fallback.
+- Ordinary work uses a task category as the entire `model` value: `task:coding`, `task:review`, `task:recon`, `task:qa`, `task:architecture` or `task:docs`. A category expands to the shared pi-herdr-agents preferences that `/setup-pstack` writes: ordered models and a thinking level. pi-herdr-agents describes the categories as kinds of work: `recon` is reconnaissance, `review` is code review, and `architecture` is planning and diagnosis.
+- Omit `thinking` on a `task:<category>` call when that category has configured thinking: its line under `Task-category shortlists` in the host prompt ends with `thinking: <level> (clamped per candidate)`. The host then applies the user's budget, clamped to each candidate. When the line ends with `thinking: role, then parent`, set `thinking` by difficulty as below. An explicit `thinking` overrides the configured level, so pass one on a configured category only for a deliberate one-off, and say why. A thinking level a skill names for a `task:<category>` seat applies only when that category has no configured thinking.
+- Judgment and prose synthesis uses `task:architecture`, with `thinking` at `high` or above when the category has no configured thinking. That covers the how explainer, the why synthesizer, and reflect's judgment, divergent and synthesizer lenses. Explorers and investigators stay on `task:recon`. The host describes architecture as planning and diagnosis, and its tier guidance puts architecture work in the frontier tier. Categories are kinds of work, not complexity tiers, so the saved shortlist is whatever `/setup-pstack` stored.
 - Before launching any recon or review seats for a flow that will need an architecture seat, check that the host prompt has a line starting `Task-category shortlists` with a `- architecture:` bullet among the bullets under it. That list holds only configured, authenticated categories. The word architecture anywhere else in the prompt, such as the tier sentence the host prints when no category is configured, is not the shortlist. If the bullet is missing, tell the user and stop or ask before spending the recon run. An unset or unauthenticated category throws when the architecture seat is spawned, after those seats have already returned.
-- The hardest implementation changes (cross-cutting design, gnarly concurrency, subtle algorithms) go to `task:architecture`, or to the strongest exact authenticated `provider/model-id` from the live catalog, with `thinking: xhigh`. Ordinary implementation stays on `task:coding`.
+- The hardest implementation changes (cross-cutting design, gnarly concurrency, subtle algorithms) go to `task:architecture`, or to the strongest exact authenticated `provider/model-id` from the live catalog with `thinking: xhigh`. Ordinary implementation stays on `task:coding`.
 - Independence-sensitive review uses an exact authenticated `provider/model-id` from the live catalog that pi-herdr-agents puts in your system prompt. Pick one from a different model family than the author. A task category alone does not prove independence. Reflect's tooling lens is a diversity seat: its family differs from the first model listed for architecture under Task-category shortlists, per `references/fan-out.md` section 3. If that launch falls back to a later candidate whose family matches the tooling lens, relabel the lens as context-isolated.
 - If no other authenticated family exists, an ordinary review may use a same-family model in a fresh standalone session. Label it context-isolated, not cross-family. The same label applies when reflect's tooling lens has no other family. Cross-family verification has no such fallback, so report that gate as incomplete.
 - Never write a model alias, a fuzzy name or a remembered model ID. Choose from the live catalog at launch time.
-- Thinking follows difficulty. Use `minimal` or `low` for mechanical work, `medium` for ordinary implementation or review, and `high` or above for architecture, security and hard diagnosis. The hardest changes use `xhigh` when the chosen model supports it.
+- Where you set thinking, it follows difficulty. Use `minimal` or `low` for mechanical work, `medium` for ordinary implementation or review, and `high` or above for architecture, security and hard diagnosis. The hardest changes use `xhigh` when the chosen model supports it.
 
 ## Reference prompts for bare delegates
 
@@ -71,7 +72,7 @@ You are a verifier. Reproduce each claimed result named in your task on the real
 
 ## Examples
 
-Each block is one `subagent` call using the tool's real parameters. Text in angle brackets is a placeholder you replace before launch. `<provider>/<model-id>` stands for an exact ID you pick from the live catalog. It is not a runnable value.
+Each block is one `subagent` call using the tool's real parameters. Text in angle brackets is a placeholder you replace before launch. `<provider>/<model-id>` stands for an exact ID you pick from the live catalog. It is not a runnable value. The `task:<category>` examples assume the category has configured thinking, so they omit `thinking`. When its shortlist line ends with `thinking: role, then parent`, add `thinking` by difficulty: `medium` for these implementers, `low` for the investigator.
 
 A bare implementer, standalone in the current checkout:
 
@@ -81,7 +82,6 @@ A bare implementer, standalone in the current checkout:
   "task": "Bug fix playbook, implementation step. <symptom and repro command>. Allowed files: src/auth/**, test/auth/**. Verify with `npm test -- test/auth` and paste the failing-then-passing output. Commit on the current branch; do not push, open a PR or launch subagents. Report the commit SHA.",
   "systemPrompt": "<the Implementer prompt above, verbatim>",
   "model": "task:coding",
-  "thinking": "medium",
   "fork": false
 }
 ```
@@ -94,7 +94,6 @@ One of two parallel bare implementers, each in its own managed worktree based on
   "task": "Feature playbook, API slice only. <outcome>. Allowed files: src/api/login/**, test/api/login/**. Verify with `npm test -- test/api/login`. Commit in your worktree; do not push, merge, open a PR or remove the worktree. Report the base and result SHAs.",
   "systemPrompt": "<the Implementer prompt above, verbatim>",
   "model": "task:coding",
-  "thinking": "medium",
   "fork": false,
   "worktree": { "branch": "login-api" }
 }
@@ -108,7 +107,6 @@ A bare investigator:
   "task": "Where is the session token refreshed, and what calls it? Cite file:line. Read-only.",
   "systemPrompt": "<the Investigator prompt above, verbatim>",
   "model": "task:recon",
-  "thinking": "low",
   "tools": "read, bash",
   "fork": false
 }

@@ -1181,7 +1181,10 @@ describe("delegation contract", () => {
 					),
 				`${path}: ${String(call.model)}`,
 			);
-			assert.ok(THINKING.includes(String(call.thinking)), path);
+			// A task:<category> call may omit thinking so the category's
+			// configured thinking applies; an exact model always sets it.
+			if ("thinking" in call || call.model === MODEL_PLACEHOLDER)
+				assert.ok(THINKING.includes(String(call.thinking)), path);
 			assert.equal(typeof call.fork, "boolean", path);
 			for (const key of ["tools", "cwd"] as const)
 				if (key in call) assert.equal(typeof call[key], "string", path);
@@ -1221,6 +1224,42 @@ describe("delegation contract", () => {
 				delegation,
 				new RegExp(`### ${prompt}\\n\\n\`\`\`text\\nYou are `),
 			);
+	});
+
+	it("leaves thinking out of poteto-mode's task:<category> examples, so the configured category thinking applies", () => {
+		const delegation = read(DELEGATION);
+		const rule = delegation
+			.split("\n")
+			.find((line) =>
+				line.startsWith("- Omit `thinking` on a `task:<category>` call"),
+			);
+		assert.ok(rule, "delegation.md states the thinking rule");
+		for (const phrase of [
+			"its line under `Task-category shortlists` in the host prompt ends with `thinking: <level> (clamped per candidate)`",
+			"When the line ends with `thinking: role, then parent`, set `thinking` by difficulty",
+			"An explicit `thinking` overrides the configured level",
+		])
+			assert.ok(rule.includes(phrase), phrase);
+		const poteto = examples.filter(({ path }) =>
+			[DELEGATION, FAN_OUT].includes(path),
+		);
+		assert.ok(poteto.length >= 6);
+		for (const { path, call } of poteto) {
+			const label = `${path}: ${String(call.name)}`;
+			if (call.model === MODEL_PLACEHOLDER)
+				assert.ok("thinking" in call, `${label}: an exact model sets thinking`);
+			// The watcher is the one deliberate, explained override.
+			else if (call.name === "pr-123-watch")
+				assert.match(
+					read(FAN_OUT),
+					/keeps `thinking: minimal` as a deliberate override/,
+				);
+			else assert.equal("thinking" in call, false, label);
+		}
+		assert.match(
+			read("skills/pstack/poteto-mode/SKILL.md"),
+			/except on a `task:<category>` whose category has configured thinking, where omitting it applies the user's `\/setup-pstack` budget/,
+		);
 	});
 
 	it("launches why investigators without a tools list, so MCP servers stay visible", {
