@@ -1526,10 +1526,7 @@ const HITL_RULES: Rule[] = [
 	],
 	// Upstream's helpers and markers, unchanged.
 	["the step helper", lit("step() {")],
-	[
-		"the capture helper",
-		lit(`printf -v "$_hitl_var" '%s' "$_hitl_answer"`),
-	],
+	["the capture helper", lit(`printf -v "$_hitl_var" '%s' "$_hitl_answer"`)],
 	["the edit markers", /# --- edit below -+ .* # --- edit above -+/],
 	["the captured block", lit("printf '\\n--- Captured ---\\n'")],
 	// Pack policy (#37 review): the block prints every capture, whatever its name.
