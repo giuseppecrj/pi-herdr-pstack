@@ -16,7 +16,7 @@ If the user passes a ticket reference, fetch it from the issue tracker and state
 
 Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `code-review` is missing, tell the user now that review is unavailable.
 
-Then record where the work starts, for the review: the commit you start from (`git rev-parse HEAD`) and any files already uncommitted (`git status --short`). If any tracked file is already changed, record a baseline with `git stash create`: it saves those changes as an unreferenced commit and leaves the working tree and the index untouched. A file that was already untracked has no baseline, so its pre-existing content can't be told apart from yours: stop and ask the user before modifying one. Never leave a file you changed out of the review.
+Then record where the work starts, for the review: the commit you start from (`git rev-parse HEAD`) and any files already uncommitted (`git status --short`). If any tracked file is already changed, record a baseline with `git stash create`: it writes those changes as unreferenced objects, staged and unstaged, and leaves the working tree, the index and refs unchanged. A file that was already untracked has no baseline, so its pre-existing content can't be told apart from yours: stop and ask the user before modifying one. Never leave a file you changed out of the review.
 
 Load the `tdd` skill you found (this pack's is `../../merged/tdd/SKILL.md`) and follow it where possible, at pre-agreed seams.
 

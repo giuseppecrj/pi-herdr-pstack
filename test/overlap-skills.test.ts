@@ -141,7 +141,7 @@ const CODE_REVIEW_RULES: Rule[] = [
 	],
 	[
 		"reading only regular text files, bounding large ones",
-		/\*\*Read only regular, in-scope text files\.\*\* Skip binaries, and for a large file \(over 2,000 lines\) read only the parts the review needs and say so\./,
+		/\*\*Read only regular, in-scope text files\.\*\* Skip binaries\. Check size before reading \(`wc -lc <path>`\): a file over 2,000 lines or 256 KB is large, and so is a long single-line file such as minified code or a JSON blob\. Read only the head of a large file and the parts the review needs, and report it as partly covered\./,
 	],
 	[
 		"handing reviewers only the allowed untracked files",
@@ -160,12 +160,24 @@ const CODE_REVIEW_RULES: Rule[] = [
 		/Then list the files no reviewer read, and why \(likely credentials, outside symlinks, binaries, or parts of large files\)\./,
 	],
 	[
-		"pre-existing changes reviewed as the delta from a baseline",
-		/\*\*Pre-existing changes\.\*\* When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create` \(it records those changes without touching the working tree or the index\)\. Review each such file as the change from that baseline to the working tree, `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, instead of its layers above\./,
+		"a stash-create baseline that leaves the tree, index and refs unchanged",
+		/\*\*Pre-existing changes\.\*\* When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create`, which writes those changes as unreferenced objects and leaves the working tree, the index and refs unchanged\. Its second parent, `<baseline>\^2`, holds the index as it was\./,
+	],
+	[
+		"the staged layer against the baseline's index",
+		/\*\*Staged, the commit candidate\*\*: `git diff --no-ext-diff --no-textconv --cached <baseline>\^2 -- <path>`, the index then against the index now\./,
+	],
+	[
+		"the working-tree layer against the baseline",
+		/\*\*Working tree\*\*: `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, the working tree then against the working tree now\./,
+	],
+	[
+		"a staged-then-reverted change showing in the staged layer",
+		/a change staged and then reverted in the working tree shows only in the staged layer\./,
 	],
 	[
 		"never dropping a file the task changed",
-		/An empty baseline delta means the task never touched the file, so it is out of scope\. A file the task changed is never dropped from the review\./,
+		/When both layers are empty, the task never touched the file, so it is out of scope\. A file the task changed is never dropped from the review\./,
 	],
 	[
 		"failing early on a bad ref or an empty target, every layer included",
@@ -335,6 +347,7 @@ describe("code-review's documented git commands on a disposable repo", () => {
 
 	it("never fires a configured diff driver or textconv, which plain git diff does", () => {
 		writeFileSync(join(repo, "f.txt"), "one\ntwo\n");
+		const baseline = git("stash", "create").trim();
 		// Control: the helper is live, so a missing flag would be caught.
 		git("diff", "HEAD");
 		assert.ok(existsSync(marker), "the probe helper never ran");
@@ -343,7 +356,7 @@ describe("code-review's documented git commands on a disposable repo", () => {
 			"fixed-point": fixed,
 			head: "HEAD",
 			base: fixed,
-			baseline: fixed,
+			baseline,
 			path: "f.txt",
 		};
 		for (const command of documented.filter(
@@ -374,23 +387,56 @@ describe("code-review's documented git commands on a disposable repo", () => {
 		git("reset", "-q");
 	});
 
+	/** A documented baseline layer, filled for `f.txt`. */
+	const baselineLayer = (
+		label: "staged" | "working tree",
+		baseline: string,
+	) => {
+		const command = documented.find(
+			(entry) =>
+				entry.includes("<baseline>") &&
+				entry.includes("--cached") === (label === "staged"),
+		);
+		assert.ok(command, label);
+		return git(...argv(command, { baseline, path: "f.txt" }));
+	};
+
 	it("reviews a task's edit to an already-dirty file as the delta from a stash-create baseline", () => {
 		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\n");
 		const before = git("status", "--porcelain");
+		const refs = git("for-each-ref");
 		const baseline = git("stash", "create").trim();
 		assert.match(baseline, /^[0-9a-f]{40}$/);
-		// git stash create leaves the working tree and the index as they were.
+		// git stash create leaves the working tree, the index and refs as they were.
 		assert.equal(git("status", "--porcelain"), before);
+		assert.equal(git("for-each-ref"), refs);
 		assert.equal(git("stash", "list"), "");
 		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\nTASK_EDIT\n");
-		const command = documented.find((entry) => entry.includes("<baseline>"));
-		assert.ok(command);
-		const delta = git(...argv(command, { baseline, path: "f.txt" }));
+		const delta = baselineLayer("working tree", baseline);
 		assert.match(delta, /\+TASK_EDIT/);
 		assert.doesNotMatch(delta, /\+USER_EDIT/);
-		// An untouched pre-existing change has an empty delta: out of scope.
+		// An untouched pre-existing change has empty layers: out of scope.
 		writeFileSync(join(repo, "f.txt"), "one\nUSER_EDIT\n");
-		assert.equal(git(...argv(command, { baseline, path: "f.txt" })), "");
+		assert.equal(baselineLayer("working tree", baseline), "");
+		assert.equal(baselineLayer("staged", baseline), "");
+		git("checkout", "-q", "--", "f.txt");
+	});
+
+	it("catches a bug the task staged and then reverted in an already-dirty file", () => {
+		// The user had already staged an edit to f.txt before the task began.
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_STAGED\n");
+		git("add", "f.txt");
+		const baseline = git("stash", "create").trim();
+		// The task stages a bug, then reverts it in the working tree only.
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_STAGED\nTASK_BUG\n");
+		git("add", "f.txt");
+		writeFileSync(join(repo, "f.txt"), "one\nUSER_STAGED\n");
+		// The working tree matches the baseline, so a net baseline diff is empty.
+		assert.equal(baselineLayer("working tree", baseline), "");
+		const staged = baselineLayer("staged", baseline);
+		assert.match(staged, /\+TASK_BUG/);
+		assert.doesNotMatch(staged, /\+USER_STAGED/);
+		git("reset", "-q");
 		git("checkout", "-q", "--", "f.txt");
 	});
 
@@ -455,7 +501,7 @@ describe("implement, implement-spec and tdd find code-review in the pack", () =>
 				],
 				[
 					"a baseline for already-changed tracked files, without touching the tree",
-					/If any tracked file is already changed, record a baseline with `git stash create`: it saves those changes as an unreferenced commit and leaves the working tree and the index untouched\./,
+					/If any tracked file is already changed, record a baseline with `git stash create`: it writes those changes as unreferenced objects, staged and unstaged, and leaves the working tree, the index and refs unchanged\./,
 				],
 				[
 					"asking before modifying an already-untracked file",

@@ -370,11 +370,14 @@ Issue #37 decides each pair of overlapping skills. Batch A implements decisions
   staged change the working tree reverts. Paths are listed before any content
   is read: likely credential files are never read or handed on (and are
   excluded from every diff by pathspec), symlinks that resolve outside the
-  repository are not followed, binaries are skipped and large files bounded,
+  repository are not followed, binaries are skipped and large files (over 2,000 lines or 256 KB, or one long line) are read only in part and reported as partly covered,
   and the report names what was omitted. `implement` records its starting
   commit and, when tracked files are already dirty, a `git stash create`
-  baseline (the tree and index stay untouched); code-review reviews those files
-  as the delta from that baseline, so a file the task changed is never dropped,
+  baseline (it writes unreferenced objects and leaves the working tree, the
+  index and refs unchanged); code-review reviews those files in two layers
+  against it, staged (`--cached <baseline>^2`) and working tree, so a change
+  staged and then reverted is still seen and a file the task changed is never
+  dropped,
   and `implement` asks before modifying a file that was already untracked. It
   then reviews its uncommitted work before it commits; `implement-spec` records
   the commit its integration branch starts from and reviews that branch as
@@ -417,7 +420,7 @@ counts each Matt file once, by the file it is the primary source of.
 to fail when its wording is removed), a disposable-repo run of every git
 command code-review and `implement` document (no configured helper fires, the
 staged layer shows a change the working tree reverts, the baseline delta keeps
-a task's edit to an already-dirty file and drops the untouched user edit, an
+a task's edit to an already-dirty file and drops the untouched user edit, and a bug staged then reverted in such a file shows in the staged baseline layer, an
 excluded credential path stays out of a diff), the checks that the dependents find these
 skills in the pack, the flow map's dependency closure and the real-Pi loader
 test. They are content and loader tests, not evidence that a live model follows

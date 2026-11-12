@@ -38,11 +38,15 @@ Then pick the **target**, the work under review:
 
 - **Never read or hand on likely credential files**, tracked or untracked: `.env` and `.env.*`, `*.pem`, `*.key`, `id_*`, `credentials*`, and names containing `secret` or `token`. Keep them out of every diff the reviewers run with an exclude pathspec (`-- . ':(exclude)<path>'`) and name each one as skipped.
 - **Never follow a symlink that resolves outside the repository**; review a symlink as its target path (`readlink <path>`), not as the contents it points at.
-- **Read only regular, in-scope text files.** Skip binaries, and for a large file (over 2,000 lines) read only the parts the review needs and say so.
+- **Read only regular, in-scope text files.** Skip binaries. Check size before reading (`wc -lc <path>`): a file over 2,000 lines or 256 KB is large, and so is a long single-line file such as minified code or a JSON blob. Read only the head of a large file and the parts the review needs, and report it as partly covered.
 - Hand the reviewers the list of untracked files they may read in full as new code, and nothing else.
 - **Tell the user which files were omitted and why**, in the final report.
 
-**Pre-existing changes.** When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create` (it records those changes without touching the working tree or the index). Review each such file as the change from that baseline to the working tree, `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, instead of its layers above. An empty baseline delta means the task never touched the file, so it is out of scope. A file the task changed is never dropped from the review.
+**Pre-existing changes.** When the caller names files that were already changed before its work began, it also names a baseline: a commit from `git stash create`, which writes those changes as unreferenced objects and leaves the working tree, the index and refs unchanged. Its second parent, `<baseline>^2`, holds the index as it was. Review each such file in two labelled layers against the baseline, instead of its layers above:
+- **Staged, the commit candidate**: `git diff --no-ext-diff --no-textconv --cached <baseline>^2 -- <path>`, the index then against the index now.
+- **Working tree**: `git diff --no-ext-diff --no-textconv <baseline> -- <path>`, the working tree then against the working tree now.
+
+Each layer leaves out what the user had already staged or changed. Two layers are needed for the same reason as above: a change staged and then reverted in the working tree shows only in the staged layer. When both layers are empty, the task never touched the file, so it is out of scope. A file the task changed is never dropped from the review.
 
 Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`, and `<head>` too when one is named) and the target is non-empty: for committed work a non-empty diff; for uncommitted work, any non-empty layer or a non-empty untracked list. A bad ref or empty target should fail here, not inside two parallel subagents.
 
