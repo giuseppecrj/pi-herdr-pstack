@@ -248,10 +248,23 @@ byte for byte. Each file's provenance entry says what changed. In summary:
   write", and `pr` also carries #33's tracker-content trust paragraph.
 - `wizard`: the agent never runs the script, in whole or in part, nor the
   commands its stages would run; it writes no secret value into the script and
-  reads `.env` files for key names only.
+  never reads a live `.env` or `.env.*` file, taking variable names only from
+  templates (`.env.example` and the like), config schemas, workflows and code,
+  and asking the user for missing names, never values. After review, the
+  template library binds GitHub writes to one repository: scoping confirms the
+  `<owner>/<repo>`, the author sets `REPO` to it, `set_secret` and `set_var`
+  pass `--repo "$REPO"` and skip when it is unset, and the intro shows it and
+  stops unless the human confirms, so `GH_REPO`, the directory or a fork's
+  default cannot redirect a secret. This is the one change to upstream's
+  library.
 - `handoff`: beyond upstream's redaction sentence, the document never holds a
   secret, even in part; it names where a secret lives, and the finished
   document is checked before its path is reported.
+- `research`'s child-carried rule also keeps secrets and credential-bearing
+  URLs (signed URLs, tokens in query strings, API responses with keys) out of
+  the notes; credentials are named by variable or location.
+  `improve-codebase-architecture`'s report keeps Mermaid's `securityLevel` at
+  `"strict"` (upstream: `"loose"`) and HTML-escapes repository-derived text.
 - `pr`'s Summary section comes through Matt's skill from HumanLayer's
   `show-me` (MIT); `THIRD_PARTY_NOTICES.md` reproduces that notice.
 

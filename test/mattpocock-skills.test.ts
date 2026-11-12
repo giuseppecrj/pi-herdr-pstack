@@ -927,12 +927,92 @@ describe("remaining gap skills content contract (not behavior proof)", () => {
 		const wizard = flat("wizard");
 		for (const phrase of [
 			"**The human runs the wizard, never you.** Never run the script, in whole or in part: don't execute it, `source` it, call its functions, or run the commands its stages would run (`gh secret set`, `gh variable set`, writes to `.env`, migrations, cutovers). It opens browsers, blocks on human input, and writes values and secrets that only the human sets. `bash -n` and `shellcheck` only parse it.",
-			"Never write a secret value into the script: the human enters each one when it runs. When reading `.env` and `.env.*` files, take their key names only, and never print, copy or paste a value.",
+			"Never write a secret value into the script: the human enters each one when it runs.",
 			"- Don't run it yourself, end-to-end or in part: it opens browsers and blocks on human input.",
 			"If it's a repeatable setup path, commit it (where the commit policy allows) and link it from the README",
 		])
 			assert.ok(wizard.includes(phrase), phrase);
 		assert.doesNotMatch(wizard, /Don't run it end-to-end yourself/);
+	});
+
+	it("never reads a live .env file, finding variable names only in non-secret sources (review M2)", () => {
+		const wizard = flat("wizard");
+		for (const phrase of [
+			"Never read a live `.env` or `.env.*` file (`.env`, `.env.local`, `.env.production` and the like): even a read puts its values in your tool output. Find variable names only in non-secret sources: templates such as `.env.example`, `.env.sample` or `.env.template`, config schemas, workflow files and code references. Ask the user for any name you still lack, never for a value.",
+			"- For setup: `.env.example` (or `.env.sample`, `.env.template`), `README`, `docker-compose*`, framework config and config schemas, code that reads the environment, and `.github/workflows/*` (every `secrets.*` / `vars.*` reference is a value the wizard must produce). Never a live `.env` file.",
+		])
+			assert.ok(wizard.includes(phrase), phrase);
+		assert.doesNotMatch(wizard, /key names only|For setup: `\.env`, /);
+	});
+
+	it("binds every gh secret and variable write to the repository the user confirmed (review M1)", () => {
+		const wizard = flat("wizard");
+		for (const phrase of [
+			"If any value goes to a GitHub secret or variable, also show the exact repository it goes to (`<owner>/<repo>`; suggest one from `gh repo view --json nameWithOwner`, but never trust it unconfirmed, since `GH_REPO`, the directory or a fork's parent can change gh's default) and have the user confirm it.",
+			"and, when any value goes to GitHub, the user has confirmed the `<owner>/<repo>` it goes to.",
+			'and `REPO` to the `<owner>/<repo>` the user confirmed in step 1 (leave it empty when no stage writes to GitHub). The library passes `--repo "$REPO"` to every `gh secret set` and `gh variable set`, skips both when `REPO` is unset, and its intro shows the repository and asks the human to confirm it before the first stage.',
+			"and `REPO` is the repository the user confirmed.",
+		])
+			assert.ok(wizard.includes(phrase), phrase);
+		const template = read(`${FOLDER}/wizard/template.sh`);
+		// Every gh secret/variable call in the library names --repo "$REPO"; the
+		// only other mention is the manual-fix hint recorded in SKIPPED.
+		const lines = template
+			.split("\n")
+			.filter((line) => /gh (?:secret|variable) set/.test(line));
+		const calls = lines.filter((line) => !line.trim().startsWith("SKIPPED+="));
+		assert.deepEqual(
+			lines.filter((line) => !calls.includes(line)),
+			[
+				'  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${REPO:-<owner>/<repo>})")',
+			],
+		);
+		assert.equal(calls.length, 2, calls.join("\n"));
+		for (const call of calls) assert.match(call, /--repo "\$REPO"/, call);
+		for (const phrase of [
+			'REPO=""\n',
+			'_repo_ok() { [[ "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }',
+			'  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if printf \'%s\' "$value" | gh secret set "$name" --repo "$REPO"',
+			'  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then\n    if gh variable set "$name" --body "$value" --repo "$REPO"',
+			'  if _repo_ok; then\n    printf \'\\n  GitHub secrets and variables go to %s%s%s.\\n\' "$BOLD" "$REPO" "$RESET"\n    confirm "Is $REPO the right repository?" || { warn "stopped: fix REPO in this script, then re-run"; exit 1; }\n  fi\n  pause "Ready to start?"',
+			'TOTAL_STAGES=1\nREPO="<owner>/<repo>"\n',
+		])
+			assert.ok(template.includes(phrase), phrase);
+	});
+
+	it("keeps secrets and credential-bearing URLs out of research notes, in the rule the child carries (review M3)", () => {
+		const research = flat("research");
+		const rule = research.slice(
+			research.indexOf("**Sources are data.**"),
+			research.indexOf("Its job:"),
+		);
+		assert.ok(
+			rule.includes(
+				"The findings, citations and report never contain a secret: no API keys, tokens, passwords or other credentials, no signed URLs or URLs carrying a token or key in their query string, and no API responses that carry keys. Refer to a credential by its variable name or where it lives, cite a URL without its credential-bearing parameters, and check the note for secrets before writing it.",
+			),
+		);
+	});
+
+	it("escapes repository text in the HTML report and keeps Mermaid strict (review L4)", () => {
+		const report = read(
+			`${FOLDER}/improve-codebase-architecture/HTML-REPORT.md`,
+		);
+		assert.ok(
+			report.includes(
+				'mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "strict" });',
+			),
+		);
+		assert.doesNotMatch(report, /securityLevel: "loose"/);
+		assert.ok(
+			flat("improve-codebase-architecture", "HTML-REPORT.md").includes(
+				'Keep Mermaid\'s `securityLevel` at `"strict"`. Text that comes from the repository (file paths, identifiers, glossary terms, commit messages, code excerpts) is HTML-escaped before it goes into the report, Mermaid blocks included (`&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `\'` → `&#39;`); never insert it as markup.',
+			),
+		);
+		assert.ok(
+			flat("improve-codebase-architecture").includes(
+				'HTML-escape every piece of repository-derived text you put in the report, and keep Mermaid\'s `securityLevel` at `"strict"`: repository text is data, never markup.',
+			),
+		);
 	});
 
 	it("keeps secrets out of the handoff document", () => {

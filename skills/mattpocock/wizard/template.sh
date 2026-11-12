@@ -19,8 +19,11 @@ else
   BOLD=""; DIM=""; RESET=""; BLUE=""; GREEN=""; YELLOW=""
 fi
 
-# Author sets this at the top of the stages section.
+# Author sets these at the top of the stages section. REPO is the GitHub
+# repository (owner/name) the human confirmed while the wizard was scoped;
+# every gh secret/variable write goes to it, and none happens without it.
 TOTAL_STAGES=0
+REPO=""
 
 _STAGE_INDEX=0
 ENV_FILE="${ENV_FILE:-.env}"
@@ -44,8 +47,15 @@ banner() {
   printf '%s  You drive the browser; this wizard tells you exactly what to do and\n' "$DIM"
   printf '  captures the values you copy back. Stop any time with Ctrl-C and re-run\n'
   printf '  later, since it remembers values already saved.%s\n' "$RESET"
+  if _repo_ok; then
+    printf '\n  GitHub secrets and variables go to %s%s%s.\n' "$BOLD" "$REPO" "$RESET"
+    confirm "Is $REPO the right repository?" || { warn "stopped: fix REPO in this script, then re-run"; exit 1; }
+  fi
   pause "Ready to start?"
 }
+
+# _repo_ok: REPO names one GitHub repository (owner/name).
+_repo_ok() { [[ "$REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; }
 
 # stage "Name" clears the screen, then announces a stage and shows progress.
 # Clearing keeps only the current step on screen.
@@ -150,32 +160,33 @@ write_env() {
   printf '  %s✓ wrote%s %s → %s\n' "$GREEN" "$RESET" "$key" "$ENV_FILE"
 }
 
-# set_secret NAME VALUE sets a GitHub Actions repo secret via gh. Falls back
-# to a warning (and records it) if gh is unavailable or unauthenticated.
+# set_secret NAME VALUE sets a GitHub Actions secret in $REPO via gh, never in
+# gh's default repo. Falls back to a warning (and records it) if REPO is unset
+# or gh is unavailable or unauthenticated.
 set_secret() {
   local name="$1" value="$2"
-  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    if printf '%s' "$value" | gh secret set "$name" >/dev/null 2>&1; then
+  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if printf '%s' "$value" | gh secret set "$name" --repo "$REPO" >/dev/null 2>&1; then
       WRITTEN_SECRET+=("$name")
       printf '  %s✓ set%s GitHub secret %s\n' "$GREEN" "$RESET" "$name"
       return
     fi
   fi
-  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name)")
-  warn "skipped GitHub secret $name: gh not ready; set it later"
+  SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name --repo ${REPO:-<owner>/<repo>})")
+  warn "skipped GitHub secret $name: REPO unset or gh not ready; set it later"
 }
 
-# set_var NAME VALUE sets a GitHub Actions repo variable (non-secret).
+# set_var NAME VALUE sets a GitHub Actions variable (non-secret) in $REPO.
 set_var() {
   local name="$1" value="$2"
-  if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-    if gh variable set "$name" --body "$value" >/dev/null 2>&1; then
+  if _repo_ok && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    if gh variable set "$name" --body "$value" --repo "$REPO" >/dev/null 2>&1; then
       printf '  %s✓ set%s GitHub variable %s\n' "$GREEN" "$RESET" "$name"
       return
     fi
   fi
   SKIPPED+=("GitHub variable $name")
-  warn "skipped GitHub variable $name, gh not ready; set it later"
+  warn "skipped GitHub variable $name, REPO unset or gh not ready; set it later"
 }
 
 # finish clears, then shows a closing summary of everything configured.
@@ -193,7 +204,9 @@ finish() {
 
 # ──────────────────────────────────────────────────────────────────────────
 # STAGES: author this section. One stage() per step the human takes.
-# Replace the example below. Set TOTAL_STAGES to match the stages you write.
+# Replace the example below. Set TOTAL_STAGES to match the stages you write,
+# and REPO to the owner/name the human confirmed (leave it "" if no stage
+# writes a GitHub secret or variable).
 # Keep every stage inside run_wizard and the last line as is: bash then parses
 # the whole file before the first prompt, so an edit mid-run can't break it.
 # ──────────────────────────────────────────────────────────────────────────
@@ -201,6 +214,7 @@ finish() {
 run_wizard() {
 
 TOTAL_STAGES=1
+REPO="<owner>/<repo>"
 
 banner "Stripe setup"
 

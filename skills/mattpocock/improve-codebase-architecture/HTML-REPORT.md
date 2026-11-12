@@ -13,7 +13,7 @@ The architectural review is rendered as a single self-contained HTML file in the
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
       import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "strict" });
     </script>
     <style>
       /* small custom layer for things Tailwind doesn't cover cleanly:
@@ -32,6 +32,8 @@ The architectural review is rendered as a single self-contained HTML file in the
   </body>
 </html>
 ```
+
+Keep Mermaid's `securityLevel` at `"strict"`. Text that comes from the repository (file paths, identifiers, glossary terms, commit messages, code excerpts) is HTML-escaped before it goes into the report, Mermaid blocks included (`&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;`); never insert it as markup.
 
 ## Header
 
