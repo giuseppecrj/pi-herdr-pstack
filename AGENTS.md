@@ -28,3 +28,17 @@ Two implementation writers maximum. One owner per file/interface at a time. Do n
 Only one real pi-herdr-agents integration suite may run on a Herdr instance at a time. Workers may run isolated unit/contract checks; coordinate real multiplexer/lifecycle tests with the parent. Keep failure evidence and distinguish skipped checks from passing evidence.
 
 Before reporting completion, inspect the diff, run declared package checks, `npm pack --dry-run`, `git diff --check`, and active LSP diagnostics for changed TypeScript when available. Report the exact base/result SHAs, files, tests and remaining blockers. Do not claim a fixture or scripted provider demonstrates live-model compliance.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in GitHub Issues for `giuseppecrj/pi-herdr-pstack`, managed with `gh`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` at the repo root and ADRs in `docs/adr/`. See `docs/agents/domain.md`.
