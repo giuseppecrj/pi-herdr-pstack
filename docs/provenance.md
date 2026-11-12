@@ -89,8 +89,9 @@ The `mattpocock` record in `test/fixtures/upstream-scope.json` maps
 **Scope choice.** The whole upstream `skills/` tree is in scope, not only the
 skills this pack ships, so the weekly sync sees every new, changed or removed
 upstream file. All 114 files at the pin are accounted for: 38 ship in
-`skills/mattpocock/` (34 adapted, 4 copied byte for byte), 1 is planned (owned
-by a later issue) and 62 are excluded (with a reason), all in
+`skills/mattpocock/` (34 adapted, 4 copied byte for byte), none is planned
+(owned by a later issue) since #37 batch B, and 63 are excluded (with a
+reason), all in
 `test/fixtures/skill-provenance/mattpocock.json`, and 13 ship merged in
 `skills/merged/`, each the primary source of a file in
 `test/fixtures/skill-provenance/merged.json`. `files` records each shipped file's source path, git blob, SHA-256
@@ -120,9 +121,9 @@ and stay in the mimir list, where they exist.
 | `tdd`, `teach` | merged: `skills/merged/<name>/` with pstack's skills of the same name (issue #36); see **Merged skills**. Their Codex-only `agents/openai.yaml` files are excluded. |
 | `code-review` | adapted: `skills/mattpocock/code-review/` (issue #37, decision 1: kept beside pstack's `interrogate` and the playbook gates); see **Overlapping skills**. Its Codex-only `agents/openai.yaml` is excluded. |
 | `prototype`, `ask-matt` | merged: `skills/merged/prototype/` with pstack's Prototype playbook, and `skills/merged/poteto-help/` with pstack's `poteto-help` (issue #37, decisions 3 and 5); see **Overlapping skills**. Their Codex-only `agents/openai.yaml` files are excluded. |
-| `diagnosing-bugs`, `retro`, `writing-for-agents` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #37, decisions 2, 4 and 6: each kept beside pstack's Bug fix playbook, `reflect` and `technical-writing`). Each Codex-only `agents/openai.yaml` is excluded. |
-| `in-progress/chief-of-staff` | planned: #37 decision 7 |
-| `skills/misc`, `skills/in-progress` (all but `chief-of-staff`), `skills/deprecated` | excluded: out of scope for v2 (#28) |
+| `diagnosing-bugs`, `retro`, `writing-for-agents` | adapted: `skills/mattpocock/<name>/` with every supporting file (issue #37, decisions 2, 4 and 6: each kept beside pstack's Bug fix playbook, `reflect` and `technical-writing`); see **Overlapping skills (issue #37, batch B)**. Each Codex-only `agents/openai.yaml` is excluded. |
+| `in-progress/chief-of-staff` | excluded: `chief-of-staff` was dropped by issue #37 decision 7 (it overlaps poteto-mode's Orchestrate playbook, and #28 puts the in-progress folder out of scope). Known gap: its dated-wiki discipline has no equivalent in this pack. |
+| `skills/misc`, `skills/in-progress`, `skills/deprecated` | excluded: out of scope for v2 (#28) |
 | every `agents/openai.yaml`, the bucket `README.md` files | excluded: Codex-only metadata and upstream indexes |
 | `skills/productivity/wait-what` | excluded for now: no issue names it, so it needs a decision |
 

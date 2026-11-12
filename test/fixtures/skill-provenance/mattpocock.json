@@ -580,16 +580,7 @@
 			"explanation": "Issue #37 decision 6 (keep both): Matt's reference for documents agents consume ships beside pstack's technical-writing, and poteto-mode's authoring-a-skill playbook references both. Upstream's reference is kept word for word: context pointers, the two loads, the information hierarchy with progressive disclosure, co-location and sprawl, steps and completion criteria, when to split, leading words and negation, and pruning. Kept upstream's model invocation (no disable-model-invocation key) and description. Pi adaptations: 'an AGENTS.md / CLAUDE.md' became 'an AGENTS.md (Pi also reads CLAUDE.md)'; the two relative Markdown links to SKILL-MECHANICS.md became backticked names (test/skill-content.test.ts rejects relative Markdown links), and the pointer to it says it covers Pi's frontmatter. A new 'Audience: agents' paragraph (decision 6): this skill governs instructions an agent reads and acts on; prose for human readers (docs, READMEs, RFCs, PR descriptions, commit messages) follows technical-writing (../../pstack/technical-writing/SKILL.md); where their advice conflicts the reader decides: in a document for agents this skill wins (a leading word such as tight or fog of war stays though technical-writing skips metaphors), in a document for humans technical-writing wins. technical-writing carries the mirror paragraph (w3-b.json)."
 		}
 	],
-	"planned": [
-		{
-			"source": "mattpocock",
-			"path": "in-progress/chief-of-staff/SKILL.md",
-			"sha256": "f4c1d6533edece6b275155911cb627154a6b13e2bc19934f77330f3afdd07987",
-			"blob": "22f0b6626f07bfdfa78b70d006742dfa2260e9c4",
-			"owningIssue": "#37",
-			"explanation": "Overlaps a pstack skill or playbook; issue #37 decides merge, keep both or drop."
-		}
-	],
+	"planned": [],
 	"excluded": [
 		{
 			"source": "mattpocock",
@@ -773,6 +764,14 @@
 			"sha256": "bc279931edd2dc862a00e0692522a6c8b97666539a3ab6c519e336dd4e5bf61a",
 			"blob": "a7352637389c97be31823c87186421385ff83466",
 			"disposition": "Excluded: everything in Matt's in-progress folder is out of scope for v2 (issue #28, Out of Scope).",
+			"explanation": "Documented disposition, not shipped and not planned."
+		},
+		{
+			"source": "mattpocock",
+			"path": "in-progress/chief-of-staff/SKILL.md",
+			"sha256": "f4c1d6533edece6b275155911cb627154a6b13e2bc19934f77330f3afdd07987",
+			"blob": "22f0b6626f07bfdfa78b70d006742dfa2260e9c4",
+			"disposition": "Excluded by issue #37 decision 7 (drop): chief-of-staff, a long-running single-session coordinator that does all work through subagents and schedules, overlaps poteto-mode's Orchestrate playbook (a depth-1 single-session coordinator with a hand-kept store) and sits in Matt's in-progress folder, which #28 puts out of scope. Known gap: no skill in this pack carries its dated-wiki discipline: a folder of interlinked pages that outlives the session (index.md, one page per decision, problem, subsystem or preference, sources cited and never copied), kept alive by ingest, query and lint, and written as history, not the present: every claim dated, code claims tied to a repo commit, never 'currently' without a date, superseded claims marked rather than rewritten.",
 			"explanation": "Documented disposition, not shipped and not planned."
 		},
 		{

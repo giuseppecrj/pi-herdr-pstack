@@ -2018,6 +2018,63 @@ describe("writing-for-agents content contract (not behavior proof)", () => {
 	});
 });
 
+describe("chief-of-staff is dropped, and no #37 file stays planned", () => {
+	// SAFETY: test-owned fixture; test/mattpocock-skills.test.ts asserts its shape.
+	const matt = JSON.parse(
+		read("test/fixtures/skill-provenance/mattpocock.json"),
+	) as {
+		files: Array<{ path: string; sources: Array<{ path: string }> }>;
+		planned: Array<{ path: string; owningIssue: string }>;
+		excluded: Array<{ path: string; disposition: string }>;
+	};
+
+	it("records it as excluded with the reason and the known gap, and fails when either is removed", () => {
+		const entry = matt.excluded.find(
+			({ path }) => path === "in-progress/chief-of-staff/SKILL.md",
+		);
+		assert.ok(entry);
+		assertContract(entry.disposition, [
+			["decision 7", lit("Excluded by issue #37 decision 7 (drop)")],
+			[
+				"the overlap with Orchestrate",
+				lit("overlaps poteto-mode's Orchestrate playbook"),
+			],
+			[
+				"the known gap",
+				lit(
+					"Known gap: no skill in this pack carries its dated-wiki discipline",
+				),
+			],
+		]);
+		assert.deepEqual(packFolders("chief-of-staff"), []);
+		assert.match(
+			flat(read("docs/provenance.md")),
+			/\| `in-progress\/chief-of-staff` \| excluded: `chief-of-staff` was dropped by issue #37 decision 7 .*Known gap: its dated-wiki discipline has no equivalent in this pack\. \|/,
+		);
+	});
+
+	it("ships every file #37 had planned, leaving none planned", () => {
+		assert.deepEqual(
+			matt.planned.filter(({ owningIssue }) => owningIssue === "#37"),
+			[],
+		);
+		const shipped = new Map(
+			matt.files.map(({ path, sources }) => [sources[0].path, path]),
+		);
+		for (const [from, to] of [
+			["engineering/diagnosing-bugs/SKILL.md", `${DIAGNOSING}/SKILL.md`],
+			["engineering/diagnosing-bugs/scripts/hitl-loop.template.sh", HITL],
+			["engineering/retro/SKILL.md", RETRO],
+			["productivity/writing-for-agents/SKILL.md", `${WRITING}/SKILL.md`],
+			[
+				"productivity/writing-for-agents/SKILL-MECHANICS.md",
+				`${WRITING}/SKILL-MECHANICS.md`,
+			],
+		])
+			assert.equal(shipped.get(from), to, from);
+	});
+});
+
 describe("#37 skills load (batches A and B)", () => {
 	/** Each skill #37 adds or moves, its folder and whether the model sees it. */
 	const LOADED: Array<[name: string, folder: string, modelInvoked: boolean]> = [
