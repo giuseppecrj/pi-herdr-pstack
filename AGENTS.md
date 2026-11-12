@@ -12,7 +12,7 @@ No pushes, PR creation, merges, package publication, release-triggering version 
 
 ## Implementation boundaries
 
-- Do not import pi-herdr-agents internals. Pstack contributes no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/no-comments/references/`. If a role is later authorized, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
+- Do not import pi-herdr-agents internals. Pstack contributes no named roles and must not register a role directory; comment-sicko is a bare delegate prompt under `skills/pstack/no-comments/references/`. If a role is later authorized, use the public `pi-herdr-subagents:roles:discover:v1` protocol.
 - Declare pi-herdr-agents as a peer and an explicit Pi installation prerequisite. A peer declaration is not extension activation.
 - Keep initial experimental packages private. A temporary peer range is not a published compatibility promise; record the exact candidate host SHA used in tests.
 - Preserve applicable upstream license notices and record file provenance.

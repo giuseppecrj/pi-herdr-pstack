@@ -42,9 +42,9 @@ New files in this package are offered under the same MIT terms.
 ## Upstream pstack
 
 Every file under `skills/` is copied or adapted from pstack, from two pinned
-sources. Wave 2 shipped `skills/poteto-mode/` and `skills/setup-pstack/`; Wave 3
+sources. Wave 2 shipped `skills/pstack/poteto-mode/` and `skills/pstack/setup-pstack/`; Wave 3
 shipped the other 35 skills and the comment-sicko delegate prompt at
-`skills/no-comments/references/comment-sicko.md`:
+`skills/pstack/no-comments/references/comment-sicko.md`:
 
 - [casualjim/pi-mimir](https://github.com/casualjim/pi-mimir) at commit
   `f07dd981f62c9c994a5d043ede67d6c63c721454`, path `packages/pi-pstack/skills`.
@@ -111,7 +111,7 @@ SOFTWARE.
 
 ## tla-ts
 
-`tla-ts` `0.0.8` is a runtime dependency used by `skills/statechart` to check
+`tla-ts` `0.0.8` is a runtime dependency used by `skills/pstack/statechart` to check
 TLA+ models without a JVM. It is MIT-licensed:
 
 ```text
@@ -140,7 +140,7 @@ SOFTWARE.
 
 ## Short quoted examples in `technical-writing`
 
-`skills/technical-writing/SKILL.md` is copied byte-for-byte from the pinned
+`skills/pstack/technical-writing/SKILL.md` is copied byte-for-byte from the pinned
 pi-mimir source, and its text remains under the upstream MIT notices above. It
 contains two short example sentences quoted from third-party style guides. They
 are attributed here; the copied skill bytes are not changed.

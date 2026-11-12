@@ -106,7 +106,7 @@ earlier predate Maestro, bundle their own roles and workflow commands and are
 Pstack contributes no named roles and registers no role directory. Alone with a
 role-free host, `subagents_list` lists no roles; with pi-herdr-roles it lists
 that pack's six roles. comment-sicko is a bare delegate prompt under
-`skills/no-comments/references/`, launched by `/skill:no-comments` through the
+`skills/pstack/no-comments/references/`, launched by `/skill:no-comments` through the
 public `subagent` schema with `systemPrompt`; pstack still ships no named roles.
 Wave 3 repins the delegation schema to host
 `7d35371f5d7d0df3edd208a1d5c9a187767d563b`, whose `SubagentParams` and task
@@ -118,7 +118,7 @@ against it.
 
 Observed at host `7d35371f5d7d0df3edd208a1d5c9a187767d563b` with a
 deterministic provider (gates G1 to G7); they prove host mechanics, not model
-behavior. `skills/poteto-mode/references/fan-out.md` states them for agents.
+behavior. `skills/pstack/poteto-mode/references/fan-out.md` states them for agents.
 
 - Fan-out: three bare children launched in one turn each get one initial
   message and one delivery; dropout and cancel give exactly one terminal

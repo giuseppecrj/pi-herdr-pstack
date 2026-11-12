@@ -86,20 +86,20 @@ Pstack skills keep unprefixed names.
 | Tooling | `make-bot-ui` | A loopback-only local page whose server starts one `pi -p` run per request. Exposure and installs need authorization. |
 | Principles | 24 `principle-*` skills | One rule each, cited by `poteto-mode`, which keeps a summary of each. |
 
-Browse the [full skill collection](skills/) or the [principle summaries](skills/poteto-mode/SKILL.md).
+Browse the [full skill collection](skills/) or the [principle summaries](skills/pstack/poteto-mode/SKILL.md).
 
 ## Delegation model
 
 Pstack registers no role directory and depends on neither pi-herdr-roles nor another pack. Delegates are deliberately **bare**:
 
 - `poteto-mode` omits `agent` on each call and passes a bounded reference prompt (implementer, investigator, reviewer or verifier) as `systemPrompt`, with explicit `model`, `thinking`, `fork` and, for parallel writers, `worktree`.
-- `/skill:no-comments` passes its comment-sicko prompt (under `skills/no-comments/references/`) as `systemPrompt` with `tools: "read, bash, edit"`.
+- `/skill:no-comments` passes its comment-sicko prompt (under `skills/pstack/no-comments/references/`) as `systemPrompt` with `tools: "read, bash, edit"`.
 
 ## Workflow limitations
 
 Several poteto-mode workflows are scoped down for Pi:
 
-- Pstack adds no scheduler, timer or ledger. Every fan-out runs in the parent session and children are leaves (`skills/poteto-mode/references/fan-out.md`).
+- Pstack adds no scheduler, timer or ledger. Every fan-out runs in the parent session and children are leaves (`skills/pstack/poteto-mode/references/fan-out.md`).
 - Babysit and Shipping use `gh` only and wait through a one-shot watcher child. Shipping lands the verified run only on an explicit request.
 - Autopilot-full and Autopilot-stack are run by the root session, with fresh owner rounds and audits on each wake, never a timer.
 - Orchestrate is a depth-1 single-session coordinator with a hand-kept store, not an unattended or multi-day runner.
@@ -125,7 +125,7 @@ The following variables configure additional checks or override test defaults. C
 | `PI_HERDR_AGENTS_LEGACY_HOST` | Pre-extraction host root for separate legacy bundled-role characterization. |
 | `PI_HERDR_ROLES_PACK` | Also installs pi-herdr-roles to check coexistence; needs `PI_HERDR_AGENTS_HOST`. |
 | `PI_HERDR_AGENTS_SOURCE` | pi-herdr-agents Git checkout for file provenance and schema pins. Defaults to a sibling `../pi-herdr-agents` containing the source commit. |
-| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. The cursor checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. |
+| `PSTACK_MIMIR_SOURCE`, `PSTACK_CURSOR_SOURCE` | Upstream pstack checkouts for skill source-hash reproduction and the upstream scope inventory. The cursor checkout must hold the pinned blobs (a full clone); the scope checks do not fetch lazily. Each upstream pin in `test/fixtures/upstream-scope.json` reads its checkout from `PSTACK_<UPSTREAM>_SOURCE`. |
 | `PI_BIN` | Alternative Pi executable for RPC tests. |
 
 CI runs `npm run check` without these variables.

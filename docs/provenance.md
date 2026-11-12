@@ -28,9 +28,18 @@ change.
 `pstack/skills` is accounted for by `docs/skill-inventory.json` and
 `test/fixtures/skill-provenance/`. Its `root` stays `pstack/skills`, so a
 sibling path such as `../agents/comment-sicko.md` is relative to it.
-`test/fixtures/upstream-scope.json` records the scope and the status and
-SHA-256 of every file under `pstack/agents` and `pstack/docs` at the cursor pin
-`1ba91fc25c0977741dd0e267849e6234b037ed0a`. With `PSTACK_CURSOR_SOURCE` set,
+`test/fixtures/upstream-scope.json` holds one pin record per upstream
+(ADR-0003): its `upstream` key in the inventory's `sources`, the skills
+`folder` it maps to, and its `repository`, `commit` and `root`. Every folder
+under `skills/` must map to exactly one record. The `cursor` record maps
+`skills/pstack/` to cursor/plugins at `root` `pstack`, and records the scope and
+the status and SHA-256 of every file under `pstack/agents` and `pstack/docs` at
+the cursor pin `1ba91fc25c0977741dd0e267849e6234b037ed0a`. The checks below run
+once per record, with that upstream's checkout in `PSTACK_<UPSTREAM>_SOURCE`.
+To move skills between folders, run `node scripts/move-skills.mjs <folder>
+<skill>...`: it moves them with `git mv` and rewrites the `../` links between
+skills, which `test/skill-tree.test.ts` requires to resolve.
+With `PSTACK_CURSOR_SOURCE` set,
 `npm test` checks that the file list and every hash match the pin, that every
 top-level `pstack/` entry is classified, and that every file under
 `pstack/skills` at the pin is referenced by the inventory or a skill-provenance
@@ -41,8 +50,10 @@ status must match the fixture. The checkout must hold the commit's blobs (a
 full clone, or a partial clone that already fetched them): the tests and the
 script disable lazy fetching.
 
-On a pin move, `npm run fixtures:upstream-scope -- <checkout>` rewrites the
-fixture at its own `commit`. It re-hashes every file, keeps each existing
+On a pin move, `npm run fixtures:upstream-scope -- <upstream> <checkout>`
+(for example `cursor`) rewrites that upstream's record at its own `commit`; the
+checkout defaults to `PSTACK_<UPSTREAM>_SOURCE`, and the older
+`npm run fixtures:upstream-scope -- <checkout>` form still means `cursor`. It re-hashes every file, keeps each existing
 status, adds new paths as `not-carried`, and prints what was added, removed or
 changed, any unclassified top-level entry and any watched file that changed.
 It never updates a watched hash, and it exits non-zero when a top-level entry
@@ -51,7 +62,7 @@ table check until it gets a row here.
 
 | Upstream path | Status at the pin |
 | --- | --- |
-| `pstack/agents/comment-sicko.md` | carried: context source for `skills/no-comments/references/comment-sicko.md` (adapted from mimir's copy; Wave 3) |
+| `pstack/agents/comment-sicko.md` | carried: context source for `skills/pstack/no-comments/references/comment-sicko.md` (adapted from mimir's copy; Wave 3) |
 | `pstack/agents/poteto-agent.md` | excluded: a named role; pstack ships no named roles (Wave 2: role removal) |
 | `pstack/docs/guide/**` (11 Markdown pages, 6 images) | excluded: under decision Q1 |
 | `pstack/docs/harness/claude-code.md` | excluded: Claude Code harness adapter; this pack stays Pi/pi-herdr-agents only |
@@ -100,7 +111,7 @@ added and the role body was not copied elsewhere.
 
 ## Wave 2: methodology skills
 
-The `skills/poteto-mode/` and `skills/setup-pstack/` files are adaptations of
+The `skills/pstack/poteto-mode/` and `skills/pstack/setup-pstack/` files are adaptations of
 upstream pstack, recorded separately from the Wave 1 role fixture in
 `test/fixtures/skill-provenance/w2.json`. Sources:
 
@@ -111,12 +122,12 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
-| `skills/poteto-mode/SKILL.md` | mimir `poteto-mode/SKILL.md`, Cursor hub as context | adapted |
-| `skills/poteto-mode/playbooks/*.md` (12 base playbooks) | mimir playbook of the same name, Cursor as context | adapted |
-| `skills/poteto-mode/references/bugbot-triage.md` | mimir file of the same name | adapted |
-| `skills/poteto-mode/references/delegation.md` | derived from both hubs' Subagents sections | new |
-| `skills/poteto-mode/references/authorization.md` | derived from both hubs' Autonomy sections | new |
-| `skills/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted, substantially rewritten; revised by the runtime owner to describe the implemented change flow |
+| `skills/pstack/poteto-mode/SKILL.md` | mimir `poteto-mode/SKILL.md`, Cursor hub as context | adapted |
+| `skills/pstack/poteto-mode/playbooks/*.md` (12 base playbooks) | mimir playbook of the same name, Cursor as context | adapted |
+| `skills/pstack/poteto-mode/references/bugbot-triage.md` | mimir file of the same name | adapted |
+| `skills/pstack/poteto-mode/references/delegation.md` | derived from both hubs' Subagents sections | new |
+| `skills/pstack/poteto-mode/references/authorization.md` | derived from both hubs' Autonomy sections | new |
+| `skills/pstack/setup-pstack/SKILL.md` | Cursor `setup-pstack/SKILL.md` | adapted, substantially rewritten; revised by the runtime owner to describe the implemented change flow |
 
 The fixture records, for every shipped file, its SHA-256, each source path and
 blob hash at the pinned commit, and what changed. The adaptations share four
@@ -164,7 +175,7 @@ equal the primary source), `adapted` (one primary source, changes explained) or
 `planned` or `shipped` that drives the content checks, and the `no-comments`
 row lists `../agents/comment-sicko.md` (relative to each source's skills root)
 as the source of its bare delegate prompt
-`skills/no-comments/references/comment-sicko.md`. The delegation schema pin is
+`skills/pstack/no-comments/references/comment-sicko.md`. The delegation schema pin is
 pi-herdr-agents `7d35371f5d7d0df3edd208a1d5c9a187767d563b`; its
 `SubagentParams` and task categories are byte-identical to the Wave 2 pin
 `e262c584`.
@@ -181,14 +192,14 @@ and `unslop`, `technical-writing`, `no-comments`, `teach`, `bro` and
 source and an explanation in its fixture.
 
 | Destination | Primary source | Status |
-| `skills/principle-*/SKILL.md`, `tdd`, `correct` | mimir file of the same name | 19 copied; 7 principles adapted for skill-relative paths, full principle names or a planned W4 reference |
-| `skills/{benchmark-checklist,blast-radius}/SKILL.md`, `skills/typescript-best-practices/**` | mimir | adapted (paths, names, planned W4 interim rules; `paths:` frontmatter dropped; the boundary row follows the Cursor blob, and `references/patterns.md` is aligned to that row) |
-| `skills/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
-| `skills/{no-comments,teach}/SKILL.md` | mimir, Cursor as context | adapted |
-| `skills/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
-| `skills/poteto-help/**` (3 files) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
+| `skills/pstack/principle-*/SKILL.md`, `tdd`, `correct` | mimir file of the same name | 19 copied; 7 principles adapted for skill-relative paths, full principle names or a planned W4 reference |
+| `skills/pstack/{benchmark-checklist,blast-radius}/SKILL.md`, `skills/pstack/typescript-best-practices/**` | mimir | adapted (paths, names, planned W4 interim rules; `paths:` frontmatter dropped; the boundary row follows the Cursor blob, and `references/patterns.md` is aligned to that row) |
+| `skills/pstack/{unslop,technical-writing,bro}/SKILL.md` | mimir | copied |
+| `skills/pstack/{no-comments,teach}/SKILL.md` | mimir, Cursor as context | adapted |
+| `skills/pstack/no-comments/references/comment-sicko.md` | mimir `../agents/comment-sicko.md` at `f07dd981f62c9c994a5d043ede67d6c63c721454` | adapted: frontmatter dropped, made a comment editor, planned W4 interim rule |
+| `skills/pstack/poteto-help/**` (3 files) | Cursor `poteto-help/` at `ccb5507cec1546dc88135c1139c811e6c59115ba` | adapted, re-authored for Pi from Cursor's structure |
 
-`skills/poteto-help/SKILL.md` adapts the one-time setup nudge that landed in
+`skills/pstack/poteto-help/SKILL.md` adapts the one-time setup nudge that landed in
 cursor/plugins `1e56b2913469f05101e4ffd4d437c2e6fd2c1b8d` (PR #509) and is now
 in the pin. The fixture records the Cursor blob at
 `ccb5507cec1546dc88135c1139c811e6c59115ba`. The nudge asks once, when the
@@ -205,7 +216,7 @@ poteto-mode always passes `task:<category>`, so
 those delegations fail until an approved `/setup-pstack <request>` write sets
 the category. poteto-help does not read or write task-model config.
 
-comment-sicko is a bare delegate prompt under `skills/no-comments/references/`,
+comment-sicko is a bare delegate prompt under `skills/pstack/no-comments/references/`,
 not a role. `/skill:no-comments` reads it and passes it as `systemPrompt`;
 pstack still ships no named roles and has no `agents/` directory.
 
@@ -258,7 +269,7 @@ ship. Each batch owns its fixtures:
   wording. The divergence is deliberate, so a sync must not restore it.
 
 Of the 56 new Wave 4 files, 25 are copied and 31 adapted. The C0 checkpoint
-added one new file, `skills/poteto-mode/references/fan-out.md` (in `w2.json`),
+added one new file, `skills/pstack/poteto-mode/references/fan-out.md` (in `w2.json`),
 the shared fan-out protocol. The package now ships 115 skill files: 48 copied,
 64 adapted and 3 new. The ccb5507 pin move re-adapted `blast-radius` (it was a
 mimir copy after reconcile) for the "more than one model" wording. The 190d287
@@ -354,14 +365,14 @@ touch `pstack/` are `1e56b29` (#509, poteto-help setup nudge) and `df58112`
 
 Hand-ported, platform-neutral substance only:
 
-- `skills/blast-radius/SKILL.md`: "several models" became "more than one
+- `skills/pstack/blast-radius/SKILL.md`: "several models" became "more than one
   model". Status is `adapted`; the destination equals the Cursor blob and is
   no longer a mimir copy.
-- `skills/architect/references/runner-prompt.md`: "one of several runners"
+- `skills/pstack/architect/references/runner-prompt.md`: "one of several runners"
   became "one of the parallel runners".
-- `skills/poteto-help/SKILL.md`: the interrogate table says "different
+- `skills/pstack/poteto-help/SKILL.md`: the interrogate table says "different
   models". The G5 setup nudge is now in the pin; the Pi mapping is unchanged.
-- `skills/interrogate/SKILL.md`: a rejected model prefers the same family and
+- `skills/pstack/interrogate/SKILL.md`: a rejected model prefers the same family and
   reasoning tier. Seats still follow the live catalog, one family each.
 
 Documented skips (Cursor-only model defaults, rule file, budget ladder, or
@@ -390,7 +401,7 @@ other reproduces the bug and may open a draft PR. Running it needs an
 external trigger or scheduler, which conflicts with this pack's no-scheduler
 rule, and it depends on Cursor Automations, Slack posting and tracker writes.
 Four of its methodology gates are adapted into
-`skills/poteto-mode/playbooks/bug-fix.md` (Q2): confirm the cause is in code
+`skills/pstack/poteto-mode/playbooks/bug-fix.md` (Q2): confirm the cause is in code
 this repo or team owns, verify an existing fix instead of writing a competing
 one, stop rather than race another person's claim on the fix, and reproduce
 twice before and after the fix. The sources are
@@ -413,30 +424,30 @@ subagent-effort and playbook cuts (`ce649c0`), and the new skills
 
 Hand-ported, platform-neutral substance only:
 
-- `skills/poteto-mode/scripts/check-plan.mjs`: CommonMark fence pairing so
+- `skills/pstack/poteto-mode/scripts/check-plan.mjs`: CommonMark fence pairing so
   nested fences are not treated as prose. PROGRAM_MARKERS, the
   unchanged-patch-id scan and git mode `100644` stay. Upstream's `/loop 1h`
   and `git show origin/main:` markers were not restored.
-- `skills/correct/SKILL.md`: step 3 now fails a test that still passes when
+- `skills/pstack/correct/SKILL.md`: step 3 now fails a test that still passes when
   the checked behavior breaks, or that fails when only the internals change.
   Destination equals the Cursor blob; status is `adapted`.
-- `skills/create-verification-skill/SKILL.md`: launch readiness means usable
+- `skills/pstack/create-verification-skill/SKILL.md`: launch readiness means usable
   from an empty data dir; a missing seed precondition fails the journey;
   a stand-in proof lists unverified setup steps. `.pi/skills` paths stay.
-- `skills/principle-attack-the-premise/SKILL.md`: write the premise down and
+- `skills/pstack/principle-attack-the-premise/SKILL.md`: write the premise down and
   test it; follow the evidence; remove the condition. Pi backticked paths stay.
-- `skills/principle-fix-root-causes/SKILL.md`: fault versus symptom; a guard
+- `skills/pstack/principle-fix-root-causes/SKILL.md`: fault versus symptom; a guard
   is a fix only when the state is legitimate; cheap always-on signal after a
   deep dig. Destination equals the Cursor blob; was a mimir copy.
-- `skills/principle-make-operations-idempotent/SKILL.md`: derive steps from
+- `skills/pstack/principle-make-operations-idempotent/SKILL.md`: derive steps from
   existing state; judge leftover artifacts as stale by crash-surviving
   evidence. Destination equals the Cursor blob; was a mimir copy.
-- `skills/principle-test-behavior-not-implementation/SKILL.md`: two imagined
+- `skills/pstack/principle-test-behavior-not-implementation/SKILL.md`: two imagined
   edits (break behavior / change internals) replace the `undefined`-import
   heuristic. Destination equals the Cursor blob; was a mimir copy.
-- `skills/poteto-mode/SKILL.md`: the three principle summaries above follow
+- `skills/pstack/poteto-mode/SKILL.md`: the three principle summaries above follow
   the ported leaves.
-- `skills/poteto-mode/playbooks/opening-a-pr.md`: as a parent merges, move
+- `skills/pstack/poteto-mode/playbooks/opening-a-pr.md`: as a parent merges, move
   its child onto trunk per `playbooks/shipping.md` step 4.
 
 Documented skips (Cursor-only tools, token cuts that only delete examples,
@@ -481,18 +492,18 @@ plugin version bumps through 0.15.29. The casualjim/pi-mimir pin stays
 
 Hand-ported, platform-neutral substance only:
 
-- `skills/create-formal-verification-skill/SKILL.md`: new, adapted from
+- `skills/pstack/create-formal-verification-skill/SKILL.md`: new, adapted from
   Cursor. Pi `.pi/skills/` paths, `/skill:` forms, and install authorization.
-- `skills/maintain-formal-verification-skill/SKILL.md`: new, adapted from
+- `skills/pstack/maintain-formal-verification-skill/SKILL.md`: new, adapted from
   Cursor. Same path and slash adaptations; PR push authorization on the
   report's change, matching maintain-verification-skill.
-- `skills/typescript-best-practices/SKILL.md` and `references/patterns.md`:
+- `skills/pstack/typescript-best-practices/SKILL.md` and `references/patterns.md`:
   a brand comes from a verifying type guard, never from `as`.
-- `skills/setup-pstack/SKILL.md`: mention once when the project has no
+- `skills/pstack/setup-pstack/SKILL.md`: mention once when the project has no
   formal verification skill; do not run create from setup.
-- `skills/poteto-mode/SKILL.md`: inventory 53; availability routes for the
+- `skills/pstack/poteto-mode/SKILL.md`: inventory 53; availability routes for the
   two formal-verification skills.
-- `skills/poteto-help/SKILL.md` and `references/recipes.md`: check-state,
+- `skills/pstack/poteto-help/SKILL.md` and `references/recipes.md`: check-state,
   skill table and recipe for the two formal-verification skills.
 
 Documented skips (Cursor-only tools, named-role agents, harness, or
@@ -534,10 +545,10 @@ changed. Inventory stays at 53 skills and 23 playbooks.
 
 Documented skips and classifications:
 
-- `skills/poteto-help/SKILL.md`: upstream adds only a `/statechart` table
+- `skills/pstack/poteto-help/SKILL.md`: upstream adds only a `/statechart` table
   row. Not copied; statechart is not shipped. Destination hash unchanged;
   Cursor primary source hash refreshed to the new pin blob.
-- `skills/statechart/**` (12 files: `SKILL.md`, scripts, TLA+ model, tests,
+- `skills/pstack/statechart/**` (12 files: `SKILL.md`, scripts, TLA+ model, tests,
   `.mmd` fixtures): **flagged, not shipped**. Executable Node scripts spawn
   Java/TLC via `TLA2TOOLS`/`JAVA`, write files under a work directory, and
   depend on external TLA+ tooling. Recommendation: **skip** until G
@@ -565,7 +576,7 @@ The cursor pin moved from `8b3326d99fd4b993cb33a24dad8af03175c642c5` to
 
 Hand-ported substance:
 
-- `skills/statechart/**`: **shipped** as an optional skill. Checking runs
+- `skills/pstack/statechart/**`: **shipped** as an optional skill. Checking runs
   through the pack `tla-ts` dependency (no Java / `tla2tools.jar`).
   `SKILL.md` and `references/render.md` adapted for Pi
   (`/skill:statechart`, no silent installer, Mermaid-first, optional image
