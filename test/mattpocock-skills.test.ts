@@ -107,7 +107,7 @@ describe("setup-repo content", () => {
 			"- The labels the tracker lacks and would be created in that repo, when Section B ran on GitHub or GitLab",
 			"- Any legacy `CONTEXT.md` / `CONTEXT-MAP.md` rename (`git mv`) and the `docs/agents/domain.md` rewrite",
 			"the rename goes in the step 3 change list, and you run it only once the user approves",
-			"(`gh label create <label> -R <owner>/<repo>` / `glab label create <label> -R <owner>/<repo>`), once the user has approved that list and repo in step 3.",
+			"(`gh label create <label> -R <owner>/<repo>` / `glab label create --name <label> -R <owner>/<repo>`), once the user has approved that list and repo in step 3.",
 		])
 			assert.ok(flat.includes(phrase), phrase);
 		const github = read(`${SKILL_DIR}/issue-tracker-github.md`);
@@ -121,7 +121,7 @@ describe("setup-repo content", () => {
 	it("binds the tracker repo to the approval and passes it to every gh and glab command", () => {
 		for (const phrase of [
 			"resolve the exact tracker repo with `gh repo view --json nameWithOwner` / `glab repo view -F json` and show it.",
-			"never trust it unconfirmed. The user confirms the `<owner>/<repo>` as part of the approval in step 3, and every `gh` / `glab` command after that passes it explicitly (`-R <owner>/<repo>`).",
+			"never trust it unconfirmed. The user confirms the `<owner>/<repo>` as part of the approval in step 3, and every `gh issue` / `gh pr` / `gh label` and `glab issue` / `glab mr` / `glab label` command after that passes it explicitly (`-R <owner>/<repo>`). `gh repo view` / `glab repo view` take it as a positional argument, and `gh api` / `glab api` paths name it; neither takes `-R`.",
 			"replacing each `<owner>/<repo>` in the GitHub or GitLab template with the confirmed repo.",
 			"- The exact tracker repo (`<owner>/<repo>`), when the tracker is GitHub or GitLab",
 			"Done when `gh repo view <owner>/<repo>` / `glab repo view <owner>/<repo>` prints the confirmed project",
@@ -144,6 +144,27 @@ describe("setup-repo content", () => {
 				/Infer the repo from `git remote -v` only when setting this file up, and have the user confirm it/,
 			);
 		}
+		// gh and glab reject -R on api and repo view, and glab label create takes --name.
+		for (const name of ["github", "gitlab"]) {
+			const template = read(`${SKILL_DIR}/issue-tracker-${name}.md`);
+			assert.match(template, /do not take `-R`/, name);
+			assert.doesNotMatch(
+				template,
+				/(?:gh|glab) (?:api|repo view)[^`\n]* -R /,
+				name,
+			);
+		}
+		assert.ok(
+			read(`${SKILL_DIR}/issue-tracker-github.md`).includes(
+				"check that `gh repo view <owner>/<repo> --json nameWithOwner` resolves to the repo named above",
+			),
+		);
+		assert.ok(
+			read(`${SKILL_DIR}/issue-tracker-gitlab.md`).includes(
+				"check that `glab repo view <owner>/<repo>` resolves to the project named above",
+			),
+		);
+		assert.doesNotMatch(flat, /glab label create <label>/);
 		const github = read(`${SKILL_DIR}/issue-tracker-github.md`);
 		assert.doesNotMatch(
 			github.replace("not `{owner}/{repo}`", ""),

@@ -48,7 +48,7 @@ Default posture: these skills were designed for GitHub. If a `git remote` points
 
 Never file issues into either upstream these skills come from, `cursor/plugins` or `mattpocock/skills`. If the only `git remote` points at one of them, it isn't the user's tracker: ask for their own repo.
 
-For GitHub or GitLab, resolve the exact tracker repo with `gh repo view --json nameWithOwner` / `glab repo view -F json` and show it. With several remotes (for example an `upstream` one), or a fork, the default can be another repo than the one the user means, so never trust it unconfirmed. The user confirms the `<owner>/<repo>` as part of the approval in step 3, and every `gh` / `glab` command after that passes it explicitly (`-R <owner>/<repo>`).
+For GitHub or GitLab, resolve the exact tracker repo with `gh repo view --json nameWithOwner` / `glab repo view -F json` and show it. With several remotes (for example an `upstream` one), or a fork, the default can be another repo than the one the user means, so never trust it unconfirmed. The user confirms the `<owner>/<repo>` as part of the approval in step 3, and every `gh issue` / `gh pr` / `gh label` and `glab issue` / `glab mr` / `glab label` command after that passes it explicitly (`-R <owner>/<repo>`). `gh repo view` / `glab repo view` take it as a positional argument, and `gh api` / `glab api` paths name it; neither takes `-R`.
 
 Record the choice in `docs/agents/issue-tracker.md`, replacing each `<owner>/<repo>` in the GitHub or GitLab template with the confirmed repo. The GitHub and GitLab templates carry a "PRs as a request surface" flag, defaulted **off**. Leave it off and don't raise it: a user who wants external PRs in the triage queue can flip the flag in the file later.
 
@@ -110,7 +110,7 @@ The block:
 
 Include the `### Triage labels` sub-block, and write `docs/agents/triage-labels.md`, only when `triage` is installed and Section B ran. When it isn't, both are omitted.
 
-When Section B ran on GitHub or GitLab, create each configured label the tracker lacks (`gh label create <label> -R <owner>/<repo>` / `glab label create <label> -R <owner>/<repo>`), once the user has approved that list and repo in step 3.
+When Section B ran on GitHub or GitLab, create each configured label the tracker lacks (`gh label create <label> -R <owner>/<repo>` / `glab label create --name <label> -R <owner>/<repo>`), once the user has approved that list and repo in step 3.
 
 Then write the docs files using the seed templates in this skill folder as a starting point:
 

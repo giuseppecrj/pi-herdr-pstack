@@ -1,6 +1,6 @@
 # Issue tracker: GitLab
 
-Issues and specs for this repo live as GitLab issues in `<owner>/<repo>`. Use the [`glab`](https://gitlab.com/gitlab-org/cli) CLI for all operations, and pass `-R <owner>/<repo>` to every `glab issue`, `glab mr` and `glab label` command: a bare `glab` resolves the project from the remotes, which can be another project than this one. Write that project in `glab api` paths too, URL-encoded (`projects/<owner>%2F<repo>/...`), not `projects/:id/`.
+Issues and specs for this repo live as GitLab issues in `<owner>/<repo>`. Use the [`glab`](https://gitlab.com/gitlab-org/cli) CLI for all operations, and pass `-R <owner>/<repo>` to every `glab issue`, `glab mr` and `glab label` command: a bare `glab` resolves the project from the remotes, which can be another project than this one. Write that project in `glab api` paths too, URL-encoded (`projects/<owner>%2F<repo>/...`), not `projects/:id/`; `glab api` and `glab repo view` do not take `-R` (`glab repo view <owner>/<repo>` is positional). Never rely on the implicit default: before the first `glab issue create` of a session, check that `glab repo view <owner>/<repo>` resolves to the project named above, and confirm with the user if it does not.
 
 ## Conventions
 

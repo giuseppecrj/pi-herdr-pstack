@@ -1,6 +1,6 @@
 # Issue tracker: GitHub
 
-Issues and specs for this repo live as GitHub issues in `<owner>/<repo>`. Use the `gh` CLI for all operations, and pass `-R <owner>/<repo>` to every `gh issue`, `gh pr` and `gh label` command: a bare `gh` resolves the repo from the remotes, which can be another repo than this one (an `upstream` remote, or a fork's parent). Write that repo in `gh api` paths too, not `{owner}/{repo}`.
+Issues and specs for this repo live as GitHub issues in `<owner>/<repo>`. Use the `gh` CLI for all operations, and pass `-R <owner>/<repo>` to every `gh issue`, `gh pr` and `gh label` command: a bare `gh` resolves the repo from the remotes, which can be another repo than this one (an `upstream` remote, or a fork's parent). Write that repo in `gh api` paths too, not `{owner}/{repo}`; `gh api` and `gh repo view` do not take `-R` (`gh repo view <owner>/<repo>` is positional).
 
 ## Conventions
 
@@ -16,7 +16,7 @@ Issues and specs for this repo live as GitHub issues in `<owner>/<repo>`. Use th
 
 Infer the repo from `git remote -v` only when setting this file up, and have the user confirm it; after that use the repo named above.
 
-File issues only into the user's own repo. Never file into either upstream these skills come from, `cursor/plugins` or `mattpocock/skills`. In a fork, `gh` can default to the upstream parent, so before the first `gh issue create` of a session, check the target with `gh repo view --json nameWithOwner` and confirm it with the user if it is not their repo.
+File issues only into the user's own repo. Never file into either upstream these skills come from, `cursor/plugins` or `mattpocock/skills`. In a fork, `gh` can default to the upstream parent, so never rely on the implicit default: before the first `gh issue create` of a session, check that `gh repo view <owner>/<repo> --json nameWithOwner` resolves to the repo named above, and confirm with the user if it does not.
 
 ## Pull requests as a triage surface
 

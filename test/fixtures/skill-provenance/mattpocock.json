@@ -11,7 +11,7 @@
 	"files": [
 		{
 			"path": "skills/mattpocock/setup-repo/SKILL.md",
-			"sha256": "58a00f464a4227051614de8cd42e6ec51f38ac3fc9fd36399014d66ae3b09b5e",
+			"sha256": "e3a0992c54f83e98d15124ec0643e8ae46e7a1c145c32e2da30490092b6b7373",
 			"status": "adapted",
 			"sources": [
 				{
@@ -41,7 +41,7 @@
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-github.md",
-			"sha256": "09efd71e9ea5e6190376cf5ec8ac90688affaea7f2498a6e2808331c60cb9dfb",
+			"sha256": "1288d620a26ce06f75b6f3ee9a51c52089892eb9de46b088d873e5619a15ed89",
 			"status": "adapted",
 			"sources": [
 				{
@@ -56,7 +56,7 @@
 		},
 		{
 			"path": "skills/mattpocock/setup-repo/issue-tracker-gitlab.md",
-			"sha256": "44981cd43d1acf9811644b1a3cf1b19c502772f58adbbd5f049a8ecd6eea5f24",
+			"sha256": "0368c6f8c9889c550bbc80532e245579fbb85d341293df979613c7d1658f2844",
 			"status": "adapted",
 			"sources": [
 				{

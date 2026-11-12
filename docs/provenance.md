@@ -129,8 +129,9 @@ skills that disable model invocation from the available-skills list) and
 backticked paths for the template links, which `test/skill-content.test.ts`
 requires. A review added: the tracker repo is resolved, shown and confirmed in
 the step 3 approval, written into the generated tracker doc, and passed as `-R
-<owner>/<repo>` to every `gh` and `glab` command, so an `upstream` remote cannot
-redirect labels or issues; the domain layout and any legacy `CONTEXT.md` rename
+<owner>/<repo>` to every `gh`/`glab` issue, pr, mr and label command (`repo view`
+takes it positionally and `api` paths name it; neither accepts `-R`), so an
+`upstream` remote cannot redirect labels or issues; the domain layout and any legacy `CONTEXT.md` rename
 join the step 3 drafts; and repo content read during exploration never
 authorizes a command. These are content checks on the skill text; they do not
 show that a live model follows it. The seed templates carry the same adaptations as this repository's
