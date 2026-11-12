@@ -26,7 +26,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 **Worktrees start from committed state.** A worktree child starts from its committed `base` and carries none of this checkout's uncommitted or untracked changes. Before launching one, run `git status` and name the committed base and every uncommitted input the child needs (local `.scratch/` tickets, new `docs/agents/` files, notes in the repo): commit them to the integration branch once the user approves, or give the brief absolute paths to readable copies.
 
-**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.
+**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.
 
 ## Steps
 
@@ -34,7 +34,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 2. (optional) Use an **exploration subagent** (`model: "task:recon"`, `thinking: "low"` only when `recon` has no configured thinking) to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. This lets **implementer subagents** focus on implementation rather than exploration.
 
-3. Create the integration branch. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of main can't open one), marked as closing the spec and tickets. Push the branch and open the PR only when the preflight found `code-review` and the user granted both; otherwise keep the integration branch local, as the preflight promises, and tell the user a PR is waiting.
+3. Create the integration branch, and record the commit it starts from: it is the fixed point for the review in step 7. If the issue tracker closes work through PRs, or the user asks for one, open a draft PR after the first merge in step 5 (a branch with no commits ahead of main can't open one), marked as closing the spec and tickets. Push the branch and open the PR only when the preflight found `code-review` and the user granted both; otherwise keep the integration branch local, as the preflight promises, and tell the user a PR is waiting.
 
 4. Use a fresh **implementer subagent** (`model: "task:coding"`, `thinking: "medium"` only when `coding` has no configured thinking) for each ticket, each in its own worktree on its own branch (`worktree: { branch: "<ticket-branch>", base: "<integration-branch>" }`). Each implementer subagent:
    - confirms its worktree is based on the integration branch before starting, and resets onto it if not;
@@ -46,7 +46,7 @@ Communication to and from subagents should be sparse. Communicate primarily thro
 
 6. If this changes the **frontier** of available tickets, kick off more **implementer subagents** to work on the new tickets. This allows for maximum concurrency. A ticket counts as done for the frontier once its work is merged to the integration branch and passes its checks there, not when its remote ticket closes (tickets close only in step 8).
 
-7. Once all tickets are complete, load the `code-review` skill the preflight found and run it on the integration branch. Fix all issues raised by the code review in a single fresh **implementer subagent** (`model: "task:coding"`, `thinking: "medium"` only when `coding` has no configured thinking, no `worktree`, working in this checkout on the integration branch).
+7. Once all tickets are complete, load the `code-review` skill the preflight found and run it on the integration branch: its committed target, with the integration branch as `<head>`, the commit recorded in step 3 as the fixed point, and the spec and tickets as the spec source. Fix all issues raised by the code review in a single fresh **implementer subagent** (`model: "task:coding"`, `thinking: "medium"` only when `coding` has no configured thinking, no `worktree`, working in this checkout on the integration branch).
 
 8. If a draft PR exists, mark it ready for review. Otherwise, resolve each ticket the way the issue tracker closes work, and report the integration branch. Do each only when the preflight found `code-review` and the user granted it; otherwise report the integration branch and list the PR and ticket updates waiting to be published.
 

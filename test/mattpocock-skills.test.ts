@@ -20,6 +20,7 @@ const SKILL_DIR = `${FOLDER}/setup-repo`;
 const UPSTREAM_DIR = "engineering/setup-matt-pocock-skills";
 /** Each shipped skill in the folder and the upstream directory it adapts. */
 const UPSTREAM_DIRS: Record<string, string> = {
+	"code-review": "engineering/code-review",
 	"codebase-design": "engineering/codebase-design",
 	"domain-modeling": "engineering/domain-modeling",
 	"grill-me": "productivity/grill-me",
@@ -620,7 +621,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 	it("preflights the skills it loads and fails closed when one is missing (M1)", () => {
 		assert.ok(
 			flat("implement").includes(
-				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `code-review` is missing, tell the user now that review is unavailable.",
+				"Before starting, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `code-review` is missing, tell the user now that review is unavailable.",
 			),
 		);
 		assert.ok(
@@ -636,7 +637,7 @@ describe("spec, ticket and triage flow content contract (not behavior proof)", (
 		);
 		assert.ok(
 			flat("implement-spec").includes(
-				"**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review`. If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.",
+				"**Preflight.** Before step 1, find the skills this run loads (see **Finding a skill**): `tdd` (this pack's is `../../merged/tdd/SKILL.md`) and `code-review` (this pack's is `../code-review/SKILL.md`). If `tdd` is missing, stop before launching any implementer. If `code-review` is missing, tell the user now that review is unavailable; you may still build the integration branch, but stop after step 6: open no PR, mark nothing ready, resolve no ticket, and report the integration branch as local and unreviewed. Never stand in for a missing skill with another one.",
 			),
 		);
 		const wayfinder = flat("wayfinder");

@@ -46,7 +46,7 @@ When the shape of that interface is itself in question (how deep the module is, 
 - **Run it red.** Run each new test before writing the code for it and confirm it fails for the intended reason. If it passes, or fails for an unrelated reason, correct the test or the reproduction before editing the implementation.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle. For a bug, the slice is the regression test and the smallest production change that satisfies the intended behavior while preserving nearby contracts.
 - **Rerun it green.** Rerun the test after the change and confirm it now passes, then run the nearby tests.
-- **Refactoring is not part of the loop.** It belongs to the review stage (the `code-review` skill, when one is installed), not the red → green implementation cycle.
+- **Refactoring is not part of the loop.** It belongs to the review stage (the `code-review` skill, when one is installed; this pack's is `../../mattpocock/code-review/SKILL.md`), not the red → green implementation cycle.
 
 ## Fixing a bug
 

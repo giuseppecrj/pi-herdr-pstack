@@ -555,10 +555,11 @@ const body = (path: string) => read(path).replace(/^---\n[\s\S]*?\n---\n/, "");
 /**
  * The skills Pi lists for the model: setup-pstack, and the Matt skills upstream
  * leaves model-invocable (grilling and domain-modeling, so other skills can
- * load them, and codebase-design, pr, research and wizard). Every other skill
+ * load them, and code-review, codebase-design, pr, research and wizard). Every other skill
  * disables model invocation.
  */
 const MODEL_INVOKED = [
+	"code-review",
 	"codebase-design",
 	"domain-modeling",
 	"grilling",
@@ -572,7 +573,7 @@ describe("shipped skill tree", () => {
 	it("matches the canonical inventory partition and statuses", () => {
 		assert.equal(inventory.schemaVersion, 2);
 		assert.equal(inventory.skills.length, inventory.expectedSkillCount);
-		assert.equal(inventory.skills.length, 75);
+		assert.equal(inventory.skills.length, 76);
 		assert.equal(pstackRows.length, 55);
 		assert.deepEqual(
 			mergedRows.map(({ name }) => name),
@@ -634,6 +635,7 @@ describe("shipped skill tree", () => {
 				.filter(({ folder }) => folder === "skills/mattpocock")
 				.map(({ name, folder }) => `${folder}/${name}`),
 			[
+				"code-review",
 				"codebase-design",
 				"domain-modeling",
 				"grill-me",

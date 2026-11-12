@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "expectedSkillCount": 75,
+  "expectedSkillCount": 76,
   "sources": {
     "mimir": {
       "repository": "https://github.com/casualjim/pi-mimir",
@@ -112,6 +112,19 @@
         ],
         "cursor": [
           "bro/SKILL.md"
+        ]
+      }
+    },
+    {
+      "name": "code-review",
+      "folder": "skills/mattpocock",
+      "wave": "V2",
+      "status": "shipped",
+      "primarySource": "mattpocock",
+      "sourceFiles": {
+        "mattpocock": [
+          "engineering/code-review/SKILL.md",
+          "engineering/code-review/agents/openai.yaml"
         ]
       }
     },

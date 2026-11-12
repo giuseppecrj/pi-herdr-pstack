@@ -124,7 +124,9 @@ const REPO_FILE_NAMES = new Set([
 	"0002-slug.md",
 	"AGENTS.md",
 	"CLAUDE.md",
+	"CODING_STANDARDS.md",
 	"CONTEXT-MAP.md",
+	"CONTRIBUTING.md",
 	"CONTEXT.md",
 	"GLOSSARY-MAP.md",
 	"GLOSSARY.md",
@@ -176,7 +178,7 @@ const skill = (name: string, body = "") =>
 
 describe("skill tree across upstream folders", () => {
 	it("finds every shipped skill", () => {
-		assert.equal(skillDirs(PACK_ROOT).length, 75);
+		assert.equal(skillDirs(PACK_ROOT).length, 76);
 		for (const dir of skillDirs(PACK_ROOT))
 			assert.match(dir, /^skills\/[a-z0-9-]+\/[a-z0-9-]+$/, dir);
 	});
