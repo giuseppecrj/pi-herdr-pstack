@@ -2,7 +2,9 @@
 // Reports how far each upstream has moved past its recorded pin (ADR-0003).
 // Usage: npm run upstream:drift -- [options]
 //   --format markdown|json   output format (default markdown)
-//   --upstream <a,b>         only these upstreams (default: cursor, mattpocock, mimir)
+//   --upstream <a,b>         only these upstreams (default: the synced upstreams with a
+//                            scope record, cursor and mattpocock; pi-mimir is frozen
+//                            and reported only when named, ADR-0004)
 //   --source <name>=<path>   checkout of an upstream (default PSTACK_<NAME>_SOURCE)
 //   --ref <name>=<ref>       target ref of an upstream (default: its default branch,
 //                            origin/HEAD, or HEAD when the checkout has no remote at all)
@@ -723,7 +725,11 @@ function main() {
 	const inventory = readJson("docs/skill-inventory.json");
 	const all = upstreamsToCheck(fixture, inventory);
 	const names = all.map(({ name }) => name);
-	const selected = options.only ?? names;
+	// Only upstreams with a scope record are synced; a context source such as
+	// pi-mimir is frozen at its pin (ADR-0004) and reported only when named.
+	const selected =
+		options.only ??
+		all.filter(({ context }) => !context).map(({ name }) => name);
 	for (const name of [
 		...selected,
 		...Object.keys(options.sources),

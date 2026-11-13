@@ -299,10 +299,16 @@ describe("upstream-drift.mjs", () => {
 		const env: NodeJS.ProcessEnv = { ...process.env };
 		for (const key of Object.keys(env))
 			if (/^PSTACK_.*_SOURCE$/.test(key)) delete env[key];
+		// The default run covers only scoped upstreams (u1, u2); the context
+		// source u3 is frozen (ADR-0004). These helpers name all three unless the
+		// caller picks with --upstream, so each test still sees u3 when it asks.
+		const every = (args: string[]) =>
+			args.includes("--upstream") ? args : ["--upstream", "u1,u2,u3", ...args];
 		return {
 			root,
 			repos,
 			pins,
+			env,
 			run: (...args: string[]) =>
 				spawnSync(
 					process.execPath,
@@ -312,7 +318,7 @@ describe("upstream-drift.mjs", () => {
 							"--source",
 							`${key}=${repos[key]}`,
 						]),
-						...args,
+						...every(args),
 					],
 					{ encoding: "utf8", env },
 				),
@@ -327,7 +333,7 @@ describe("upstream-drift.mjs", () => {
 						]),
 						"--format",
 						"json",
-						...args,
+						...every(args),
 					],
 					{ encoding: "utf8", env },
 				);
@@ -1005,6 +1011,40 @@ describe("upstream-drift.mjs", () => {
 		assert.match(source, /"fetch", "--quiet", "origin"/);
 	});
 
+	it("syncs only the scoped upstreams by default; pi-mimir is frozen (ADR-0004)", {
+		skip:
+			!(
+				process.env.PSTACK_CURSOR_SOURCE && process.env.PSTACK_MATTPOCOCK_SOURCE
+			) && "set PSTACK_CURSOR_SOURCE and PSTACK_MATTPOCOCK_SOURCE",
+	}, () => {
+		// No mimir checkout is needed: a default run never reads one.
+		const env = { ...process.env };
+		delete env.PSTACK_MIMIR_SOURCE;
+		const pins = JSON.parse(
+			readFileSync(join(PACK_ROOT, "docs/skill-inventory.json"), "utf8"),
+		) as { sources: Record<string, { commit: string }> };
+		const result = spawnSync(
+			process.execPath,
+			[
+				join(PACK_ROOT, "scripts/upstream-drift.mjs"),
+				"--format",
+				"json",
+				"--ref",
+				`cursor=${pins.sources.cursor.commit}`,
+				"--ref",
+				`mattpocock=${pins.sources.mattpocock.commit}`,
+			],
+			{ encoding: "utf8", env },
+		);
+		assert.equal(result.status, 0, result.stdout + result.stderr);
+		assert.deepEqual(
+			(JSON.parse(result.stdout) as Report).upstreams.map(
+				({ upstream }) => upstream,
+			),
+			["cursor", "mattpocock"],
+		);
+	});
+
 	it("passes every real upstream at its pin when checkouts are available", {
 		skip:
 			!(
@@ -1023,6 +1063,9 @@ describe("upstream-drift.mjs", () => {
 				join(PACK_ROOT, "scripts/upstream-drift.mjs"),
 				"--format",
 				"json",
+				// mimir is frozen, not synced, but it must still resolve at its pin.
+				"--upstream",
+				Object.keys(pins.sources).join(","),
 				...Object.entries(pins.sources).flatMap(([name, { commit }]) => [
 					"--ref",
 					`${name}=${commit}`,

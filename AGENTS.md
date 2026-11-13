@@ -45,4 +45,4 @@ Single-context: `GLOSSARY.md` at the repo root and ADRs in `docs/adr/`. See `doc
 
 ### Upstream sync
 
-The weekly sync of cursor/plugins, mattpocock/skills and pi-mimir: see `docs/agents/upstream-sync.md` (`npm run upstream:drift` reports the drift).
+The weekly sync of cursor/plugins and mattpocock/skills: see `docs/agents/upstream-sync.md` (`npm run upstream:drift` reports the drift). pi-mimir is frozen at its pin and not synced (ADR-0004).

@@ -2,7 +2,7 @@
 
 ## Upstream scope
 
-The weekly sync is run from `docs/agents/upstream-sync.md`; `npm run upstream:drift` reports how far each upstream moved past its pin.
+The weekly sync is run from `docs/agents/upstream-sync.md`; `npm run upstream:drift` reports how far each upstream moved past its pin. It covers cursor/plugins and mattpocock/skills; pi-mimir stays frozen at `f07dd981` as historical provenance and is not synced (ADR-0004).
 
 The mattpocock/skills upstream has its own section below. Parity reviews and the weekly upstream sync cover three cursor/plugins roots
 (decision Q6): `pstack/skills`, `pstack/agents` and `pstack/docs`. Two roots
