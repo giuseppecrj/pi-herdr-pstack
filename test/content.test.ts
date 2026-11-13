@@ -146,7 +146,7 @@ describe("package manifest", () => {
 	it("is a public released Pi package with host peers", () => {
 		assert.equal(manifest.name, "pi-herdr-pstack");
 		assert.equal(manifest.private, undefined);
-		assert.equal(manifest.version, "0.6.0");
+		assert.equal(manifest.version, "1.0.0");
 		assert.equal(manifest.license, "MIT");
 		assert.ok(manifest.keywords.includes("pi-package"));
 		// 3.10.0 ships category thinking and the writer's approval dialog.

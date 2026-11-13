@@ -194,8 +194,12 @@ describe("upgrading from 0.6.0 (C1)", () => {
 		}
 	});
 
-	it("prepares hand-written 1.0.0 release notes for the changelog", () => {
-		const notes = flat("docs/release-notes-1.0.0.md");
+	it("ships hand-written 1.0.0 release notes in the changelog", () => {
+		const changelog = flat("CHANGELOG.md");
+		const notes = changelog.slice(
+			changelog.indexOf("## [v1.0.0]"),
+			changelog.indexOf("### Commits"),
+		);
 		assert.ok(
 			notes.includes(
 				"## [v1.0.0](https://github.com/giuseppecrj/pi-herdr-pstack/compare/v0.6.0...v1.0.0)",
@@ -209,10 +213,11 @@ describe("upgrading from 0.6.0 (C1)", () => {
 			"### Highlights",
 		])
 			assert.ok(notes.includes(phrase), phrase);
-		// The coordinator merges it at release; the package does not ship it.
-		const files = (JSON.parse(read("package.json")) as { files: string[] })
-			.files;
-		assert.equal(files.includes("docs/release-notes-1.0.0.md"), false);
+		// The draft file was merged into the changelog at release and removed.
+		assert.equal(
+			existsSync(join(PACK_ROOT, "docs/release-notes-1.0.0.md")),
+			false,
+		);
 	});
 });
 
@@ -359,13 +364,13 @@ describe("release docs describe 1.0.0 without drifting counts (C7)", () => {
 		);
 	});
 
-	it("RELEASING.md's current state is 1.0.0 and says how to merge the release notes", () => {
+	it("RELEASING.md's current state is 1.0.0 and records the hand-written notes", () => {
 		const guide = flat("RELEASING.md");
 		assert.match(guide, /## Current state: 1\.0\.0 /);
 		assert.doesNotMatch(guide, /## Current state: 0\./);
 		assert.ok(
 			guide.includes(
-				"Before the version commit, prepend `docs/release-notes-1.0.0.md` to `CHANGELOG.md` and delete that file.",
+				"The version commit put hand-written 1.0.0 notes above the generated commit list in `CHANGELOG.md`; `auto-changelog` regenerates the whole file, so a later regeneration must keep them.",
 			),
 		);
 	});

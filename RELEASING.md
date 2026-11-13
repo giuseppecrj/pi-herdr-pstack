@@ -10,9 +10,10 @@ The `1.0.0` release is a major version. The pi-herdr-agents peer is
 `>=3.10.0`; `/setup-pstack` saves through the host's own approval dialog;
 `/setup-pstack init` and `pstack_apply_task_models` are removed; and Matt
 Pocock's skills ship beside pstack's, in folders by upstream (see the README's
-"Upgrading from 0.6.0"). Before the version commit, prepend
-`docs/release-notes-1.0.0.md` to `CHANGELOG.md` and delete that file. When the
-version commit reaches `main`, the detect step sees the previous public
+"Upgrading from 0.6.0"). The version commit put hand-written 1.0.0 notes above
+the generated commit list in `CHANGELOG.md`; `auto-changelog` regenerates the
+whole file, so a later regeneration must keep them. When the version commit
+reaches `main`, the detect step sees the previous public
 `0.6.0` manifest and the current `1.0.0`, sets `release=true`, and the
 workflow publishes `1.0.0`.
 
