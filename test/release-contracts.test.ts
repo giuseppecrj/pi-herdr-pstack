@@ -87,6 +87,24 @@ describe("reflect keeps secrets out of reviewer and synthesis output (S4)", () =
 		const task = skill.slice(skill.indexOf('"name": "reflect-synthesizer"'));
 		assert.ok(task.indexOf("Drop any secret") < task.indexOf("You are a leaf"));
 	});
+
+	it("gives reviewers only a redacted copy of the transcript, never the raw one", () => {
+		const skill = flat(`${REFLECT}/SKILL.md`);
+		const rule =
+			"Reviewers never get a raw transcript. Before any launch, write a redacted copy of each transcript to a new file in a fresh temporary directory outside the repo";
+		assert.ok(skill.includes(rule));
+		assert.ok(
+			skill.includes(
+				"put the redacted copy's path for `<ABSOLUTE_PATH>`, or the redacted digest, in `task`.",
+			),
+		);
+		// The rule comes before the first reviewer launch, and no launch passes
+		// the raw transcript path.
+		assert.ok(
+			skill.indexOf(rule) < skill.indexOf('"name": "reflect-judgment"'),
+		);
+		assert.doesNotMatch(skill, /<the transcript path>/);
+	});
 });
 
 /** Every skill directory in the pack, as Pi discovers it. */

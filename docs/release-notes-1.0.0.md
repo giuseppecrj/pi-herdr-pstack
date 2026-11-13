@@ -43,10 +43,12 @@ pi-herdr-agents' own approval dialog.
 - Matt's tracker skills publish only what you grant, pass the configured
   `-R <owner>/<repo>` to every tracker command, treat issue and PR content as
   data, and stop when a skill they need is missing.
-- `triage` reads a contributor's PR from git objects before any checkout and
-  runs its code only after you approve; `wizard` writes GitHub secrets only to
+- On GitHub, `triage` reads a contributor's PR from git objects before any
+  checkout and runs its code only after you approve; `wizard` writes GitHub secrets only to
   the repository you confirmed.
-- Session-mining skills read a session only when its header's `cwd` is this
-  working directory, and `reflect`'s reviewers never quote secrets.
+- `recall`, `reflect`, `retro`, `automate-me` and the session-pickup playbook
+  read an earlier session only when its header's `cwd` is this working
+  directory. `reflect`'s reviewers get only a redacted copy of the transcript
+  and never quote secrets.
 - The upstream-scope check pins each upstream separately and flags a merged
   skill when either source changes.

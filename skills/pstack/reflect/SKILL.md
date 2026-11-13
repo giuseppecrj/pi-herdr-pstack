@@ -32,12 +32,14 @@ Before these launches, follow the architecture preflight in `../poteto-mode/refe
 
 Judgment and divergent are judgment seats: `model` is `task:architecture` and `thinking` is `high` or above only when that category has no configured thinking (otherwise omit it), the same category as other judgment and prose synthesis (`../poteto-mode/references/delegation.md`). The tooling lens is a diversity seat per `../poteto-mode/references/fan-out.md` section 3. Read the family of the first model listed for architecture under Task-category shortlists, and give tooling an exact authenticated `provider/model-id` from a different family. With no other authenticated family, run tooling on a same-family model and say the lens is context-isolated, not cross-family. If the architecture launch falls back to a later candidate, check the delivered model's family, and if it matches the tooling lens, relabel that lens as context-isolated.
 
-Pass each template verbatim as `systemPrompt`, and put the transcript path for `<ABSOLUTE_PATH>`, or the digest, in `task`. Reviewers return findings in their delivered `subagent` results. Each template forbids quoting a secret, token, credential or credential-bearing URL: a finding refers to one by its location and quotes only bounded excerpts. That matters most for the tooling lens, which sends the transcript to another model family.
+Reviewers never get a raw transcript. Before any launch, write a redacted copy of each transcript to a new file in a fresh temporary directory outside the repo (`mktemp -d`, file mode 600). In the copy, replace every secret, token, password, private key, credential and credential-bearing URL, and the whole output of any tool call that read a `.env*` or credential file, with `[REDACTED: <what>, <where>]`. Check the copy before passing it on, and delete the directory once synthesis is done. A digest follows the same rule.
+
+Pass each template verbatim as `systemPrompt`, and put the redacted copy's path for `<ABSOLUTE_PATH>`, or the redacted digest, in `task`. Reviewers return findings in their delivered `subagent` results. Each template forbids quoting a secret, token, credential or credential-bearing URL: a finding refers to one by its location and quotes only bounded excerpts. That matters most for the tooling lens, which sends the transcript to another model family.
 
 ```json subagent
 {
   "name": "reflect-judgment",
-  "task": "<ABSOLUTE_PATH> is <the transcript path>. <Or: no path; the digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
+  "task": "<ABSOLUTE_PATH> is <the redacted copy's path>. <Or: no path; the redacted digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/judgment-reviewer.md, verbatim>",
   "model": "task:architecture",
   "fork": false
@@ -49,7 +51,7 @@ The divergent reviewer differs only in `name` and prompt file. The tooling revie
 ```json subagent
 {
   "name": "reflect-tooling",
-  "task": "<ABSOLUTE_PATH> is <the transcript path>. <Or: no path; the digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
+  "task": "<ABSOLUTE_PATH> is <the redacted copy's path>. <Or: no path; the redacted digest follows: ...>. Do not write files. You are a leaf: launch nothing.",
   "systemPrompt": "<the full text of references/tooling-reviewer.md, verbatim>",
   "model": "<provider>/<model-id>",
   "thinking": "high",
