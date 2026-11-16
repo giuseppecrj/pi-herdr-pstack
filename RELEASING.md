@@ -4,18 +4,23 @@ GitHub Actions publishes this package when the version in `package.json` changes
 
 The published version must be unique on npm.
 
-## Current state: 1.0.0
+## Current state: 1.1.0
+
+The `1.1.0` release syncs the cursor/plugins pin to `bf0c7cd` (pstack
+`0.15.42`): sharpen and teach tip text, statechart mermaid and SANY-error
+fixes on the pack `tla-ts` runner, and inventory updates for Cursor's
+one-file how/why collapse (pack how/why stay on the frozen mimir primary).
+When the version commit reaches `main`, the detect step sees the previous
+public `1.0.0` manifest and the current `1.1.0`, sets `release=true`, and the
+workflow publishes `1.1.0`.
 
 The `1.0.0` release is a major version. The pi-herdr-agents peer is
 `>=3.10.0`; `/setup-pstack` saves through the host's own approval dialog;
 `/setup-pstack init` and `pstack_apply_task_models` are removed; and Matt
 Pocock's skills ship beside pstack's, in folders by upstream (see the README's
-"Upgrading from 0.6.0"). The version commit put hand-written 1.0.0 notes above
+"Upgrading from 0.6.0"). The 1.0.0 version commit put hand-written notes above
 the generated commit list in `CHANGELOG.md`; `auto-changelog` regenerates the
-whole file, so a later regeneration must keep them. When the version commit
-reaches `main`, the detect step sees the previous public
-`0.6.0` manifest and the current `1.0.0`, sets `release=true`, and the
-workflow publishes `1.0.0`.
+whole file, so a later regeneration must keep them.
 
 The `0.6.0` release made `statechart` check models with the pack's `tla-ts`
 dependency instead of Java.

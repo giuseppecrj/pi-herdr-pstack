@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
+			"commit": "bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7",
 			"root": "pstack/skills"
 		}
 	},
@@ -48,7 +48,7 @@
 				{
 					"source": "cursor",
 					"path": "no-comments/SKILL.md",
-					"sha256": "078ecfe224eafbb017f6476870612838bf6dbe38c0b697e12f0c887d0313f17e",
+					"sha256": "9cc934e7541c4db609deeb5fd4e5882c1a4d3956975b5ae1ee693ed340527b9b",
 					"use": "context"
 				}
 			],
@@ -68,7 +68,7 @@
 				{
 					"source": "cursor",
 					"path": "../agents/comment-sicko.md",
-					"sha256": "3e239e40b7b4b9beb2cf7f3ccc57f2388eb8b69bd1ba8ae888ef87ef6e0e2116",
+					"sha256": "0fb37221ab2a9159714d38f1528898e82b9758b5750f244bbe2e575bb593a1de",
 					"use": "context"
 				}
 			],
@@ -144,13 +144,13 @@
 		},
 		{
 			"path": "skills/pstack/sharpen/SKILL.md",
-			"sha256": "0d0ed27041096d4ba9109539cd0c2ccfb74be3c20a1d184f4fcfd935bae313de",
+			"sha256": "5b56b1a3fe8ae858306ae27cf63e1a60a914cdc69836c8c15e513f7bc2668205",
 			"status": "adapted",
 			"sources": [
 				{
 					"source": "cursor",
 					"path": "sharpen/SKILL.md",
-					"sha256": "563dfc460c605d311e650726288e2f1cbd61eab817db178d6e7e29643e07e7a2",
+					"sha256": "aac4f8e6a1ffd70e3763314db37d3c2eb0cfea08bc63e98907aca6dae0343031",
 					"use": "primary"
 				}
 			],

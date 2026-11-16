@@ -340,16 +340,16 @@ describe("the local-markdown tracker and to-tickets agree on ticket lines (C6)",
 	});
 });
 
-describe("release docs describe 1.0.0 without drifting counts (C7)", () => {
-	it("compatibility.md states 1.0.0 and how it is verified, with no stale test counts", () => {
+describe("release docs describe 1.1.0 without drifting counts (C7)", () => {
+	it("compatibility.md states 1.1.0 and how it is verified, with no stale test counts", () => {
 		const doc = flat("docs/compatibility.md");
 		assert.match(
 			doc,
-			/^# Compatibility Status: pi-herdr-pstack `1\.0\.0`, on pi-herdr-agents `>=3\.10\.0`/,
+			/^# Compatibility Status: pi-herdr-pstack `1\.1\.0`, on pi-herdr-agents `>=3\.10\.0`/,
 		);
 		const current = doc.slice(
+			doc.indexOf("For 1.1.0,"),
 			doc.indexOf("For 1.0.0,"),
-			doc.indexOf("For 0.5.0,"),
 		);
 		assert.ok(current.length > 0);
 		for (const phrase of [
@@ -364,13 +364,13 @@ describe("release docs describe 1.0.0 without drifting counts (C7)", () => {
 		);
 	});
 
-	it("RELEASING.md's current state is 1.0.0 and records the hand-written notes", () => {
+	it("RELEASING.md's current state is 1.1.0 and keeps the 1.0.0 hand-written notes rule", () => {
 		const guide = flat("RELEASING.md");
-		assert.match(guide, /## Current state: 1\.0\.0 /);
+		assert.match(guide, /## Current state: 1\.1\.0 /);
 		assert.doesNotMatch(guide, /## Current state: 0\./);
 		assert.ok(
 			guide.includes(
-				"The version commit put hand-written 1.0.0 notes above the generated commit list in `CHANGELOG.md`; `auto-changelog` regenerates the whole file, so a later regeneration must keep them.",
+				"The 1.0.0 version commit put hand-written notes above the generated commit list in `CHANGELOG.md`; `auto-changelog` regenerates the whole file, so a later regeneration must keep them.",
 			),
 		);
 	});

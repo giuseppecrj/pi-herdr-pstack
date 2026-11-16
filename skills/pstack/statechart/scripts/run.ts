@@ -68,6 +68,7 @@ export function* fileLines(file: string) {
 }
 
 export const PINNED_FLAGS = ["-workers", "1", "-fp", "0", "-lncheck", "final"];
+const SANY_ERRORS = /^\*\*\* ?(?:Errors|Abort messages|Parse Error)/m;
 
 export const killGroup = (pid: number) =>
   new Promise((resolve) =>
@@ -192,6 +193,12 @@ const tail = (r: FileResult) => {
   return kept.join("").trim().split("\n").slice(-30).join("\n");
 };
 
+const firstLines = (text: string) => {
+  const lines = text.trim().split("\n");
+  if (lines.length > 40) lines.splice(40, Infinity, `... ${lines.length - 40} more lines`);
+  return lines.join("\n");
+};
+
 const stopOf = (r: FileResult): Stop => {
   const errors: Part[] = [];
   for (const m of r.error ? [] : messagesOf(r.output))
@@ -203,9 +210,14 @@ const stopOf = (r: FileResult): Stop => {
     )
       errors.push(m);
   if (!errors.length) return { status: r.status, message: tail(r) };
-  const lines = [...plainText(errors)].join("").trim().split("\n");
-  if (lines.length > 40) lines.splice(40, Infinity, `... ${lines.length - 40} more lines`);
-  return { status: r.status, message: lines.join("\n") };
+  return { status: r.status, message: firstLines([...plainText(errors)].join("")) };
+};
+
+const sanyErrors = (r: FileResult) => {
+  if (r.error) return undefined;
+  const text = [...plainText(messagesOf(r.output))].join("");
+  const at = text.search(SANY_ERRORS);
+  return at === -1 ? undefined : firstLines(text.slice(at));
 };
 
 const names = (rules: Rule[], kind: Rule["kind"]) => {
@@ -269,8 +281,16 @@ export async function check(specFile: string, configFile: string): Promise<Check
       folder,
       path.resolve(specFile),
     ]);
-    if (xml.status !== 0)
-      throw new Error(`SANY could not read ${specFile} (exit ${xml.status}):\n${tail(xml)}`);
+    if (xml.status !== 0) {
+      const errors = xml.error
+        ? undefined
+        : sanyErrors(
+            await runTlc("sany-errors", "tla2sany.SANY", [path.resolve(specFile)]),
+          );
+      throw new Error(
+        `SANY could not read ${specFile} (exit ${xml.status}):\n${errors ?? tail(xml)}`,
+      );
+    }
     const sany = readSany(fs.readFileSync(xml.stdout, "utf8"));
     const module = path.basename(specFile, ".tla");
     const spec = { ...readSpec({ module, sany, checks }), folder };

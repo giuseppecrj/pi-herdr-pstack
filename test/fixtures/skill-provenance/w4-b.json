@@ -9,7 +9,7 @@
 		},
 		"cursor": {
 			"repository": "https://github.com/cursor/plugins",
-			"commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
+			"commit": "bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7",
 			"root": "pstack/skills"
 		}
 	},
@@ -46,7 +46,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Project-local skills write under .pi/skills/; a ~/.pi/agent/skills copy needs explicit confirmation. Installing a verification tool needs authorization (references/authorization.md). Generate step names the .pi/skills path. Hand-off points at /skill:maintain-formal-verification-skill. Cursor-only plugin resolution wording was not copied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
+			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Project-local skills write under .pi/skills/; a ~/.pi/agent/skills copy needs explicit confirmation. Installing a verification tool needs authorization (references/authorization.md). Generate step names the .pi/skills path. Hand-off points at /skill:maintain-formal-verification-skill. Cursor-only plugin resolution wording was not copied. Pin move to bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
 		},
 		{
 			"path": "skills/pstack/create-verification-skill/SKILL.md",
@@ -140,7 +140,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Find-the-checks looks under .pi/skills/. The report keeps the one-change shape but says commits follow the commit policy and that pushing and opening a PR each need explicit authorization (references/authorization.md); without it the run stops at the local diff. Cursor-only plugin resolution wording was not copied. Pin move to 1ba91fc25c0977741dd0e267849e6234b037ed0a: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
+			"explanation": "Adapted from the pinned Cursor skill (no mimir copy). Bare slash commands became /skill: forms. Find-the-checks looks under .pi/skills/. The report keeps the one-change shape but says commits follow the commit policy and that pushing and opening a PR each need explicit authorization (references/authorization.md); without it the run stops at the local diff. Cursor-only plugin resolution wording was not copied. Pin move to bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7: generated skills must read TLA+ results via /skill:statechart without copying its CLI."
 		},
 		{
 			"path": "skills/pstack/maintain-verification-skill/SKILL.md",
@@ -190,7 +190,7 @@
 				{
 					"source": "cursor",
 					"path": "recall/SKILL.md",
-					"sha256": "b0ceb996259c3404532f61e4b010df4e3d80d7ddbed85b3c302895723eb62a89",
+					"sha256": "44673475f0523b83db7ea09388562b844ad7f2026f54e7d980f537e33109b1c8",
 					"use": "context"
 				}
 			],
@@ -300,13 +300,13 @@
 		},
 		{
 			"path": "skills/pstack/statechart/scripts/backends/mermaid.ts",
-			"sha256": "75704b2704a9399a39479ff704a580d5b9a1d0fede01fe771df28bf799b434b6",
+			"sha256": "ce293d34ce3928d93329bd6d1a889d5722620008dae4339add79ef226c3f9b88",
 			"status": "copied",
 			"sources": [
 				{
 					"source": "cursor",
 					"path": "statechart/scripts/backends/mermaid.ts",
-					"sha256": "75704b2704a9399a39479ff704a580d5b9a1d0fede01fe771df28bf799b434b6",
+					"sha256": "ce293d34ce3928d93329bd6d1a889d5722620008dae4339add79ef226c3f9b88",
 					"use": "primary"
 				}
 			],
@@ -608,13 +608,13 @@
 		},
 		{
 			"path": "skills/pstack/statechart/scripts/run.ts",
-			"sha256": "bf77f00117df14850da5b03e94fd7f2e4a2a458f0f82e8091ee55d12eef42f3b",
+			"sha256": "0569c239ed949f2fe16a4f5cd93a5a596cf12fed3e18c766ed59cdb1d3fd8a1b",
 			"status": "adapted",
 			"sources": [
 				{
 					"source": "cursor",
 					"path": "statechart/scripts/run.ts",
-					"sha256": "f330e0a3b0a9f8181c2e52252c4a47db3f0a64f79a7cca5490263e33a5f13c72",
+					"sha256": "751d97cfde3c241bfeed8913fc74a7a7cbc6acd3829e37a441016af3eb78f0e0",
 					"use": "primary"
 				}
 			],
@@ -674,15 +674,8 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/ConfigOracle.java",
-			"sha256": "4f3367314f0fc34e39777d40dd31f96451985b77834fd0e925716aa3b169a021",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/chart.test.ts",
-			"sha256": "3f9022fcc981d17f58b5e7a9302e766241f81a477bda70c3e621d7a1d95f19c1",
+			"sha256": "e5c4bb0dcb9bcb570066d427ee768b2eb01aea87aa3bd9136c8e92459f513ae4",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -710,7 +703,7 @@
 		{
 			"source": "cursor",
 			"path": "statechart/scripts/test/cli.test.ts",
-			"sha256": "8a3b028dafe2065029a66242f7a3832d18058e772a0dfc1b2c170511ffee8e07",
+			"sha256": "fdd3154882a0c4505868973a9de133b3f5d2140f0ca9e0a9dcfd7b2cc55871df",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -723,8 +716,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/ConfigOracle.java",
+			"sha256": "4f3367314f0fc34e39777d40dd31f96451985b77834fd0e925716aa3b169a021",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus.test.ts",
-			"sha256": "5686aa487dfec3e0a06b3c15390dbc3ab5953ced532c5eee7d5c5e2f54f492c7",
+			"sha256": "b280d27ca7c33bb9a8df2fbbd6d59c5b8c41e3ceaad0c7c73fba4ce9af85824b",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Counter/chart.mmd",
+			"sha256": "bcdc46dccfa6172fa9e36c3236fb1cb9221d0648534499d5fe0c51ebd13d22b0",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -746,13 +753,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/Counter/Counter.tla",
 			"sha256": "a277dd9ba29b50b21d87d5ebbbaff3ed87949e427ce563ddb37ede7ba728da05",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Counter/chart.mmd",
-			"sha256": "bcdc46dccfa6172fa9e36c3236fb1cb9221d0648534499d5fe0c51ebd13d22b0",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -786,6 +786,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterAction/chart.mmd",
+			"sha256": "d35190a320e1b9e5cb35ae583b8367d2d10bf4cc17b1f7e94e4edf0613d01730",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterAction/ChartRun.out",
 			"sha256": "ea9ceacfd5ea703bf19893d82f7e790f3b39441b3588c7248286710cf472495d",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -802,13 +809,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterAction/CounterAction.tla",
 			"sha256": "895ed84802b88a6deb9653e7baf36b1eb67b848592c91d168d84db03b73c74f5",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterAction/chart.mmd",
-			"sha256": "d35190a320e1b9e5cb35ae583b8367d2d10bf4cc17b1f7e94e4edf0613d01730",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -870,6 +870,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterDeadlock/chart.mmd",
+			"sha256": "928b930e2d28f94e083183cc064f1dde292a5f65fcc0dfec013b04c234e6254b",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterDeadlock/ChartRun.out",
 			"sha256": "c3ac24eafc6f680c59b976e6ddd4ec6272623e1a3641fe43707abbf208c9d9d3",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -886,13 +893,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterDeadlock/CounterDeadlock.tla",
 			"sha256": "d6af2fc22ab5fbe8d64ae6202187ce807e53189a43eef1af860db55db933b132",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterDeadlock/chart.mmd",
-			"sha256": "928b930e2d28f94e083183cc064f1dde292a5f65fcc0dfec013b04c234e6254b",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -947,6 +947,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterFan/chart.mmd",
+			"sha256": "2f59dcc1236cc70d4e6609139237e07b7e6645f63129b8722ef6e1d44030b0fd",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterFan/ChartRun.out",
 			"sha256": "819af259403aab9b4eb407b8a6f04e088d9a428d8fbf6fa871c2380d44de8d21",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -963,13 +970,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterFan/CounterFan.tla",
 			"sha256": "1fddc670bda9ad7a900d29891aca1329a9e9f932d353ea944379f6f45bc50a5e",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterFan/chart.mmd",
-			"sha256": "2f59dcc1236cc70d4e6609139237e07b7e6645f63129b8722ef6e1d44030b0fd",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1017,6 +1017,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterGuard/chart.mmd",
+			"sha256": "8baa9330755dd4217aadd731b77fde833f747d09998944ada660b2708cc7d313",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterGuard/ChartRun.exit",
 			"sha256": "84b9bb077be0d8a29d0d01ef350d718b77c2ec5f40c3ab90502b1b4b5016c550",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1040,13 +1047,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterGuard/CounterGuard.tla",
 			"sha256": "c2d7ed7d7bd4b317764d590dbd9bb6cbe7819500c7e6707787fe3065460c99a7",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterGuard/chart.mmd",
-			"sha256": "8baa9330755dd4217aadd731b77fde833f747d09998944ada660b2708cc7d313",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1101,6 +1101,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterInitPast/chart.mmd",
+			"sha256": "28797d6572aa78a9f49f04a3247b62a7047e660af586d8717877164f3bda73e2",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInitPast/ChartRun.out",
 			"sha256": "9323d9f012374d2392fd4f7fbe655e1ed6fce04160270c11ceada536c51ce677",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1117,13 +1124,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInitPast/CounterInitPast.tla",
 			"sha256": "745a6e54d0b9c285d797481a09d4a531004f46b04fb5ef0b7c35194fa4d6a137",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterInitPast/chart.mmd",
-			"sha256": "28797d6572aa78a9f49f04a3247b62a7047e660af586d8717877164f3bda73e2",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1171,6 +1171,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterInitPastHolds/chart.mmd",
+			"sha256": "f74c6486f80c1e9820a901a730eecb3d6f9aa88076f704b87a60bb02b8b24d01",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInitPastHolds/ChartRun.out",
 			"sha256": "a1bf4035560dba1b655bb1577caf63df9f3dd9444380e42c9cffc721c1f6e019",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1187,13 +1194,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInitPastHolds/CounterInitPastHolds.tla",
 			"sha256": "97bafdcba8976d26069b89c31a549d3d7d992cf9cde10d654133d55f2ce604e7",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterInitPastHolds/chart.mmd",
-			"sha256": "f74c6486f80c1e9820a901a730eecb3d6f9aa88076f704b87a60bb02b8b24d01",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1227,6 +1227,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterInstance/chart.mmd",
+			"sha256": "649d905eb59e1a2972e56396f4aeaff6cafb40c6733c55b5829d36cb4986eb8e",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInstance/ChartRun.out",
 			"sha256": "12e78945b0e37f41b86705b53c09c044a06427265e23613908052a0c7661c5f6",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1250,13 +1257,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterInstance/CounterSteps.tla",
 			"sha256": "ec27748a316d01d7384a402166ff3fe36c7364511fd1681797832f2a1777e8ac",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterInstance/chart.mmd",
-			"sha256": "649d905eb59e1a2972e56396f4aeaff6cafb40c6733c55b5829d36cb4986eb8e",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1297,6 +1297,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterJump/chart.mmd",
+			"sha256": "b9829b90a85d056c88c8742e17caf5058941048dc411a48524115481a29be92f",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterJump/ChartRun.out",
 			"sha256": "e5a45da16ae7638b1bf30fd72cb482ed4b97183262ee130a73337a2fa4f28a0d",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1313,13 +1320,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterJump/CounterJump.tla",
 			"sha256": "62e09e72adfdc0bda81d4e4d26c3c8c56641589258b6308d4c3c0e62c882f035",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterJump/chart.mmd",
-			"sha256": "b9829b90a85d056c88c8742e17caf5058941048dc411a48524115481a29be92f",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1367,6 +1367,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterLoop/chart.mmd",
+			"sha256": "0157bf074e7aa642a0819cd6eb2352fc57c21866962f2944bf71e2c028c9bff9",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterLoop/ChartRun.out",
 			"sha256": "8e7aaaa8f605109e5dff38439ec5a9ff4d3b94d02612a4b1ce2763754a66cb54",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1383,13 +1390,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterLoop/CounterLoop.tla",
 			"sha256": "84449896e318fd129b82f574b644ea16a73c1f23e9331cdb9361d5a284e17cdc",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterLoop/chart.mmd",
-			"sha256": "0157bf074e7aa642a0819cd6eb2352fc57c21866962f2944bf71e2c028c9bff9",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1430,6 +1430,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterOrder/chart.mmd",
+			"sha256": "8259183f842918dfaa6f70fb805db9db5a61f3db0af13c2cf09e9e131136d8d1",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterOrder/ChartRun.out",
 			"sha256": "07e4fc2dca6afe0d621dd26603330c59a6052d1bebb19f395ff8e30c3772e667",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1446,13 +1453,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterOrder/CounterOrder.tla",
 			"sha256": "173e3ba50a4b662464e1188d31d5c306c0202a03385978a8aa841cf0c2f5e8a0",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterOrder/chart.mmd",
-			"sha256": "8259183f842918dfaa6f70fb805db9db5a61f3db0af13c2cf09e9e131136d8d1",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1507,6 +1507,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterRules/chart.mmd",
+			"sha256": "a8349b6203985b4cf3f10d581d7a15a312c19262ee7a8de8b73ba62311a817ea",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterRules/ChartRun.out",
 			"sha256": "c6a688529dfb153ca9206928f04563b2c0f2cb448bf1cf6cfabfeb94981f9d72",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1528,22 +1535,15 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterRules/Moves.tla",
-			"sha256": "3c58aaa6098d94f727d427d7ce65ebbc79d684c5a6d7b8e18ccdf2b9222a0a56",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterRules/chart.mmd",
-			"sha256": "a8349b6203985b4cf3f10d581d7a15a312c19262ee7a8de8b73ba62311a817ea",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterRules/graph.dot",
 			"sha256": "80b70738200d8b16e52b598fd6ddffb607f672550168cc8756c8605180210fce",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterRules/Moves.tla",
+			"sha256": "3c58aaa6098d94f727d427d7ce65ebbc79d684c5a6d7b8e18ccdf2b9222a0a56",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1612,6 +1612,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterStart/chart.mmd",
+			"sha256": "fca72ed62e89b903e63a7f2a646a29cee33f72b1b60a6c96793bbcc807e09f74",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterStart/ChartRun.out",
 			"sha256": "0cc81c2f968b23b4c8c1fd8e1c2032991a8d2d6137ab267958aeb7aee478b240",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1628,13 +1635,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterStart/CounterStart.tla",
 			"sha256": "dbbb6c141d88a7bc4dc354c89d85ce9623871070b0dc93ca7ba6c0ece2043b28",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterStart/chart.mmd",
-			"sha256": "fca72ed62e89b903e63a7f2a646a29cee33f72b1b60a6c96793bbcc807e09f74",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1682,6 +1682,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterStop/chart.mmd",
+			"sha256": "0ddf7a93d1317fa0414c0c5b05dba856c268a2124c4e06caebc3f5b4ad6f393c",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterStop/ChartRun.out",
 			"sha256": "11bcbb21c9a5b3c5491e436c8fc61d339a7c27593fced2199132ab6cf8e4d489",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1698,13 +1705,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterStop/CounterStop.tla",
 			"sha256": "e4486923b563ac7fb028e8513e79e3caa5e0905579d423569e9c918938e0f12c",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterStop/chart.mmd",
-			"sha256": "0ddf7a93d1317fa0414c0c5b05dba856c268a2124c4e06caebc3f5b4ad6f393c",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1738,6 +1738,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterTie/chart.mmd",
+			"sha256": "0fcc808934cbf91f592eda060de978064e4854c704d1c861332f875cf7415543",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterTie/ChartRun.out",
 			"sha256": "bce917da55d7f549b2902c3ebbf2a7bfc7da9d7de8e3e099a9dc6c7fa815fc37",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1754,13 +1761,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterTie/CounterTie.tla",
 			"sha256": "e668ff93e2213651d6bb14e14255814cb37ab61062466384b953563b2d844daa",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterTie/chart.mmd",
-			"sha256": "0fcc808934cbf91f592eda060de978064e4854c704d1c861332f875cf7415543",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1836,6 +1836,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterTieInGraph/chart.mmd",
+			"sha256": "2c3fb00ad851c1bab2516ce25838209c342cbc8c5d3d795a54bb6eac3ad5d0d0",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterTieInGraph/ChartRun.out",
 			"sha256": "4f0a042594b6b512195658761c84bf0054fa14fc6d52e72a78113a8230a28d93",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1852,13 +1859,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterTieInGraph/CounterTieInGraph.tla",
 			"sha256": "cf1818fc7d96bd4082f9260a42b7e792d5e6494ce7ae6c97730b63e8085e0ac0",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterTieInGraph/chart.mmd",
-			"sha256": "2c3fb00ad851c1bab2516ce25838209c342cbc8c5d3d795a54bb6eac3ad5d0d0",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -1906,6 +1906,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/CounterView/chart.mmd",
+			"sha256": "e6e0208a45a15a8af7be73b8e89ee665117414c3fc082679f35b250f2643cd05",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterView/ChartRun.out",
 			"sha256": "1763153dd2d92f64250e983f283e622a7c7519aa21b5357c07f5931225039314",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -1922,13 +1929,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/CounterView/CounterView.tla",
 			"sha256": "273e549d576351809a2220003ae1b3c8cd2e687499be05fb21b3ce461d1b5162",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/CounterView/chart.mmd",
-			"sha256": "e6e0208a45a15a8af7be73b8e89ee665117414c3fc082679f35b250f2643cd05",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2011,6 +2011,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/DieHard/chart.mmd",
+			"sha256": "89057b576e59f437dd8c96a25edfd6891512d9b5788c5883e7d1affb6b5a9681",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/DieHard/ChartRun.out",
 			"sha256": "dfd5fadfb9ea0030ecdf82c184268d09ce877336f19e3b9f2f3b95866099538a",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -2027,13 +2034,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/DieHard/DieHard.tla",
 			"sha256": "8a63111dc1aea97f4b32cc6fb7f36112775ef65b5a8a8603fbd35c493eba306d",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/DieHard/chart.mmd",
-			"sha256": "89057b576e59f437dd8c96a25edfd6891512d9b5788c5883e7d1affb6b5a9681",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2081,6 +2081,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/FirstRule/chart.mmd",
+			"sha256": "60b3c9d31e74b633d5d97a2847aab3bd3fb4f63813e8e0d8a3a493ff5dde1bc3",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/FirstRule/ChartRun.out",
 			"sha256": "6514873d106dda3ed051e38f2e7df8932c597c3d27e68538899ee9c2f70a9405",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -2097,13 +2104,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/FirstRule/FirstRule.tla",
 			"sha256": "9f1b2ddb4a573c4612cee6657f728117656a2dd1ab9e8e800e171ee1f3cbb1f4",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/FirstRule/chart.mmd",
-			"sha256": "60b3c9d31e74b633d5d97a2847aab3bd3fb4f63813e8e0d8a3a493ff5dde1bc3",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2186,8 +2186,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/HiddenClock/chart.mmd",
+			"sha256": "7d29b01c2bc123ec82c9ccf12a082b2bd700afa6ae5f5e4451c08fba553b317f",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/HiddenClock/ChartRun.out",
 			"sha256": "263a6666f3bd0a91020bdc2e674285889db6160e62aeeabf81d3fd6c80ad5898",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/HiddenClock/graph.dot",
+			"sha256": "abfe48a392e3f5217684882942261deb1a117e63e3e3836f037a551019fff710",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2202,20 +2216,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/HiddenClock/HiddenClock.tla",
 			"sha256": "1cdb3a20c553557f60fddc93d0c2a57dcd815f0028020a58110ff92ae5e6ef1b",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/HiddenClock/chart.mmd",
-			"sha256": "7d29b01c2bc123ec82c9ccf12a082b2bd700afa6ae5f5e4451c08fba553b317f",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/HiddenClock/graph.dot",
-			"sha256": "abfe48a392e3f5217684882942261deb1a117e63e3e3836f037a551019fff710",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2249,8 +2249,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Login/chart.mmd",
+			"sha256": "2aba56af645f56e371a87c22908e110ab259bed055a979d348220209d89b9862",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/Login/ChartRun.out",
 			"sha256": "69e092decc546972f84ff731b24cb5d2f4d75eb373dbedde38b8aa136f2bfdb8",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Login/graph.dot",
+			"sha256": "f120b5583e931755578032d87cedf5bcadc4cb4c4ef497605b4290e1de704673",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2265,20 +2279,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/Login/Login.tla",
 			"sha256": "25aa3c50791c7f24fe96243baeef4cc4281d9fa37f29abb78533862bd6b6e9de",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Login/chart.mmd",
-			"sha256": "6cfda25977c467c106f9fb7f5602960bdd40919ac9294994ccd3bb33346faf35",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Login/graph.dot",
-			"sha256": "f120b5583e931755578032d87cedf5bcadc4cb4c4ef497605b4290e1de704673",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2312,8 +2312,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/LoginGuarded/chart.mmd",
+			"sha256": "298760e9f3334c9807f2c3698c1f487981e9cb67c2688e6d910a2904321383f8",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/LoginGuarded/ChartRun.out",
 			"sha256": "b9578b274bf3458ac3b721eca7638f48e97874a32765e0db95807cbb7f9609aa",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/LoginGuarded/graph.dot",
+			"sha256": "3e2ffcda3ccb6fa266b13f6f19d18d81d819f9e0e9809e91868edf77d9663237",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2328,20 +2342,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/LoginGuarded/LoginGuarded.tla",
 			"sha256": "c62583af14b40df94a4276438edecfdf482d2b185eb6b302c3db2dfe71c129e1",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/LoginGuarded/chart.mmd",
-			"sha256": "298760e9f3334c9807f2c3698c1f487981e9cb67c2688e6d910a2904321383f8",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/LoginGuarded/graph.dot",
-			"sha256": "3e2ffcda3ccb6fa266b13f6f19d18d81d819f9e0e9809e91868edf77d9663237",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2375,8 +2375,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/LoginParallel/chart.mmd",
+			"sha256": "d00f84c57486de54bde56ee75ad223e6936bd1b0334319cef60ebbee899a2480",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/LoginParallel/ChartRun.out",
 			"sha256": "2dda75ca79ff432a8f74fa504c8876f01441f8196b274f4f834959c49576c87b",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/LoginParallel/graph.dot",
+			"sha256": "8f4d20009e23824b0bfbeddd2ca9d1c12e764599a7e179018c98d432d091ab86",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2391,20 +2405,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/LoginParallel/LoginParallel.tla",
 			"sha256": "8f93509fca05425c054e7ec518e9653097ac9464c98fbf426fee551f940b2e51",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/LoginParallel/chart.mmd",
-			"sha256": "d00f84c57486de54bde56ee75ad223e6936bd1b0334319cef60ebbee899a2480",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/LoginParallel/graph.dot",
-			"sha256": "8f4d20009e23824b0bfbeddd2ca9d1c12e764599a7e179018c98d432d091ab86",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2452,8 +2452,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayer/chart.mmd",
+			"sha256": "e3a6e6987bd8c6aa9fcc480a5f19e1c8c954804935f2d5f938279e6e7c2f6ceb",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayer/ChartRun.out",
 			"sha256": "2460f0f517117836b5a02e70e4ef2f9889061f1b2cb83ac4bf8fc41532fa2b1d",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayer/graph.dot",
+			"sha256": "881d999fa6e60ba7698ea8633f16a315be97a370aa300cdea885d04333028534",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2468,20 +2482,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayer/MediaPlayer.tla",
 			"sha256": "ace4961900ceb44281c94879c05550123a74c5427e9fcfaf3dfb134f51c38390",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayer/chart.mmd",
-			"sha256": "e3a6e6987bd8c6aa9fcc480a5f19e1c8c954804935f2d5f938279e6e7c2f6ceb",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayer/graph.dot",
-			"sha256": "881d999fa6e60ba7698ea8633f16a315be97a370aa300cdea885d04333028534",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2529,8 +2529,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/chart.mmd",
+			"sha256": "1a77aeca211f5469041f03c6d149beec17f300d6cb5e5386e5f73d6a214f73ae",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/ChartRun.out",
 			"sha256": "1050612e030b11a1f6e1942880bfcfb634913e0123fe04133e38554553cb79f6",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/graph.dot",
+			"sha256": "cb6b2d85fb70cfa6aefe16e3fdcb686b60f6593ec755e04ed5c4ec15867766f7",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2545,20 +2559,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/MediaPlayerFixed.tla",
 			"sha256": "59c4c86bfa1f38e0a01e8675d9936558d9a3899c3de8243483e633674a6bccfc",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/chart.mmd",
-			"sha256": "1a77aeca211f5469041f03c6d149beec17f300d6cb5e5386e5f73d6a214f73ae",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayerFixed/graph.dot",
-			"sha256": "cb6b2d85fb70cfa6aefe16e3fdcb686b60f6593ec755e04ed5c4ec15867766f7",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2592,8 +2592,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayerProps/chart.mmd",
+			"sha256": "40e8330310aa4ec838ad4bf99b12e5eb0ddc7b6ec99bf21d764c05ab05217d9b",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayerProps/ChartRun.out",
 			"sha256": "4a67e04e5c801f92ce4a9fe7bf48fdc3a800abe6754d75c0df2ac0f7fa85af68",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/MediaPlayerProps/graph.dot",
+			"sha256": "881d999fa6e60ba7698ea8633f16a315be97a370aa300cdea885d04333028534",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2615,20 +2629,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/MediaPlayerProps/MediaPlayerProps.tla",
 			"sha256": "31f510c61062eaede29be56efd920aa0cfdb9851e09cdbb0c971468c48e54985",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayerProps/chart.mmd",
-			"sha256": "40e8330310aa4ec838ad4bf99b12e5eb0ddc7b6ec99bf21d764c05ab05217d9b",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/MediaPlayerProps/graph.dot",
-			"sha256": "881d999fa6e60ba7698ea8633f16a315be97a370aa300cdea885d04333028534",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2718,8 +2718,22 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/PickWorker/chart.mmd",
+			"sha256": "5fff795e5d0da737cdf1fef95c993ea6ca45fd9f5fb61e163d2e292c40186a64",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/PickWorker/ChartRun.out",
 			"sha256": "caeb61ac10b01bf2e6044cebd316b599793eb075fb0256aa81c696e4e5c7a7ce",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/PickWorker/graph.dot",
+			"sha256": "1d60f0497f939134c6cb91f5e869445aa7da04ba8caad5128f1509a28c31f245",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2734,20 +2748,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/PickWorker/PickWorker.tla",
 			"sha256": "8cd92057affd06b367a85c1d87c81b827cfdfd41a2bea10989ce911ed2fd3124",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/PickWorker/chart.mmd",
-			"sha256": "5fff795e5d0da737cdf1fef95c993ea6ca45fd9f5fb61e163d2e292c40186a64",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/PickWorker/graph.dot",
-			"sha256": "1d60f0497f939134c6cb91f5e869445aa7da04ba8caad5128f1509a28c31f245",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2774,8 +2774,36 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Shadow/chart.mmd",
+			"sha256": "386fbbc905c7c89c4457a3d48f4b76bdf42861093188dc7369c32aef7b48658c",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/Shadow/ChartRun.out",
 			"sha256": "e01704359d955974f20afee7ea1d5f4f120a5319c219929d747c9e9bc2c9b36d",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Shadow/graph.dot",
+			"sha256": "a1b348348bf032ff81cfd796ae19f8cdcf491d5af18eab73ebfca3058a15691b",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Shadow/report.md",
+			"sha256": "16788146e79b669a06152e69fbb0b3ef738bab2bd37c6c278137e7b96373dd97",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/Shadow/sany.out",
+			"sha256": "e7396792c0a425651e9765498b6922a95fa63c37d3fa9927137b3c35596eb310",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2809,34 +2837,6 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Shadow/chart.mmd",
-			"sha256": "386fbbc905c7c89c4457a3d48f4b76bdf42861093188dc7369c32aef7b48658c",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Shadow/graph.dot",
-			"sha256": "a1b348348bf032ff81cfd796ae19f8cdcf491d5af18eab73ebfca3058a15691b",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Shadow/report.md",
-			"sha256": "16788146e79b669a06152e69fbb0b3ef738bab2bd37c6c278137e7b96373dd97",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/Shadow/sany.out",
-			"sha256": "e7396792c0a425651e9765498b6922a95fa63c37d3fa9927137b3c35596eb310",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/Shadow/verdict-1.out",
 			"sha256": "b6df6a9904d6b1fbe9fb20ae1d7f2e52aded6a7884e6e2514db4e984d6d2c4b9",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -2844,29 +2844,15 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/SpacedNames/ChartRun.out",
-			"sha256": "68bb08c06e2c22ec57dd84e595c2895f01bf6c7be3cadb8ae3a942c662888f0c",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/SpacedNames/SpacedNames.cfg",
-			"sha256": "e32044a2d32c9e2c9c9459b257ff062bd33028914d392b0ec1d25815772dfbfa",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/SpacedNames/SpacedNames.tla",
-			"sha256": "0685a3f78ae2d30bc883201b3c9fc16f9f590b15d02a62295da3cc48566d777b",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/SpacedNames/chart.mmd",
 			"sha256": "de161c72bdfa1feff2ccbebbc39db5fee3bd4b1d789945802b310838875a2bf1",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/SpacedNames/ChartRun.out",
+			"sha256": "68bb08c06e2c22ec57dd84e595c2895f01bf6c7be3cadb8ae3a942c662888f0c",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2888,6 +2874,20 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/SpacedNames/sany.out",
 			"sha256": "415faa44484371020747737d57b69bec28640dce60adf5cbeac26d0a79f89953",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/SpacedNames/SpacedNames.cfg",
+			"sha256": "e32044a2d32c9e2c9c9459b257ff062bd33028914d392b0ec1d25815772dfbfa",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/SpacedNames/SpacedNames.tla",
+			"sha256": "0685a3f78ae2d30bc883201b3c9fc16f9f590b15d02a62295da3cc48566d777b",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2921,29 +2921,15 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhase/ChartRun.out",
-			"sha256": "aed20dee26285d007a0529727c67ff86d52c1eaa3e1ea4c56472df4f2c5b1b92",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhase/TwoPhase.cfg",
-			"sha256": "a4e4546592e8e5d361ccbeb4808338e15fb61338fdbc84c358e9b0a41a58a704",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhase/TwoPhase.tla",
-			"sha256": "c27868893c2f4de82a0c561af6fc65d2abe233e840d9a2d830920d1487ab793d",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TwoPhase/chart.mmd",
 			"sha256": "e8761c527163b1d15d699da7f7e026337c939e51b2f82feea82a93ce1d67482c",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhase/ChartRun.out",
+			"sha256": "aed20dee26285d007a0529727c67ff86d52c1eaa3e1ea4c56472df4f2c5b1b92",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2965,6 +2951,20 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TwoPhase/sany.out",
 			"sha256": "3944566b6d4e0b3457c9b30320041e19e97d45f40a01b9a868ddeb9d7ad6304e",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhase/TwoPhase.cfg",
+			"sha256": "a4e4546592e8e5d361ccbeb4808338e15fb61338fdbc84c358e9b0a41a58a704",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhase/TwoPhase.tla",
+			"sha256": "c27868893c2f4de82a0c561af6fc65d2abe233e840d9a2d830920d1487ab793d",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -2998,29 +2998,15 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/ChartRun.out",
-			"sha256": "73094c6a6b78588569eef707f88ce7d6f7da4505a4882a2ff0cc1dcffc72b0f0",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/TwoPhaseFixed.cfg",
-			"sha256": "a4e4546592e8e5d361ccbeb4808338e15fb61338fdbc84c358e9b0a41a58a704",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/TwoPhaseFixed.tla",
-			"sha256": "9d9459496de208594596804e0a70faad6390286c7b3fc2b9ae173e61d25ade57",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/chart.mmd",
 			"sha256": "d7a0b12bfc62b60507334c045369ef53bbeba7e432f0c335a5c0a72e0b667fe7",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/ChartRun.out",
+			"sha256": "73094c6a6b78588569eef707f88ce7d6f7da4505a4882a2ff0cc1dcffc72b0f0",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3047,6 +3033,20 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/TwoPhaseFixed.cfg",
+			"sha256": "a4e4546592e8e5d361ccbeb4808338e15fb61338fdbc84c358e9b0a41a58a704",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/TwoPhaseFixed.tla",
+			"sha256": "9d9459496de208594596804e0a70faad6390286c7b3fc2b9ae173e61d25ade57",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TwoPhaseFixed/verdict-1.out",
 			"sha256": "a85d46fa117924eec003fe28749f71bee520016d65e3d4cad671768635157600",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -3061,6 +3061,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TypeGuard/chart.mmd",
+			"sha256": "e180050487251de907e1a25c34a3acf28159d28a3166afd0786c7f8bd1bb52d5",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TypeGuard/ChartRun.exit",
 			"sha256": "461144ccfd56ee3cf0f9a9d80e520c5b872166b23092d5fd838ecbdb46d64dab",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -3070,27 +3077,6 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TypeGuard/ChartRun.out",
 			"sha256": "d3a2f8df56c31c081e5c0b27da754180cdb5b2a62073467421a90fc8514c4a08",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TypeGuard/TypeGuard.cfg",
-			"sha256": "ddd3b43e9455ebfe7ed7c487867352b9466bf60fb35900b84ad5281fe6763766",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TypeGuard/TypeGuard.tla",
-			"sha256": "ccda004cd0e3c40a7c39c200095a12eb3e0cc7c40f9ecabff24026c1cdfc53b4",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/TypeGuard/chart.mmd",
-			"sha256": "e180050487251de907e1a25c34a3acf28159d28a3166afd0786c7f8bd1bb52d5",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3112,6 +3098,20 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/TypeGuard/sany.out",
 			"sha256": "cf58712d31a0daab97eb960e7820c7b0c4326dfe785937eef9f7ed2476347ee3",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TypeGuard/TypeGuard.cfg",
+			"sha256": "ddd3b43e9455ebfe7ed7c487867352b9466bf60fb35900b84ad5281fe6763766",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/TypeGuard/TypeGuard.tla",
+			"sha256": "ccda004cd0e3c40a7c39c200095a12eb3e0cc7c40f9ecabff24026c1cdfc53b4",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3145,29 +3145,15 @@
 		},
 		{
 			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/UserNoDeadlock/ChartRun.out",
-			"sha256": "acd62745ae91ce9250ed32bb84a084f7a7327232f0e96a599eb49ed4f74c2388",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/UserNoDeadlock/UserNoDeadlock.cfg",
-			"sha256": "2cf30ce46c41f9d6978b8080f2e0cdd627e0b034e367f98b351882fb0277b748",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
-			"path": "statechart/scripts/test/corpus/UserNoDeadlock/UserNoDeadlock.tla",
-			"sha256": "b4ebd22cce4480f25812ea31f67447df520fb554ed9bd0114641c261f4e2b804",
-			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
-			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
-		},
-		{
-			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/UserNoDeadlock/chart.mmd",
 			"sha256": "730f79185a86f0345440cfbbcd05eb4b6b9b6e4653e00073708432e341c5fea7",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/UserNoDeadlock/ChartRun.out",
+			"sha256": "acd62745ae91ce9250ed32bb84a084f7a7327232f0e96a599eb49ed4f74c2388",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3189,6 +3175,20 @@
 			"source": "cursor",
 			"path": "statechart/scripts/test/corpus/UserNoDeadlock/sany.out",
 			"sha256": "b11bbc9d4985f64b11b09f48029c1c6a84089835cebf4211a56ee6e70e4c226c",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/UserNoDeadlock/UserNoDeadlock.cfg",
+			"sha256": "2cf30ce46c41f9d6978b8080f2e0cdd627e0b034e367f98b351882fb0277b748",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
+			"path": "statechart/scripts/test/corpus/UserNoDeadlock/UserNoDeadlock.tla",
+			"sha256": "b4ebd22cce4480f25812ea31f67447df520fb554ed9bd0114641c261f4e2b804",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3229,6 +3229,13 @@
 		},
 		{
 			"source": "cursor",
+			"path": "statechart/scripts/test/drawn.ts",
+			"sha256": "369ac67009b9ddfa19e080b9f99e2eeb59fc3616c2b374a92b5b1e653df55919",
+			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
+			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
+		},
+		{
+			"source": "cursor",
 			"path": "statechart/scripts/test/grid/Grid.cfg",
 			"sha256": "41d15a4d5bef6385c00b30f2126204e74a779d835d37f1ea73669afcfb579ef5",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
@@ -3258,7 +3265,7 @@
 		{
 			"source": "cursor",
 			"path": "statechart/scripts/test/labels.ts",
-			"sha256": "5a884161428fc00229d9a0e896001df4b262b56a441b6b3d66d1b59b06050650",
+			"sha256": "12c8403517b423ea7af0ed5c5d788ff872f9ba127ca11555ae128076a27a83ca",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},
@@ -3286,7 +3293,7 @@
 		{
 			"source": "cursor",
 			"path": "statechart/scripts/test/render.test.ts",
-			"sha256": "9cb369e5f4c464ca540ccc3de4fdd76670b84e54f06955ccb46908826579ac23",
+			"sha256": "717d36625f0ed5edb5086b9bf1993b79801700f9889b58aa7faa38e3fa0d50a2",
 			"disposition": "Not packed: statechart ships runtime scripts and docs only. Upstream unit tests, corpora, package.json and tsconfig stay upstream-accounted and unshipped so the npm pack does not balloon.",
 			"explanation": "Upstream statechart tooling asset excluded from the Pi pack. No dest file."
 		},

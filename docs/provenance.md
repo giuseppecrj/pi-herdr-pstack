@@ -36,7 +36,7 @@ sibling path such as `../agents/comment-sicko.md` is relative to it.
 under `skills/` must map to exactly one record. The `cursor` record maps
 `skills/pstack/` to cursor/plugins at `root` `pstack`, and records the scope and
 the status and SHA-256 of every file under `pstack/agents` and `pstack/docs` at
-the cursor pin `1ba91fc25c0977741dd0e267849e6234b037ed0a`. The checks below run
+the cursor pin `bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`. The checks below run
 once per record, with that upstream's checkout in `PSTACK_<UPSTREAM>_SOURCE`.
 To move skills between folders, run `node scripts/move-skills.mjs <folder>
 <skill>...`: it moves them with `git mv` and rewrites the `../` links between
@@ -550,7 +550,7 @@ upstream pstack, recorded separately from the Wave 1 role fixture in
 | Key | Repository | Commit | Root |
 | --- | --- | --- | --- |
 | mimir | https://github.com/casualjim/pi-mimir | `f07dd981f62c9c994a5d043ede67d6c63c721454` | `packages/pi-pstack/skills` |
-| cursor | https://github.com/cursor/plugins | `1ba91fc25c0977741dd0e267849e6234b037ed0a` | `pstack/skills` |
+| cursor | https://github.com/cursor/plugins | `bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7` | `pstack/skills` |
 
 | Destination | Primary source | Status |
 | --- | --- | --- |
@@ -761,7 +761,7 @@ reflect's judgment, divergent and synthesizer lenses) uses `task:architecture`
 with thinking at high or above. Reflect's tooling lens is a diversity seat.
 The hardest implementation changes go to that category or to the strongest
 exact catalog model with `thinking: xhigh`. The cursor pin is
-`1ba91fc25c0977741dd0e267849e6234b037ed0a`. The host describes `architecture`
+`bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`. The host describes `architecture`
 as planning and diagnosis, and its tier guidance puts that work in the
 frontier tier. `/setup-pstack` reports an unset `architecture` category;
 `qa` stays off that list. A flow that will need an architecture seat checks
@@ -781,7 +781,7 @@ index, ten chapters (`01-setup.md` through `10-recipes-and-pitfalls.md`, about
 `d0ef80d86795816da932a153458c5dbe192d294e`, at
 `f713f14203cd6420cec13cd7c55c32d598dbab68`, at
 `190d28736eff128ec94f502a22c7fe0c4b56cd37`, and at the current pin
-`1ba91fc25c0977741dd0e267849e6234b037ed0a`) and six `images/*.jpg`. It walks a user from setup and prompting
+`bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`) and six `images/*.jpg`. It walks a user from setup and prompting
 through design, verification, overnight runs and customization. It sits outside
 the pinned `pstack/skills` root and is deliberately not ported, adapted or
 packed.
@@ -801,7 +801,7 @@ shipped file links a guide page.
 Origin is dropped. `playbooks/opening-a-pr.md` uses `gh` for every PR
 operation, like Babysit, Shipping and the autopilots. The mimir and Cursor
 sources still offer Origin; the cursor pin is
-`1ba91fc25c0977741dd0e267849e6234b037ed0a`. The content test bans capitalized
+`bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`. The content test bans capitalized
 `Origin` in shipped skills, except make-bot-ui's backticked HTTP header field,
 and the lowercase forge CLI forms; the git remote named `origin` is
 unaffected.
@@ -1050,3 +1050,40 @@ Still unshipped (accounted in `w3-b.json` excluded + `FLAGGED_UNSHIPPED_CURSOR`)
 Shipped at this pin beyond the prior 53: optional `statechart` (runtime
 scripts only; test corpora not packed), `in-your-own-words`, `ketchup` and
 `sharpen`.
+
+## Pin move: cursor/plugins `bf0c7cd` (pstack 0.15.42)
+
+The cursor pin moved from `1ba91fc25c0977741dd0e267849e6234b037ed0a` to
+`bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7` (cursor/plugins `main` at sync;
+`pstack/plugin.json` reads `0.15.42`). The casualjim/pi-mimir pin stays
+`f07dd981f62c9c994a5d043ede67d6c63c721454` (ADR-0004).
+
+Hand-ported substance:
+
+- `skills/pstack/sharpen/SKILL.md`: adapted tip. The rewritten prompt asks the
+  agent to prototype experiment-settleable choices and leave product or
+  preference choices open.
+- `skills/merged/teach/SKILL.md`: merged tip from cursor `teach/SKILL.md`.
+  Explain mode step 2 drops the "keep why narrow by default" clause; Workspace
+  mode and Pi path wording stay.
+- `skills/pstack/statechart/scripts/backends/mermaid.ts`: shipped byte copy of
+  the tip (nested start-edge drawing).
+- `skills/pstack/statechart/scripts/run.ts`: ported the tip's clearer SANY
+  error extraction onto the pack's `tla-ts` runner. No Java, mise, or
+  `tla2tools.jar` path returned.
+- `skills/pstack/setup-pstack/SKILL.md` and `skills/merged/poteto-help/SKILL.md`:
+  primary destinations. Cursor tip was Cursor-rule default models and a
+  Claude Code caveat line; Pi adaptations already cover the category model
+  flow, so no body port. Source hashes moved with the pin.
+- Context destinations (`poteto-mode` hub and playbooks, `swarm`, `recall`,
+  `blast-radius`, `no-comments`, `comment-sicko`): noted, not overwritten.
+  Cursor default-model and how/why one-file wording stay upstream-only.
+- Cursor collapsed `how` and `why` to one file and deleted their reference
+  trees. Pack `how`/`why` stay on the frozen mimir primary (ADR-0004); cursor
+  inventory `sourceFiles` keep only the remaining `how/SKILL.md` and
+  `why/SKILL.md`.
+- `statechart/scripts/test/drawn.ts`: new upstream test helper, excluded with
+  the other statechart test corpora. Excluded test hashes refreshed.
+
+`test/fixtures/statechart/check-no-java.sh` now points at
+`skills/pstack/statechart/scripts/statechart.ts` so a reviewer can rerun it.
