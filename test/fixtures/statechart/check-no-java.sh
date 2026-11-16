@@ -2,7 +2,7 @@
 set -euo pipefail
 root=$(cd "$(dirname "$0")/../../.." && pwd)
 fixture="$root/test/fixtures/statechart/Break.tla"
-entry="$root/skills/statechart/scripts/statechart.ts"
+entry="$root/skills/pstack/statechart/scripts/statechart.ts"
 node_bin=$(command -v node)
 safe=$(mktemp -d)
 outdir=$(mktemp -d)

@@ -9,7 +9,7 @@
     },
     "cursor": {
       "repository": "https://github.com/cursor/plugins",
-      "commit": "1ba91fc25c0977741dd0e267849e6234b037ed0a",
+      "commit": "bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7",
       "root": "pstack/skills"
     },
     "mattpocock": {
@@ -300,9 +300,7 @@
           "how/references/explorer-prompt.md"
         ],
         "cursor": [
-          "how/SKILL.md",
-          "how/references/explainer-prompt.md",
-          "how/references/explorer-prompt.md"
+          "how/SKILL.md"
         ]
       }
     },
@@ -1314,19 +1312,7 @@
           "why/references/synthesizer-prompt.md"
         ],
         "cursor": [
-          "why/SKILL.md",
-          "why/references/epistemics.md",
-          "why/references/investigator-prompt.md",
-          "why/references/source-playbook.md",
-          "why/references/sources/code-archaeology.md",
-          "why/references/sources/databricks.md",
-          "why/references/sources/datadog.md",
-          "why/references/sources/incident-postmortem.md",
-          "why/references/sources/linear.md",
-          "why/references/sources/notion.md",
-          "why/references/sources/sentry.md",
-          "why/references/sources/slack.md",
-          "why/references/synthesizer-prompt.md"
+          "why/SKILL.md"
         ]
       }
     },

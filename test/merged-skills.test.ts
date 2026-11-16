@@ -792,8 +792,8 @@ const TEACH_RULES: Rule[] = [
 		/Keep `why`'s confidence language intact \(its hedges are findings, not style\)\./,
 	],
 	[
-		"running how and why in parallel and keeping why narrow",
-		/Run them in parallel and combine the results\.[^]*Keep `why` narrow by default since its full sweep is slow\./,
+		"running how and why in parallel and matching size to the question",
+		/Run them in parallel and combine the results\. Match the size to the question\. Run both for a subsystem, maybe one is enough for a small change\./,
 	],
 	[
 		"starting with a plain definition",

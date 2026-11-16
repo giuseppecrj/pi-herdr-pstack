@@ -1,6 +1,6 @@
 # Compatibility
 
-Status: pi-herdr-pstack `1.0.0`, on pi-herdr-agents `>=3.10.0`: pstack's skills, Matt Pocock's skills and the skills merged from both, with poteto-mode's playbooks (the README lists them).
+Status: pi-herdr-pstack `1.1.0`, on pi-herdr-agents `>=3.10.0`: pstack's skills, Matt Pocock's skills and the skills merged from both, with poteto-mode's playbooks (the README lists them).
 
 ## Host baseline
 
@@ -21,7 +21,7 @@ depend on the newer host.
 | pi-herdr-roles (coexistence) | `0.1.0` from npm (`fc3383daaa839228cc9f703c2d99728684acfe07`) |
 | Pi SDK and CLI | `1.0.3` |
 
-For 1.0.0, the release commit must pass `npm run check` (typecheck, lint,
+For 1.1.0, the release commit must pass `npm run check` (typecheck, lint,
 format and the test suite) with every upstream checkout set
 (`PSTACK_CURSOR_SOURCE`, `PSTACK_MIMIR_SOURCE`, `PSTACK_MATTPOCOCK_SOURCE`)
 and `PI_HERDR_AGENTS_SOURCE`, so the skill source hashes, the per-upstream
@@ -46,6 +46,10 @@ this file. What the suite proves:
 
 None of this shows that a live model follows the skills, and real Herdr child
 launches and worktree lifecycle are not covered here.
+
+For 1.0.0, the same verification story applied on pi-herdr-agents `>=3.10.0`
+with Matt Pocock's skills beside pstack's. Pass and skip counts for that
+release live in the release record, not here.
 
 For 0.5.0, `npm test` with the pinned upstream sources passed 162 tests with
 0 skipped at the test level: cursor/plugins
