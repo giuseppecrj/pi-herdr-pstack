@@ -144,7 +144,7 @@
 		},
 		{
 			"path": "skills/pstack/sharpen/SKILL.md",
-			"sha256": "0d0ed27041096d4ba9109539cd0c2ccfb74be3c20a1d184f4fcfd935bae313de",
+			"sha256": "5b56b1a3fe8ae858306ae27cf63e1a60a914cdc69836c8c15e513f7bc2668205",
 			"status": "adapted",
 			"sources": [
 				{
@@ -154,7 +154,7 @@
 					"use": "primary"
 				}
 			],
-			"explanation": "Adapted from pinned Cursor leaf: /skill:sharpen invocation. Body otherwise follows upstream."
+			"explanation": "Adapted from pinned Cursor leaf: /skill:sharpen invocation. Partial sync 2026-11-16: hand-ported the final-paragraph delta from cursor/plugins bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7 (pstack/skills/sharpen/SKILL.md): the rewritten prompt asks its eventual agent to prototype empirically decidable choices and recommend from observations, while reserving product and preference choices for the user. Sharpen itself still rewrites the prompt rather than executing it. The shared Cursor pin and source hash remain at the recorded base because how/why reference removals and the statechart update are deferred; see docs/upstream-sync/2026-11-16.md."
 		}
 	],
 	"planned": [],
